@@ -487,9 +487,15 @@ async def features_in(
     include_hidden: bool = False,
     include_deleted: bool = False,
     public: bool = False,
+    q: str | None = None,
     limit: int,
 ) -> Sequence[FeatureRow]:
     query = select(LayerFeature, LAT, LON).where(LayerFeature.layer_id == layer.id)
+    if q:
+        # "What, then where" (phase N, design §7): the places of the chosen layer whose name holds the words.
+        for word in q.split()[:5]:
+            pattern = "%" + word.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
+            query = query.where(LayerFeature.name.ilike(pattern, escape="\\"))
     if public:
         query = query.where(public_place())
     elif not include_hidden:

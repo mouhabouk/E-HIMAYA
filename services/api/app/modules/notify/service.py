@@ -31,10 +31,8 @@ from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN
 from app.modules.settings import domain as settings_domain
 from app.modules.settings import service as settings_service
 
-MAX_ALERT_DAYS = 7
 MAX_POLYGON_POINTS = 500
 SCOPE_TOLERANCE_M = 5000
-INBOX_ALERT_DAYS = 30
 
 INFO_ROLES = frozenset({Role.CONTENT_EDITOR, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE})
 ALERT_DRAFT_ROLES = frozenset({Role.OPS_MANAGER, Role.CONTENT_EDITOR, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE})
@@ -165,7 +163,8 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
         if body.severity is None or body.category is None or body.expires_at is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "severity_category_expiry_required")
         expires = body.expires_at if body.expires_at.tzinfo else body.expires_at.replace(tzinfo=UTC)
-        if not _now() < expires <= _now() + timedelta(days=MAX_ALERT_DAYS):
+        max_days = await settings_service.threshold(session, "alerts.max_days")
+        if not _now() < expires <= _now() + timedelta(days=max_days):
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_expiry")
         message.severity, message.category, message.hazard = body.severity, body.category, body.hazard
         message.expires_at = expires
@@ -742,9 +741,10 @@ async def inbox(
     session: AsyncSession, user_id: uuid.UUID, limit: int, cursor: str | None
 ) -> tuple[list[schemas.InboxItem], str | None]:
     """Messages addressed to this account (any of its devices or its profile) and recent alerts for its area."""
+    inbox_days = await settings_service.threshold(session, "alerts.inbox_days")
     where = f"""
         m.status IN ('published', 'expired', 'cancelled') AND m.published_at IS NOT NULL
-        AND (m.kind = 'info' OR m.published_at > now() - make_interval(days => {INBOX_ALERT_DAYS}))
+        AND (m.kind = 'info' OR m.published_at > now() - make_interval(days => {inbox_days}))
         AND (m.kind = 'alert' OR m.status = 'published')
         AND (
             EXISTS (SELECT 1 FROM notify.device d LEFT JOIN identity.profile p ON p.user_id = d.user_id

@@ -34,6 +34,7 @@ rectangle "e-Himaya" {
   usecase "Rédiger un avis médical\nverrouillé" as M9
   usecase "Reverrouiller les dossiers\npour un nouveau membre" as M10
   usecase "Voir qui a consulté\nmon dossier médical" as M11
+  usecase "Tenir mon calendrier\nde disponibilité (N)" as M12
 }
 CIT --> V1
 VOL --> V2
@@ -56,4 +57,7 @@ SP --> M9
 M9 ..> M5 : <<include>>
 CMR --> M10
 CIT --> M11
+VOL --> M12
+DV --> M12
+DPC --> M12
 @enduml

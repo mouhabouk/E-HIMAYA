@@ -37,6 +37,13 @@ class Médecin {
   lieu de travail, gouvernorat
   matricule PC : chiffré
 }
+class PériodeDisponibilité {
+  rôle : bénévole | médecin
+  type : disponible | indisponible
+  jours ISO[] (vide = tous)
+  du / au (au facultatif)
+  de / à (heure de Tunis, nuit si à < de)
+}
 class DécisionRevue {
   décision, motif
   acteur, date
@@ -74,6 +81,7 @@ Compte "1" -- "0..1" Profil
 Compte "1" -- "*" Consentement
 Compte "1" -- "0..1" Bénévole
 Compte "1" -- "0..1" Médecin
+Compte "1" -- "0..20" PériodeDisponibilité : par rôle (N)
 Bénévole "1" -- "*" DécisionRevue
 Médecin "1" -- "*" DécisionRevue
 Compte "1" -- "*" Appareil

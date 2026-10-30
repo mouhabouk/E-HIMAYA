@@ -31,6 +31,7 @@ function layer(extra: Partial<MapLayer> = {}): MapLayer {
     last_import: null,
     can_manage: true,
     can_import: true,
+    can_edit: true,
     ...LAYER_L1A,
     audiences: [...LAYER_L1A.audiences],
     scope: [],
@@ -146,7 +147,7 @@ describe("LayersPage", () => {
     const editor = { ...OPERATOR_CLAIMS, realm_access: { roles: ["content_editor"] }, scope_level: "national" };
     const api = fakeApi({
       ...fakeLayersApi(),
-      layers: vi.fn(() => Promise.resolve(list([layer({ can_manage: false, can_import: false })], false))),
+      layers: vi.fn(() => Promise.resolve(list([layer({ can_manage: false, can_import: false, can_edit: false })], false))),
     });
     renderApp(<LayersPage />, { api, auth: fakeAuth(editor), lang: "fr" });
     fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
@@ -192,8 +193,8 @@ describe("LayersPage", () => {
     const api = fakeApi({ ...fakeLayersApi(), layers: vi.fn(() => Promise.resolve(list([layer()]))) });
     renderApp(<LayersPage />, { api, auth: fakeAuth(SYSADMIN), lang: "fr" });
     fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
-    fireEvent.click(await screen.findByRole("checkbox", { name: "Couche sensible (le ministre seul)" }));
-    expect(screen.getByText(/jamais le gouverneur/)).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Couche sensible (le comité national seul)" }));
+    expect(screen.getByText(/jamais le comité régional/)).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Citoyen" })).toBeDisabled();
   });
 
@@ -334,5 +335,20 @@ describe("LayersPage", () => {
       expect(review).toHaveBeenCalledWith("hopitaux", { accept_confidence: ["confirmed", "high"], reason: "Noms vérifiés" }),
     );
     expect(await within(section).findByText(/1 accepté/)).toBeInTheDocument();
+  });
+});
+
+describe("LayersPage (phase N, option (b))", () => {
+  it("lets a content editor correct the places but not load a file", async () => {
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() => Promise.resolve(list([layer({ can_manage: false, can_import: false, can_edit: true })], false))),
+    });
+    const editor = { ...OPERATOR_CLAIMS, realm_access: { roles: ["content_editor"] }, scope_level: "national" };
+    renderApp(<LayersPage />, { api, auth: fakeAuth(editor), lang: "fr" });
+    fireEvent.click(await screen.findByRole("button", { name: "Ouvrir" }));
+    expect(await screen.findByText("Ajouter un lieu à la main")).toBeInTheDocument();
+    expect(screen.queryByText("Importer un fichier")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Fichier")).not.toBeInTheDocument();
   });
 });

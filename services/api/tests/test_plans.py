@@ -105,12 +105,12 @@ async def test_plan_in_force_by_hazard_versions_and_viewer(
     nabeul_plan = await create(
         client,
         staff(["ops_manager"], gouvernorat=NABEUL),
-        plan(k, "ملحق نابل", level="regional", gouvernorat_code=NABEUL, issuer="والي نابل"),
+        plan(k, "ملحق نابل", level="regional", gouvernorat_code=NABEUL, issuer="اللجنة الجهوية بنابل"),
     )
     await create(
         client,
         staff(["ops_manager"], gouvernorat=SOUSSE),
-        plan(k, "ملحق سوسة", level="regional", gouvernorat_code=SOUSSE, issuer="والي سوسة"),
+        plan(k, "ملحق سوسة", level="regional", gouvernorat_code=SOUSSE, issuer="اللجنة الجهوية بسوسة"),
     )
     # A draft is not a plan yet.
     await create(client, centre, plan(k, "مسودة", publish=False))
@@ -151,12 +151,12 @@ async def test_a_crisis_axis_is_offered_the_plans_of_its_hazard(client: httpx.As
     annex = await create(
         client,
         staff(["ops_manager"], gouvernorat=NABEUL),
-        plan("floods", "ملحق نابل للفيضانات", level="regional", gouvernorat_code=NABEUL, issuer="والي نابل"),
+        plan("floods", "ملحق نابل للفيضانات", level="regional", gouvernorat_code=NABEUL, issuer="اللجنة الجهوية بنابل"),
     )
     other = await create(
         client,
         staff(["ops_manager"], gouvernorat=SOUSSE),
-        plan("floods", "ملحق سوسة للفيضانات", level="regional", gouvernorat_code=SOUSSE, issuer="والي سوسة"),
+        plan("floods", "ملحق سوسة للفيضانات", level="regional", gouvernorat_code=SOUSSE, issuer="اللجنة الجهوية بسوسة"),
     )
     r = await client.post(
         "/api/v1/staff/crisis/axes",

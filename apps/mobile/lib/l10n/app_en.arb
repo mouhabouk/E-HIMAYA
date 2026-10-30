@@ -3262,5 +3262,47 @@
         "type": "String"
       }
     }
+  },
+  "availabilityTitle": "My availability calendar",
+  "availabilityDesc": "When you can be called, and when not",
+  "availabilityIntro": "The room reads this calendar. While it says unavailable, you are not suggested for call-outs.",
+  "availabilityNowAvailable": "Available now by your calendar",
+  "availabilityNowUnavailable": "Unavailable now by your calendar",
+  "availabilityNowNone": "Nothing planned now",
+  "availabilityEmpty": "No period yet. Add when you are available or away.",
+  "availabilityAdd": "Add a period",
+  "availabilitySave": "Save the calendar",
+  "availabilitySaved": "Calendar saved",
+  "availabilityKindAvailable": "Available",
+  "availabilityKindUnavailable": "Unavailable",
+  "availabilityEveryDay": "Every day",
+  "availabilityStartsOn": "From",
+  "availabilityEndsOn": "To",
+  "availabilityNoEnd": "No end date",
+  "availabilityFromTime": "From",
+  "availabilityToTime": "To",
+  "availabilityOvernight": "into the next day",
+  "availabilityRemove": "Remove this period",
+  "availabilityMax": "20 periods at most",
+  "availabilityEmptyHours": "The start and end hours must differ",
+  "availabilityOk": "Add",
+  "availabilityFromDate": "From {date}",
+  "@availabilityFromDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "availabilityBetween": "From {from} to {to}",
+  "@availabilityBetween": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
   }
 }

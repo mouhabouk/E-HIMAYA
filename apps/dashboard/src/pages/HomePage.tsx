@@ -16,6 +16,7 @@ import { canReadOrgs } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import { CATEGORIES, REPORT_STATUSES, type Kpis } from "../lib/types";
 import { IconTile, type IconName, type Tone } from "../components/Icon";
+import { CommitteeHeading } from "../components/CommitteeHeading";
 import { PageTitle } from "../components/PageTitle";
 
 interface KpiIcon {
@@ -116,7 +117,10 @@ export function HomePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="home" tone="navy">{t("kpi.title")}</PageTitle>
+        <div>
+          <PageTitle icon="home" tone="navy">{t("kpi.title")}</PageTitle>
+          <CommitteeHeading />
+        </div>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
       <AiStatusBanner />

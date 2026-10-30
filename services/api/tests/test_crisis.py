@@ -435,3 +435,46 @@ def test_live_route() -> None:
 
     routed = _route("axis.opened", {"axis": {}, "gouvernorat_codes": [NABEUL]})
     assert routed is not None and routed[0] == "crisis"
+
+
+async def test_disaster_map_for_the_committees(client: httpx.AsyncClient, staff: Staff, session: AsyncSession) -> None:
+    """Phase N (docs/phase-n/design-n.md §3): the disaster view shows the places of the chosen disasters only, to the
+    rooms and to the committees, each in its gouvernorat."""
+    inside = await incident(session, deceased=1, rescued=4)
+    elsewhere = await incident(session, lat=36.90, lon=10.90)  # not attached: never on the disaster map
+    nabeul = await open_regional(client, staff, incident_ids=[inside])
+    sousse = await open_regional(
+        client, staff, name="حرائق سوسة، أكتوبر 2026", kind="forest_fire", gouvernorat_code=SOUSSE
+    )
+    both = {"axis": f"{nabeul['id']},{sousse['id']}"}
+
+    national = await client.get(
+        f"{URL}/disasters/map", params=both, headers=staff(["central_committee"], gouvernorat=None)
+    )
+    assert national.status_code == 200, national.text
+    body = national.json()
+    assert {a["id"] for a in body["areas"]} == {nabeul["id"], sousse["id"]}
+    assert [i["id"] for i in body["incidents"]] == [inside] and elsewhere not in str(body)
+    assert body["figures"]["deceased"] == 1 and body["figures"]["rescued"] == 4
+
+    # The regional committee of Sousse: its own disaster, not Nabeul's (row-level security).
+    regional = await client.get(
+        f"{URL}/disasters/map", params=both, headers=staff(["local_committee"], gouvernorat=SOUSSE)
+    )
+    assert regional.status_code == 200 and {a["id"] for a in regional.json()["areas"]} == {sousse["id"]}
+    assert regional.json()["incidents"] == []
+    # The committees read the disasters but act on none of them.
+    assert (await client.get(f"{URL}/axes", headers=staff(["local_committee"], gouvernorat=SOUSSE))).status_code == 200
+    assert (
+        await client.post(
+            f"{URL}/axes/{sousse['id']}/close",
+            json={"summary": "انتهت الحرائق"},
+            headers=staff(["central_committee"], gouvernorat=None),
+        )
+    ).status_code == 403
+    assert (
+        await client.get(f"{URL}/disasters/map", params=both, headers=staff(["doctor"], gouvernorat=NABEUL))
+    ).status_code == 403
+    assert (await client.get(f"{URL}/disasters/map", headers=commander(staff))).status_code == 422
+    bad = await client.get(f"{URL}/disasters/map", params={"axis": "x"}, headers=commander(staff))
+    assert bad.status_code == 422 and bad.json()["detail"] == "invalid_selection"

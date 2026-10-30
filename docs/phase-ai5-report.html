@@ -82,7 +82,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 
 <section>
 <h2>2. مراجعة ← تصميم ← تطوير</h2>
-<div class="note"><b>الطلب:</b> قال يامن: «أداة ذكاء اصطناعي مفتوحة المصدر تعمل في بيئة محلية، جاهزة للتعلم من البلاغات والقرارات المتخذة والموارد المادية والبشرية والجاهزية، توضع على ذمة القيادة. يُدخل القائد نصا، أو يعتمد القرارات المولّدة، أو يضغط على زر لإدخال رسالة صوتية». ووافق على المراحل الثلاث «على شرط أن تصل الأداة إلى أداة عالية الدقة من خلال التدريب والتعلم». ثم حدّد القائد: «احذف زر المساعد القائد للوالي ولكن امنحه لمدير النظام وهو سيقرر بعد ذلك لمن يمنحه»، وأكّد توفر خادم GPU.</div>
+<div class="note"><b>الطلب:</b> قال يامن: «أداة ذكاء اصطناعي مفتوحة المصدر تعمل في بيئة محلية، جاهزة للتعلم من البلاغات والقرارات المتخذة والموارد المادية والبشرية والجاهزية، توضع على ذمة القيادة. يُدخل القائد نصا، أو يعتمد القرارات المولّدة، أو يضغط على زر لإدخال رسالة صوتية». ووافق على المراحل الثلاث «على شرط أن تصل الأداة إلى أداة عالية الدقة من خلال التدريب والتعلم». ثم حدّد القائد: «احذف زر المساعد القائد للجنة الجهوية ولكن امنحه لمدير النظام وهو سيقرر بعد ذلك لمن يمنحه»، وأكّد توفر خادم GPU.</div>
 <div class="note warn"><b>الأمن والخصوصية:</b> كل شيء محلي (Ollama و Qwen3، faster-whisper، scikit-learn)، لا خدمة سحابية. نص القائد يُحاط بوسم لا يخرج منه ويُقرأ بجواب JSON مقيّد بمخطط. الصوت يُحذف فور التفريغ نجح أو فشل، والتفريغ والتصحيح مشفّران. لا أسماء ولا هواتف ولا كلام المواطنين فيما تتعلم منه الأداة، والعيّنات مجهَّلة ومشفّرة ويقرؤها مدير الذكاء الاصطناعي وحده. القرار تحت أمان أسطر الحادث نفسه، وكل قرار في السجل والخط الزمني. النماذج المتعلَّمة أرقام عادية بلا pickle.</div>
 <h3>AI5a: لوحة القائد وذاكرة القرارات والأوامر المكتوبة (#136)</h3>
 <ol>
@@ -117,7 +117,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 <p>لقطات اللوحة كما هي في نهاية المرحلة، نهارا وليلا، بالعربية، قاعدةً مرجعية لما يأتي بعدها. المعطيات في اللقطات محاكاة.</p>
   <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-board-day.png" alt="لوحة القائد: اقتراحات مرقّمة وأمر مكتوب وقراءته، و«ما قرّرتموه»، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">لوحة القائد: اقتراحات مرقّمة وأمر مكتوب وقراءته، و«ما قرّرتموه»، نهارا</figcaption></figure>
   <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-voice-night.png" alt="الرسالة الصوتية: التسجيل ثم النص للتصحيح قبل الإرسال، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">الرسالة الصوتية: التسجيل ثم النص للتصحيح قبل الإرسال، ليلا</figcaption></figure>
-  <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-readonly-day.png" alt="اللوحة للاطلاع فقط لمن ليس قائدا (الوالي مثلا)، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">اللوحة للاطلاع فقط لمن ليس قائدا (الوالي مثلا)، نهارا</figcaption></figure>
+  <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-readonly-day.png" alt="اللوحة للاطلاع فقط لمن ليس قائدا (اللجنة الجهوية مثلا)، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">اللوحة للاطلاع فقط لمن ليس قائدا (اللجنة الجهوية مثلا)، نهارا</figcaption></figure>
   <figure style="margin:12px 0"><img src="phase-ai5/ai5-model-card-night.png" alt="بطاقة نموذج مساعد القائد: الأهداف وحكمها، والترتيب المتعلَّم مقارنة بالقواعد، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">بطاقة نموذج مساعد القائد: الأهداف وحكمها، والترتيب المتعلَّم مقارنة بالقواعد، ليلا</figcaption></figure>
   <figure style="margin:12px 0"><img src="phase-ai5/ai5-learning-ranker-day.png" alt="مركز التدريب: ترتيب القائد المتعلَّم والاقتراح الأول المعتمد، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">مركز التدريب: ترتيب القائد المتعلَّم والاقتراح الأول المعتمد، نهارا</figcaption></figure>
 </section>
@@ -161,7 +161,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 </table></div>
 <ul>
   <li>الصوت: <code>test_voice_message_corrected_then_sent</code> و <code>test_voice_message_refusals</code> يتحققان من حذف الصوت من المخزن بعد التفريغ، ومن التصحيح قبل الإرسال وحدود الحجم.</li>
-  <li>القائد وحده: الوالي ومن لا يملك الزر يحصلون على 403 عند الكتابة أو القرار، ويرون اللوحة للاطلاع.</li>
+  <li>القائد وحده: اللجنة الجهوية ومن لا يملك الزر يحصلون على 403 عند الكتابة أو القرار، ويرون اللوحة للاطلاع.</li>
   <li>التعلم: <code>test_command_learning</code> (6 اختبارات): الربط بعد الإغلاق وإعادته عند إعادة الفتح، التسمية، المرتِّب في الظل مقارنة بالقواعد، والحد الأدنى للعيّنات.</li>
 </ul>
 </section>

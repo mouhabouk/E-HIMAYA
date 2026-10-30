@@ -21,6 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.audit import service as audit
+from app.modules.availability import service as availability
 from app.modules.identity.models import Consent, Profile, phone_index
 from app.modules.identity.service import Reporter
 from app.modules.notify import outbox, templates
@@ -403,6 +404,7 @@ async def staff_detail(session: AsyncSession, volunteer: Volunteer) -> schemas.S
             )
             for t, c in callouts
         ],
+        calendar=availability.out("volunteer", await availability.slots_of(session, volunteer.user_id, "volunteer")),
     )
 
 
@@ -452,6 +454,7 @@ async def map_features(
                 Volunteer.user_id.in_(list(fixes)),
                 Volunteer.status == "approved",
                 Volunteer.ready_until > func.now(),
+                func.identity.planned_state(Volunteer.user_id, "volunteer", func.now()).is_distinct_from("unavailable"),
                 scope_filter(principal),
             )
         )

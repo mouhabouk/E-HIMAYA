@@ -115,8 +115,8 @@ describe("PermissionsPage", () => {
     fireEvent.click(screen.getByRole("radio", { name: "منح" }));
     fireEvent.change(screen.getByLabelText("الصفحة أو التبويب أو الزر"), { target: { value: "incidents" } });
     fireEvent.change(screen.getAllByLabelText("الدور")[0] as HTMLElement, { target: { value: "governor" } });
-    fireEvent.change(screen.getByLabelText(/^السبب/), { target: { value: "[SIM] اطلاع الوالي" } });
+    fireEvent.change(screen.getByLabelText(/^السبب/), { target: { value: "[SIM] اطلاع اللجنة الجهوية" } });
     fireEvent.click(screen.getByRole("button", { name: "منح" }));
-    expect(await screen.findByText(/فلا تُمنح للوالي ولا للوزير/)).toBeInTheDocument();
+    expect(await screen.findByText(/فلا تُمنح للجنة الجهوية ولا للجنة الوطنية/)).toBeInTheDocument();
   });
 });

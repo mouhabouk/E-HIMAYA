@@ -517,7 +517,7 @@ async def record_directive(
         kind="decision" if kind == "decision" else "recommendation",
         level="central" if minister else "regional",
         gouvernorat_code=None if minister else gouvernorat_code,
-        issuer="وزير الداخلية" if minister else "الوالي",
+        issuer="اللجنة الوطنية" if minister else "اللجنة الجهوية",
         signatory=audit.name_of(principal) or "",
         title=title[:300],
         summary=body[:4000],
@@ -550,7 +550,7 @@ async def record_directive(
             select(Document).where(Document.directive_id.in_([uuid.UUID(i) for i in overridden]))
         ):
             if earlier.status == "in_force":
-                await repeal(session, principal, earlier, f"{doc.number}: قرار الوزير يُعتمد عند التعارض", doc)
+                await repeal(session, principal, earlier, f"{doc.number}: قرار اللجنة الوطنية يُعتمد عند التعارض", doc)
     return doc
 
 

@@ -76,8 +76,13 @@ def issuer_role(p: Principal) -> str | None:
     return None
 
 
+def is_committee(p: Principal) -> bool:
+    """A member of the national committee or of a gouvernorat's regional committee (phase N: the disaster view)."""
+    return Role.CENTRAL_COMMITTEE in p.roles or (Role.LOCAL_COMMITTEE in p.roles and p.gouvernorat_code is not None)
+
+
 def reads(p: Principal) -> bool:
-    return is_room(p) or is_governor(p) or is_minister(p)
+    return is_room(p) or is_governor(p) or is_minister(p) or is_committee(p)
 
 
 def can_manage_axis(p: Principal, gouvernorat: int | None) -> bool:

@@ -16,15 +16,18 @@ export type BBox = readonly [number, number, number, number];
 export interface ReportFilters {
   statuses: ReportStatus[];
   categories: Category[];
-  /** Only for national-scope users; ignored otherwise (the server applies the token's scope). */
-  gouvernorat: number | null;
+  /**
+   * Only for national-scope users; ignored otherwise (the server applies the token's scope). Several gouvernorats at
+   * once (phase N, design §6); empty = all.
+   */
+  gouvernorats: number[];
   period: Period;
   q: string;
   /** Only reports flagged "needs verification" by the abuse controls (phase 5.5). */
   unverified?: boolean;
 }
 
-export const DEFAULT_FILTERS: ReportFilters = { statuses: [], categories: [], gouvernorat: null, period: "7d", q: "" };
+export const DEFAULT_FILTERS: ReportFilters = { statuses: [], categories: [], gouvernorats: [], period: "7d", q: "" };
 
 export function isPeriod(v: unknown): v is Period {
   return typeof v === "string" && (PERIODS as readonly string[]).includes(v);
@@ -46,7 +49,7 @@ export function filtersToQuery(
   return {
     status: [...filters.statuses].sort(),
     category: [...filters.categories].sort(),
-    gouvernorat_code: filters.gouvernorat,
+    gouvernorat_code: [...filters.gouvernorats].sort((a, b) => a - b),
     since: periodSince(filters.period, options.now),
     q: q || undefined,
     bbox: options.bbox ? bboxParam(options.bbox) : undefined,
@@ -59,11 +62,11 @@ export function filtersToQuery(
 /** Stable, serialisable representation for react-query keys (excludes the moving `since` instant). */
 export function filtersKey(
   filters: ReportFilters,
-): readonly [string, string, number | null, Period, string, boolean] {
+): readonly [string, string, string, Period, string, boolean] {
   return [
     [...filters.statuses].sort().join(","),
     [...filters.categories].sort().join(","),
-    filters.gouvernorat,
+    [...filters.gouvernorats].sort((a, b) => a - b).join(","),
     filters.period,
     filters.q.trim().toLowerCase(),
     Boolean(filters.unverified),
@@ -82,7 +85,8 @@ export function matchesFilters(
 ): boolean {
   if (filters.statuses.length > 0 && !filters.statuses.includes(report.status)) return false;
   if (filters.categories.length > 0 && !filters.categories.includes(report.category)) return false;
-  if (filters.gouvernorat !== null && report.gouvernorat_code !== filters.gouvernorat) return false;
+  if (filters.gouvernorats.length > 0 && (report.gouvernorat_code === null || !filters.gouvernorats.includes(report.gouvernorat_code)))
+    return false;
   if (filters.unverified && !report.needs_verification) return false;
   if (Date.parse(report.received_at) < Date.parse(periodSince(filters.period, options.now))) return false;
   const q = filters.q.trim().toLowerCase();

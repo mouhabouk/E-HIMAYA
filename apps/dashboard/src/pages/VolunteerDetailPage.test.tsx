@@ -51,4 +51,23 @@ describe("VolunteerDetailPage", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "Amel Jaziri" })).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Choisir la décision" })).not.toBeInTheDocument();
   });
+
+  it("shows the availability calendar the volunteer keeps in the app", async () => {
+    const calendar = {
+      role: "volunteer" as const,
+      planned_now: "unavailable" as const,
+      slots: [
+        { id: "s1", kind: "available" as const, weekdays: [6, 7], starts_on: "2026-11-01", ends_on: null, from_time: "20:00:00", to_time: "06:00:00" },
+        { id: "s2", kind: "unavailable" as const, weekdays: [], starts_on: "2026-11-03", ends_on: "2026-11-05", from_time: "00:00:00", to_time: "23:59:00" },
+      ],
+    };
+    const api = fakeApi({ volunteer: vi.fn(() => Promise.resolve(makeVolunteerDetail({ calendar }))) });
+    renderApp(<VolunteerDetailPage />, { api, lang: "fr", route, path });
+    const section = (await screen.findByRole("heading", { name: "Calendrier de disponibilité" })).closest("section");
+    if (!section) throw new Error("no calendar card");
+    const card = section;
+    expect(within(card).getByText(/Indisponible maintenant/)).toBeInTheDocument();
+    expect(within(card).getAllByRole("listitem")).toHaveLength(2);
+    expect(within(card).getByText("(jusqu’au lendemain)")).toBeInTheDocument();
+  });
 });

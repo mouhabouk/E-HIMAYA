@@ -6306,4 +6306,88 @@ class AppLocalizationsFr extends AppLocalizations {
   String stepperDecrease(String label) {
     return 'Diminuer : $label';
   }
+
+  @override
+  String get availabilityTitle => 'Mon calendrier de disponibilité';
+
+  @override
+  String get availabilityDesc => 'Quand on peut vous appeler, et quand non';
+
+  @override
+  String get availabilityIntro =>
+      'La salle lit ce calendrier. Tant qu’il indique indisponible, vous n’êtes pas proposé aux appels.';
+
+  @override
+  String get availabilityNowAvailable =>
+      'Disponible maintenant selon votre calendrier';
+
+  @override
+  String get availabilityNowUnavailable =>
+      'Indisponible maintenant selon votre calendrier';
+
+  @override
+  String get availabilityNowNone => 'Rien de prévu maintenant';
+
+  @override
+  String get availabilityEmpty =>
+      'Aucune période. Ajoutez quand vous êtes disponible ou absent.';
+
+  @override
+  String get availabilityAdd => 'Ajouter une période';
+
+  @override
+  String get availabilitySave => 'Enregistrer le calendrier';
+
+  @override
+  String get availabilitySaved => 'Calendrier enregistré';
+
+  @override
+  String get availabilityKindAvailable => 'Disponible';
+
+  @override
+  String get availabilityKindUnavailable => 'Indisponible';
+
+  @override
+  String get availabilityEveryDay => 'Tous les jours';
+
+  @override
+  String get availabilityStartsOn => 'Du';
+
+  @override
+  String get availabilityEndsOn => 'Au';
+
+  @override
+  String get availabilityNoEnd => 'Sans date de fin';
+
+  @override
+  String get availabilityFromTime => 'De';
+
+  @override
+  String get availabilityToTime => 'À';
+
+  @override
+  String get availabilityOvernight => 'jusqu’au lendemain';
+
+  @override
+  String get availabilityRemove => 'Supprimer cette période';
+
+  @override
+  String get availabilityMax => '20 périodes au plus';
+
+  @override
+  String get availabilityEmptyHours =>
+      'Les heures de début et de fin doivent différer';
+
+  @override
+  String get availabilityOk => 'Ajouter';
+
+  @override
+  String availabilityFromDate(String date) {
+    return 'À partir du $date';
+  }
+
+  @override
+  String availabilityBetween(String from, String to) {
+    return 'Du $from au $to';
+  }
 }

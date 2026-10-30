@@ -22,6 +22,9 @@ from app.core.crypto import get_cipher
 from app.core.db import as_system, get_session
 from app.modules.appinfo import feedback as app_feedback
 from app.modules.audit import service as audit
+from app.modules.availability import service as availability
+from app.modules.availability.models import AvailabilitySlot
+from app.modules.availability.schemas import SlotOut
 from app.modules.contact import router as contact
 from app.modules.doctors import service as doctors
 from app.modules.doctors.models import Doctor
@@ -192,6 +195,8 @@ class ExportOut(BaseModel):
     # Phase P5b: ratings of the app, and the work e-mail confirmed by code.
     app_ratings: list[app_feedback.ExportRating]
     confirmed_email: str | None
+    # Phase N: the availability calendar kept as a volunteer or a doctor.
+    availability: list[SlotOut] = []
 
 
 class DeleteIn(BaseModel):
@@ -387,6 +392,19 @@ async def export_my_data(
         contact=await contact.export(session, user_id),
         app_ratings=await app_feedback.export(session, user_id),
         confirmed_email=email_code.email if (email_code := await session.get(EmailCode, user_id)) else None,
+        availability=[
+            SlotOut(
+                id=a.id,
+                kind=a.kind,
+                weekdays=list(a.weekdays),
+                starts_on=a.starts_on,
+                ends_on=a.ends_on,
+                from_time=a.from_time,
+                to_time=a.to_time,
+            )
+            for role in ("volunteer", "doctor")
+            for a in await availability.slots_of(session, user_id, role)
+        ],
     )
     await audit.record(
         session,
@@ -455,6 +473,9 @@ async def delete_my_account(request: Request, body: DeleteIn, reporter: CurrentR
     details["profile"] = (await session.execute(delete(Profile).where(Profile.user_id == user_id))).rowcount > 0  # type: ignore[attr-defined]
     details["devices"] = (await session.execute(delete(Device).where(Device.user_id == user_id))).rowcount  # type: ignore[attr-defined]
     await session.execute(delete(Outbox).where(Outbox.user_id == user_id, Outbox.status == "pending"))
+    details["availability_slots"] = int(
+        (await session.execute(delete(AvailabilitySlot).where(AvailabilitySlot.user_id == user_id))).rowcount  # type: ignore[attr-defined]
+    )
     volunteer = await session.get(Volunteer, user_id, with_for_update=True)
     if volunteer is not None:
         volunteer.status = "withdrawn"

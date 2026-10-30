@@ -1,0 +1,19 @@
+@startuml
+!include style.iuml
+title Séquence : calendrier de disponibilité et appel des bénévoles (N)
+autonumber
+actor "Bénévole ou médecin" as V
+participant "Application" as APP
+participant "API" as API
+database "PostgreSQL\nidentity.availability_slot" as DB
+actor "Salle des opérations" as OP
+V -> APP : « Mon calendrier » : périodes disponible / indisponible,\njours de la semaine, heures de Tunis
+APP -> API : PUT /me/availability?role=volunteer (tout le calendrier)
+API -> DB : remplace les périodes, audit « availability.replace »
+API --> APP : périodes + état prévu maintenant
+OP -> API : GET /staff/incidents/{id}/volunteer-suggestions
+API -> DB : prêts, approuvés, compétence, proximité\nET identity.planned_state(…, now()) <> 'unavailable'
+API --> OP : bénévoles proposables (l'indisponibilité prévue l'emporte)
+OP -> API : GET /staff/volunteers/{id}
+API --> OP : fiche + calendrier + état prévu maintenant
+@enduml

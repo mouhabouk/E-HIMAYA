@@ -40,6 +40,7 @@ from app.modules.orgs.models import (
     PreventionVisit,
     TeamMember,
 )
+from app.modules.settings import service as settings
 
 PDF_TYPE = certificate.PDF_TYPE
 SIGNATURE_TYPE = "image/png"
@@ -601,12 +602,13 @@ async def prevention_alerts(session: AsyncSession, org_id: uuid.UUID, on: date) 
     )
     if visit is not None:
         alerts.append(schemas.Alert(kind="visit_scheduled", ref=visit.id, since=visit.scheduled_on))
+    soon = await settings.threshold(session, "orgs.reservation_due_soon_days")
     rows = await session.scalars(
         select(PreventionReservation)
         .where(
             PreventionReservation.org_id == org_id,
             PreventionReservation.lifted_at.is_(None),
-            PreventionReservation.due_on <= on + timedelta(days=domain.RESERVATION_DUE_SOON_DAYS),
+            PreventionReservation.due_on <= on + timedelta(days=soon),
         )
         .order_by(PreventionReservation.due_on)
     )

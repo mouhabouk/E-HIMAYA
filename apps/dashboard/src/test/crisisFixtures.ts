@@ -10,6 +10,15 @@ export function fakeCrisisApi(): CrisisApi {
   return {
     crisisAxes: vi.fn((status: "open" | "closed") => Promise.resolve(status === "open" ? [NABEUL_AXIS, JENDOUBA_AXIS, SOUSSE_AXIS] : [])),
     crisisAxis: vi.fn(() => Promise.resolve(NABEUL_DETAIL)),
+    disasterMap: vi.fn(() =>
+      Promise.resolve({
+        figures: NABEUL_AXIS.figures,
+        areas: [{ id: NABEUL_AXIS.id, level: NABEUL_AXIS.level, area: NABEUL_AXIS.area }],
+        incidents: NABEUL_DETAIL.incidents,
+        shelters: NABEUL_DETAIL.shelters,
+        evacuations: NABEUL_DETAIL.evacuations,
+      }),
+    ),
     openAxis: vi.fn(() => Promise.resolve(NABEUL_AXIS)),
     updateAxis: vi.fn(() => Promise.resolve(NABEUL_AXIS)),
     escalateAxis: vi.fn(() => Promise.resolve(NABEUL_AXIS)),

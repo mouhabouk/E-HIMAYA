@@ -54,3 +54,15 @@ export const GOUVERNORAT_BOUNDS: Readonly<Record<number, BBox>> = {
 export function initialBoundsFor(gouvernoratCode: number | null): BBox {
   return (gouvernoratCode !== null ? GOUVERNORAT_BOUNDS[gouvernoratCode] : undefined) ?? TUNISIA_BOUNDS;
 }
+
+/** The box around the given gouvernorats (Tunisia when none). */
+export function gouvernoratsBounds(codes: readonly number[]): BBox {
+  if (codes.length === 0) return TUNISIA_BOUNDS;
+  const boxes = codes.map((c) => initialBoundsFor(c));
+  return [
+    Math.min(...boxes.map((b) => b[0])),
+    Math.min(...boxes.map((b) => b[1])),
+    Math.max(...boxes.map((b) => b[2])),
+    Math.max(...boxes.map((b) => b[3])),
+  ];
+}

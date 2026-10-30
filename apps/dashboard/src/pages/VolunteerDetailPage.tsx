@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { AvailabilityCalendar } from "../components/AvailabilityCalendar";
 import { Link, useParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { useAuth } from "../context/auth";
@@ -238,6 +239,7 @@ export function VolunteerDetailPage() {
             </ol>
           )}
         </section>
+        <AvailabilityCalendar calendar={v.calendar} />
         <section className="card" aria-labelledby="sec-vol-callouts">
           <h2 id="sec-vol-callouts">{t("volunteers.detail.callouts")}</h2>
           {v.callouts.length === 0 ? (

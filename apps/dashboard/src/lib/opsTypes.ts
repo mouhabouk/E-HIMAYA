@@ -354,7 +354,25 @@ export interface StaffVolunteer {
   submitted_at: string;
 }
 
+/** Phase N (design §8): the availability calendar kept in the app. */
+export interface AvailabilitySlot {
+  id: string;
+  kind: "available" | "unavailable";
+  weekdays: number[];
+  starts_on: string;
+  ends_on: string | null;
+  from_time: string;
+  to_time: string;
+}
+
+export interface AvailabilityCalendarData {
+  role: "volunteer" | "doctor";
+  slots: AvailabilitySlot[];
+  planned_now: "available" | "unavailable" | null;
+}
+
 export interface StaffVolunteerDetail extends StaffVolunteer {
+  calendar: AvailabilityCalendarData;
   email: string | null;
   other_skill: string | null;
   notes: string | null;

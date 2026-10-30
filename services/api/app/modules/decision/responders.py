@@ -24,11 +24,11 @@ from app.modules.ops.models import Unit
 from app.modules.ops.resources import unit_scope
 from app.modules.orgs.models import Organization
 from app.modules.reports.domain import Category
+from app.modules.settings import service as settings
 
 NEAREST_UNITS = 2
 # Units timed on the road among the closest as the crow flies.
 UNIT_CANDIDATES = 6
-UNIT_RADIUS_M = 60_000
 _LIVES_CATEGORIES = frozenset({Category.MEDICAL, Category.DROWNING, Category.TRAFFIC_ACCIDENT, Category.SOS})
 
 
@@ -69,7 +69,7 @@ async def _units(session: AsyncSession, principal: Principal, situation: Situati
             .where(
                 unit_scope(principal),
                 Unit.kind != "directorate",
-                func.ST_DWithin(Unit.location, point, UNIT_RADIUS_M),
+                func.ST_DWithin(Unit.location, point, await settings.threshold(session, "decision.unit_radius_m")),
             )
             .order_by(distance)
             .limit(UNIT_CANDIDATES)

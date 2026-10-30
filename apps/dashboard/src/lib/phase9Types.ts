@@ -28,6 +28,16 @@ export const SETTING_KEYS = [
 ] as const;
 export type SettingKey = (typeof SETTING_KEYS)[number];
 
+/** Phase N (§9): one operational threshold of the setting ``operations.thresholds``. */
+export interface ThresholdSpec {
+  name: string;
+  group: "crisis" | "alerts" | "rooms" | "partners";
+  unit: "count" | "days" | "hours" | "metres";
+  default: number;
+  low: number;
+  high: number;
+}
+
 export interface PlatformSetting {
   key: string;
   value: unknown;

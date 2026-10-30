@@ -35,10 +35,26 @@ from app.modules.layers.service import point as wkt_point
 from app.modules.register import plans as register_plans
 from app.modules.register import service as register
 from app.modules.register.models import Document as RegisterDocument
+from app.modules.settings import service as settings
 
 router = APIRouter(prefix="/api/v1/staff/crisis", tags=["staff", "crisis"])
 Session = Annotated[AsyncSession, Depends(get_session)]
-_Reader = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER, Role.GOVERNOR, Role.MINISTER))]
+_Reader = Annotated[
+    Principal,
+    Depends(
+        require_roles(
+            Role.OPERATOR,
+            Role.OPS_MANAGER,
+            Role.GOVERNOR,
+            Role.MINISTER,
+            Role.LOCAL_COMMITTEE,
+            Role.CENTRAL_COMMITTEE,
+        )
+    ),
+]
+# The disasters one view may show at once (phase N).
+# The disasters chosen at once: the setting ``crisis.disaster_map_max`` (phase N §9), never above its bound.
+DISASTER_MAP_CEILING = 100
 TIMELINE_LIMIT = 200
 CACHE_HEADER = "private, max-age=3600"
 
@@ -689,6 +705,37 @@ async def decide_request(
     out = (await _requests_out(session, [request]))[0]
     await session.commit()
     return out
+
+
+# --- Disasters (phase N) ---------------------------------------------------------------------------------------------
+
+
+@router.get("/disasters/map", response_model=schemas.DisasterMap)
+async def disaster_map(
+    principal: Reader, session: Session, axis: Annotated[str, Query(max_length=DISASTER_MAP_CEILING * 37)] = ""
+) -> schemas.DisasterMap:
+    """The disaster view (docs/phase-n/design-n.md §3): the places of the chosen disasters only (their areas,
+    interventions, shelters and evacuation zones) and their summed figures, for the rooms, the commander and the
+    committees. Row-level security keeps a regional reader to the disasters of their gouvernorat."""
+    try:
+        axis_ids = [uuid.UUID(part) for part in axis.split(",") if part.strip()]
+    except ValueError:
+        axis_ids = []
+    if not 0 < len(axis_ids) <= await settings.threshold(session, "crisis.disaster_map_max"):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "invalid_selection")
+    members: dict[uuid.UUID, Axis] = {}
+    for chosen in await session.scalars(select(Axis).where(Axis.id.in_(axis_ids))):
+        for member in await service.family(session, chosen):
+            members.setdefault(member.id, member)
+    ids = list(members)
+    areas = await service.geojson(session, Axis, ids)
+    return schemas.DisasterMap(
+        figures=await service.figures(session, ids),
+        areas=[schemas.DisasterArea(id=str(a.id), level=a.level, area=areas.get(a.id)) for a in members.values()],
+        incidents=await service.incidents_out(session, ids, principal) if ids else [],
+        shelters=await _shelters_out(session, ids),
+        evacuations=await _evacuations_out(session, ids),
+    )
 
 
 # --- Command (governor, minister) -----------------------------------------------------------------------------------

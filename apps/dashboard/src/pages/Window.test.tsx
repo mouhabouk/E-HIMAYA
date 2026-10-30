@@ -84,7 +84,7 @@ describe("WindowPage", () => {
     renderApp(<WindowPage />, { api: fakeApi(win), auth: fakeAuth(claims(["ops_manager"], "21")), path: "/window" });
     fireEvent.click(await screen.findByRole("tab", { name: "التفويضات" }));
     const form = (await screen.findByRole("heading", { name: "تفويض جديد" })).closest("form") as HTMLFormElement;
-    await within(form).findByRole("option", { name: /\[SIM\] والي نابل/ });
+    await within(form).findByRole("option", { name: /\[SIM\] اللجنة الجهوية بنابل/ });
     fireEvent.change(within(form).getByLabelText("الحساب"), { target: { value: "gov-nabeul" } });
     fireEvent.change(within(form).getByLabelText("ينتهي في"), { target: { value: "2026-11-03T16:00" } });
     fireEvent.click(await within(form).findByRole("checkbox", { name: /AX-2026-004/ }));

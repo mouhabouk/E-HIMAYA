@@ -25,6 +25,7 @@ from app.core.events import emit
 from app.core.storage import get_store
 from app.modules.geo.models import Gouvernorat
 from app.modules.reports.models import Media
+from app.modules.settings import service as settings
 from app.modules.streams.models import LiveStream, StreamDetection
 from app.modules.towers import domain
 from app.modules.towers.models import CameraTower, TowerEvent
@@ -32,7 +33,6 @@ from app.modules.weather.models import AlertSuggestion
 from app.modules.weather.service import ACTIVE_STATUSES, suggestion_out
 
 log = structlog.get_logger()
-SUGGESTION_HOURS = 2
 FRAME_MAX_BYTES = 2 * 1024 * 1024
 SEVERITY = {"fire": "high", "smoke": "medium"}
 
@@ -245,7 +245,7 @@ async def _suggest(
         body=body,
         evidence=evidence,
         valid_from=now,
-        valid_until=now + timedelta(hours=SUGGESTION_HOURS),
+        valid_until=now + timedelta(hours=await settings.threshold(session, "towers.suggestion_hours")),
         simulated=tower.simulated,
     )
     session.add(suggestion)

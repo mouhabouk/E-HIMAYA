@@ -10,7 +10,9 @@ import { FiltersBar } from "../components/FiltersBar";
 import { InlineIcon } from "../components/OrgBits";
 import { StatusChip } from "../components/StatusChip";
 import { useLiveEvents } from "../context/live";
+import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
+import { canEnterReports } from "../lib/roles";
 import { matchesFilters } from "../lib/filters";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { listKey } from "../lib/liveCache";
@@ -73,6 +75,7 @@ export function ReportsPage() {
   const fmt = useFormat();
   const gouvernorats = useGouvernorats();
   const { filters, national } = useEffectiveFilters();
+  const roles = useAuth().user?.identity.roles ?? [];
   const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
   const [unread, setUnread] = useState(0);
   const [sort, setSortState] = useState<ReportSort>(storedSort);
@@ -120,6 +123,11 @@ export function ReportsPage() {
         <PageTitle icon="description" tone="red" ref={topRef} tabIndex={-1}>
           {t("reports.title")}
         </PageTitle>
+        {canEnterReports(roles) && (
+          <Link className="btn" to="/reports/new">
+            {t("intake.open")}
+          </Link>
+        )}
         {unread > 0 && (
           <button type="button" className="btn btn--primary new-badge" onClick={acknowledge}>
             {t("reports.newCount", { count: unread })}

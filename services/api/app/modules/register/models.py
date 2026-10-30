@@ -23,7 +23,7 @@ class Document(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
     number: Mapped[str] = mapped_column(Text, unique=True)
-    # The official reference: "قرار والي نابل عدد 27 لسنة 2026".
+    # The official reference: "قرار اللجنة الجهوية بولاية نابل عدد 27 لسنة 2026".
     reference: Mapped[str] = mapped_column(Text, server_default="")
     kind: Mapped[str] = mapped_column(Text)
     # The hazard of a plan (phase PL1, migration 0061); only a plan has one.

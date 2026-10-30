@@ -705,7 +705,7 @@ function PlaceRow({ layer, feature }: { layer: MapLayer; feature: LayerFeature }
         <td>{gouvernorats.nameOf(feature.gouvernorat_code) ?? "—"}</td>
         <td>{feature.hidden ? t("layers.places.hidden") : t("layers.places.visible")}</td>
         <td>
-          {layer.can_import && (
+          {layer.can_edit && (
             <button
               type="button"
               className="btn btn--small"
@@ -716,7 +716,7 @@ function PlaceRow({ layer, feature }: { layer: MapLayer; feature: LayerFeature }
               {t("layers.places.edit")}
             </button>
           )}
-          {layer.can_import && (
+          {layer.can_edit && (
             <button
               type="button"
               className="btn btn--small btn--danger"
@@ -933,8 +933,8 @@ function Places({ layer }: { layer: MapLayer }) {
   return (
     <section className="card" aria-labelledby={`${id}-title`}>
       <h3 id={`${id}-title`}>{t("layers.places.title", { count: layer.feature_count })}</h3>
-      {layer.can_import && <AddPlace layer={layer} />}
-      {layer.can_import && layer.quality.deleted > 0 && <DeletedPlaces layer={layer} />}
+      {layer.can_edit && <AddPlace layer={layer} />}
+      {layer.can_edit && layer.quality.deleted > 0 && <DeletedPlaces layer={layer} />}
       <div className="field">
         <label htmlFor={`${id}-filter`}>{t("layers.places.filter")}</label>
         <input id={`${id}-filter`} type="search" dir="auto" value={filter} onChange={(e) => setFilter(e.target.value)} />
@@ -1029,13 +1029,13 @@ function LayerDetail({ layer, meta, onDeleted }: { layer: MapLayer; meta: MapLay
         {layer.simulated && <SimTag label={t("layers.simulated")} />}
       </p>
       <LayerBadges layer={layer} />
-      {(layer.can_import || layer.can_manage) && <ExportButtons layer={layer} />}
+      {(layer.can_edit || layer.can_manage) && <ExportButtons layer={layer} />}
       {layer.can_manage && <VisibilityCard key={`v-${layer.version}`} layer={layer} />}
       {layer.can_manage && <LayerForm key={`${layer.key}-${layer.version}`} layer={layer} meta={meta} onDone={() => undefined} />}
       {layer.can_manage && <FieldsCard key={`f-${layer.version}-${columns.length}`} layer={layer} columns={columns} />}
       {layer.can_import && <ImportPanel layer={layer} limits={meta.limits} />}
-      {layer.can_import && (layer.quality.suggested > 0 || layer.quality.duplicates > 0) && <ReviewCard layer={layer} />}
-      {(layer.can_import || layer.can_manage) && <History layer={layer} />}
+      {layer.can_edit && (layer.quality.suggested > 0 || layer.quality.duplicates > 0) && <ReviewCard layer={layer} />}
+      {(layer.can_edit || layer.can_manage) && <History layer={layer} />}
       <Places layer={layer} />
       {layer.can_manage && <RevisionsCard layer={layer} />}
       {layer.can_manage && <DeleteLayerCard layer={layer} onDeleted={onDeleted} />}

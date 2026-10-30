@@ -3,6 +3,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { LayerFeature, MapLayer } from "../lib/layers";
 import { fakeApi, fakeAuth, fakeLayersApi, FEATURE_L1A, LAYER_L1A, OPERATOR_CLAIMS, renderApp } from "../test/render";
+import { WhatWhereSearch } from "./WhatWhereSearch";
 import { useMapDataLayers, zoomOf } from "./MapDataLayers";
 
 function Harness() {
@@ -48,6 +49,7 @@ const layer = (key: string, fr: string, colour: string): MapLayer =>
     last_import: null,
     can_manage: false,
     can_import: false,
+    can_edit: false,
     ...LAYER_L1A,
     audiences: [...LAYER_L1A.audiences],
     scope: [],
@@ -205,5 +207,40 @@ describe("useMapDataLayers", () => {
     fireEvent.click(screen.getByRole("checkbox", { name: /toutes les couches : Moyens de la protection civile/ }));
     expect(JSON.parse(sessionStorage.getItem("ehimaya.mapDataLayers") ?? "[]")).toEqual(["bouches"]);
     expect(JSON.parse(localStorage.getItem("ehimaya.layerFolders") ?? "[]")).toEqual(["health"]);
+  });
+});
+
+describe("WhatWhereSearch", () => {
+  it("finds a place of the chosen layer by its name and moves the map to it (phase N)", async () => {
+    const layerPlaces = vi.fn((_key: string, q: string) =>
+      Promise.resolve({ items: q.startsWith("char") ? [feature("Charles Nicolle")] : [], truncated: false }),
+    );
+    const api = fakeApi({
+      ...fakeLayersApi(),
+      layers: vi.fn(() =>
+        Promise.resolve({
+          items: [layer("hopitaux", "Hôpitaux", "#C62828"), { ...layer("vide", "Vide", "#2E7D32"), feature_count: 0 }],
+          deleted: [],
+          can_manage: false,
+          icons: [],
+          palette: [],
+          limits: { file_bytes: 1, rows: 1 },
+        }),
+      ),
+      layerPlaces,
+    });
+    const onPick = vi.fn();
+    renderApp(<WhatWhereSearch onPick={onPick} />, { api, auth: fakeAuth(OPERATOR_CLAIMS), lang: "fr" });
+    const where = screen.getByRole("searchbox", { name: "Où : tapez le nom du lieu" });
+    expect(where).toBeDisabled();
+    const what = screen.getByRole("combobox", { name: "Quoi : choisissez une couche" });
+    await waitFor(() => expect(within(what).getAllByRole("option")).toHaveLength(2));
+    fireEvent.change(what, { target: { value: "hopitaux" } });
+    fireEvent.change(where, { target: { value: "charles" } });
+    fireEvent.click(await screen.findByRole("button", { name: "Charles Nicolle" }));
+    expect(layerPlaces).toHaveBeenCalledWith("hopitaux", "charles", expect.anything());
+    expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ name: "Charles Nicolle", lat: 36.8 }));
+    fireEvent.change(where, { target: { value: "zz" } });
+    expect(await screen.findByText("Aucun lieu de ce nom dans cette couche.")).toBeInTheDocument();
   });
 });

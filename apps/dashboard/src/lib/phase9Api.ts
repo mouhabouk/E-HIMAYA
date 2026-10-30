@@ -10,6 +10,7 @@ import type {
   CommandLevel,
   NearbyIncident,
   PlatformSetting,
+  ThresholdSpec,
   ReferBody,
   ResourceRequest,
   ResourceRequestBody,
@@ -46,6 +47,10 @@ export function phase9Api(api: ApiClient) {
     // ---------- §2 national settings ----------
     platformSettings: (signal?: AbortSignal) =>
       api.request<{ items: PlatformSetting[] }>(`${S}/settings`, { signal }).then((b) => b.items),
+
+    /** Phase N (§9): what each operational threshold of ``operations.thresholds`` means, and its bounds. */
+    thresholdSpecs: (signal?: AbortSignal) =>
+      api.request<{ thresholds: ThresholdSpec[] }>(`${S}/settings`, { signal }).then((b) => b.thresholds),
 
     savePlatformSetting: (key: string, body: SettingUpdateBody) =>
       api.request<PlatformSetting>(`${S}/settings/${enc(key)}`, { method: "PUT", body }),
@@ -197,6 +202,7 @@ export type Phase9Api = ReturnType<typeof phase9Api>;
 
 export const p9Keys = {
   settings: ["platform-settings"] as const,
+  thresholdSpecs: ["platform-settings", "thresholds"] as const,
   lateAll: ["late-reports"] as const,
   late: (gouvernorat: number | null) => ["late-reports", gouvernorat] as const,
   geoQueue: ["geo-queue"] as const,

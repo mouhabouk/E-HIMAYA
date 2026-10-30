@@ -8699,6 +8699,81 @@
         "title": "DirectoryDoctor",
         "type": "object"
       },
+      "DisasterArea": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "level",
+          "area"
+        ],
+        "title": "DisasterArea",
+        "type": "object"
+      },
+      "DisasterMap": {
+        "properties": {
+          "areas": {
+            "items": {
+              "$ref": "#/components/schemas/DisasterArea"
+            },
+            "title": "Areas",
+            "type": "array"
+          },
+          "evacuations": {
+            "items": {
+              "$ref": "#/components/schemas/EvacuationOut"
+            },
+            "title": "Evacuations",
+            "type": "array"
+          },
+          "figures": {
+            "$ref": "#/components/schemas/app__modules__crisis__schemas__Figures"
+          },
+          "incidents": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentOut"
+            },
+            "title": "Incidents",
+            "type": "array"
+          },
+          "shelters": {
+            "items": {
+              "$ref": "#/components/schemas/ShelterOut"
+            },
+            "title": "Shelters",
+            "type": "array"
+          }
+        },
+        "required": [
+          "figures",
+          "areas",
+          "incidents",
+          "shelters",
+          "evacuations"
+        ],
+        "title": "DisasterMap",
+        "type": "object"
+      },
       "DismissIn": {
         "properties": {
           "reason": {
@@ -12499,6 +12574,14 @@
               "$ref": "#/components/schemas/ExportRating"
             },
             "title": "App Ratings",
+            "type": "array"
+          },
+          "availability": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/SlotOut"
+            },
+            "title": "Availability",
             "type": "array"
           },
           "calls": {
@@ -19366,6 +19449,11 @@
             },
             "title": "Audiences",
             "type": "array"
+          },
+          "can_edit": {
+            "default": false,
+            "title": "Can Edit",
+            "type": "boolean"
           },
           "can_import": {
             "title": "Can Import",
@@ -30403,6 +30491,68 @@
         "title": "Role",
         "type": "string"
       },
+      "RoomReportIn": {
+        "description": "A report a room agent enters by hand (phase N, docs/phase-n/design-n.md §5).",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "channel": {
+            "enum": [
+              "phone",
+              "radio",
+              "in_person",
+              "other"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Lang",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          },
+          "received_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Received At"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "required": [
+          "category",
+          "location",
+          "channel"
+        ],
+        "title": "RoomReportIn",
+        "type": "object"
+      },
       "RouteOut": {
         "properties": {
           "assumptions": {
@@ -32524,6 +32674,184 @@
         "title": "SkillTotal",
         "type": "object"
       },
+      "SlotIn": {
+        "properties": {
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "from_time": {
+            "format": "time",
+            "title": "From Time",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "to_time": {
+            "format": "time",
+            "title": "To Time",
+            "type": "string"
+          },
+          "weekdays": {
+            "items": {
+              "maximum": 7.0,
+              "minimum": 1.0,
+              "type": "integer"
+            },
+            "maxItems": 7,
+            "title": "Weekdays",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "starts_on",
+          "from_time",
+          "to_time"
+        ],
+        "title": "SlotIn",
+        "type": "object"
+      },
+      "SlotOut": {
+        "properties": {
+          "ends_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends On"
+          },
+          "from_time": {
+            "format": "time",
+            "title": "From Time",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "to_time": {
+            "format": "time",
+            "title": "To Time",
+            "type": "string"
+          },
+          "weekdays": {
+            "items": {
+              "maximum": 7.0,
+              "minimum": 1.0,
+              "type": "integer"
+            },
+            "maxItems": 7,
+            "title": "Weekdays",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "starts_on",
+          "from_time",
+          "to_time",
+          "id"
+        ],
+        "title": "SlotOut",
+        "type": "object"
+      },
+      "SlotsIn": {
+        "properties": {
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/SlotIn"
+            },
+            "maxItems": 20,
+            "title": "Slots",
+            "type": "array"
+          }
+        },
+        "required": [
+          "slots"
+        ],
+        "title": "SlotsIn",
+        "type": "object"
+      },
+      "SlotsOut": {
+        "properties": {
+          "planned_now": {
+            "anyOf": [
+              {
+                "enum": [
+                  "available",
+                  "unavailable"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned Now"
+          },
+          "role": {
+            "enum": [
+              "volunteer",
+              "doctor"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/SlotOut"
+            },
+            "title": "Slots",
+            "type": "array"
+          }
+        },
+        "required": [
+          "role",
+          "slots",
+          "planned_now"
+        ],
+        "title": "SlotsOut",
+        "type": "object"
+      },
       "SmsKeyOut": {
         "description": "The phone's own key for its signed EH2 text messages (design §9.3).",
         "properties": {
@@ -32902,6 +33230,9 @@
             "title": "Available",
             "type": "boolean"
           },
+          "calendar": {
+            "$ref": "#/components/schemas/SlotsOut"
+          },
           "committee_until": {
             "anyOf": [
               {
@@ -33083,7 +33414,8 @@
           "licence_no",
           "cp_staff_no",
           "review_reason",
-          "reviews"
+          "reviews",
+          "calendar"
         ],
         "title": "StaffDoctorDetail",
         "type": "object"
@@ -34035,6 +34367,17 @@
             ],
             "title": "Delegation Id"
           },
+          "entered_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered By Name"
+          },
           "escalation_state": {
             "default": "none",
             "enum": [
@@ -34098,6 +34441,23 @@
               }
             ],
             "title": "Incident Id"
+          },
+          "intake_channel": {
+            "anyOf": [
+              {
+                "enum": [
+                  "phone",
+                  "radio",
+                  "in_person",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intake Channel"
           },
           "lang": {
             "anyOf": [
@@ -34201,6 +34561,11 @@
               }
             ],
             "title": "Sla Due At"
+          },
+          "source": {
+            "default": "app",
+            "title": "Source",
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/Status"
@@ -34440,6 +34805,17 @@
             ],
             "title": "Delegation Id"
           },
+          "entered_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered By Name"
+          },
           "escalation_state": {
             "default": "none",
             "enum": [
@@ -34517,6 +34893,23 @@
               }
             ],
             "title": "Incident Id"
+          },
+          "intake_channel": {
+            "anyOf": [
+              {
+                "enum": [
+                  "phone",
+                  "radio",
+                  "in_person",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intake Channel"
           },
           "lang": {
             "anyOf": [
@@ -34655,6 +35048,11 @@
               }
             ],
             "title": "Sla Due At"
+          },
+          "source": {
+            "default": "app",
+            "title": "Source",
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/Status"
@@ -35645,6 +36043,9 @@
             "title": "Availability",
             "type": "string"
           },
+          "calendar": {
+            "$ref": "#/components/schemas/SlotsOut"
+          },
           "callouts": {
             "items": {
               "$ref": "#/components/schemas/VolunteerCalloutRef"
@@ -35819,7 +36220,8 @@
           "notes",
           "review_reason",
           "reviews",
-          "callouts"
+          "callouts",
+          "calendar"
         ],
         "title": "StaffVolunteerDetail",
         "type": "object"
@@ -37837,6 +38239,44 @@
           "value"
         ],
         "title": "Threshold",
+        "type": "object"
+      },
+      "ThresholdSpec": {
+        "properties": {
+          "default": {
+            "title": "Default",
+            "type": "integer"
+          },
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "high": {
+            "title": "High",
+            "type": "integer"
+          },
+          "low": {
+            "title": "Low",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "group",
+          "unit",
+          "default",
+          "low",
+          "high"
+        ],
+        "title": "ThresholdSpec",
         "type": "object"
       },
       "Thresholds": {
@@ -50887,6 +51327,14 @@
             },
             "title": "Items",
             "type": "array"
+          },
+          "thresholds": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ThresholdSpec"
+            },
+            "title": "Thresholds",
+            "type": "array"
           }
         },
         "required": [
@@ -55372,6 +55820,151 @@
         "summary": "Me",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/me/availability": {
+      "get": {
+        "operationId": "mine_api_v1_me_availability_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": true,
+            "schema": {
+              "enum": [
+                "volunteer",
+                "doctor"
+              ],
+              "title": "Role",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlotsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mine",
+        "tags": [
+          "availability"
+        ]
+      },
+      "put": {
+        "description": "The whole calendar at once: the app sends every slot the person keeps.",
+        "operationId": "replace_api_v1_me_availability_put",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": true,
+            "schema": {
+              "enum": [
+                "volunteer",
+                "doctor"
+              ],
+              "title": "Role",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlotsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Replace",
+        "tags": [
+          "availability"
         ]
       }
     },
@@ -68311,6 +68904,57 @@
         ]
       }
     },
+    "/api/v1/staff/crisis/disasters/map": {
+      "get": {
+        "description": "The disaster view (docs/phase-n/design-n.md §3): the places of the chosen disasters only (their areas,\ninterventions, shelters and evacuation zones) and their summed figures, for the rooms, the commander and the\ncommittees. Row-level security keeps a regional reader to the disasters of their gouvernorat.",
+        "operationId": "disaster_map_api_v1_staff_crisis_disasters_map_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "axis",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 3700,
+              "title": "Axis",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisasterMap"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Disaster Map",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
     "/api/v1/staff/crisis/requests": {
       "get": {
         "operationId": "list_requests_api_v1_staff_crisis_requests_get",
@@ -75870,6 +76514,25 @@
               "description": "the deleted places (managers)",
               "title": "Deleted",
               "type": "boolean"
+            }
+          },
+          {
+            "description": "words of the place's name",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "words of the place's name",
+              "title": "Q"
             }
           }
         ],
@@ -83871,7 +84534,8 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "integer"
+                  "maxLength": 100,
+                  "type": "string"
                 },
                 {
                   "type": "null"
@@ -84115,6 +84779,51 @@
           }
         ],
         "summary": "List Reports",
+        "tags": [
+          "staff"
+        ]
+      },
+      "post": {
+        "description": "A report that came by telephone, radio or in person, written down by the room that answers it.",
+        "operationId": "enter_report_api_v1_staff_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoomReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffReportDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Enter Report",
         "tags": [
           "staff"
         ]

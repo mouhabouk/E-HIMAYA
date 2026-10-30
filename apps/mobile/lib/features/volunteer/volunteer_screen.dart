@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/auth/identity.dart';
 import '../../core/config/providers.dart';
 import '../../core/http/api_error.dart';
+import '../../core/http/availability_models.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/volunteer_models.dart';
 import '../../core/location/location_service.dart';
@@ -251,6 +252,18 @@ class _Space extends ConsumerWidget {
             title: l10n.calloutsTitle,
             subtitle: l10n.calloutsDesc,
             onTap: () => context.push(Routes.callouts),
+          ),
+        ],
+        if (v.status != VolunteerStatus.withdrawn) ...[
+          const SizedBox(height: 8),
+          NavCard(
+            key: const Key('volunteer-availability'),
+            icon: Icons.calendar_month_rounded,
+            tone: Tone.teal,
+            title: l10n.availabilityTitle,
+            subtitle: l10n.availabilityDesc,
+            onTap: () =>
+                context.push(Routes.availability(CalendarRole.volunteer)),
           ),
         ],
         const SizedBox(height: 16),

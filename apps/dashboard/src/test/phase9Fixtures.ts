@@ -145,6 +145,7 @@ const empty = () => Promise.resolve({ items: [], next_cursor: null });
 export function fakePhase9Api(): Phase9Api {
   return {
     platformSettings: vi.fn(() => Promise.resolve(makeSettings(false))),
+    thresholdSpecs: vi.fn(() => Promise.resolve([])),
     savePlatformSetting: vi.fn(),
     claimReport: vi.fn(),
     releaseClaim: vi.fn(),

@@ -290,6 +290,10 @@ async def test_lines_and_areas_on_the_map(client: httpx.AsyncClient, staff: Staf
     await _import(client, staff, key, _shp_zip(), "plages.zip")
     features = (await client.get(f"{URL}/{key}/features", headers=staff())).json()["items"]
     assert {f["name"]: f["geometry"] for f in features} == {"شاطئ بوجعفر": "area", "Oued Meliane": "line"}
+    # "What, then where" (phase N, design §7): the places of this layer whose name holds the words.
+    found = (await client.get(f"{URL}/{key}/features", params={"q": "oued"}, headers=staff())).json()["items"]
+    assert [f["name"] for f in found] == ["Oued Meliane"]
+    assert (await client.get(f"{URL}/{key}/features", params={"q": "100%_"}, headers=staff())).json()["items"] == []
     beach = next(f for f in features if f["geometry"] == "area")
     # The point of an area is on its surface (the region and "nearest" use it).
     assert 35.82 <= beach["lat"] <= 35.83 and 10.64 <= beach["lon"] <= 10.65 and beach["gouvernorat_code"] == 51

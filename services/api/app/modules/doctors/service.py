@@ -6,8 +6,8 @@ specialties, registration number and workplace. Staff (a regional medical coordi
 check the registration before the doctor receives anything; the decision is e-mailed like a volunteer's.
 
 The system administrator appoints approved Civil Protection doctors to the national **medical committee** for a fixed
-term (§11): at most ``COMMITTEE_MAX`` members, never themselves; the membership ends on its own when the doctor stops
-being an approved Civil Protection doctor.
+term (§11): at most ``doctors.committee_max`` members (a setting), never themselves; the membership ends on its own
+when the doctor stops being an approved Civil Protection doctor.
 
 The workplace's gouvernorat is the doctor's group. Approved doctors find one another by specialty and gouvernorat for
 referrals (``directory``): name, workplace and availability only, never the phone or the registration number.
@@ -24,6 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import Principal
 from app.modules.audit import service as audit
+from app.modules.availability import service as availability
 from app.modules.doctors import schemas
 from app.modules.doctors.models import Doctor, DoctorReview
 from app.modules.geo.models import Gouvernorat
@@ -31,11 +32,10 @@ from app.modules.identity.models import Profile
 from app.modules.identity.service import Reporter
 from app.modules.medical import service as medical
 from app.modules.notify import outbox, templates
+from app.modules.settings import service as settings
 
 # Version of the doctor's terms the app shows before the registration (texts in the app's translations).
 TERMS_VERSION = "1"
-# Each member gets a copy of the key of every medical file in the country (phase C1-b): keep the committee small.
-COMMITTEE_MAX = 7
 
 _DECISIONS: dict[str, tuple[str, str]] = {
     # decision: (required current status, new status)
@@ -346,6 +346,7 @@ async def staff_detail(session: AsyncSession, doctor: Doctor) -> schemas.StaffDo
         cp_staff_no=doctor.cp_staff_no,
         review_reason=doctor.review_reason,
         reviews=[schemas.DoctorReviewOut(decision=r.decision, reason=r.reason, at=r.at) for r in reviews],
+        calendar=availability.out("doctor", await availability.slots_of(session, doctor.user_id, "doctor")),
     )
 
 
@@ -467,7 +468,7 @@ async def appoint(
             .select_from(Doctor)
             .where(Doctor.status == "approved", Doctor.committee_until > func.now())
         )
-        if (members or 0) >= COMMITTEE_MAX:
+        if (members or 0) >= await settings.threshold(session, "doctors.committee_max"):
             raise HTTPException(status.HTTP_409_CONFLICT, "committee_full")
         doctor.committee_since = now()
     until = now() + timedelta(days=30 * body.months)

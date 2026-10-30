@@ -4630,6 +4630,13 @@ button.nav-card:hover {
   margin: 0;
 }
 
+/* Phase N §2: who chairs the committee, under the title of its main window. */
+.committee-heading {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+  color: var(--muted);
+}
+
 /* UI-2: KPI card with its icon tile above the number. */
 .kpi--with-icon {
   display: grid;
@@ -9053,4 +9060,173 @@ button.nav-card:hover {
 .map-poi--place {
   border: 2px solid rgb(255 255 255 / 85%);
   box-shadow: 0 2px 6px rgb(14 20 38 / 40%), inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+
+/* Phase N (docs/phase-n/design-n.md §3): the disaster view, the list of disasters beside their map. */
+.disasters-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 22rem) 1fr;
+  gap: 1rem;
+  margin-block: 1rem;
+}
+
+.disasters-layout__list {
+  max-block-size: 70vh;
+  overflow-y: auto;
+}
+
+.disasters-layout__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.disasters-layout__head h2 {
+  margin: 0;
+  margin-inline-end: auto;
+  font-size: 1.05rem;
+}
+
+.disasters-layout__map {
+  position: relative;
+  min-block-size: 60vh;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.disasters-layout__map > * {
+  position: absolute;
+  inset: 0;
+}
+
+.disaster-card__closing {
+  margin-block-start: 0.5rem;
+  padding-block-start: 0.5rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.disasters-places {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 900px) {
+  .disasters-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .disasters-layout__list {
+    max-block-size: none;
+  }
+}
+
+/* Phase N (design §6): the gouvernorats of the filters, several at once. */
+.filters__gouvernorats {
+  position: relative;
+}
+
+.filters__gouvernorats > summary {
+  cursor: pointer;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.filters__gouvernorats[open] > .chips {
+  position: absolute;
+  z-index: 30;
+  inset-inline-start: 0;
+  margin-block-start: 0.35rem;
+  inline-size: min(36rem, 90vw);
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Phase N (design §7): the map with its side column ("what, then where", saved places). */
+.map-with-side {
+  display: grid;
+  grid-template-columns: minmax(15rem, 20rem) 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.map-with-side__aside {
+  display: grid;
+  gap: 0.75rem;
+  max-block-size: 75vh;
+  overflow-y: auto;
+}
+
+.what-where {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.what-where__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.what-where__row {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.what-where__results {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 900px) {
+  .map-with-side {
+    grid-template-columns: 1fr;
+  }
+
+  .map-with-side__aside {
+    max-block-size: none;
+  }
+}
+
+/* Phase N (design §8): availability calendar of volunteers and doctors. */
+.calendar-now--available {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.calendar-now--unavailable {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.calendar-slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.calendar-slots__item {
+  padding: 0.4rem 0.6rem;
+  border-inline-start: 4px solid var(--ok-text);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+.calendar-slots__item--unavailable {
+  border-inline-start-color: var(--error-text);
+}
+.calendar-slots__hours {
+  white-space: nowrap;
+  unicode-bidi: isolate;
 }

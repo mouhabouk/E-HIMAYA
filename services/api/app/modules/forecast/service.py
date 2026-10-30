@@ -21,6 +21,7 @@ from app.modules.forecast.models import ForecastRun
 from app.modules.forecast.terrain import get_terrain, slope_at
 from app.modules.forecast.terrain_fetch import ATTRIBUTION as TERRAIN_ATTRIBUTION
 from app.modules.ops.models import Incident
+from app.modules.settings import service as settings
 from app.modules.weather import fwi
 from app.modules.weather import service as weather
 from app.modules.weather.models import GridPoint, Observation
@@ -35,7 +36,6 @@ FUELS: dict[str, tuple[int, float | None]] = {
     "mixed": (2, None),  # open woodland with grass and shrub understory
 }
 DEFAULT_FUEL = "mixed"
-FLOOD_RADIUS_M = 3000.0
 DRY_MONTHS = (6, 7, 8, 9)
 
 FIRE_DISCLAIMER = {
@@ -373,7 +373,7 @@ async def flood_advisory(session: AsyncSession, incident: Incident, actor: str) 
     else:
         assert centroid is not None
         lat, lon = centroid
-        radius = FLOOD_RADIUS_M
+        radius = float(await settings.threshold(session, "forecast.flood_radius_m"))
         assumptions.append(_assumption("flood_area_circle"))
     point, current = await _weather_now(session, lat, lon)
     rain = await _rain(session, point, current)

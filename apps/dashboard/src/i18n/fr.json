@@ -50,7 +50,8 @@
     "dispatches": "Directives et réponses",
     "group": {
       "ops": "Opérations du jour",
-      "crisis": "Crises et commandement",
+      "crisis": "Commandement et décision",
+      "disasters": "Gestion des catastrophes et des crises",
       "alerts": "Alertes et contact",
       "people": "Bénévoles et médecins",
       "orgs": "Établissements",
@@ -67,7 +68,8 @@
     "towers": "Tours de guet",
     "drones": "Drones",
     "modelCards": "Fiches des modèles",
-    "learning": "Centre d'entraînement"
+    "learning": "Centre d'entraînement",
+    "disasters": "Catastrophes : bilan et carte"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -115,8 +117,8 @@
     "regional_account_admin": "Administrateur des comptes",
     "medical_coordinator": "Coordinateur médical régional",
     "team_leader": "Chef d'agrès",
-    "governor": "Gouverneur",
-    "minister": "Ministre"
+    "governor": "Comité régional",
+    "minister": "Comité national"
   },
   "status": {
     "received": "Reçu",
@@ -333,7 +335,7 @@
     "layer_changed": "La couche a changé depuis l’aperçu : refaites l’aperçu.",
     "not_last_import": "Seul le dernier import publié peut être annulé.",
     "duplicate_id": "Un lieu a déjà cet identifiant.",
-    "outside_tunisia": "Position hors de Tunisie.",
+    "outside_tunisia": "Lieu hors du territoire tunisien.",
     "cannot_move": "Impossible de déplacer dans ce sens.",
     "text_required": "Une note, une réponse ou un motif est nécessaire.",
     "feature_off": "Cette fonction est désactivée sur la plateforme.",
@@ -414,7 +416,7 @@
     "request_not_found": "Demande introuvable.",
     "executor_name_required": "Indiquez le partenaire.",
     "due_in_past": "Échéance passée.",
-    "directive_overridden": "Décision remplacée par celle du ministre.",
+    "directive_overridden": "Décision remplacée par celle du comité national.",
     "directive_not_found": "Décision introuvable.",
     "sitrep_sent": "Point déjà envoyé.",
     "sitrep_not_found": "Point introuvable.",
@@ -477,7 +479,7 @@
     "unknown_role": "Rôle inconnu.",
     "user_rule_has_no_gouvernorat": "Une règle de compte ne se limite pas à un gouvernorat : le compte a le sien.",
     "window_delegation_required": "Cette fenêtre ne s'ouvre qu'avec une délégation en cours.",
-    "delegate_not_allowed": "Délégation impossible à ce compte : le directeur des opérations du gouvernorat délègue à son gouverneur et à son comité local seulement.",
+    "delegate_not_allowed": "Délégation impossible à ce compte : le directeur des opérations du gouvernorat délègue à son comité régional et à son comité local seulement.",
     "event_out_of_scope": "Cet événement est hors de votre périmètre ou de celui du délégataire.",
     "unknown_event": "Cet événement n'existe pas.",
     "self_delegation": "Vous ne pouvez pas vous déléguer.",
@@ -556,7 +558,9 @@
     "audio_too_long": "L'enregistrement dépasse une minute.",
     "media_too_large": "Fichier trop volumineux.",
     "voice_not_found": "Ce message vocal est introuvable ou n'est pas le vôtre.",
-    "voice_already_sent": "Ce message vocal a déjà été envoyé."
+    "voice_already_sent": "Ce message vocal a déjà été envoyé.",
+    "outside_gouvernorat": "Lieu hors de votre gouvernorat : une salle régionale saisit les signalements de son gouvernorat.",
+    "invalid_selection": "Sélection invalide."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -586,7 +590,8 @@
     "gouvernorat": "Gouvernorat",
     "allGouvernorats": "Tous les gouvernorats",
     "reset": "Réinitialiser",
-    "unverified": "À vérifier uniquement"
+    "unverified": "À vérifier uniquement",
+    "someGouvernorats": "{{count}} gouvernorats"
   },
   "reports": {
     "title": "Signalements",
@@ -3757,6 +3762,67 @@
       "version": "Version",
       "remarks": "Dernières remarques",
       "noRemarks": "Aucune remarque sur cette période."
+    },
+    "thresholds": {
+      "group": {
+        "crisis": "Seuils des catastrophes et du commandement",
+        "alerts": "Seuils des alertes",
+        "rooms": "Seuils des salles et du terrain",
+        "partners": "Seuils des médecins et des établissements"
+      },
+      "help": "Les nombres du travail quotidien : les changer ne demande pas de nouvelle version, et ils restent dans leurs bornes. Ce qui n’est pas changé garde sa valeur par défaut.",
+      "bounds": "Chaque valeur est un entier dans les bornes indiquées à côté.",
+      "unit": "{{unit}} · entre {{low}} et {{high}} · par défaut {{fallback}}",
+      "units": {
+        "count": "nombre",
+        "days": "jours",
+        "hours": "heures",
+        "metres": "mètres"
+      },
+      "names": {
+        "crisis": {
+          "disaster_map_max": "Catastrophes affichées ensemble, au plus"
+        },
+        "decision": {
+          "unit_radius_m": "Rayon de recherche des unités proches",
+          "resource_radius_m": "Rayon de recherche des moyens proposés"
+        },
+        "forecast": {
+          "flood_radius_m": "Rayon d’estimation de crue autour de l’intervention"
+        },
+        "alerts": {
+          "max_days": "Durée maximale d’une alerte",
+          "inbox_days": "Durée des alertes dans la boîte du citoyen"
+        },
+        "telephony": {
+          "sms_match_m": "Distance d’appariement SMS et application"
+        },
+        "drones": {
+          "nearby_m": "Rayon des zones proches du drone"
+        },
+        "sensors": {
+          "suggestion_hours": "Validité d’une suggestion de capteur"
+        },
+        "towers": {
+          "suggestion_hours": "Validité d’une suggestion de tour"
+        },
+        "inventory": {
+          "stale_days": "Délai après lequel l’inventaire est ancien"
+        },
+        "coastal": {
+          "warn_radius_m": "Rayon d’avertissement des plages"
+        },
+        "programmes": {
+          "guard_radius_m": "Rayon d’une plage surveillée"
+        },
+        "doctors": {
+          "committee_max": "Membres du comité médical, au plus"
+        },
+        "orgs": {
+          "invitation_days": "Validité d’une invitation d’établissement",
+          "reservation_due_soon_days": "Alerte avant l’échéance des réserves"
+        }
+      }
     }
   },
   "accounts": {
@@ -3930,7 +3996,7 @@
       "staffOnly": "Colonnes jamais envoyées à l’application",
       "staffOnlyHelp": "Séparées par des virgules. Par défaut : manager (nom du responsable).",
       "toVerify": "Données à vérifier (affichées avec « À vérifier »)",
-      "editorsAllowed": "Les éditeurs de contenu peuvent importer dans cette couche",
+      "editorsAllowed": "Les éditeurs de contenu peuvent corriger les lieux de cette couche (l'import reste à l'administrateur)",
       "enabled": "Couche active",
       "create": "Créer la couche",
       "errors": {
@@ -4098,10 +4164,10 @@
           "published": "Publiée : les publics choisis ci-dessous la voient.",
           "paused": "Suspendue : retirée de toutes les cartes, ses réglages sont gardés."
         },
-        "sensitive": "Couche sensible (le ministre seul)",
-        "sensitiveHelp": "Seuls le ministre et l'administrateur la voient, jamais le gouverneur, même pendant un axe ouvert. Chaque lecture de ses lieux est inscrite au journal d'audit.",
+        "sensitive": "Couche sensible (le comité national seul)",
+        "sensitiveHelp": "Seuls le comité national et l'administrateur la voient, jamais le comité régional, même pendant un axe ouvert. Chaque lecture de ses lieux est inscrite au journal d'audit.",
         "audiences": "Publics qui la voient",
-        "audiencesHelp": "Salles : opérateurs et chefs de salle. Terrain : commandants d'intervention et chefs d'équipe. Commandement : gouverneur et ministre. Administration et soutien : les autres agents.",
+        "audiencesHelp": "Salles : opérateurs et chefs de salle. Terrain : commandants d'intervention et chefs d'équipe. Commandement : comité régional et comité national. Administration et soutien : les autres agents.",
         "national": "Portée : nationale (tous les gouvernorats)",
         "scope": "Gouvernorats",
         "scopeHelp": "Sans choix : les agents de tous les gouvernorats la voient. Avec des gouvernorats : parmi les agents régionaux, seuls les leurs la voient ; les agents nationaux la voient toujours.",
@@ -4206,7 +4272,7 @@
       },
       "toReview": "Noms à revoir : {{n}}",
       "duplicates": "Doublons possibles : {{n}}",
-      "ministerOnly": "Le ministre seul",
+      "ministerOnly": "Le comité national seul",
       "listSeparator": ", "
     },
     "groups": {
@@ -5254,8 +5320,8 @@
       "other": "Autre"
     },
     "role": {
-      "governor": "Gouverneur",
-      "minister": "Ministre"
+      "governor": "Comité régional",
+      "minister": "Comité national"
     },
     "fig": {
       "incidentsOpen": "Interventions ouvertes",
@@ -5292,8 +5358,8 @@
     },
     "command": {
       "eyebrow": "Commandement des catastrophes et crises",
-      "minister": "Tableau du ministre : situation nationale",
-      "governor": "Tableau du gouverneur de {{name}}",
+      "minister": "Comité national présidé par M. le ministre de l'Intérieur : situation nationale",
+      "governor": "Comité régional présidé par M. le gouverneur de {{name}}",
       "active": "{{count}} axe(s) actif(s)",
       "overview": "Vue d’ensemble",
       "axes": "Crises en cours",
@@ -5328,7 +5394,7 @@
       "intro": "Un axe regroupe les interventions d’un événement majeur : zone, niveau, moyens et décisions. Le commandant l’ouvre ; le chef de salle régionale le demande.",
       "open": "Ouvrir un axe",
       "request": "Demander la déclaration d’un axe",
-      "openConfirm": "Ouvrir et prévenir gouverneur et ministre",
+      "openConfirm": "Ouvrir et prévenir comités régional et national",
       "requestConfirm": "Envoyer au commandant",
       "name": "Nom de l’axe",
       "namePlaceholder": "Inondations de Nabeul, octobre 2026",
@@ -5443,7 +5509,7 @@
         "done": "Exécutée",
         "failed": "Impossible (motif)"
       },
-      "overridden": "En conflit : la décision du ministre prévaut",
+      "overridden": "En conflit : la décision du comité national prévaut",
       "overdue": "Échéance dépassée",
       "signed": "Signée (clé {{key}})",
       "unsigned": "Non signée : clé de signature absente sur le serveur.",
@@ -5456,7 +5522,7 @@
       "draft": "Brouillon",
       "figures": "Interventions {{incidents}} · décès {{deceased}} · évacués {{evacuated}} · hébergés {{sheltered}}",
       "assessment": "Appréciation",
-      "send": "Envoyer au gouverneur et au ministre",
+      "send": "Envoyer aux comités régional et national",
       "prepare": "Préparer un point maintenant",
       "dueIn": "Prochain point dans {{h}} h",
       "late": "Point de situation en retard"
@@ -5556,9 +5622,9 @@
       "access": "Accès",
       "title": "Titre",
       "reference": "Référence officielle",
-      "referencePlaceholder": "Arrêté du gouverneur de Nabeul n° 27 de 2026",
+      "referencePlaceholder": "Décision du comité régional de Nabeul n° 27 de 2026",
       "issuer": "Émetteur",
-      "issuerPlaceholder": "Gouverneur, directeur général, comité régional…",
+      "issuerPlaceholder": "Comité régional, comité national, directeur général…",
       "signatory": "Signataire",
       "issuedOn": "Date d'émission",
       "effectiveFrom": "Date d'effet",
@@ -6392,7 +6458,7 @@
   "permissions": {
     "title": "Autorisations",
     "intro": "L'administrateur système délègue toutes les autorisations : il accorde une page, un onglet ou un bouton à un compte ou à un rôle, ou le masque, pour une période ou sans terme. Le serveur refuse ce qui est masqué ; chaque changement est audité.",
-    "ceilingNote": "Les règles de sécurité fixes sont un plafond que personne ne lève : ni couches sensibles, ni données personnelles au gouverneur et au ministre, ni comptes, audit ou clé du fond de carte, ni portée nationale à un compte régional. Masquer reste toujours possible.",
+    "ceilingNote": "Les règles de sécurité fixes sont un plafond que personne ne lève : ni couches sensibles, ni données personnelles aux comités régional et national, ni comptes, audit ou clé du fond de carte, ni portée nationale à un compte régional. Masquer reste toujours possible.",
     "new": "Nouvelle règle",
     "feature": "Page, onglet ou bouton",
     "choose": "Choisir",
@@ -6454,13 +6520,13 @@
       "fixed": "Fixe"
     },
     "flagHint": {
-      "personal": "Jamais accordé au gouverneur ni au ministre.",
+      "personal": "Jamais accordé au comité régional ni au comité national.",
       "national": "Accordé seulement à un compte national.",
       "fixed": "Jamais accordé ; seulement masqué."
     },
     "ceiling": {
       "fixed": "Fonction fixe : jamais accordée, seulement masquée.",
-      "personal_data": "Données personnelles : jamais accordées au gouverneur ni au ministre.",
+      "personal_data": "Données personnelles : jamais accordées au comité régional ni au comité national.",
       "national_scope": "Fonction nationale : jamais accordée à un rôle d'un seul gouvernorat.",
       "technical_account": "Les comptes techniques ne reçoivent pas de droits opérationnels.",
       "not_staff": "Jamais accordé à un compte citoyen."
@@ -7488,5 +7554,77 @@
     "delete": "Supprimer",
     "deleteConfirm": "Confirmer la suppression",
     "by": "Dernière modification : {{name}} · {{time}}"
+  },
+  "committeeHeading": {
+    "regional": "Comité régional présidé par M. le gouverneur de {{name}}",
+    "national": "Comité national présidé par M. le ministre de l'Intérieur"
+  },
+  "disasters": {
+    "title": "Catastrophes : bilan et carte",
+    "intro": "Les catastrophes en cours et clôturées au même endroit. Choisissez une ou plusieurs catastrophes et gouvernorats : le bilan additionne leurs chiffres et la carte ne montre que leurs lieux (zone, interventions, abris, zones d'évacuation). Les salles, le commandant et les comités régional et national la voient, chacun dans son gouvernorat.",
+    "open": "En cours",
+    "closed": "Clôturées",
+    "noneOpen": "Aucune catastrophe en cours.",
+    "noneClosed": "Aucune catastrophe clôturée.",
+    "gouvernorats": "Gouvernorats affichés",
+    "summary": "Bilan des catastrophes choisies : {{count}}",
+    "chooseOne": "Choisissez au moins une catastrophe.",
+    "list": "Catastrophes",
+    "show": "Afficher {{name}} sur la carte",
+    "mapAria": "Carte des catastrophes choisies : {{count}}",
+    "closedAfter": "Clôturée le {{at}} après {{hours}} h",
+    "places": "Lieux de la catastrophe",
+    "shelter": "Abri",
+    "occupancy": "{{n}} sur {{of}}",
+    "promote": "Élever en catastrophe",
+    "promoted": "Catastrophe élevée depuis une intervention : celle-ci lui est rattachée dès l'ouverture."
+  },
+  "intake": {
+    "open": "Saisir un signalement (téléphone, radio, sur place)",
+    "back": "← Signalements",
+    "title": "Saisie d'un signalement par la salle",
+    "intro": "Un signalement reçu par téléphone, radio ou sur place devient un signalement comme les autres (code de suivi, priorité, regroupement, suivi), pris en charge par la salle qui le saisit.",
+    "channel": "Canal",
+    "channels": {
+      "phone": "Téléphone",
+      "radio": "Radio",
+      "in_person": "Sur place",
+      "other": "Autre"
+    },
+    "category": "Type",
+    "receivedAt": "Heure de réception (si antérieure)",
+    "text": "Ce qu'a dit l'appelant",
+    "where": "Lieu : cliquez sur la carte ou saisissez les coordonnées.",
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "pointRequired": "Indiquez un lieu en Tunisie.",
+    "point": "Lieu du signalement",
+    "mapAria": "Carte pour placer le signalement",
+    "submit": "Enregistrer le signalement",
+    "entered": "Saisi par la salle · {{channel}}"
+  },
+  "whatWhere": {
+    "title": "Quoi, puis où",
+    "what": "Quoi : choisissez une couche",
+    "where": "Où : tapez le nom du lieu",
+    "none": "Aucun lieu de ce nom dans cette couche.",
+    "more": "Autres résultats : précisez le nom."
+  },
+  "calendar": {
+    "title": "Calendrier de disponibilité",
+    "empty": "Aucun calendrier saisi dans l’application.",
+    "now": {
+      "available": "Disponible maintenant selon son calendrier",
+      "unavailable": "Indisponible maintenant selon son calendrier : non proposé à l’appel",
+      "none": "Rien de prévu maintenant"
+    },
+    "kind": {
+      "available": "Disponible",
+      "unavailable": "Indisponible"
+    },
+    "between": "du {{from}} au {{to}}",
+    "from": "à partir du {{from}}",
+    "everyDay": "tous les jours",
+    "overnight": "(jusqu’au lendemain)"
   }
 }

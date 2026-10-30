@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/auth/identity.dart';
 import '../../core/config/providers.dart';
 import '../../core/crypto/medical_crypto.dart';
+import '../../core/http/availability_models.dart';
 import '../../core/http/doctor_models.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/volunteer_models.dart';
@@ -255,6 +256,17 @@ class _Space extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           _KeyCard(doctor: d),
+        ],
+        if (d.status != VolunteerStatus.withdrawn) ...[
+          const SizedBox(height: 8),
+          NavCard(
+            key: const Key('doctor-availability'),
+            icon: Icons.calendar_month_rounded,
+            tone: Tone.teal,
+            title: l10n.availabilityTitle,
+            subtitle: l10n.availabilityDesc,
+            onTap: () => context.push(Routes.availability(CalendarRole.doctor)),
+          ),
         ],
         const SizedBox(height: 16),
         if (d.status != VolunteerStatus.withdrawn)

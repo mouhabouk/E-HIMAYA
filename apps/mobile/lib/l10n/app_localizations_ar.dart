@@ -6175,4 +6175,85 @@ class AppLocalizationsAr extends AppLocalizations {
   String stepperDecrease(String label) {
     return 'إنقاص $label';
   }
+
+  @override
+  String get availabilityTitle => 'رزنامة توفري';
+
+  @override
+  String get availabilityDesc => 'متى يمكن دعوتك ومتى لا';
+
+  @override
+  String get availabilityIntro =>
+      'تطّلع القاعة على هذه الرزنامة. ما دامت تقول «غير متوفر» فلن تُقترح في الاستنفار.';
+
+  @override
+  String get availabilityNowAvailable => 'متوفر الآن حسب رزنامتك';
+
+  @override
+  String get availabilityNowUnavailable => 'غير متوفر الآن حسب رزنامتك';
+
+  @override
+  String get availabilityNowNone => 'لا شيء مخطط الآن';
+
+  @override
+  String get availabilityEmpty => 'لا فترة بعد. أضف متى تكون متوفرا أو غائبا.';
+
+  @override
+  String get availabilityAdd => 'إضافة فترة';
+
+  @override
+  String get availabilitySave => 'حفظ الرزنامة';
+
+  @override
+  String get availabilitySaved => 'حُفظت الرزنامة';
+
+  @override
+  String get availabilityKindAvailable => 'متوفر';
+
+  @override
+  String get availabilityKindUnavailable => 'غير متوفر';
+
+  @override
+  String get availabilityEveryDay => 'كل الأيام';
+
+  @override
+  String get availabilityStartsOn => 'من';
+
+  @override
+  String get availabilityEndsOn => 'إلى';
+
+  @override
+  String get availabilityNoEnd => 'دون تاريخ نهاية';
+
+  @override
+  String get availabilityFromTime => 'من الساعة';
+
+  @override
+  String get availabilityToTime => 'إلى الساعة';
+
+  @override
+  String get availabilityOvernight => 'إلى اليوم الموالي';
+
+  @override
+  String get availabilityRemove => 'حذف هذه الفترة';
+
+  @override
+  String get availabilityMax => '20 فترة على الأكثر';
+
+  @override
+  String get availabilityEmptyHours =>
+      'يجب أن تختلف ساعة البداية عن ساعة النهاية';
+
+  @override
+  String get availabilityOk => 'إضافة';
+
+  @override
+  String availabilityFromDate(String date) {
+    return 'ابتداء من $date';
+  }
+
+  @override
+  String availabilityBetween(String from, String to) {
+    return 'من $from إلى $to';
+  }
 }

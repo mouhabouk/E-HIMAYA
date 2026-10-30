@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
 import { LevelPill, SimBadge } from "../components/crisis/CrisisBits";
@@ -11,7 +11,7 @@ import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
 import { AXIS_KINDS, AXIS_LEVELS, crisisKeys, type Axis, type AxisKind, type DeclarationRequest } from "../lib/crisis";
-import { displayName, isSimulated } from "../lib/crisisText";
+import { displayName, isSimulated, readPromotion, type Promotion } from "../lib/crisisText";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 
 interface DraftAxis {
@@ -23,7 +23,7 @@ interface DraftAxis {
   national: boolean;
 }
 
-function AxisForm({ mode, onClose }: { mode: "open" | "request"; onClose: () => void }) {
+function AxisForm({ mode, onClose, from }: { mode: "open" | "request"; onClose: () => void; from?: Promotion | null }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const { user } = useAuth();
@@ -32,18 +32,22 @@ function AxisForm({ mode, onClose }: { mode: "open" | "request"; onClose: () => 
   const navigate = useNavigate();
   const id = useId();
   const [f, setF] = useState<DraftAxis>({
-    name: "",
-    kind: "flood",
+    name: from?.name ?? "",
+    kind: from?.kind ?? "flood",
     level: 2,
-    gouvernorat: user?.identity.gouvernoratCode ?? null,
+    gouvernorat: from?.gouvernorat ?? user?.identity.gouvernoratCode ?? null,
     text: "",
     national: false,
   });
   const [tried, setTried] = useState(false);
+  // Phase N (design §4): a disaster promoted from an intervention carries it from the start.
+  const incidents = from ? [from.incident] : [];
   const save = useMutation({
     mutationFn: async () => {
       if (mode === "request")
-        return api.requestDeclaration({ name: f.name.trim(), kind: f.kind, level: f.level, facts: f.text.trim() }).then(() => null);
+        return api
+          .requestDeclaration({ name: f.name.trim(), kind: f.kind, level: f.level, facts: f.text.trim(), incident_ids: incidents })
+          .then(() => null);
       return api
         .openAxis({
           name: f.name.trim(),
@@ -53,6 +57,7 @@ function AxisForm({ mode, onClose }: { mode: "open" | "request"; onClose: () => 
           plan: f.text.trim(),
           national: f.national,
           gouvernorats: f.national && f.gouvernorat ? [f.gouvernorat] : [],
+          incident_ids: incidents,
         })
         .then((a) => a.id);
     },
@@ -71,6 +76,7 @@ function AxisForm({ mode, onClose }: { mode: "open" | "request"; onClose: () => 
   return (
     <form className="card ops-form" onSubmit={submit} noValidate aria-labelledby={`${id}-t`}>
       <h2 id={`${id}-t`}>{mode === "open" ? t("crisis.axes.open") : t("crisis.axes.request")}</h2>
+      {from && <p className="muted">{t("disasters.promoted")}</p>}
       <div className="form-grid">
         <div className="field">
           <label htmlFor={`${id}-n`}>{t("crisis.axes.name")}</label>
@@ -254,7 +260,11 @@ export function AxesPage() {
   const commander = national && roles.includes("ops_manager");
   const regionalManager = !national && roles.includes("ops_manager");
   const [state, setState] = useState<"open" | "closed">("open");
-  const [form, setForm] = useState<"none" | "open" | "request">("none");
+  const [params] = useSearchParams();
+  const promotion = readPromotion(params);
+  // null until the user picks: a promotion from an intervention opens its form once the account is known.
+  const [picked, setForm] = useState<"none" | "open" | "request" | null>(null);
+  const form = picked ?? (promotion && commander ? "open" : promotion && regionalManager ? "request" : "none");
   const axes = useQuery({ queryKey: crisisKeys.axes(state), queryFn: ({ signal }) => api.crisisAxes(state, signal), refetchInterval: 60_000 });
   const requests = useQuery({ queryKey: crisisKeys.requests("pending"), queryFn: ({ signal }) => api.declarationRequests("pending", signal) });
   return (
@@ -280,7 +290,7 @@ export function AxesPage() {
         </div>
       </div>
       <p className="muted">{t("crisis.axes.intro")}</p>
-      {form !== "none" && <AxisForm mode={form} onClose={() => setForm("none")} />}
+      {form !== "none" && <AxisForm mode={form} onClose={() => setForm("none")} from={promotion} />}
       {(requests.data?.length ?? 0) > 0 && (
         <section className="card" aria-labelledby="axes-requests">
           <h2 id="axes-requests">{t("crisis.axes.pending", { n: requests.data?.length ?? 0 })}</h2>

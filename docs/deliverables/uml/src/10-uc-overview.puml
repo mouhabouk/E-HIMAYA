@@ -10,7 +10,7 @@ actor "Responsable\nd'établissement" as ORG
 actor "Personnel de salle" as OPS
 actor "Comités" as COM
 actor "Administrateurs" as ADM
-actor "Gouverneur, ministre\n(L3)" as GM
+actor "Gouverneur, comité national\n(L3)" as GM
 CIT -|> ANO
 VOL -|> CIT
 DOC -|> CIT

@@ -10,6 +10,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from app.core.security import Role
+from app.modules.settings import thresholds
 
 SLA_BANDS = "sla.bands"
 SLA_CLAIM_DELAY = "sla.claim_delay_s"
@@ -36,6 +37,8 @@ CRISIS_SITREP_HOURS = "crisis.sitrep_hours"
 # Self-learning (docs/learning.md §3): which trainings of the training centre run on their own, and every how many
 # days. All off by default: the system administrator turns them on.
 LEARNING_SCHEDULE = "learning.schedule"
+# Phase N (review point 27): the operational thresholds, see ``thresholds``.
+THRESHOLDS = "operations.thresholds"
 LEARNING_TASKS = (
     "report_category",
     "report_lives",
@@ -191,6 +194,7 @@ DEFAULTS: dict[str, Any] = {
     SAFETY_LOCATION_HISTORY: False,
     CRISIS_SITREP_HOURS: {"1": 24, "2": 12, "3": 6, "4": 2},
     LEARNING_SCHEDULE: {key: {"enabled": False, "every_days": 7} for key in LEARNING_TASKS},
+    THRESHOLDS: thresholds.DEFAULTS,
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -208,6 +212,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     SAFETY_LOCATION_HISTORY: frozenset({Role.SYSADMIN}),
     CRISIS_SITREP_HOURS: frozenset({Role.SYSADMIN}),
     LEARNING_SCHEDULE: frozenset({Role.SYSADMIN, Role.AI_ADMIN}),
+    THRESHOLDS: frozenset({Role.SYSADMIN, Role.CENTRAL_COMMITTEE}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -226,6 +231,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     SAFETY_LOCATION_HISTORY: _boolean,
     CRISIS_SITREP_HOURS: _sitrep_hours,
     LEARNING_SCHEDULE: _learning_schedule,
+    THRESHOLDS: thresholds.validate,
 }
 
 

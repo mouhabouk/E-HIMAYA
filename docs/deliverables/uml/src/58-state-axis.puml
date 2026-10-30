@@ -25,7 +25,7 @@ state "Recommandation ou décision" as Dir {
   Émise --> Impossible : motif
   Reçue --> Impossible : motif
   EnCours --> Impossible : motif
-  Émise --> EnConflit : décision du ministre\n(même catégorie)
+  Émise --> EnConflit : décision du comité national\n(même catégorie)
   Reçue --> EnConflit
   EnCours --> EnConflit
   Exécutée --> [*]

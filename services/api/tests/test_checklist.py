@@ -234,7 +234,7 @@ async def test_axis_list_read_reviewed_approved_and_followed(
     r = await client.post(f"{url}/tasks/{second}/review", json={"decision": "edit", "task": edited}, headers=manager)
     assert r.status_code == 200, r.text
     r = await client.post(f"{url}/tasks/{third}/review", json={"decision": "delete"}, headers=manager)
-    added = {"action": "إعلام الوالي كل ساعتين", "owner": "رئيس القاعة"}
+    added = {"action": "إعلام اللجنة الجهوية كل ساعتين", "owner": "رئيس القاعة"}
     r = await client.post(f"{url}/tasks", json=added, headers=manager)
     assert r.status_code == 201, r.text
     reviewed = r.json()

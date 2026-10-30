@@ -28,6 +28,7 @@ from app.modules.layers.service import LAT, LON, public_place
 from app.modules.reports.domain import Category, Status
 from app.modules.reports.models import Report
 from app.modules.reports.staff_router import READ_ROLES
+from app.modules.settings import service as settings
 from app.modules.weather import service as weather
 
 public_router = APIRouter(prefix="/api/v1/coastal", tags=["coastal"])
@@ -37,7 +38,6 @@ EDITOR_ROLES = (Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE)
 StaffReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.CONTENT_EDITOR, Role.SYSADMIN))]
 RuleEditor = Annotated[Principal, Depends(require_roles(*EDITOR_ROLES))]
 Lang = Literal["ar", "fr", "en"]
-WARN_RADIUS_M = 1000
 # The beach card (PLAGES_MASTER, design §1.3), in display order; each column may carry its source and date in the
 # columns "<name>_source" and "<name>_date" of the file (or set by hand on the layer page).
 CARD_FIELDS = (
@@ -145,7 +145,7 @@ async def public_beaches(
         computed_at=computed_at,
         simulated=simulated,
         attribution=_attribution(simulated),
-        warn_radius_m=WARN_RADIUS_M,
+        warn_radius_m=await settings.threshold(session, "coastal.warn_radius_m"),
         items=[_beach_out(f, lat, lon, r, None) for f, lat, lon, r in rows],
     )
 

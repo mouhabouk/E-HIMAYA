@@ -145,6 +145,10 @@ export function layersApi(api: ApiClient) {
         signal,
       }),
 
+    // Phase N (design §7): "what, then where", the places of one layer whose name holds the words.
+    layerPlaces: (key: string, q: string, signal?: AbortSignal) =>
+      api.request<LayerFeatures>(`${layerPath(key)}/features`, { query: { q }, signal }),
+
     // Phase L1b: the lines and areas of a layer in view, simplified for the zoom (GeoJSON).
     layerShapes: (key: string, bbox: BBox, zoom: number, lang: string, signal?: AbortSignal) =>
       api.request<LayerShapes>(`${layerPath(key)}/shapes`, {

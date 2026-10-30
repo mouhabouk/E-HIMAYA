@@ -4,6 +4,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, StringConstraints
 
+from app.modules.availability.schemas import SlotsOut
+
 Skill = Literal[
     "first_aid", "diving", "heavy_vehicles", "firefighting", "search_rescue", "logistics", "medical", "other"
 ]
@@ -104,6 +106,8 @@ class StaffVolunteerDetail(StaffVolunteer):
     review_reason: str | None
     reviews: list[VolunteerReviewOut]
     callouts: list[VolunteerCalloutRef]
+    # Phase N (design §8): the calendar the person keeps in the app, and what it says now.
+    calendar: SlotsOut
 
 
 class VolunteerReviewIn(BaseModel):

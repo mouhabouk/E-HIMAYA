@@ -249,8 +249,14 @@ async def test_who_may_create_and_import(client: httpx.AsyncClient, staff: Staff
     )
     assert r.status_code == 200 and r.json()["editors_allowed"] is True
     listed = {i["key"]: i for i in (await client.get(URL, headers=editor)).json()["items"]}
-    assert listed[layer["key"]]["can_import"] is True and listed[layer["key"]]["can_manage"] is False
-    assert (await _preview(client, editor, layer["key"], _csv(HOSPITALS))).status_code == 201
+    # Phase N (option (b) of the review): the editor corrects the places by hand, but loads no file.
+    assert listed[layer["key"]]["can_edit"] is True and listed[layer["key"]]["can_manage"] is False
+    assert listed[layer["key"]]["can_import"] is False
+    r = await _preview(client, editor, layer["key"], _csv(HOSPITALS))
+    assert (r.status_code, r.json()["detail"]) == (403, "insufficient_role")
+    place = {"ref": "ED1", "name": "مستوصف الحي", "lat": SFAX[0], "lon": SFAX[1], "reason": "a place the file missed"}
+    added = await client.post(f"{URL}/{layer['key']}/features", json=place, headers=editor)
+    assert added.status_code == 201, added.text
     # A regional operator reads the layers but imports nothing.
     regional = staff(["operator"], gouvernorat=61)
     assert (await client.get(URL, headers=regional)).status_code == 200

@@ -316,7 +316,11 @@ export function ReportDetailPage() {
               {r.address?.municipality ? localizedName(r.address.municipality, lang) : t("common.notAvailable")}
             </dd>
             <dt>{t("detail.fields.reporterKind")}</dt>
-            <dd>{t(`reporterKind.${r.reporter_kind}`)}</dd>
+            <dd>
+              {r.source === "room" && r.intake_channel
+                ? `${t("intake.entered", { channel: t(`intake.channels.${r.intake_channel}`) })}${r.entered_by_name ? ` · ${r.entered_by_name}` : ""}`
+                : t(`reporterKind.${r.reporter_kind}`)}
+            </dd>
             <dt>{t("detail.fields.coordinates")}</dt>
             <dd dir="ltr" className="code">
               {lat.toFixed(5)}, {lon.toFixed(5)}

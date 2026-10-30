@@ -11,6 +11,7 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.doctors import schemas, service
+from app.modules.settings import service as settings
 
 router = APIRouter(prefix="/api/v1/staff/medical-committee", tags=["staff-medical-committee"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -26,7 +27,9 @@ Admin = Annotated[Principal, Depends(_national_admin)]
 
 
 async def _out(session: AsyncSession) -> schemas.CommitteeOut:
-    return schemas.CommitteeOut(members=await service.committee(session), max_members=service.COMMITTEE_MAX)
+    return schemas.CommitteeOut(
+        members=await service.committee(session), max_members=await settings.threshold(session, "doctors.committee_max")
+    )
 
 
 @router.get("", response_model=schemas.CommitteeOut)

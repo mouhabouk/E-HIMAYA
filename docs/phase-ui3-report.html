@@ -82,7 +82,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 <section>
 <h2>2. مراجعة ← تصميم ← تطوير</h2>
 <div class="note"><b>الطلب:</b> قائمة رئيسية مجمّعة تنفتح عند المرور، أو مسطّحة، في أعلى الصفحة أو يمينها أو يسارها، يختارها المستخدم من حسابه، بطابع زجاجي في الوضعين. ثم: طبقات الخريطة مجمّعة (المؤسسات الصحية بها المستشفيات والمصحات والصيدليات، وموارد الحماية المدنية…) لا في قائمة مسطّحة.</div>
-<div class="note warn"><b>الأمن:</b> المجموعات والمجلدات لا تمنح أي صلاحية. القائمة تعرض الروابط نفسها بقواعد الأدوار نفسها، والواجهة البرمجية تفرض القواعد. ولا يعيد الخادم إلا المجلدات التي فيها طبقة يراها الطالب، فلا يعرف الوالي ولا القاعات بوجود مجلد الطبقات الحساسة، والطبقة الحساسة لا تخرج منه.</div>
+<div class="note warn"><b>الأمن:</b> المجموعات والمجلدات لا تمنح أي صلاحية. القائمة تعرض الروابط نفسها بقواعد الأدوار نفسها، والواجهة البرمجية تفرض القواعد. ولا يعيد الخادم إلا المجلدات التي فيها طبقة يراها الطالب، فلا تعرف اللجنة الجهوية ولا القاعات بوجود مجلد الطبقات الحساسة، والطبقة الحساسة لا تخرج منه.</div>
 <h3>UI-3: القائمة الرئيسية</h3>
 <ol>
   <li><b>سبع مجموعات</b>: العمليات اليومية، الأزمات والقيادة، التنبيهات والتواصل، المتطوعون والأطباء، المؤسسات، التحليل والمعرفة، النظام؛ المجموعة الفارغة لا تظهر، وذات الرابط الواحد تصير رابطا مباشرا.</li>
@@ -109,7 +109,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
   <img src="phase-ui3/ui3-left-flat-night.png" alt="القائمة المسطّحة على اليسار، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
   <img src="phase-ui3/ui3-top-flat-day.png" alt="القائمة المسطّحة في الأعلى، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
 <p>واجهة القيادة بملء الشاشة مع الشريط الجانبي:</p>
-  <img src="phase-ui3/ui3-right-grouped-command-night.png" alt="واجهة الوزير مع الشريط الجانبي" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
+  <img src="phase-ui3/ui3-right-grouped-command-night.png" alt="واجهة اللجنة الوطنية مع الشريط الجانبي" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
 <p>طبقات الخريطة في مجلدات، ليلا (مجلدا الحماية المدنية والصحة مفتوحان، وزر «إظهار الكل» بعلامة −) ثم نهارا مع الشريط الجانبي:</p>
   <img src="phase-ui3/ui3b-map-folders-night.png" alt="مجلدات الطبقات على الخريطة، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
   <img src="phase-ui3/ui3b-map-folders-day.png" alt="مجلدات الطبقات على الخريطة، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:12px">
@@ -152,7 +152,7 @@ footer{color:var(--muted);text-align:center;font-size:13px}
 <tr><td><code>ruff</code> و <code>eslint</code> و <code>tsc</code>، و OpenAPI و ERD بـ <code>--check</code></td><td>—</td><td>لا ملاحظة</td></tr>
 </table></div>
 <ul>
-  <li>الرؤية: القاعة لا تتلقى مجلد الطبقات الحساسة، والوزير يتلقاه؛ ولا يُعاد مجلد فارغ لغير المدير.</li>
+  <li>الرؤية: القاعة لا تتلقى مجلد الطبقات الحساسة، واللجنة الوطنية تتلقاه؛ ولا يُعاد مجلد فارغ لغير المدير.</li>
   <li>القواعد: الطبقة الحساسة لا تدخل غير مجلدها والعادية لا تدخله (422)؛ الطبقة التي تصير حساسة تنتقل إليه؛ المجلد الذي فيه طبقات لا يُحذف (409)، و«أخرى» و«الحساسة» ثابتان؛ استرجاع نسخة يعيد مجلدها.</li>
   <li>الإدارة: غير المدير لا ينشئ مجلدا (403)، والأيقونة واللون من قائمة معتمدة، والإنشاء والتعديل والحذف في سجل التدقيق.</li>
 </ul>
