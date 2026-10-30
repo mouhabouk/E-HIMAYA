@@ -552,7 +552,7 @@ export function CommanderPanel({
   const refresh = () => void qc.invalidateQueries({ queryKey: p7Keys.commandBoard(incident.id) });
   const data = board.data;
   return (
-    <section className="card commander" aria-labelledby={`${base}-title`}>
+    <section className="card commander-panel" aria-labelledby={`${base}-title`}>
       <h2 id={`${base}-title`}>{t("commander.title")}</h2>
       <AdvisoryNote text={t("commander.advisory")} />
       {board.data?.can_decide === false ? (

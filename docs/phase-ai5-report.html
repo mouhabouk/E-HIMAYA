@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة AI5</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة AI5: مساعد القائد، أداة ذكاء اصطناعي مفتوحة المصدر تعمل محليا وتتعلم من القرارات. لوحة القائد والأوامر المكتوبة (AI5a)، الرسالة الصوتية وحصر القرار في القائد (AI5b)، التعلم من القرارات ونتائجها في الظل وجدول الأهداف (AI5c)؛ ومعها مركز التدريب الذاتي من البلاغات</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-29</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-y7ctrf</span></div>
+    <div><b>الحالة</b>الكود مدموج (#136 و #138 و #139 و #140)؛ وثائق نهاية المرحلة بانتظار الدمج</div>
+    <div><b>المراجع</b><a href="phase-ai5/design-ai5.md">تصميم AI5</a> · <a href="learning.md">مركز التدريب</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">القائمة المؤجلة (§3.8)</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div>التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div class="now">التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div class="now">التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div class="now">اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>اتخاذ القرار</b>: القائد يرى في صفحة الحادث اقتراحات مرقّمة بتعليلها، ويكتب أمرا أو يمليه، ثم يعتمد أو يعدّل أو يرفض بسبب. الذكاء الاصطناعي يقترح ولا ينفّذ (AI-01، BR-21).</li>
+  <li><b>التحليل والتنبؤ</b>: كل قرار يُربط بنتيجة حادثه بعد الإغلاق، فيتعلم منه مرتِّب يُقارَن بترتيب القواعد ويبقى في الظل.</li>
+  <li><b>المعالجة</b>: البلاغات المغلقة تصبح عيّنات مجهَّلة مشفّرة لمركز التدريب، وتأكيد المشغّل يزن أكثر.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> قال يامن: «أداة ذكاء اصطناعي مفتوحة المصدر تعمل في بيئة محلية، جاهزة للتعلم من البلاغات والقرارات المتخذة والموارد المادية والبشرية والجاهزية، توضع على ذمة القيادة. يُدخل القائد نصا، أو يعتمد القرارات المولّدة، أو يضغط على زر لإدخال رسالة صوتية». ووافق على المراحل الثلاث «على شرط أن تصل الأداة إلى أداة عالية الدقة من خلال التدريب والتعلم». ثم حدّد القائد: «احذف زر المساعد القائد للوالي ولكن امنحه لمدير النظام وهو سيقرر بعد ذلك لمن يمنحه»، وأكّد توفر خادم GPU.</div>
+<div class="note warn"><b>الأمن والخصوصية:</b> كل شيء محلي (Ollama و Qwen3، faster-whisper، scikit-learn)، لا خدمة سحابية. نص القائد يُحاط بوسم لا يخرج منه ويُقرأ بجواب JSON مقيّد بمخطط. الصوت يُحذف فور التفريغ نجح أو فشل، والتفريغ والتصحيح مشفّران. لا أسماء ولا هواتف ولا كلام المواطنين فيما تتعلم منه الأداة، والعيّنات مجهَّلة ومشفّرة ويقرؤها مدير الذكاء الاصطناعي وحده. القرار تحت أمان أسطر الحادث نفسه، وكل قرار في السجل والخط الزمني. النماذج المتعلَّمة أرقام عادية بلا pickle.</div>
+<h3>AI5a: لوحة القائد وذاكرة القرارات والأوامر المكتوبة (#136)</h3>
+<ol>
+  <li>ذاكرة القرارات (الترحيل 0077): سطر لكل اقتراح عُرض، بأصله وصورة الحالة المجهولة وحالته وسببه ومن قرر.</li>
+  <li>اللوحة: الاقتراحات مرقّمة، أوامر القائد أولا، وسطر «ما فعله القادة» في حوادث مشابهة (أعداد وطنية دون أسماء).</li>
+  <li>قراءة الأمر: المعجم أولا ثم النموذج المحلي لما لم يجد فيه فعلا؛ القراءة تحت البطاقة قبل أي اعتماد.</li>
+  <li>مجموعتا تقييم 60 + 60 نصا [SIM] بالفصحى والدارجة والفرنسية، وأرقام المحجوزة وحدها في بطاقة النموذج.</li>
+</ol>
+<h3>مركز التدريب الذاتي (#138)</h3>
+<ol>
+  <li>البلاغ المغلق أو المرفوض عيّنة مجهَّلة مشفّرة (الترحيل 0076)، والتقسيم ثابت حسب الحادثة.</li>
+  <li>تدريبات الصنف والأرواح في خطر والرفض والكلمات الجديدة والحرائق والدخان، يطلقها مدير المنظومة أو يبرمجها، كلها موقوفة افتراضيا.</li>
+  <li>نسخة جديدة لا تُعتمد إلا إن تفوّقت على الحالية، وتبقى في الظل.</li>
+</ol>
+<h3>AI5b: الرسالة الصوتية، والقائد وحده يقرر (#139)</h3>
+<ol>
+  <li>زر الميكروفون حتى 60 ثانية، تفريغ محلي بموجّه فيه كلمات الأوامر (الترحيل 0078)، والنص في الصندوق ليصحّحه القائد.</li>
+  <li>القائد: مدير العمليات الجهوي وقاعة العمليات المركزية؛ غيرهما يرى اللوحة للاطلاع؛ الزر <code>incidents.commander</code> يمنحه مدير المنظومة.</li>
+  <li>عدد الكلمات الخاطئة بين التفريغ والتصحيح يُقاس لكل لغة على 90 يوما.</li>
+</ol>
+<h3>AI5c: التعلم من القرارات ونتائجها (#140)</h3>
+<ol>
+  <li>النتيجة: الدقائق حتى الإغلاق، ونتيجة التقييم، والتكليفات بعد القرار، والتصعيد، وهل أُرسلت الوسيلة نفسها لاحقا.</li>
+  <li>المرتِّب: انحدار لوجستي على الاقتراح وصورة الحالة، يُقاس بـ«الاقتراح الأول المعتمد» مقارنة بالقواعد على حوادث محجوزة، ثم على قرارات بعد التدريب.</li>
+  <li>عيّنات الأوامر (<code>source = 'order'</code>) بقراءتها وحكم القائد: مادة التدريب الدقيق لاحقا (AI5d).</li>
+  <li>جدول الأهداف في بطاقة نموذج مساعد القائد، بحكم كل هدف: محقَّق، غير محقَّق، لم يُقَس بعد.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات مرجعية <span class="sim">[SIM]</span></h2>
+<p>لقطات اللوحة كما هي في نهاية المرحلة، نهارا وليلا، بالعربية، قاعدةً مرجعية لما يأتي بعدها. المعطيات في اللقطات محاكاة.</p>
+  <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-board-day.png" alt="لوحة القائد: اقتراحات مرقّمة وأمر مكتوب وقراءته، و«ما قرّرتموه»، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">لوحة القائد: اقتراحات مرقّمة وأمر مكتوب وقراءته، و«ما قرّرتموه»، نهارا</figcaption></figure>
+  <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-voice-night.png" alt="الرسالة الصوتية: التسجيل ثم النص للتصحيح قبل الإرسال، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">الرسالة الصوتية: التسجيل ثم النص للتصحيح قبل الإرسال، ليلا</figcaption></figure>
+  <figure style="margin:12px 0"><img src="phase-ai5/ai5-commander-readonly-day.png" alt="اللوحة للاطلاع فقط لمن ليس قائدا (الوالي مثلا)، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">اللوحة للاطلاع فقط لمن ليس قائدا (الوالي مثلا)، نهارا</figcaption></figure>
+  <figure style="margin:12px 0"><img src="phase-ai5/ai5-model-card-night.png" alt="بطاقة نموذج مساعد القائد: الأهداف وحكمها، والترتيب المتعلَّم مقارنة بالقواعد، ليلا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">بطاقة نموذج مساعد القائد: الأهداف وحكمها، والترتيب المتعلَّم مقارنة بالقواعد، ليلا</figcaption></figure>
+  <figure style="margin:12px 0"><img src="phase-ai5/ai5-learning-ranker-day.png" alt="مركز التدريب: ترتيب القائد المتعلَّم والاقتراح الأول المعتمد، نهارا" style="width:900px;max-width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="color:var(--muted);font-size:14px">مركز التدريب: ترتيب القائد المتعلَّم والاقتراح الأول المعتمد، نهارا</figcaption></figure>
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>F-DSH-97 و 98 لوحة القائد والأوامر المكتوبة</td><td>منجز (AI5a)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-99 و 100 الرسالة الصوتية ومن هو القائد</td><td>منجز (AI5b)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-DSH-101 مركز التدريب وبطاقة النموذج بالأهداف</td><td>منجز (#138 و AI5c)</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>F-SRV-41 إلى F-SRV-44</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>هدف قراءة الأوامر ≥ 95٪</td><td>86.7٪ بالمعجم على المحجوزة؛ يُقاس بـ Qwen3 8B على خادم GPU</td><td><div class="bar"><span style="width:91%"></span></div></td></tr>
+<tr><td>هدف الكلمات الخاطئة في الصوت ≤ 15٪</td><td>لم يُقَس بعد: يحتاج رسائل حقيقية مصحَّحة</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+<tr><td>إخراج المرتِّب من الظل (AI-03)</td><td>بقرار اللجنة على قرارات حقيقية</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+<tr><td>AI5d التدريب الدقيق LoRA</td><td>مؤجّل حتى بضعة آلاف من القرارات المصحَّحة</td><td><div class="bar"><span style="width:0%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم المرحلة AI5: 100% من البناء. الدقة العالية التي اشترطها يامن تُبلغ بالتعلم من الاستعمال الحقيقي، وكل رقم يُقاس على معطيات لم يُضبط عليها.</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> الحوادث والاقتراحات والقرارات والأوامر في اللقطات مختلَقة للعرض.</li>
+  <li><span class="sim">[SIM]</span> مجموعتا تقييم الأوامر (120 نصا) كتبها الفريق؛ الأرقام حقيقية لكن على نصوص محاكاة.</li>
+  <li><span class="sim">[SIM]</span> اختبار المرتِّب يولّد 150 حادثا بقادة محاكين يتبعون قاعدة خفية لا يعرفها ترتيب القواعد، فيبيّن أن المرتِّب يتعلمها ويتفوق على القواعد؛ لا يقول شيئا عن قادة حقيقيين.</li>
+  <li>لا قرار حقيقي بعد: المرتِّب في الظل، وجدول الأهداف يقول «لم يُقَس» حيث لا معطيات.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>1113، منها ذاكرة القرارات وقيودها، قراءة الأوامر، الصوت وحذفه، القائد وحده، النتائج، المرتِّب، عيّنات الأوامر، مركز التدريب</td><td>ناجحة في CI</td></tr>
+<tr><td>الترحيلات</td><td>صعودا ونزولا ثم صعودا حتى 0078</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>611، منها لوحة القائد والصوت والاطلاع ومركز التدريب</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (Playwright مع axe)</td><td>93</td><td>ناجحة، دون أي مخالفة</td></tr>
+<tr><td>قراءة الأوامر بالنموذج الحقيقي في CI (qwen3:1.7b)</td><td>60 + 60 نصا <span class="sim">[SIM]</span></td><td>المحجوزة: المعجم 86.7٪ [75.8٪، 93.1٪]، النموذج وحده 71.7٪، الدمج «المعجم أولا» 86.7٪</td></tr>
+<tr><td>CI على #140</td><td>كل الفحوص</td><td>ناجحة</td></tr>
+</table></div>
+<ul>
+  <li>الصوت: <code>test_voice_message_corrected_then_sent</code> و <code>test_voice_message_refusals</code> يتحققان من حذف الصوت من المخزن بعد التفريغ، ومن التصحيح قبل الإرسال وحدود الحجم.</li>
+  <li>القائد وحده: الوالي ومن لا يملك الزر يحصلون على 403 عند الكتابة أو القرار، ويرون اللوحة للاطلاع.</li>
+  <li>التعلم: <code>test_command_learning</code> (6 اختبارات): الربط بعد الإغلاق وإعادته عند إعادة الفتح، التسمية، المرتِّب في الظل مقارنة بالقواعد، والحد الأدنى للعيّنات.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيلات قاعدة البيانات</h3><p class="v">من 0076 إلى 0078 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd>مركز التدريب، ذاكرة القرارات، الرسائل الصوتية</dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>النموذج اللغوي المحلي</h3><p class="v">Ollama و Qwen3 (8B في الإنتاج، 1.7B في CI) · <span class="prio p2">2</span></p>
+<dl><dt>الاستعمال</dt><dd>قراءة نية الأمر وفعله بجواب JSON مقيّد</dd><dt>الرخصة</dt><dd>Apache-2.0</dd></dl></div>
+<div class="card"><h3>faster-whisper</h3><p class="v">الخدمة <code>ai</code>، حقل <code>prompt</code> جديد · <span class="prio p2">2</span></p>
+<dl><dt>الاستعمال</dt><dd>تفريغ رسائل القائد، والصوت لا يُحفظ</dd><dt>الأمر</dt><dd>إعادة بناء الخدمة <code>ai</code></dd></dl></div>
+<div class="card"><h3>scikit-learn</h3><p class="v">1.9.1 (الموجود) · <span class="prio p3">3</span></p>
+<dl><dt>الاستعمال</dt><dd>نماذج مركز التدريب ومرتِّب القائد، معاملات صريحة بلا pickle</dd><dt>الرخصة</dt><dd>BSD-3-Clause</dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">563 مسارا · 678 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/staff/incidents/{id}/command</code> و <code>.../command/voice</code> و <code>/staff/command/decisions/{id}</code> و <code>/staff/learning/*</code> و <code>/staff/reports/{id}/learning-label</code></dd></dl></div>
+<div class="card"><h3>الأيقونات</h3><p class="v">37 أيقونة في الويب · <span class="prio p4">4</span></p>
+<dl><dt>الجديد</dt><dd><code>mic</code> و <code>stop</code> للرسالة الصوتية</dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V26 (docx و pdf) في <code>spec/</code>: F-DSH-97 إلى 101، F-SRV-41 إلى 44، القاعدة BR-21، قرارات AI5، القرار المنتظر AI-03، 563 مسارا و678 عملية، 33 مخططا و202 جدولا و78 ترحيلا، الاختبارات، وخارطة الطريق؛ و V25 محفوظ.</li>
+  <li>مخططات UML في <code>diagrams/</code>: صنف مساعد القائد والتعلم (2b)، وثلاثة تسلسلات (77 الأمر والقرار، 78 الصوت، 79 التعلم في الظل)، وحالات الاقتراح (7a)، وحالات الاستعمال S70 إلى S76.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 48 مرحلة، مساعد القائد، الاختبارات، دقة قراءة الأوامر، وخارطة الطريق.</li>
+  <li>مرجع التصميم أعيد توليده بأيقونتي الميكروفون والإيقاف: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>سجل الإصدارات، دليلا التنصيب (الترحيلات 0076 إلى 0078، إعادة بناء خدمة الذكاء) ونسخهما في <code>guide/</code>، واللقطات المرجعية في <code>phase-ai5/</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>الدمج الأول «النموذج يقرر» أنقص القراءات التامة في CI (78.3٪ على المحجوزة)، فصار «المعجم أولا» على أساس مجموعة التطوير وحدها: لا يقرأ أسوأ من المعجم فيما يعرفه المعجم.</li>
+  <li>المرتِّب يعمل في الظل فقط؛ لا يغيّر ترتيب اللوحة حتى قرار اللجنة (AI-03).</li>
+  <li>إصلاحان ظهرا في لقطات نهاية المرحلة: لوحة القائد كانت تحمل الصنف <code>commander</code> الذي يستعمله المحور لتخطيط أفقي، فطفا عنوان «ما قرّرتموه» بجانب البطاقات وصغر خطه، وصار الصنف <code>commander-panel</code>؛ وجدول الأهداف صار يكتب الهدف بالنسبة المئوية حسب اللغة (≥ 95٪، ≤ 15٪).</li>
+  <li>اختباران في CI على #140 تعثّرا مرة ثم نجحا (<code>test_learning</code> و <code>test_cross_border</code>)، ونجحا على قاعدة جديدة محليا.</li>
+  <li>بند في الميثاق عن استعمال النصوص المجهولة لتحسين الأداة (القانون 2004-63) يُطرح خطوة مستقلة، لأن تغيير الميثاق يفرض إعادة القبول.</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>دمج هذا التحيين. ثم، حين يتوفر خادم GPU: قياس قراءة الأوامر بـ Qwen3 8B وتفريغ الصوت بنموذج أكبر، وتشغيل التدريبات المبرمجة على البلاغات الحقيقية؛ وقرار اللجنة في المرتِّب (AI-03) والتدريب الدقيق AI5d حين تتجمع القرارات الحقيقية.</p>
+</section>
+</div>
+</body>
+</html>

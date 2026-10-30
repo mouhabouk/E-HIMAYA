@@ -380,6 +380,10 @@ $ docker compose --env-file .env -f infra/compose.yml --profile vision up -d
 مخططات التدخل والبرمجة (المرحلة PL): `npm ci` في `apps/dashboard` (الحزمة `pdfjs-dist`) ثم `alembic upgrade head`
 (0061 و 0062). لا شيء آخر في WSL.
 
+مساعد القائد ومركز التدريب (المرحلة AI5): `alembic upgrade head` (من 0076 إلى 0078)، ثم أعد بناء خدمة الذكاء إن كانت
+تعمل في WSL (`docker compose --env-file .env -f infra/compose.yml --profile ai build ai`) لتفريغ الرسائل الصوتية. دون
+Ollama يقرأ المعجم أوامر القائد وحده. التدريبات موقوفة افتراضيا، ولا شيء آخر في WSL.
+
 المرحلة L5 (ومعها R3 و R4): `alembic upgrade head` (من 0066 إلى 0075)، ثم أضف `SENSOR_GATEWAY_TOKEN` إلى `.env`
 (`openssl rand -hex 24`). الحساسات والدرون [SIM] تعمل في WSL بالملفين الشخصيين `sensors` و `drones`:
 `docker compose --env-file .env -f infra/compose.yml --profile sensors --profile drones up -d`. اختبار الضغط في

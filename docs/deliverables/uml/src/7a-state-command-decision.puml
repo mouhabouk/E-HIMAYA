@@ -1,0 +1,21 @@
+@startuml
+!include style.iuml
+title États : proposition de l'assistant du commandant (AI5a)
+[*] --> Proposée : règle ou ordre
+Proposée --> Adoptée : adopter
+Proposée --> Modifiée : modifier puis adopter\n(boutons gardés, note)
+Proposée --> Rejetée : rejeter (motif obligatoire,\n« autre » avec texte)
+Proposée --> Dépassée : plus nécessaire\navant décision
+Adoptée --> [*]
+Modifiée --> [*]
+Rejetée --> [*]
+Dépassée --> [*]
+note right of Proposée
+  Une seule proposition ouverte par clé et par incident.
+  Seul le commandant décide ; 409 si déjà décidée.
+end note
+note bottom of Rejetée
+  À la clôture de l'incident : résultat lié ;
+  rejetée puis même moyen envoyé = étiquette 1.
+end note
+@enduml
