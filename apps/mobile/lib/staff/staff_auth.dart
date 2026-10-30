@@ -32,7 +32,17 @@ class StaffTokens {
     required this.accessToken,
     required this.refreshToken,
     required this.expiresAt,
+    this.field = false,
   });
+
+  /// Tokens the platform issued to an agent activated with a code (phase F): renewed at
+  /// `/api/v1/field/token`, not at the identity provider.
+  factory StaffTokens.fromField(Map<String, dynamic> json) => StaffTokens(
+    accessToken: json['access_token'] as String,
+    refreshToken: json['refresh_token'] as String,
+    expiresAt: DateTime.parse(json['expires_at'] as String),
+    field: true,
+  );
 
   factory StaffTokens.fromToken(Map<String, dynamic> json, DateTime now) =>
       StaffTokens(
@@ -47,16 +57,19 @@ class StaffTokens {
     accessToken: json['a'] as String,
     refreshToken: json['r'] as String,
     expiresAt: DateTime.parse(json['e'] as String),
+    field: json['f'] == true,
   );
 
   final String accessToken;
   final String refreshToken;
   final DateTime expiresAt;
+  final bool field;
 
   Map<String, dynamic> toJson() => {
     'a': accessToken,
     'r': refreshToken,
     'e': expiresAt.toUtc().toIso8601String(),
+    if (field) 'f': true,
   };
 }
 
@@ -72,6 +85,27 @@ class PollResult {
 /// The sign-in is refused for good (refresh token revoked, account disabled).
 class StaffSignedOut implements Exception {
   const StaffSignedOut();
+}
+
+/// The room disabled the agent's phone (phase F): the app erases everything it holds.
+class FieldDeviceRevoked implements Exception {
+  const FieldDeviceRevoked();
+}
+
+/// The activation was refused: `activation_refused` (wrong number or code) or
+/// `activation_expired`; [code] is `network` when the server could not be reached.
+class ActivationRefused implements Exception {
+  const ActivationRefused(this.code);
+
+  final String code;
+}
+
+/// What the server answers to an activation: the tokens and the phone's id.
+class Activation {
+  const Activation({required this.tokens, required this.deviceId});
+
+  final StaffTokens tokens;
+  final String deviceId;
 }
 
 /// Device authorization grant against the staff realm, over plain HTTP (no browser plugin).
@@ -139,9 +173,47 @@ class StaffAuth {
     });
   }
 
+  /// Phase F: the agent types the professional number and the one-time code the room chief gave;
+  /// the phone is registered to them and receives the platform's own tokens.
+  Future<Activation> activate({
+    required String matricule,
+    required String code,
+    required String platform,
+    String? pushToken,
+  }) async {
+    final Response<Map<String, dynamic>> r;
+    try {
+      r = await _dio.post<Map<String, dynamic>>(
+        '${config.apiBaseUrl}/api/v1/field/activate',
+        data: {
+          'matricule': matricule.trim(),
+          'code': code.trim(),
+          'device': {'platform': platform, 'push_token': ?pushToken},
+        },
+        options: Options(validateStatus: (_) => true),
+      );
+    } on DioException {
+      throw const ActivationRefused('network');
+    }
+    final json = r.data;
+    if (r.statusCode == 200 && json != null) {
+      return Activation(
+        tokens: StaffTokens.fromField(json),
+        deviceId: json['device_id'] as String,
+      );
+    }
+    final detail = json?['detail'];
+    throw ActivationRefused(
+      detail is String
+          ? detail
+          : (r.statusCode == 429 ? 'rate_limited' : 'activation_refused'),
+    );
+  }
+
   /// A fresh access token. Throws [StaffSignedOut] when the server refuses the refresh token;
   /// a network error is rethrown as is (the shift goes on with the last missions).
   Future<StaffTokens> refresh(StaffTokens tokens) async {
+    if (tokens.field) return _refreshField(tokens);
     final r = await _dio.post<Map<String, dynamic>>(
       config.tokenEndpoint,
       data: {
@@ -157,6 +229,20 @@ class StaffAuth {
     if (r.statusCode == 400 || r.statusCode == 401) {
       throw const StaffSignedOut();
     }
+    throw DioException(requestOptions: r.requestOptions, response: r);
+  }
+
+  Future<StaffTokens> _refreshField(StaffTokens tokens) async {
+    final r = await _dio.post<Map<String, dynamic>>(
+      '${config.apiBaseUrl}/api/v1/field/token',
+      data: {'refresh_token': tokens.refreshToken},
+      options: Options(validateStatus: (_) => true),
+    );
+    if (r.statusCode == 200 && r.data != null) {
+      return StaffTokens.fromField(r.data!);
+    }
+    if (r.statusCode == 410) throw const FieldDeviceRevoked();
+    if (r.statusCode == 401) throw const StaffSignedOut();
     throw DioException(requestOptions: r.requestOptions, response: r);
   }
 }

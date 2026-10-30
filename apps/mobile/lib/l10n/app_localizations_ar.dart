@@ -6315,4 +6315,285 @@ class AppLocalizationsAr extends AppLocalizations {
   String availabilityBetween(String from, String to) {
     return 'من $from إلى $to';
   }
+
+  @override
+  String get staffActivationTitle => 'تفعيل الهاتف';
+
+  @override
+  String get staffActivationHelp =>
+      'اكتب رقمك المهني ورمز التفعيل الذي سلّمه لك رئيس القاعة. يعمل الرمز مرة واحدة.';
+
+  @override
+  String get staffActivationMatricule => 'الرقم المهني';
+
+  @override
+  String get staffActivationCode => 'رمز التفعيل';
+
+  @override
+  String get staffActivationSubmit => 'تفعيل';
+
+  @override
+  String get staffActivationRefused => 'الرقم المهني أو الرمز غير صحيح.';
+
+  @override
+  String get staffActivationExpired =>
+      'انتهت صلاحية الرمز. اطلب رمزا جديدا من رئيس القاعة.';
+
+  @override
+  String get staffActivationLater => 'محاولات كثيرة. أعد المحاولة بعد قليل.';
+
+  @override
+  String get staffSignInAccount => 'قادة الفرق الذين لهم حساب بالمؤسسة:';
+
+  @override
+  String get staffAgentWaitShift =>
+      'سيضيفك قائد الفريق إلى نوبته، فتظهر لك مهامها هنا للاطلاع.';
+
+  @override
+  String get staffCharterTitle => 'ميثاق العون';
+
+  @override
+  String get staffCharterIntro =>
+      'قبل استعمال التطبيق، اقرأ هذا الميثاق المنبثق من القانون المنظم للحماية المدنية:';
+
+  @override
+  String get staffCharter1 =>
+      'أسجّل مراحل المهمة في وقتها الحقيقي ولا أسجّل ما لم يحدث.';
+
+  @override
+  String get staffCharter2 =>
+      'أحفظ السر المهني: لا أصوّر ولا أنشر معطيات الضحايا خارج التطبيق.';
+
+  @override
+  String get staffCharter3 =>
+      'الهاتف عهدة: أبلغ القاعة فورا عند ضياعه ليُعطَّل ويُمسح.';
+
+  @override
+  String get staffCharter4 =>
+      'لا أعطي رقمي السري لأحد، ولا أترك الهاتف مفتوحا.';
+
+  @override
+  String get staffCharter5 =>
+      'سلامة الفريق أولا: أطلب التعزيز وأبلغ عن الخطر دون تأخير.';
+
+  @override
+  String get staffCharterAccept => 'قرأت الميثاق وألتزم به';
+
+  @override
+  String get staffCharterSms => 'أوافق على تلقي الرسائل القصيرة المهنية';
+
+  @override
+  String get staffCharterLocation => 'أوافق على إرسال موقع الهاتف أثناء المهام';
+
+  @override
+  String get staffCharterSubmit => 'موافقة';
+
+  @override
+  String get staffCrewAgents => 'أعوان النوبة';
+
+  @override
+  String get staffReadOnly =>
+      'للاطلاع فقط: هاتف قائد الفريق وحده يسجّل مراحل المهمة.';
+
+  @override
+  String get staffFlowLeftUnit => 'انطلقنا من الوحدة';
+
+  @override
+  String get staffFlowArrived => 'وصلنا المكان';
+
+  @override
+  String get staffFlowLeftScene => 'غادرنا المكان';
+
+  @override
+  String get staffFlowAtHospital => 'وصلنا للمستشفى';
+
+  @override
+  String get staffFlowAvailable => 'متاحون في طريق العودة';
+
+  @override
+  String get staffFlowBackAtUnit => 'رجعنا للوحدة';
+
+  @override
+  String get staffFlowHoldHint => 'اضغط مطوّلا للتسجيل';
+
+  @override
+  String staffFlowRecorded(String step, String time) {
+    return 'سُجّل «$step» على $time';
+  }
+
+  @override
+  String staffFlowUndo(int seconds) {
+    return 'تراجع ($seconds)';
+  }
+
+  @override
+  String get staffFlowSkip => 'تجاوز المرحلة';
+
+  @override
+  String staffFlowSkipWhy(String step) {
+    return 'لماذا تتجاوز «$step»؟';
+  }
+
+  @override
+  String get staffFlowNoIntervention => 'بدون تدخل';
+
+  @override
+  String get staffFlowNoInterventionWhy => 'سبب إنهاء المهمة بدون تدخل';
+
+  @override
+  String get staffFlowNoInterventionConfirm => 'إنهاء المهمة بدون تدخل؟';
+
+  @override
+  String get staffFlowNoInterventionYes => 'نعم، أنهِ المهمة';
+
+  @override
+  String get staffReasonOther => 'سبب آخر';
+
+  @override
+  String get staffSkipNoTransport => 'لا أحد للنقل';
+
+  @override
+  String get staffSkipOtherTransport => 'نقل بوسيلة أخرى';
+
+  @override
+  String get staffSkipRefused => 'رفض النقل';
+
+  @override
+  String get staffSkipNotNeeded => 'غير لازمة';
+
+  @override
+  String get staffNoIntFalseAlarm => 'إنذار كاذب';
+
+  @override
+  String get staffNoIntPutOut => 'أُخمد قبل وصولنا';
+
+  @override
+  String get staffNoIntOtherAgency => 'تكفّلت به جهة أخرى';
+
+  @override
+  String get staffNoIntNotFound => 'لم يُعثر على المكان';
+
+  @override
+  String get staffNoIntCancelled => 'أُلغي من القاعة';
+
+  @override
+  String get staffNature => 'طبيعة التدخل';
+
+  @override
+  String get staffNatureFire => 'حريق';
+
+  @override
+  String get staffNatureFlood => 'فيضان';
+
+  @override
+  String get staffNatureTraffic => 'حادث مرور';
+
+  @override
+  String get staffNatureRescue => 'عملية إنقاذ';
+
+  @override
+  String get staffNatureMedical => 'إسعاف';
+
+  @override
+  String get staffNatureDrowning => 'غرق';
+
+  @override
+  String get staffNatureLandslide => 'انزلاق أرضي';
+
+  @override
+  String get staffNatureChemical => 'تسرب مواد خطرة';
+
+  @override
+  String get staffNatureAnimal => 'حيوان';
+
+  @override
+  String get staffNatureOther => 'أخرى';
+
+  @override
+  String get staffPointFromRoom => 'نقطة المهمة من القاعة';
+
+  @override
+  String get staffPointIncident => 'موقع الحادث';
+
+  @override
+  String get staffPointCopy => 'نسخ الإحداثيات';
+
+  @override
+  String get staffPointCopied => 'نُسخت الإحداثيات';
+
+  @override
+  String get staffToll => 'الحصيلة';
+
+  @override
+  String get staffTollDue => 'الضحايا والأضرار المادية ووصف الحادث';
+
+  @override
+  String get staffTollDescription => 'وصف الحادث';
+
+  @override
+  String get staffDamage => 'الأضرار المادية';
+
+  @override
+  String get staffDamageNone => 'لا أضرار';
+
+  @override
+  String get staffDamageMinor => 'طفيفة';
+
+  @override
+  String get staffDamageModerate => 'متوسطة';
+
+  @override
+  String get staffDamageMajor => 'كبيرة';
+
+  @override
+  String get staffDamageTotal => 'كلية';
+
+  @override
+  String staffSentAt(String time) {
+    return 'أُرسل على $time';
+  }
+
+  @override
+  String get staffInterventionReport => 'محضر التدخل';
+
+  @override
+  String get staffInterventionReportDue => 'اكتبه أو أمْلِه بالصوت';
+
+  @override
+  String get staffInterventionReportHelp =>
+      'أمْلِ المحضر بالصوت ثم صحّح النص، أو اكتبه مباشرة. يُحذف التسجيل الصوتي نهائيا بعد التفريغ.';
+
+  @override
+  String get staffVoiceSpeak => 'إملاء بالصوت';
+
+  @override
+  String get staffVoiceListening => 'جارٍ التفريغ…';
+
+  @override
+  String get staffVoiceDeleted =>
+      'يُفرَّغ الصوت ثم يُحذف نهائيا؛ لا يُرسل إلا النص بعد تصحيحه.';
+
+  @override
+  String get staffOpenMission => 'فتح مهمة من الميدان';
+
+  @override
+  String get staffOpenMissionSub =>
+      'حادث صادفه الفريق في طريقه؛ تُعلَم القاعة فورا';
+
+  @override
+  String get staffOpenMissionHelp =>
+      'اختر الطبيعة وأضف ملاحظة. يُرسل موقع الهاتف الحالي وتُعلَم القاعة فورا.';
+
+  @override
+  String get staffOpenMissionNote => 'ملاحظة للقاعة';
+
+  @override
+  String get staffOpenMissionSend => 'فتح المهمة وإعلام القاعة';
+
+  @override
+  String get staffOpenMissionLocating => 'تحديد الموقع…';
+
+  @override
+  String get staffOpenMissionNoFix =>
+      'تعذّر تحديد الموقع. اخرج إلى مكان مكشوف وأعد المحاولة.';
 }

@@ -54,6 +54,8 @@ class StaffApi {
       try {
         t = await pending;
         await _vault.saveTokens(t);
+      } on FieldDeviceRevoked {
+        throw const DeviceRevoked();
       } finally {
         _refreshing = null;
       }
@@ -96,9 +98,12 @@ class StaffApi {
     return data is Map<String, dynamic> ? data : {'items': data};
   }
 
-  Map<String, dynamic> _write([Map<String, dynamic> body = const {}]) => {
+  Map<String, dynamic> _write([
+    Map<String, dynamic> body = const {},
+    DateTime? at,
+  ]) => {
     'client_id': _newId(),
-    'device_at': _clock().toUtc().toIso8601String(),
+    'device_at': (at ?? _clock()).toUtc().toIso8601String(),
     ...body,
   };
 
@@ -138,8 +143,9 @@ class StaffApi {
   Future<CrewShift> startShift(
     String vehicleId,
     int crewSize,
-    String? crewNames,
-  ) async => CrewShift.fromJson(
+    String? crewNames, {
+    List<String> crewAgentIds = const [],
+  }) async => CrewShift.fromJson(
     await _call(
       'POST',
       '/shifts',
@@ -148,9 +154,69 @@ class StaffApi {
         'crew_size': crewSize,
         if (crewNames != null && crewNames.trim().isNotEmpty)
           'crew_names': crewNames.trim(),
+        if (crewAgentIds.isNotEmpty) 'crew_agent_ids': crewAgentIds,
       }),
     ),
   );
+
+  /// Phase F: the activated agents of the gouvernorat, for the crew of the shift.
+  Future<List<CrewAgent>> crewAgents() async {
+    final j = await _call('GET', '/agents');
+    return [
+      for (final a in j['items'] as List)
+        CrewAgent.fromJson(a as Map<String, dynamic>),
+    ];
+  }
+
+  /// Phase F: the charter the agent accepted, with the consent to text messages and location.
+  Future<void> acceptCharter({
+    required String version,
+    required bool sms,
+    required bool location,
+  }) => _call(
+    'POST',
+    '/charter',
+    body: {'version': version, 'sms': sms, 'location': location},
+  );
+
+  /// Phase F: a mission the team opens from the field; the room sees the new incident at once.
+  Future<Mission> openMission({
+    required String nature,
+    required double lat,
+    required double lon,
+    String? note,
+  }) async => Mission.fromJson(
+    await _call(
+      'POST',
+      '/missions/open',
+      body: _write({
+        'nature': nature,
+        'lat': lat,
+        'lon': lon,
+        if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+      }),
+    ),
+  );
+
+  /// Phase F: a spoken toll or intervention report, transcribed by the platform (the audio is
+  /// deleted there); the text comes back for the leader to correct.
+  Future<SpokenText> transcribe(
+    String missionId,
+    CapturedMedia media, {
+    String lang = 'ar',
+  }) async {
+    final j = await _call(
+      'POST',
+      '/missions/$missionId/voice',
+      body: media.bytes,
+      contentType: media.contentType,
+      query: {'lang': lang},
+    );
+    return SpokenText(
+      voiceId: j['voice_id'] as String,
+      text: j['text'] as String,
+    );
+  }
 
   Future<void> endShift() => _call('POST', '/shifts/current/end');
 
@@ -170,10 +236,11 @@ class StaffApi {
     Map<String, dynamic> body, {
     String? mediaType,
     Map<String, dynamic> shown = const {},
+    DateTime? at,
   }) => MissionWrite(
     missionId: missionId,
     action: action,
-    body: _write(body),
+    body: _write(body, at),
     mediaType: mediaType,
     shown: shown,
   );

@@ -40,6 +40,8 @@ class CrewShift {
     required this.crewSize,
     required this.startedAt,
     this.crewNames,
+    this.leaderName,
+    this.crew = const [],
   });
 
   factory CrewShift.fromJson(Map<String, dynamic> j) => CrewShift(
@@ -48,6 +50,11 @@ class CrewShift {
     crewSize: j['crew_size'] as int,
     crewNames: j['crew_names'] as String?,
     startedAt: DateTime.parse(j['started_at'] as String),
+    leaderName: j['leader_name'] as String?,
+    crew: [
+      for (final a in j['crew'] as List? ?? const [])
+        CrewAgent.fromJson(a as Map<String, dynamic>),
+    ],
   );
 
   final String id;
@@ -55,6 +62,42 @@ class CrewShift {
   final int crewSize;
   final String? crewNames;
   final DateTime startedAt;
+
+  /// Phase F: the leader and the activated agents on the shift.
+  final String? leaderName;
+  final List<CrewAgent> crew;
+}
+
+/// Phase F: an agent activated with a code, picked for the crew of a shift.
+class CrewAgent {
+  const CrewAgent({
+    required this.id,
+    required this.name,
+    required this.function,
+    this.matricule,
+  });
+
+  factory CrewAgent.fromJson(Map<String, dynamic> j) => CrewAgent(
+    id: j['id'] as String,
+    name: j['name'] as String,
+    function: j['function'] as String? ?? 'agent',
+    matricule: j['matricule'] as String?,
+  );
+
+  final String id;
+  final String name;
+
+  /// `leader`, `agent` or `driver`.
+  final String function;
+  final String? matricule;
+}
+
+/// Phase F: what the platform heard in a spoken toll or report, for the leader to correct.
+class SpokenText {
+  const SpokenText({required this.voiceId, required this.text});
+
+  final String voiceId;
+  final String text;
 }
 
 class CrewMe {
@@ -65,6 +108,10 @@ class CrewMe {
     this.shift,
     this.roles = const ['team_leader'],
     this.json = const {},
+    this.activatedAgent = false,
+    this.charterAccepted = true,
+    this.holdMs = 1500,
+    this.undoSeconds = 10,
   });
 
   factory CrewMe.fromJson(Map<String, dynamic> j) => CrewMe(
@@ -78,6 +125,10 @@ class CrewMe {
     roles: j['roles'] == null
         ? const ['team_leader']
         : [for (final r in j['roles'] as List) r as String],
+    activatedAgent: j['activated_agent'] as bool? ?? false,
+    charterAccepted: j['charter_accepted'] as bool? ?? true,
+    holdMs: (j['field'] as Map?)?['hold_ms'] as int? ?? 1500,
+    undoSeconds: (j['field'] as Map?)?['undo_seconds'] as int? ?? 10,
   );
 
   final String? name;
@@ -92,8 +143,18 @@ class CrewMe {
   /// The server's answer, kept sealed on the phone for a start without network (phase P4d).
   final Map<String, dynamic> json;
 
+  /// Phase F: an agent activated with a code (not an account of the identity provider), whether
+  /// they accepted the charter, and how the round button behaves (settings of the room).
+  final bool activatedAgent;
+  final bool charterAccepted;
+  final int holdMs;
+  final int undoSeconds;
+
   bool get leader => roles.contains('team_leader');
   bool get inspector => roles.contains('org_auditor');
+
+  /// Phase F: an agent of the crew reads the missions; only the leader's phone records them.
+  bool get readOnly => !leader && roles.contains('field_agent');
 }
 
 enum MissionStatus { ordered, enRoute, onScene, released, cancelled }
@@ -485,6 +546,14 @@ class Mission {
     this.contactPhone,
     this.distanceM,
     this.json = const {},
+    this.target,
+    this.targetNote,
+    this.crewNature,
+    this.skipped = const {},
+    this.noInterventionReason,
+    this.fieldInitiated = false,
+    this.toll,
+    this.interventionReport,
   });
 
   factory Mission.fromJson(Map<String, dynamic> j) {
@@ -543,6 +612,25 @@ class Mission {
           : ReportTemplate.fromJson(obj('template')!),
       contactPhone: j['contact_phone'] as String?,
       distanceM: j['distance_m'] as int?,
+      target: switch (obj('target')) {
+        final t? => GeoPoint(
+          lat: (t['lat'] as num).toDouble(),
+          lon: (t['lon'] as num).toDouble(),
+        ),
+        null => null,
+      },
+      targetNote: j['target_note'] as String?,
+      crewNature: j['crew_nature'] as String?,
+      skipped: {
+        for (final e in (j['skipped'] as Map? ?? const {}).entries)
+          e.key as String: e.value as String,
+      },
+      noInterventionReason: j['no_intervention_reason'] as String?,
+      fieldInitiated: j['field_initiated'] as bool? ?? false,
+      toll: obj('toll') == null ? null : FieldReport.fromJson(obj('toll')!),
+      interventionReport: obj('intervention_report') == null
+          ? null
+          : FieldReport.fromJson(obj('intervention_report')!),
     );
   }
 
@@ -591,6 +679,56 @@ class Mission {
   /// The server's answer, kept sealed on the phone and changed there by the writes that wait to
   /// be sent (phase P4d, design §9.1).
   final Map<String, dynamic> json;
+
+  /// Phase F: the point the room picked on the map (it may differ from the incident's centre).
+  final GeoPoint? target;
+  final String? targetNote;
+
+  /// The nature the team confirmed (`fire`, `traffic_accident`...), the room's category first.
+  final String? crewNature;
+
+  /// The steps skipped (`at_hospital`, `available`) and why.
+  final Map<String, String> skipped;
+  final String? noInterventionReason;
+  final bool fieldInitiated;
+  final FieldReport? toll;
+  final FieldReport? interventionReport;
+
+  /// Where the team goes: the room's point, else the incident's centre.
+  GeoPoint? get destination => target ?? location;
+
+  /// The round button's next step (phase F): left the unit, arrived, left the scene, at the
+  /// hospital, free on the way back, back at the unit; skipped steps are passed.
+  String? get nextStep {
+    if (status == MissionStatus.cancelled || backAtUnitAt != null) return null;
+    if (status == MissionStatus.ordered) return 'en_route';
+    if (status == MissionStatus.enRoute) return 'on_scene';
+    if (leftSceneAt == null) {
+      return status == MissionStatus.onScene ? 'left_scene' : 'back_at_unit';
+    }
+    if (atHospitalAt == null &&
+        availableAt == null &&
+        !skipped.containsKey('at_hospital')) {
+      return 'at_hospital';
+    }
+    if (availableAt == null && !skipped.containsKey('available')) {
+      return 'available';
+    }
+    return 'back_at_unit';
+  }
+
+  /// The steps «تجاوز المرحلة» may pass now (with a reason).
+  bool get canSkip => nextStep == 'at_hospital' || nextStep == 'available';
+
+  /// The end without intervention, while the team has not left the scene.
+  bool get canEndWithout =>
+      active && leftSceneAt == null && noInterventionReason == null;
+
+  /// The mission is over for the team: the toll is due.
+  bool get over =>
+      backAtUnitAt != null ||
+      noInterventionReason != null ||
+      status == MissionStatus.cancelled;
 
   bool get active =>
       status == MissionStatus.ordered ||

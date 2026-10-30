@@ -11265,6 +11265,522 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'From {from} to {to}'**
   String availabilityBetween(String from, String to);
+
+  /// No description provided for @staffActivationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate the phone'**
+  String get staffActivationTitle;
+
+  /// No description provided for @staffActivationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your professional number and the activation code the room chief gave you. The code works once.'**
+  String get staffActivationHelp;
+
+  /// No description provided for @staffActivationMatricule.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional number'**
+  String get staffActivationMatricule;
+
+  /// No description provided for @staffActivationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Activation code'**
+  String get staffActivationCode;
+
+  /// No description provided for @staffActivationSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get staffActivationSubmit;
+
+  /// No description provided for @staffActivationRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong professional number or code.'**
+  String get staffActivationRefused;
+
+  /// No description provided for @staffActivationExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The code has expired. Ask the room chief for a new one.'**
+  String get staffActivationExpired;
+
+  /// No description provided for @staffActivationLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries. Try again later.'**
+  String get staffActivationLater;
+
+  /// No description provided for @staffSignInAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Team leaders with an account of the institution:'**
+  String get staffSignInAccount;
+
+  /// No description provided for @staffAgentWaitShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Your team leader will add you to their shift; its missions will show here to read.'**
+  String get staffAgentWaitShift;
+
+  /// No description provided for @staffCharterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent\'s charter'**
+  String get staffCharterTitle;
+
+  /// No description provided for @staffCharterIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Before using the app, read this charter drawn from the civil protection law:'**
+  String get staffCharterIntro;
+
+  /// No description provided for @staffCharter1.
+  ///
+  /// In en, this message translates to:
+  /// **'I record the mission\'s steps when they happen and nothing that did not.'**
+  String get staffCharter1;
+
+  /// No description provided for @staffCharter2.
+  ///
+  /// In en, this message translates to:
+  /// **'I keep professional secrecy: no photos or victims\' data outside the app.'**
+  String get staffCharter2;
+
+  /// No description provided for @staffCharter3.
+  ///
+  /// In en, this message translates to:
+  /// **'The phone is in my care: I report its loss to the room at once so it is disabled and erased.'**
+  String get staffCharter3;
+
+  /// No description provided for @staffCharter4.
+  ///
+  /// In en, this message translates to:
+  /// **'I give my PIN to no one and never leave the phone unlocked.'**
+  String get staffCharter4;
+
+  /// No description provided for @staffCharter5.
+  ///
+  /// In en, this message translates to:
+  /// **'The team\'s safety first: I ask for backup and report danger without delay.'**
+  String get staffCharter5;
+
+  /// No description provided for @staffCharterAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read the charter and commit to it'**
+  String get staffCharterAccept;
+
+  /// No description provided for @staffCharterSms.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to receive work text messages'**
+  String get staffCharterSms;
+
+  /// No description provided for @staffCharterLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to send the phone\'s location during missions'**
+  String get staffCharterLocation;
+
+  /// No description provided for @staffCharterSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept'**
+  String get staffCharterSubmit;
+
+  /// No description provided for @staffCrewAgents.
+  ///
+  /// In en, this message translates to:
+  /// **'Agents on the shift'**
+  String get staffCrewAgents;
+
+  /// No description provided for @staffReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Read only: only the team leader\'s phone records the steps.'**
+  String get staffReadOnly;
+
+  /// No description provided for @staffFlowLeftUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Left the unit'**
+  String get staffFlowLeftUnit;
+
+  /// No description provided for @staffFlowArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived on scene'**
+  String get staffFlowArrived;
+
+  /// No description provided for @staffFlowLeftScene.
+  ///
+  /// In en, this message translates to:
+  /// **'Left the scene'**
+  String get staffFlowLeftScene;
+
+  /// No description provided for @staffFlowAtHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'At the hospital'**
+  String get staffFlowAtHospital;
+
+  /// No description provided for @staffFlowAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Free on the way back'**
+  String get staffFlowAvailable;
+
+  /// No description provided for @staffFlowBackAtUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Back at the unit'**
+  String get staffFlowBackAtUnit;
+
+  /// No description provided for @staffFlowHoldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Press and hold to record'**
+  String get staffFlowHoldHint;
+
+  /// No description provided for @staffFlowRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{step}\" recorded at {time}'**
+  String staffFlowRecorded(String step, String time);
+
+  /// No description provided for @staffFlowUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo ({seconds})'**
+  String staffFlowUndo(int seconds);
+
+  /// No description provided for @staffFlowSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip the step'**
+  String get staffFlowSkip;
+
+  /// No description provided for @staffFlowSkipWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Why skip \"{step}\"?'**
+  String staffFlowSkipWhy(String step);
+
+  /// No description provided for @staffFlowNoIntervention.
+  ///
+  /// In en, this message translates to:
+  /// **'No intervention'**
+  String get staffFlowNoIntervention;
+
+  /// No description provided for @staffFlowNoInterventionWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Why the mission ends without intervention'**
+  String get staffFlowNoInterventionWhy;
+
+  /// No description provided for @staffFlowNoInterventionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'End the mission without intervention?'**
+  String get staffFlowNoInterventionConfirm;
+
+  /// No description provided for @staffFlowNoInterventionYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, end it'**
+  String get staffFlowNoInterventionYes;
+
+  /// No description provided for @staffReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other reason'**
+  String get staffReasonOther;
+
+  /// No description provided for @staffSkipNoTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'No one to transport'**
+  String get staffSkipNoTransport;
+
+  /// No description provided for @staffSkipOtherTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transported by other means'**
+  String get staffSkipOtherTransport;
+
+  /// No description provided for @staffSkipRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport refused'**
+  String get staffSkipRefused;
+
+  /// No description provided for @staffSkipNotNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not needed'**
+  String get staffSkipNotNeeded;
+
+  /// No description provided for @staffNoIntFalseAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'False alarm'**
+  String get staffNoIntFalseAlarm;
+
+  /// No description provided for @staffNoIntPutOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Put out before we arrived'**
+  String get staffNoIntPutOut;
+
+  /// No description provided for @staffNoIntOtherAgency.
+  ///
+  /// In en, this message translates to:
+  /// **'Handled by another service'**
+  String get staffNoIntOtherAgency;
+
+  /// No description provided for @staffNoIntNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Place not found'**
+  String get staffNoIntNotFound;
+
+  /// No description provided for @staffNoIntCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by the room'**
+  String get staffNoIntCancelled;
+
+  /// No description provided for @staffNature.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature of the intervention'**
+  String get staffNature;
+
+  /// No description provided for @staffNatureFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire'**
+  String get staffNatureFire;
+
+  /// No description provided for @staffNatureFlood.
+  ///
+  /// In en, this message translates to:
+  /// **'Flood'**
+  String get staffNatureFlood;
+
+  /// No description provided for @staffNatureTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic accident'**
+  String get staffNatureTraffic;
+
+  /// No description provided for @staffNatureRescue.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescue'**
+  String get staffNatureRescue;
+
+  /// No description provided for @staffNatureMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical'**
+  String get staffNatureMedical;
+
+  /// No description provided for @staffNatureDrowning.
+  ///
+  /// In en, this message translates to:
+  /// **'Drowning'**
+  String get staffNatureDrowning;
+
+  /// No description provided for @staffNatureLandslide.
+  ///
+  /// In en, this message translates to:
+  /// **'Landslide'**
+  String get staffNatureLandslide;
+
+  /// No description provided for @staffNatureChemical.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous leak'**
+  String get staffNatureChemical;
+
+  /// No description provided for @staffNatureAnimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Animal'**
+  String get staffNatureAnimal;
+
+  /// No description provided for @staffNatureOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get staffNatureOther;
+
+  /// No description provided for @staffPointFromRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission point from the room'**
+  String get staffPointFromRoom;
+
+  /// No description provided for @staffPointIncident.
+  ///
+  /// In en, this message translates to:
+  /// **'Incident location'**
+  String get staffPointIncident;
+
+  /// No description provided for @staffPointCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy coordinates'**
+  String get staffPointCopy;
+
+  /// No description provided for @staffPointCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates copied'**
+  String get staffPointCopied;
+
+  /// No description provided for @staffToll.
+  ///
+  /// In en, this message translates to:
+  /// **'Toll'**
+  String get staffToll;
+
+  /// No description provided for @staffTollDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Casualties, material damage and description'**
+  String get staffTollDue;
+
+  /// No description provided for @staffTollDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description of the incident'**
+  String get staffTollDescription;
+
+  /// No description provided for @staffDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Material damage'**
+  String get staffDamage;
+
+  /// No description provided for @staffDamageNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get staffDamageNone;
+
+  /// No description provided for @staffDamageMinor.
+  ///
+  /// In en, this message translates to:
+  /// **'Minor'**
+  String get staffDamageMinor;
+
+  /// No description provided for @staffDamageModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get staffDamageModerate;
+
+  /// No description provided for @staffDamageMajor.
+  ///
+  /// In en, this message translates to:
+  /// **'Major'**
+  String get staffDamageMajor;
+
+  /// No description provided for @staffDamageTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get staffDamageTotal;
+
+  /// No description provided for @staffSentAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent at {time}'**
+  String staffSentAt(String time);
+
+  /// No description provided for @staffInterventionReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Intervention report'**
+  String get staffInterventionReport;
+
+  /// No description provided for @staffInterventionReportDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Type it or dictate it'**
+  String get staffInterventionReportDue;
+
+  /// No description provided for @staffInterventionReportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictate the report then correct the text, or type it. The recording is deleted after transcription.'**
+  String get staffInterventionReportHelp;
+
+  /// No description provided for @staffVoiceSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictate'**
+  String get staffVoiceSpeak;
+
+  /// No description provided for @staffVoiceListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing…'**
+  String get staffVoiceListening;
+
+  /// No description provided for @staffVoiceDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'The voice is transcribed then deleted; only the corrected text is sent.'**
+  String get staffVoiceDeleted;
+
+  /// No description provided for @staffOpenMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a mission from the field'**
+  String get staffOpenMission;
+
+  /// No description provided for @staffOpenMissionSub.
+  ///
+  /// In en, this message translates to:
+  /// **'An incident met on the way; the room is told at once'**
+  String get staffOpenMissionSub;
+
+  /// No description provided for @staffOpenMissionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the nature and add a note. The phone\'s position is sent and the room is told at once.'**
+  String get staffOpenMissionHelp;
+
+  /// No description provided for @staffOpenMissionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note for the room'**
+  String get staffOpenMissionNote;
+
+  /// No description provided for @staffOpenMissionSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Open and tell the room'**
+  String get staffOpenMissionSend;
+
+  /// No description provided for @staffOpenMissionLocating.
+  ///
+  /// In en, this message translates to:
+  /// **'Locating…'**
+  String get staffOpenMissionLocating;
+
+  /// No description provided for @staffOpenMissionNoFix.
+  ///
+  /// In en, this message translates to:
+  /// **'No position. Move into the open and try again.'**
+  String get staffOpenMissionNoFix;
 }
 
 class _AppLocalizationsDelegate

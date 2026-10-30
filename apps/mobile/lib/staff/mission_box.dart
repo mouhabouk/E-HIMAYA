@@ -295,6 +295,39 @@ Map<String, dynamic> applyLocally(
         'note': b['note'],
         'created_at': at,
       };
+    // Phase F: the nature the team confirmed, a skipped step, the end without intervention, the
+    // toll and the intervention report.
+    case 'nature':
+      m['crew_nature'] = b['nature'];
+    case 'skip':
+      m['skipped'] = {
+        ...m['skipped'] as Map? ?? const {},
+        b['step'] as String: b['reason'],
+      };
+    case 'no-intervention':
+      m['no_intervention_reason'] = b['reason'];
+      if (m['status'] == 'on_scene') {
+        m['status'] = 'released';
+        m['released_at'] = at;
+      } else if (m['status'] == 'ordered' || m['status'] == 'en_route') {
+        m['status'] = 'cancelled';
+        m['cancelled_at'] = at;
+      }
+    case 'toll':
+      m['toll'] = {
+        'kind': 'toll',
+        'category': (m['incident'] as Map?)?['category'],
+        'answers': {'damage': b['damage']},
+        'note': b['description'],
+        'created_at': at,
+      };
+    case 'report':
+      m['intervention_report'] = {
+        'kind': 'report',
+        'category': (m['incident'] as Map?)?['category'],
+        'note': b['text'],
+        'created_at': at,
+      };
   }
   return m;
 }
