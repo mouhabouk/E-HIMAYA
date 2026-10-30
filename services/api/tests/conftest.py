@@ -132,10 +132,12 @@ HOOK_AUTH = {"Authorization": "Basic dHVzZDp0ZXN0LWhvb2stc2VjcmV0LXRlc3QtaG9vay1
 
 
 async def outbox_events(session: AsyncSession, subject: str) -> list[dict[str, Any]]:
-    """Clear payloads of the queued domain events of a subject (they are sealed at rest)."""
+    """Clear payloads of the queued domain events of a subject, oldest first (they are sealed at rest)."""
     from app.core.events import open_payload
 
-    rows = await session.scalars(text("SELECT payload FROM events.outbox WHERE subject = :s"), {"s": subject})
+    rows = await session.scalars(
+        text("SELECT payload FROM events.outbox WHERE subject = :s ORDER BY id"), {"s": subject}
+    )
     return [open_payload(json.loads(p) if isinstance(p, str) else p) for p in rows]
 
 
