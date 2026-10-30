@@ -9,6 +9,7 @@ import { modelCardsApi } from "./modelCards";
 import { learningApi } from "./learning";
 import { crisisApi } from "./crisis";
 import { adminApi } from "./admin";
+import { placesApi } from "./places";
 import { basemapApi } from "./basemap";
 import { inventoryApi } from "./inventory";
 import { plansApi } from "./plans";
@@ -257,6 +258,7 @@ export function staffApi(api: ApiClient) {
     ...inventoryApi(api),
     ...basemapApi(api),
     ...adminApi(api),
+    ...placesApi(api),
     ...plansApi(api),
     ...scheduleApi(api),
     ...featuresApi(api),

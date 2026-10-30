@@ -218,7 +218,7 @@ def upgrade() -> None:
 
     bind.execute(
         sa.text(
-            f"UPDATE geo.gouvernorat SET boundary = {GEOM}, ins_code = :ins, region = :region, district = :district, "
+            f"UPDATE geo.gouvernorat SET boundary = {GEOM}, ins_code = :ins, region = :region, district = :district, "  # noqa: S608 (constant SQL fragments, values are bound)
             f"population_2014 = :p14, population_2024 = :p24, area_km2 = :area, label = {LABEL} WHERE iso_code = :iso"
         ),
         [
@@ -241,7 +241,7 @@ def upgrade() -> None:
 
     bind.execute(
         sa.text(
-            f"UPDATE geo.delegation SET boundary = {GEOM}, ins_code = :ins, name_en = :en, population_2014 = :p14, "
+            f"UPDATE geo.delegation SET boundary = {GEOM}, ins_code = :ins, name_en = :en, population_2014 = :p14, "  # noqa: S608 (constant SQL fragments, values are bound)
             f"population_2024 = :p24, area_km2 = :area, hasc = NULLIF(:hasc, ''), osm_relation = :osm, "
             f"label = {LABEL} WHERE gouvernorat_code = :gov AND name_fr = :ours"
         ),
@@ -267,7 +267,7 @@ def upgrade() -> None:
 
     bind.execute(
         sa.text(
-            "INSERT INTO geo.sector (code, delegation_id, gouvernorat_code, name_ar, name_fr, name_en, osm_relation, "
+            "INSERT INTO geo.sector (code, delegation_id, gouvernorat_code, name_ar, name_fr, name_en, osm_relation, "  # noqa: S608 (constant SQL fragments, values are bound)
             f"area_km2, label, boundary) SELECT :code, d.id, d.gouvernorat_code, :ar, :fr, :en, :osm, :area, {LABEL}, "
             f"{GEOM} FROM geo.delegation d WHERE d.ins_code = :delegation"
         ),
@@ -291,7 +291,7 @@ def upgrade() -> None:
 
     bind.execute(
         sa.text(
-            "INSERT INTO geo.municipality (id, gouvernorat_code, name_ar, name_fr, name_en, area_km2, label, boundary) "
+            "INSERT INTO geo.municipality (id, gouvernorat_code, name_ar, name_fr, name_en, area_km2, label, boundary) "  # noqa: S608 (constant SQL fragments, values are bound)
             f"VALUES (:id, :gov, :ar, :fr, :en, :area, {LABEL}, {GEOM})"
         ),
         [
@@ -314,7 +314,7 @@ def upgrade() -> None:
     # A few water bodies have no name in one language: the other one stands in.
     bind.execute(
         sa.text(
-            "INSERT INTO geo.water_body (id, kind, gouvernorat_codes, name_ar, name_fr, name_en, salt, intermittent, "
+            "INSERT INTO geo.water_body (id, kind, gouvernorat_codes, name_ar, name_fr, name_en, salt, intermittent, "  # noqa: S608 (constant SQL fragments, values are bound)
             f"area_km2, label, boundary) VALUES (:id, :kind, :govs, :ar, :fr, :en, :salt, :intermittent, :area, "
             f"{LABEL}, {GEOM})"
         ),
@@ -376,6 +376,6 @@ def downgrade() -> None:
     # The simplified outlines of migration 0003 come back.
     features = json.loads((SEED / "tn_gouvernorats.geojson").read_text(encoding="utf-8"))["features"]
     op.get_bind().execute(
-        sa.text(f"UPDATE geo.gouvernorat SET boundary = {GEOM} WHERE iso_code = :iso"),
+        sa.text(f"UPDATE geo.gouvernorat SET boundary = {GEOM} WHERE iso_code = :iso"),  # noqa: S608 (constant SQL fragments, values are bound)
         [{"iso": f["properties"]["iso_code"], "geom": json.dumps(f["geometry"])} for f in features],
     )

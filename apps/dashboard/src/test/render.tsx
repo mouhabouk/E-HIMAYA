@@ -271,6 +271,21 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     anomalies: vi.fn(() => Promise.resolve({ enabled: true, items: [] })),
     boundaries: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [] })),
     delegationCounts: vi.fn(() => Promise.resolve([])),
+    places: vi.fn(() => Promise.resolve([])),
+    createPlace: vi.fn((body: { name: string; kind: "critical" | "important" | "other"; note: string | null; lat: number; lon: number }) =>
+      Promise.resolve({
+        id: "place-1",
+        ...body,
+        gouvernorat_code: 61,
+        delegation_id: 6114,
+        created_by_name: null,
+        created_at: "2026-10-30T00:00:00Z",
+        updated_by_name: null,
+        updated_at: "2026-10-30T00:00:00Z",
+      }),
+    ),
+    updatePlace: vi.fn(() => Promise.reject(new Error("not used"))),
+    deletePlace: vi.fn(() => Promise.resolve(undefined)),
     gouvernorats: vi.fn(() =>
       Promise.resolve([
         { code: 11, iso_code: "TN-11", name: "تونس", name_ar: "تونس", name_fr: "Tunis", delegation_count: 21 },

@@ -87,6 +87,7 @@ from app.modules.orgs.prevention_router import staff_router as orgs_prevention_s
 from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.space import router as orgs_space_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
+from app.modules.places.router import router as places_router
 from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
 from app.modules.programmes.router import router as programmes_router
@@ -338,6 +339,7 @@ def create_app() -> FastAPI:
         sensors_internal_router,
         towers_router,
         towers_internal_router,
+        places_router,
         drones_router,
         drones_internal_router,
         checklist_router,

@@ -699,6 +699,12 @@
       "unitsHint": "Le nombre est écrit sur chaque unité.",
       "edit": "Modifier la recherche",
       "clear": "Retirer le résultat"
+    },
+    "focus": {
+      "enter": "Mettre en relief en 3D",
+      "exit": "Revenir à la vue normale",
+      "hint": "Double-cliquez sur un lieu ou un signalement pour le mettre en relief en 3D, double-cliquez à nouveau pour revenir.",
+      "on": "Lieu mis en relief : le reste de la carte passe à l’arrière-plan. Double-clic ou bouton en haut pour revenir."
     }
   },
   "priority": {
@@ -7460,5 +7466,27 @@
     "reports": "{{count}} signalements en {{days}} jours",
     "rate": "{{value}} pour 10 000 habitants",
     "legend": "Du plus clair au plus foncé, jusqu'à {{max}} signalements pour 10 000 habitants · délégations au taux le plus élevé"
+  },
+  "places": {
+    "title": "Lieux importants",
+    "add": "Enregistrer un lieu",
+    "addingStop": "Terminer",
+    "addingHint": "Cliquez sur la carte à l’endroit à enregistrer.",
+    "count": "Lieux enregistrés : {{count}}",
+    "new": "Nouveau lieu",
+    "name": "Nom",
+    "kind": "Catégorie",
+    "kinds": {
+      "critical": "Critique",
+      "important": "Important",
+      "other": "Autre"
+    },
+    "all": "Tous",
+    "note": "Informations complémentaires",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteConfirm": "Confirmer la suppression",
+    "by": "Dernière modification : {{name}} · {{time}}"
   }
 }

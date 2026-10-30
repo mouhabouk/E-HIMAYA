@@ -699,6 +699,12 @@
       "unitsHint": "The count is written on each unit.",
       "edit": "Edit the search",
       "clear": "Remove the result"
+    },
+    "focus": {
+      "enter": "Lift this place in 3D",
+      "exit": "Back to the normal view",
+      "hint": "Double-click a place or a report to lift it in 3D; double-click again to go back.",
+      "on": "Place lifted: the rest of the map is in the background. Double-click or use the button above to go back."
     }
   },
   "priority": {
@@ -7460,5 +7466,27 @@
     "reports": "{{count}} reports in {{days}} days",
     "rate": "{{value}} per 10,000 inhabitants",
     "legend": "Lightest to darkest, up to {{max}} reports per 10,000 inhabitants · délégations with the highest rate"
+  },
+  "places": {
+    "title": "Key places",
+    "add": "Save a place",
+    "addingStop": "Done",
+    "addingHint": "Click the map where the place is.",
+    "count": "Saved places: {{count}}",
+    "new": "New place",
+    "name": "Name",
+    "kind": "Kind",
+    "kinds": {
+      "critical": "Critical",
+      "important": "Important",
+      "other": "Other"
+    },
+    "all": "All",
+    "note": "Additional information",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Confirm deletion",
+    "by": "Last change: {{name}} · {{time}}"
   }
 }

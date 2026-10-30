@@ -6,7 +6,7 @@ served by the Office's own map server with no outside request. Standard library 
 Only the tiles that touch a gouvernorat (with a margin of one tile) are fetched: the sea and the neighbouring
 countries far from the border are skipped. The copy is resumable: a tile already in the file is not fetched again,
 so an interrupted run continues where it stopped. Requests are few at a time and paced, and every tile is checked to
-be an image before it is kept. Respect the licence and the usage policy of the source (docs/offline-maps.md §4).
+be an image before it is kept. Respect the licence and the usage policy of the source (docs/offline-maps.md §3.3).
 
 Environment:
   SAT_URL          tile address with {z} {x} {y} (default: Sentinel-2 cloudless 2020 by EOX)

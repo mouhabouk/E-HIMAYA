@@ -240,7 +240,20 @@ CATALOGUE: tuple[Spec, ...] = (
         flags="personal",
     ),
     page(
-        "map", "ops", "/map", ("الخريطة", "Carte", "Map"), ("GET /layers", "GET /route", "GET /weather", "GET /basemap")
+        "map",
+        "ops",
+        "/map",
+        ("الخريطة", "Carte", "Map"),
+        ("GET /layers", "GET /route", "GET /weather", "GET /basemap", "GET /places"),
+        # Phase M (design-m §7): the room's saved places, with a name, a kind and a note.
+        button(
+            "map.places",
+            ("تسجيل الأماكن الهامة", "Enregistrer les lieux importants", "Save key places"),
+            "POST /places",
+            "PUT /places/{place_id}",
+            "DELETE /places/{place_id}",
+            act_as=R.OPERATOR,
+        ),
     ),
     page(
         "streams",

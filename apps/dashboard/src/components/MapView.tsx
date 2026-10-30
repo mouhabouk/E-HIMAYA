@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, GeoJSONSource, Map as MlMap, MapMouseEvent, Marker, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureCollection } from "geojson";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORY_ICON_PATHS } from "../lib/categoryIcons";
 import type { BasemapView } from "../lib/basemap";
@@ -165,11 +165,19 @@ interface MapViewProps {
   /** "Call" button in the popups of reports (reporter) and points with `call`; omitted without telephony. */
   onCall?: (body: DialBody) => void;
   callLabel?: string;
+  /**
+   * Focus view (phase M, Yamen 2026-10-30): a double click on a place or a report lifts a 500 m disc around it in a
+   * tilted 3D view and dims the rest of the map; another double click (or the button) returns to the previous view.
+   * The labels name the button that leaves it and the popup button that enters it (keyboard users).
+   */
+  focus?: { exitLabel: string; enterLabel: string; onChange?: (focused: boolean) => void };
 }
 
 type GeoJsonData = FeatureCollection;
 
 const POLYGON_SOURCE = "ehimaya-polygons";
+const FOCUS_SOURCE = "ehimaya-focus";
+const FOCUS_RADIUS_M = 500;
 const HEAT_SOURCE = "ehimaya-heat";
 const HEX_SOURCE = "ehimaya-hexes";
 const LINE_SOURCE = "ehimaya-lines";
@@ -286,6 +294,7 @@ function popupContent(
   openLabel: string,
   onOpen?: (id: string) => void,
   call?: { label: string; onCall: (body: DialBody) => void },
+  focus?: { label: string; onFocus: (lon: number, lat: number) => void },
 ): HTMLElement {
   // Built with DOM APIs (textContent), never innerHTML: report data is user-supplied.
   const root = document.createElement("div");
@@ -304,6 +313,14 @@ function popupContent(
   });
   root.append(title, sub, link);
   if (call) root.append(callButton(call.label, { report_id: m.id }, call.onCall));
+  if (focus) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn--small btn--ghost";
+    button.textContent = focus.label;
+    button.addEventListener("click", () => focus.onFocus(m.lon, m.lat));
+    root.append(button);
+  }
   return root;
 }
 
@@ -385,6 +402,45 @@ function poiPopupContent(
   return root;
 }
 
+/** A disc of `radius` metres as a closed ring of [lon, lat]. */
+function disc(lon: number, lat: number, radius: number, steps = 72): [number, number][] {
+  const dLon = radius / (111_320 * Math.cos((lat * Math.PI) / 180));
+  const dLat = radius / 110_540;
+  const ring: [number, number][] = [];
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * 2 * Math.PI;
+    ring.push([lon + dLon * Math.cos(a), lat + dLat * Math.sin(a)]);
+  }
+  return ring;
+}
+
+function focusData(lon: number, lat: number): GeoJsonData {
+  const ring = disc(lon, lat, FOCUS_RADIUS_M);
+  const world: [number, number][] = [
+    [-180, -85],
+    [180, -85],
+    [180, 85],
+    [-180, 85],
+    [-180, -85],
+  ];
+  return {
+    type: "FeatureCollection",
+    features: [
+      // The rest of the map, with the disc cut out: dimmed like a background behind glass.
+      { type: "Feature", properties: { role: "mask" }, geometry: { type: "Polygon", coordinates: [world, [...ring].reverse()] } },
+      { type: "Feature", properties: { role: "area" }, geometry: { type: "Polygon", coordinates: [ring] } },
+    ],
+  };
+}
+
+function prefersReducedMotion(): boolean {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
+}
+
 function boundsOf(map: MlMap): BBox {
   const b = map.getBounds();
   return [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
@@ -423,15 +479,115 @@ export function MapView({
   focusBounds,
   onCall,
   callLabel,
+  focus,
 }: MapViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markersRef = useRef(new Map<string, { marker: Marker; el: HTMLElement; data: MapMarker }>());
   const poisRef = useRef(new Map<string, { marker: Marker; key: string }>());
-  const callbacks = useRef({ onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick });
+  const callbacks = useRef({ onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick, focus });
   useEffect(() => {
-    callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick };
+    callbacks.current = { onOpen, onBoundsChange, onOpenPoi, onMapClick, onPopupClose, onCall, onAdminClick, focus };
   });
+  // Focus view: the camera to go back to, and whether the view is focused (shows the button that leaves it).
+  const savedCamera = useRef<{ center: [number, number]; zoom: number; pitch: number; bearing: number } | null>(null);
+  const [focused, setFocused] = useState(false);
+  const focusEnter = focus?.enterLabel ?? "";
+
+  const leaveFocus = useCallback(() => {
+    const map = mapRef.current;
+    const saved = savedCamera.current;
+    if (!map || !saved) return;
+    savedCamera.current = null;
+    for (const id of [`${FOCUS_SOURCE}-buildings`, `${FOCUS_SOURCE}-edge`, `${FOCUS_SOURCE}-glow`, `${FOCUS_SOURCE}-plinth`, `${FOCUS_SOURCE}-mask`]) {
+      if (map.getLayer(id)) map.removeLayer(id);
+    }
+    if (map.getSource(FOCUS_SOURCE)) map.removeSource(FOCUS_SOURCE);
+    map.easeTo({ ...saved, duration: prefersReducedMotion() ? 0 : 1000 });
+    setFocused(false);
+    callbacks.current.focus?.onChange?.(false);
+  }, []);
+
+  const enterFocus = useCallback((lon: number, lat: number) => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (!savedCamera.current) {
+      const c = map.getCenter();
+      savedCamera.current = { center: [c.lng, c.lat], zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing() };
+    }
+    const data = focusData(lon, lat);
+    whenStyleReady(map, () => {
+      const source = map.getSource<GeoJSONSource>(FOCUS_SOURCE);
+      if (source) {
+        void source.setData(data);
+      } else {
+        map.addSource(FOCUS_SOURCE, { type: "geojson", data });
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-mask`,
+          type: "fill",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "mask"],
+          paint: { "fill-color": "#0E1426", "fill-opacity": 0.55 },
+        });
+        // The lifted disc: a translucent glass plinth, a soft glow and a white rim.
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-plinth`,
+          type: "fill-extrusion",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "area"],
+          paint: { "fill-extrusion-color": "#8FA8FF", "fill-extrusion-height": 40, "fill-extrusion-opacity": 0.22 },
+        });
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-glow`,
+          type: "line",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "area"],
+          paint: { "line-color": "#8FA8FF", "line-width": 12, "line-blur": 10, "line-opacity": 0.7 },
+        });
+        map.addLayer({
+          id: `${FOCUS_SOURCE}-edge`,
+          type: "line",
+          source: FOCUS_SOURCE,
+          filter: ["==", ["get", "role"], "area"],
+          paint: { "line-color": "#ffffff", "line-width": 2 },
+        });
+        // On the Office's vector map (docs/offline-maps.md) the buildings rise in 3D.
+        if (map.getSource("openmaptiles") && map.getLayer("building")) {
+          map.addLayer({
+            id: `${FOCUS_SOURCE}-buildings`,
+            type: "fill-extrusion",
+            source: "openmaptiles",
+            "source-layer": "building",
+            minzoom: 14,
+            paint: {
+              "fill-extrusion-color": "#DFE4F2",
+              "fill-extrusion-height": ["coalesce", ["get", "render_height"], 8],
+              "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
+              "fill-extrusion-opacity": 0.85,
+            },
+          });
+        }
+      }
+    });
+    map.flyTo({
+      center: [lon, lat],
+      zoom: Math.max(map.getZoom(), 15.5),
+      pitch: 60,
+      bearing: map.getBearing() - 20,
+      duration: prefersReducedMotion() ? 0 : 1400,
+      essential: true,
+    });
+    setFocused(true);
+    callbacks.current.focus?.onChange?.(true);
+  }, []);
+  const toggleFocus = useCallback(
+    (lon: number, lat: number) => (savedCamera.current ? leaveFocus() : enterFocus(lon, lat)),
+    [enterFocus, leaveFocus],
+  );
+  const toggleRef = useRef(toggleFocus);
+  useEffect(() => {
+    toggleRef.current = toggleFocus;
+  }, [toggleFocus]);
   // The call button is offered only when a handler is given (telephony roles); its label is part of the popup.
   const callKey = onCall && callLabel ? callLabel : "";
   const [popupEl] = useState(() => {
@@ -469,6 +625,13 @@ export function MapView({
       }
       callbacks.current.onMapClick?.(e.lngLat.lng, e.lngLat.lat);
     });
+    // Focus view on a double click of the map (the zoom of a double click is then turned off).
+    if (callbacks.current.focus) map.doubleClickZoom.disable();
+    map.on("dblclick", (e: MapMouseEvent) => {
+      if (!callbacks.current.focus) return;
+      e.preventDefault();
+      toggleRef.current(e.lngLat.lng, e.lngLat.lat);
+    });
     mapRef.current = map;
     const registry = markersRef.current;
     const poiRegistry = poisRef.current;
@@ -492,13 +655,14 @@ export function MapView({
     const registry = markersRef.current;
     const seen = new Set<string>();
     const call = callKey ? { label: callKey, onCall: (b: DialBody) => callbacks.current.onCall?.(b) } : undefined;
+    const lift = focusEnter ? { label: focusEnter, onFocus: (lon: number, lat: number) => toggleRef.current(lon, lat) } : undefined;
     for (const m of markers) {
       seen.add(m.id);
       const existing = registry.get(m.id);
       if (existing) {
         updateMarkerElement(existing.el, m);
         if (existing.data.lon !== m.lon || existing.data.lat !== m.lat) existing.marker.setLngLat([m.lon, m.lat]);
-        if (openLabel) existing.marker.getPopup().setDOMContent(popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call));
+        if (openLabel) existing.marker.getPopup().setDOMContent(popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call, lift));
         existing.data = m;
         continue;
       }
@@ -507,10 +671,18 @@ export function MapView({
       if (openLabel) {
         marker.setPopup(
           new maplibregl.Popup({ offset: 16, closeButton: true, focusAfterOpen: true }).setDOMContent(
-            popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call),
+            popupContent(m, openLabel, (id) => callbacks.current.onOpen?.(id), call, lift),
           ),
         );
       }
+      // A double click on a report lifts its place (focus view); the marker's own click still opens its popup.
+      el.addEventListener("dblclick", (e) => {
+        if (!callbacks.current.focus) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const at = registry.get(m.id)?.data ?? m;
+        toggleRef.current(at.lon, at.lat);
+      });
       marker.addTo(map);
       registry.set(m.id, { marker, el, data: m });
     }
@@ -520,7 +692,7 @@ export function MapView({
         registry.delete(id);
       }
     }
-  }, [markers, openLabel, callKey]);
+  }, [markers, openLabel, callKey, focusEnter]);
 
   // Institutions layer: re-create a point only when what it shows changed.
   useEffect(() => {
@@ -949,7 +1121,14 @@ export function MapView({
 
   return (
     <>
-      <div ref={container} className={className ?? "map"} role="region" aria-label={ariaLabel} />
+      <div className="map-frame">
+        <div ref={container} className={`${className ?? "map"}${focused ? " map--focused" : ""}`} role="region" aria-label={ariaLabel} />
+        {focused && focus && (
+          <button type="button" className="btn btn--small map-focus-exit" onClick={leaveFocus}>
+            {focus.exitLabel}
+          </button>
+        )}
+      </div>
       {popup && createPortal(popup.node, popupEl)}
     </>
   );

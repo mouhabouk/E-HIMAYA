@@ -76,7 +76,7 @@ def _polygon_wkt(polygon: dict[str, Any]) -> str:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
     if any(not (LON_MIN <= lon <= LON_MAX and LAT_MIN <= lat <= LAT_MAX) for lon, lat in points):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
-    return "SRID=4326;MULTIPOLYGON(((" + ", ".join(f"{lon} {lat}" for lon, lat in points) + ")))"
+    return "SRID=4326;POLYGON((" + ", ".join(f"{lon} {lat}" for lon, lat in points) + "))"
 
 
 async def _delegations_area(session: AsyncSession, ids: list[int]) -> str:
@@ -185,7 +185,8 @@ async def _apply(session: AsyncSession, message: Message, body: schemas.MessageI
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_area")
             wkt = _polygon_wkt(body.area.polygon)
             await _check_polygon(session, wkt)
-            message.area_polygon = wkt
+            # The column holds a MultiPolygon since 0080 (délégations with islands): a drawn area is one part.
+            message.area_polygon = "SRID=4326;MULTIPOLYGON(" + wkt.removeprefix("SRID=4326;POLYGON") + ")"
         else:
             message.area_polygon = None
     message.gouvernorat_codes = codes

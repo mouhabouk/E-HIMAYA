@@ -1893,6 +1893,21 @@ erDiagram
         datetime decided_at
         text decision_note
     }
+    ops__saved_place {
+        uuid id PK
+        text name
+        text kind
+        text note
+        float lat
+        float lon
+        smallint gouvernorat_code FK
+        integer delegation_id FK
+        text created_by
+        text created_by_name
+        datetime created_at
+        text updated_by_name
+        datetime updated_at
+    }
     ops__shift {
         uuid id PK
         text subject
@@ -1941,12 +1956,14 @@ erDiagram
         datetime updated_at
     }
     geo__delegation ||--o{ ops__incident : "delegation_id"
+    geo__delegation ||--o{ ops__saved_place : "delegation_id"
     geo__gouvernorat ||--o{ ops__directive : "issuer_scope"
     geo__gouvernorat ||--o{ ops__directive_ack : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__incident : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__incident_gouvernorat : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__level_state : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__resource_request : "to_gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__saved_place : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__shift : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__staff_device : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__unit : "gouvernorat_code"

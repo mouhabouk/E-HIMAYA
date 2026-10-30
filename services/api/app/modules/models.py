@@ -81,6 +81,7 @@ from app.modules.orgs.models import (
     Organization,
     TeamMember,
 )
+from app.modules.places.models import SavedPlace
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
 from app.modules.register.models import Attachment as RegisterAttachment
 from app.modules.register.models import Counter as RegisterCounter
@@ -268,6 +269,7 @@ __all__ = [
     "SafetyInvitation",
     "SafetyLink",
     "SafetyTip",
+    "SavedPlace",
     "Scenario",
     "Schedule",
     "ScheduleItem",
