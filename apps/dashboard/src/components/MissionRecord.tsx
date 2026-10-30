@@ -401,8 +401,14 @@ export function MissionRecordEditor({
             <span className="record-step__label">{t("record.step.created_at")}</span>
             <span className="record-pill record-pill--order">{t("record.source.order")}</span>
           </div>
-          <p className="record-step__fixed" dir="ltr">
-            {times.created_at ? `${clockOf(times.created_at)} · ${fmt.date(times.created_at.toISOString())}` : "—"}
+          <p className="record-step__fixed">
+            {times.created_at ? (
+              <>
+                <span dir="ltr">{clockOf(times.created_at)}</span> · <span>{fmt.date(times.created_at.toISOString())}</span>
+              </>
+            ) : (
+              "—"
+            )}
           </p>
         </li>
         {EDITABLE_STEPS.map((step) => (

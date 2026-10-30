@@ -9583,3 +9583,6 @@ button.nav-card:hover {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.record-suggest__list q {
+  quotes: "«" "»";
+}

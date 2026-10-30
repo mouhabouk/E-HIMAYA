@@ -16,6 +16,8 @@ export async function signIn(
   page: Page,
   roles: string[],
   name = "Sami Operator",
+  /** Claims replacing the defaults, e.g. a regional room: `{ scope_level: "regional", gouvernorat_code: 21 }`. */
+  claims: Record<string, unknown> = {},
 ): Promise<void> {
   const b64url = (value: object) =>
     Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -28,6 +30,7 @@ export async function signIn(
     iat: now,
     realm_access: { roles },
     scope_level: "national",
+    ...claims,
   })}.`;
   const key = `oidc.user:${E2E_ENV.VITE_OIDC_ISSUER}:${E2E_ENV.VITE_OIDC_CLIENT_ID}`;
   const user = JSON.stringify({
