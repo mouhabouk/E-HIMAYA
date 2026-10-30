@@ -13,8 +13,8 @@ actor "Administrateur\nsécurité / système / IA" as SA
 actor "Chef d'agrès\n(application des équipes, P4a, P4b)" as TL
 actor "Auditeur prévention\n(application des équipes, P4c)" as AU
 actor "Commandant\n(chef des opérations national, L3)" as CMD
-actor "Gouverneur (L3)" as GOV
-actor "Ministre (L3)" as MIN
+actor "Comité régional\n(présidé par le gouverneur, N)" as GOV
+actor "Comité national\n(présidé par le ministre de l'Intérieur, N)" as MIN
 CMD -|> OPM
 OPM -|> OP
 rectangle "Tableau de bord central" {
@@ -98,6 +98,10 @@ rectangle "Tableau de bord central" {
   usecase "Limites administratives et\ntaux par délégation (M)" as S77
   usecase "Alerter des délégations\nchoisies (M)" as S78
   usecase "Enregistrer un lieu ;\nvue 3D d'un lieu (M)" as S79
+  usecase "Lire les catastrophes :\nbilan et carte des lieux choisis (N)" as S80
+  usecase "Élever une intervention\nen catastrophe (N)" as S81
+  usecase "Saisir un signalement reçu\npar téléphone, radio, sur place (N)" as S82
+  usecase "Régler les seuils\nopérationnels (N)" as S83
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -286,6 +290,16 @@ OP --> S78
 OPM --> S78 : publie (quatre yeux)
 OP --> S79
 OPM --> S79
+GOV --> S80
+MIN --> S80
+CMD --> S80
+OP --> S80
+OPM --> S81
+S81 ..> S80 : <<extend>>
+OP --> S82
+OPM --> S82
+SA --> S83
+CC --> S83
 S71 ..> S70 : <<include>>
 S72 ..> S71 : <<extend>>
 @enduml

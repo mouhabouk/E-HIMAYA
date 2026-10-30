@@ -1,0 +1,26 @@
+@startuml
+!include style.iuml
+title Séquence : vue des catastrophes pour les comités (N)
+autonumber
+actor "Comité national\nou régional" as CM
+participant "Tableau de bord\n/disasters" as UI
+participant "API" as API
+database "PostgreSQL\ncrisis.* (RLS par gouvernorat)" as DB
+CM -> UI : ouvre « Gestion des catastrophes »
+UI -> API : GET /staff/crisis/axes?status=open
+API -> DB : axes visibles (RLS : régional = son gouvernorat)
+API --> UI : catastrophes en cours (ou clôturées avec bilan)
+CM -> UI : choisit des gouvernorats et coche des catastrophes
+UI -> API : GET /staff/crisis/disasters/map?axis=id1,id2
+alt liste vide ou plus longue que crisis.disaster_map_max
+  API --> UI : 422 invalid_selection
+else
+  API -> DB : axes et sous-axes, zones, interventions,\nabris, zones d'évacuation
+  API --> UI : chiffres cumulés + lieux des seules catastrophes choisies
+end
+UI -> CM : tuiles de chiffres, carte de commandement, liste des lieux
+== Promotion d'une intervention ==
+actor "Chef de salle" as OM
+OM -> UI : « Élever en catastrophe » sur l'intervention
+UI -> API : POST /staff/crisis/axes (commandant)\nou demande de déclaration (salle régionale)
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+!include style.iuml
+title Séquence : signalement saisi par la salle (N)
+autonumber
+actor "Opérateur de salle" as OP
+participant "Tableau de bord\n/reports/new" as UI
+participant "API" as API
+participant "Analyse IA\n(référence)" as AI
+database "PostgreSQL" as DB
+OP -> UI : appel, radio ou personne sur place
+OP -> UI : canal, type, texte, point (clic ou coordonnées)
+UI -> API : POST /staff/reports
+API -> DB : gouvernorat du point
+alt hors de la Tunisie
+  API --> UI : 422 outside_tunisia
+else hors du gouvernorat de la salle
+  API --> UI : 422 outside_gouvernorat
+else
+  API -> DB : signalement source=room, canal, saisi par
+  API -> AI : priorité de référence
+  API -> DB : délai SLA, regroupement en intervention
+  API -> DB : prise en charge si le rôle le permet
+  API -> DB : audit « report.room_entered », événement report.created
+  API --> UI : 201 code de suivi
+end
+@enduml
