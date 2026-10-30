@@ -73,7 +73,8 @@
     "disasters": "Disasters: summary and map",
     "strategies": "All strategies",
     "snacr": "Risk analysis and coverage (SNACR)",
-    "lessons": "Lessons learned"
+    "lessons": "Lessons learned",
+    "fieldAgents": "Agents and phones"
   },
   "header": {
     "scope": "Geographic scope",
@@ -199,7 +200,8 @@
     "none": "None",
     "close": "Close",
     "reasonLength": "Between {{min}} and {{max}} characters.",
-    "requiredNote": "Fields marked * are required."
+    "requiredNote": "Fields marked * are required.",
+    "confirm": "Confirm"
   },
   "errors": {
     "authentication_required": "Session expired. Please sign in again.",
@@ -3798,7 +3800,8 @@
         "alerts": "Alert thresholds",
         "rooms": "Room and field thresholds",
         "partners": "Doctor and institution thresholds",
-        "snacr": "Risk analysis and coverage thresholds (SNACR)"
+        "snacr": "Risk analysis and coverage thresholds (SNACR)",
+        "field": "Staff app"
       },
       "help": "The numbers of daily work: changing them needs no new release, and they stay within their bounds. What is not changed keeps its default.",
       "bounds": "Each value is a whole number within the bounds shown next to it.",
@@ -3812,7 +3815,9 @@
         "percent": "per cent",
         "per_km2": "inhabitants per km²",
         "months": "months",
-        "years": "years"
+        "years": "years",
+        "seconds": "seconds",
+        "milliseconds": "milliseconds"
       },
       "names": {
         "crisis": {
@@ -3887,6 +3892,12 @@
           },
           "review_months": "Plan review every",
           "validity_years": "Plan validity"
+        },
+        "field": {
+          "code_hours": "Activation code validity",
+          "code_attempts": "Wrong tries before the code is voided",
+          "hold_ms": "Long press on the step button",
+          "undo_seconds": "Undo window after a step"
         }
       }
     }
@@ -4937,7 +4948,57 @@
     "contactPhoneHint": "Optional. The leader's phone shows a «Reporter» button only if you give one; the citizen's number is never passed on automatically.",
     "lastPosition": "Last position {{ago}} ago",
     "lastPositionDistance": "Last position {{ago}} ago · {{km}} km away",
-    "viaSms": "By text message"
+    "viaSms": "By text message",
+    "closing": "Toll and intervention report",
+    "toll": "Toll",
+    "interventionReport": "Intervention report",
+    "spoken": "Dictated and corrected",
+    "damage": {
+      "label": "Material damage",
+      "none": "None",
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "major": "Major",
+      "total": "Total"
+    },
+    "nature": {
+      "fire": "Fire",
+      "flood": "Flood",
+      "traffic_accident": "Traffic accident",
+      "rescue": "Rescue",
+      "medical": "Medical",
+      "drowning": "Drowning",
+      "landslide": "Landslide",
+      "chemical_leak": "Hazardous leak",
+      "animal": "Animal",
+      "other": "Other"
+    },
+    "skipReason": {
+      "no_transport": "No one to transport",
+      "other_transport": "Transported by other means",
+      "refused_transport": "Transport refused",
+      "not_needed": "Not needed",
+      "other": "Other reason"
+    },
+    "noInterventionReason": {
+      "false_alarm": "False alarm",
+      "put_out_before": "Put out before we arrived",
+      "other_agency": "Handled by another service",
+      "place_not_found": "Place not found",
+      "cancelled": "Cancelled by the room",
+      "other": "Other reason"
+    },
+    "flow": {
+      "fieldInitiated": "Opened by the team in the field",
+      "nature": "Nature: {{nature}}",
+      "target": "Mission point:",
+      "skipped": "Skipped \"{{step}}\": {{reason}}",
+      "noIntervention": "No intervention: {{reason}}",
+      "pickTarget": "Mission point on the map",
+      "moveTarget": "Change the point",
+      "pickHint": "Click the map to set the point team {{who}} must reach. It goes to the leader's phone at once.",
+      "targetNote": "Note for the team (optional)"
+    }
   },
   "templates": {
     "pageTitle": "Report templates",
@@ -8109,5 +8170,48 @@
         "pasted": "Pasted text"
       }
     }
+  },
+  "fieldAgents": {
+    "pageTitle": "Agents and phones",
+    "intro": "Add the agents of your gouvernorat and hand each one a one-time activation code with their professional number. A lost phone is disabled here: it erases itself at its next connection and its data stays on record for legal tracking.",
+    "list": "Agents",
+    "none": "No agent yet.",
+    "agent": "Agent",
+    "device": "Phone",
+    "lastPosition": "Last position",
+    "add": "Add an agent",
+    "addSubmit": "Add and make the code",
+    "matricule": "Professional number",
+    "name": "Full name",
+    "function": "Function",
+    "shift": "Shift",
+    "phone": "Phone",
+    "functions": {
+      "leader": "Team leader",
+      "agent": "Agent",
+      "driver": "Driver"
+    },
+    "status": {
+      "pending": "Awaiting activation",
+      "active": "Active",
+      "disabled": "Disabled",
+      "deleted": "Deleted"
+    },
+    "charterPending": "Charter not accepted yet",
+    "noDevice": "No phone activated",
+    "sim": "SIM",
+    "imei": "IMEI",
+    "setImei": "Enter IMEI",
+    "newCode": "New code",
+    "newPhone": "Code for a new phone",
+    "disable": "Disable",
+    "delete": "Delete account",
+    "reason": "Reason",
+    "disableConfirm": "Disable {{name}}'s account and phone now?",
+    "deleteConfirm": "Delete {{name}}'s account? Their phone stays on record.",
+    "codeFor": "Activation code of {{name}} (professional number {{matricule}}):",
+    "codeOnce": "Hand it to the agent directly: it will not show again and works once.",
+    "codeUntil": "Valid until {{time}}.",
+    "codeHanded": "Handed over"
   }
 }

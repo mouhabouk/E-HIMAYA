@@ -25,7 +25,7 @@ import { canCloseIncidents, canDispatch } from "../lib/roles";
 import { queryKeys } from "../lib/staffApi";
 import type { IncidentDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
-import { CrewLine, FieldSection, PositionLine, crewTimelineParts } from "./CrewBits";
+import { CrewLine, FieldFlowLine, FieldSection, PositionLine, crewTimelineParts } from "./CrewBits";
 import { MissionIndicators, MissionRecordEditor } from "./MissionRecord";
 import { Stepper } from "./Stepper";
 
@@ -167,10 +167,12 @@ function AssignmentRow({
   assignment,
   canEdit,
   calledAt,
+  onPickTarget,
 }: {
   assignment: Assignment;
   canEdit: boolean;
   calledAt?: string | null;
+  onPickTarget?: (assignment: Assignment) => void;
 }) {
   const { t } = useTranslation();
   const [recordOpen, setRecordOpen] = useState(false);
@@ -213,6 +215,7 @@ function AssignmentRow({
           </div>
           {assignment.crew && <CrewLine crew={assignment.crew} />}
           {assignment.position && <PositionLine position={assignment.position} />}
+          <FieldFlowLine assignment={assignment} />
         </td>
         <td>
           <AssignmentStatusChip status={assignment.status} />
@@ -259,6 +262,11 @@ function AssignmentRow({
             </div>
           ) : (
             !recordable && <span className="muted">—</span>
+          )}
+          {canEdit && onPickTarget && assignment.kind === "resource" && ACTIVE_ASSIGNMENT_STATUSES.includes(assignment.status) && (
+            <button type="button" className="btn btn--small" onClick={() => onPickTarget(assignment)}>
+              {assignment.target ? t("crew.flow.moveTarget") : t("crew.flow.pickTarget")}
+            </button>
           )}
           {recordable && (
             <button
@@ -388,10 +396,12 @@ function AssignmentsSection({
   incident,
   canEdit,
   preset,
+  onPickTarget,
 }: {
   incident: IncidentDetail;
   canEdit: boolean;
   preset?: AssignPreset | null;
+  onPickTarget?: (assignment: Assignment) => void;
 }) {
   const { t } = useTranslation();
   const assignments = incident.assignments ?? [];
@@ -411,7 +421,13 @@ function AssignmentsSection({
         </thead>
         <tbody>
           {rows.map((a) => (
-            <AssignmentRow key={a.id} assignment={a} canEdit={canEdit} calledAt={incident.opened_at} />
+            <AssignmentRow
+              key={a.id}
+              assignment={a}
+              canEdit={canEdit}
+              calledAt={incident.opened_at}
+              onPickTarget={onPickTarget}
+            />
           ))}
         </tbody>
       </table>
@@ -929,7 +945,16 @@ export function OpsTimelineDetails({ kind, payload }: { kind: string; payload: R
 }
 
 /** FR-C-09: operations of an incident (card, assignments, volunteer call-outs, notes, close and evaluation). */
-export function OperationsPanel({ incident, assignPreset }: { incident: IncidentDetail; assignPreset?: AssignPreset | null }) {
+export function OperationsPanel({
+  incident,
+  assignPreset,
+  onPickTarget,
+}: {
+  incident: IncidentDetail;
+  assignPreset?: AssignPreset | null;
+  /** Phase F: the room picks on the map the point a team must reach. */
+  onPickTarget?: (assignment: Assignment) => void;
+}) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const roles = user?.identity.roles ?? [];
@@ -946,7 +971,12 @@ export function OperationsPanel({ incident, assignPreset }: { incident: Incident
         <CardForm incident={incident} canEdit={dispatch} />
       </section>
       {dispatch && national && open && <p className="alert alert--info">{t("resourceRequests.centralNotice")}</p>}
-      <AssignmentsSection incident={incident} canEdit={fieldDispatch && open} preset={assignPreset} />
+      <AssignmentsSection
+        incident={incident}
+        canEdit={fieldDispatch && open}
+        preset={assignPreset}
+        onPickTarget={onPickTarget}
+      />
       <FieldSection incident={incident} />
       <CalloutsSection incident={incident} canEdit={fieldDispatch && open} />
       {dispatch && (

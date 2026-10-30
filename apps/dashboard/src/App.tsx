@@ -32,6 +32,7 @@ import {
   canOpenLayers,
   canManageAccounts,
   canManagePermissions,
+  canManageFieldAgents,
   canOpenCrew,
   canOpenBreakGlass,
   canReadPlatformSettings,
@@ -65,6 +66,7 @@ import { GeoQueuePage } from "./pages/GeoQueuePage";
 import { LateReportsPage } from "./pages/LateReportsPage";
 import { ResourceRequestsPage } from "./pages/ResourceRequestsPage";
 import { CrewPage } from "./pages/CrewPage";
+import { FieldAgentsPage } from "./pages/FieldAgentsPage";
 import { ReportTemplatesPage } from "./pages/ReportTemplatesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { CallsPage } from "./pages/CallsPage";
@@ -253,6 +255,7 @@ export function AppRoutes() {
         <Route path="settings/ai/learning" element={scoped(canOpenLearning, <LearningPage />)} />
         <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
         <Route path="crew" element={<Gate allow={canOpenCrew}><CrewPage /></Gate>} />
+        <Route path="crew/agents" element={<Gate allow={canManageFieldAgents}><FieldAgentsPage /></Gate>} />
         <Route path="report-templates" element={reports(<ReportTemplatesPage />)} />
         <Route path="accounts" element={scoped(canManageAccounts, <AccountsPage />)} />
         <Route path="audit" element={scoped(canReadScopedAudit, <AuditPage />)} />

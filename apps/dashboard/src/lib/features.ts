@@ -41,6 +41,7 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/resource-requests", "resource_requests"],
   ["/resources", "resources"],
   ["/inventory", "inventory"],
+  ["/crew/agents", "field_agents"],
   ["/crew", "crew"],
   ["/schedule", "schedule"],
   ["/command", "command"],
