@@ -12,6 +12,7 @@ actor "Administrateur\nde comptes régional" as RAA
 actor "Administrateur\nsécurité / système / IA" as SA
 actor "Chef d'agrès\n(application des équipes, P4a, P4b)" as TL
 actor "Auditeur prévention\n(application des équipes, P4c)" as AU
+actor "Agent de l'équipe\n(lecture seule, F)" as FA
 actor "Commandant\n(chef des opérations national, L3)" as CMD
 actor "Comité régional\n(présidé par le gouverneur, N)" as GOV
 actor "Comité national\n(présidé par le ministre de l'Intérieur, N)" as MIN
@@ -111,6 +112,9 @@ rectangle "Tableau de bord central" {
   usecase "Retenir une heure lue dans les notes\nou le journal radio collé (S2)" as S90
   usecase "Donner les étapes après l'arrivée :\nquitté les lieux, hôpital, disponibles\nsur le retour, retour à l'unité (S2)" as S91
   usecase "Agents et moyens utilisés\n(boutons − et +, S2)" as S92
+  usecase "Ajouter un agent, remettre\nle code d'activation unique (F)" as S93
+  usecase "Désactiver le téléphone ou\nsupprimer le compte (F)" as S94
+  usecase "Placer le point de la mission\nsur la carte (F)" as S95
 }
 rectangle "Application des équipes (P4a à P4d)" {
   usecase "Se connecter par code\n(MFA, PIN 6 chiffres)" as T0
@@ -331,4 +335,31 @@ S90 ..> S89 : <<extend>>
 TL --> S91
 TL --> S92
 S91 ..> S89 : alimente
+OPM --> S93
+OPM --> S94
+OP --> S95
+OPM --> S95
+rectangle "Application des équipes (F)" {
+  usecase "Activer le téléphone :\nmatricule + code, puis PIN (F)" as F1
+  usecase "Accepter la charte\n(SMS et position, F)" as F2
+  usecase "Étape par appui long\n(1,5 s) et « Annuler » 10 s (F)" as F3
+  usecase "Passer une étape (motif) ;\nsans intervention (double confirmation, F)" as F4
+  usecase "Bilan : dégâts, description\ndictée, transcrite puis effacée (F)" as F5
+  usecase "Procès-verbal d'intervention\ndicté (F)" as F6
+  usecase "Ouvrir une mission du terrain\n(la salle est avisée, F)" as F7
+  usecase "Lire la mission\n(sans rien changer, F)" as F8
+}
+TL --> F1
+FA --> F1
+TL --> F2
+FA --> F2
+F1 ..> F2 : <<include>>
+TL --> F3
+TL --> F4
+TL --> F5
+TL --> F6
+TL --> F7
+FA --> F8
+S93 ..> F1 : code
+S95 ..> F8 : point
 @enduml

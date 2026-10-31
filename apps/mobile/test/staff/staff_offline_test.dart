@@ -45,14 +45,16 @@ void main() {
       expect(find.byKey(const Key('mission-alert')), findsNothing);
       await tester.tap(find.byKey(const Key('mission-m-1')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('step-en_route')));
-      await tester.pumpAndSettle();
+      await holdStep(tester, 'en_route');
       expect(
         find.text('2 waiting, sent when the network is back'),
         findsOneWidget,
       );
       // Shown at once: the next step is offered.
-      expect(find.byKey(const Key('step-on_scene')), findsOneWidget);
+      expect(
+        find.byKey(const Key('step-on_scene'), skipOffstage: false),
+        findsOneWidget,
+      );
       expect(server.writes, isEmpty);
 
       // Nothing readable in the box: the missions and the writes are sealed.
@@ -96,8 +98,7 @@ void main() {
 
     // The room cancelled the mission meanwhile: the counter is refused, nothing waits after.
     server.missions.clear();
-    await tester.tap(find.byKey(const Key('step-on_scene')));
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'on_scene');
     expect(find.byKey(const Key('staff-pending')), findsNothing);
     expect(server.writes.last.path, '/api/v1/crew/missions/m-1/status');
   });
@@ -123,8 +124,8 @@ void main() {
     server.down = true;
     await tester.tap(find.byKey(const Key('mission-m-1')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('step-on_scene')));
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'on_scene');
+    await reveal(tester, 'staff-send-sms');
     await tester.tap(find.byKey(const Key('staff-send-sms')));
     await tester.pumpAndSettle();
 
@@ -179,8 +180,7 @@ void main() {
     // Kept, then sent with the next pass.
     await tester.tap(find.byKey(const Key('mission-m-1')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('step-on_scene')));
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'on_scene');
     final points = server.positions['m-1']!;
     expect(points.first['lat'], 36.79);
     expect(points.first['accuracy_m'], 9);
@@ -206,8 +206,7 @@ void main() {
     server.revoked = true;
     await tester.tap(find.byKey(const Key('mission-m-1')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('step-on_scene')));
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'on_scene');
     expect(blobs.values, isEmpty);
     expect(store.values[MissionBox.keyName], isNull);
   });

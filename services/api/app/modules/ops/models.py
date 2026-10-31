@@ -235,6 +235,14 @@ class Assignment(Base):
     crew_count: Mapped[int | None] = mapped_column(SmallInteger)
     consumables: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
     time_sources: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    # Phase F: the point the room picked on the map for the team, the nature the team confirmed, the steps it skipped
+    # (step -> reason), the end without intervention and its reason, and a mission the team opened from the field.
+    target_location: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
+    target_note: Mapped[str | None] = mapped_column(Text)
+    crew_nature: Mapped[str | None] = mapped_column(Text)
+    skipped: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    no_intervention_reason: Mapped[str | None] = mapped_column(Text)
+    field_initiated: Mapped[bool] = mapped_column(Boolean, server_default="false")
 
 
 class CalloutTarget(Base):
@@ -305,6 +313,44 @@ class StaffDevice(Base):
     last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     revoked_by: Mapped[str | None] = mapped_column(Text)
+    # Phase F: the agent who activated the phone, what the phone said about itself, the IMEI typed by the room chief,
+    # and the fingerprint of its current refresh token (none for a Keycloak sign-in).
+    agent_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.field_agent.id"))
+    model: Mapped[str | None] = mapped_column(Text)
+    device_ref: Mapped[str | None] = mapped_column(Text)
+    sim_number: Mapped[str | None] = mapped_column("sim_number_enc", EncryptedText("ops.staff_device.sim_number"))
+    imei: Mapped[str | None] = mapped_column("imei_enc", EncryptedText("ops.staff_device.imei"))
+    refresh_hash: Mapped[str | None] = mapped_column(Text)
+    refresh_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FieldAgent(Base):
+    """A crew member the room chief added (phase F, docs/phase-f/design-f.md §1), activated on a phone with their
+    professional number and a one-time code."""
+
+    __tablename__ = "field_agent"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    matricule: Mapped[str] = mapped_column(Text)
+    name: Mapped[str] = mapped_column(Text)
+    function: Mapped[str] = mapped_column(Text)
+    shift_label: Mapped[str | None] = mapped_column(Text)
+    phone: Mapped[str | None] = mapped_column("phone_enc", EncryptedText("ops.field_agent.phone"))
+    status: Mapped[str] = mapped_column(Text, server_default="pending")
+    code_hash: Mapped[str | None] = mapped_column(Text)
+    code_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    code_attempts: Mapped[int] = mapped_column(SmallInteger, server_default="0")
+    charter_version: Mapped[str | None] = mapped_column(Text)
+    charter_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    consents: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    disabled_by: Mapped[str | None] = mapped_column(Text)
+    disabled_reason: Mapped[str | None] = mapped_column(Text)
 
 
 class Shift(Base):
@@ -321,6 +367,8 @@ class Shift(Base):
     gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
     crew_size: Mapped[int] = mapped_column(SmallInteger)
     crew_names: Mapped[str | None] = mapped_column(Text)
+    # Phase F: the agents on the shift with the leader; they read its missions on their own phones.
+    crew_agent_ids: Mapped[list[uuid.UUID]] = mapped_column(ARRAY(UUID(as_uuid=True)), server_default="{}")
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 

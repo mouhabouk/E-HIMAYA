@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Séquence : point de la mission, bilan et procès-verbal dictés (F)
+autonumber
+actor "Opérateur" as OP
+participant "Tableau de bord" as UI
+actor "Chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+participant "API" as API
+participant "Transcription\nlocale" as STT
+database "PostgreSQL" as DB
+OP -> UI : « Placer le point » puis clic sur la carte
+UI -> API : PUT /staff/assignments/{id}/target {lat, lon, note}
+API -> DB : target_location
+APP -> API : GET /crew/missions
+API --> APP : point, note ; copier les coordonnées
+TL -> APP : « Sans intervention » : motif, puis confirmation
+APP -> API : POST …/no-intervention {motif}
+TL -> APP : bilan : dégâts, description dictée
+APP -> API : POST …/voice (audio)
+API -> STT : transcription (ar ou fr)
+API -> API : audio effacé
+API --> APP : texte à corriger
+TL -> APP : corrige, « Envoyer »
+APP -> API : POST …/toll {dégâts, description, voice_id}
+TL -> APP : procès-verbal dicté, corrigé
+APP -> API : POST …/report {texte, voice_id}
+API -> DB : field_report (toll, report)
+API --> UI : la salle voit nature, bilan et procès-verbal
+@enduml

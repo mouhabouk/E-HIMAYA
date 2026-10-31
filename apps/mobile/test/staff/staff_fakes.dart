@@ -57,6 +57,19 @@ class FakeCrewServer {
 
   /// Writes applied once, by `client_id` (a write sent again answers the mission as it is).
   final applied = <String>{};
+
+  /// Phase F: the round button's settings, an agent activated with a code, and the activations
+  /// and renewals of its tokens.
+  int holdMs = 600;
+  int undoSeconds = 0;
+  bool activatedAgent = false;
+  bool charterAccepted = true;
+  String activationCode = 'ABCD-EFGH';
+  bool fieldRevoked = false;
+  int fieldRefreshes = 0;
+  final crewAgents = <Map<String, dynamic>>[
+    {'id': 'ag-1', 'name': 'Mounir Haj', 'function': 'driver'},
+  ];
   String? pushToken;
 
   Dio dio() => Dio()..httpClientAdapter = adapter;
@@ -239,6 +252,22 @@ class FakeCrewServer {
         },
       );
     }
+    if (p == '/api/v1/field/activate') {
+      final body = r.json! as Map;
+      if (body['code'] != activationCode || body['matricule'] != 'M1234') {
+        return const FakeResponse(401, json: {'detail': 'activation_refused'});
+      }
+      activatedAgent = true;
+      charterAccepted = false;
+      return FakeResponse(200, json: _fieldTokens('at-f1', 'rf-1'));
+    }
+    if (p == '/api/v1/field/token') {
+      fieldRefreshes++;
+      if (fieldRevoked) {
+        return const FakeResponse(410, json: {'detail': 'device_revoked'});
+      }
+      return FakeResponse(200, json: _fieldTokens('at-f2', 'rf-2'));
+    }
     if (!p.startsWith('/api/v1/crew')) return const FakeResponse(404);
     if (down) return const FakeResponse.network();
     if (revoked) {
@@ -264,8 +293,26 @@ class FakeCrewServer {
             'device': {'id': 'dev-1'},
             'shift': shiftOpen ? _shift : null,
             'roles': roles,
+            'activated_agent': activatedAgent,
+            'charter_accepted': charterAccepted,
+            'field': {'hold_ms': holdMs, 'undo_seconds': undoSeconds},
           },
         );
+      case ('POST', '/charter'):
+        charterAccepted = true;
+        return const FakeResponse(204);
+      case ('GET', '/agents'):
+        return FakeResponse(200, json: crewAgents);
+      case ('POST', '/missions/open'):
+        final body = r.json! as Map<String, dynamic>;
+        final opened = {
+          ...mission(id: 'm-open', acknowledgedAt: '2026-10-26T09:00:00Z'),
+          'crew_nature': body['nature'],
+          'field_initiated': true,
+          'target': {'lat': body['lat'], 'lon': body['lon']},
+        };
+        missions.insert(0, opened);
+        return FakeResponse(201, json: opened);
       case ('GET', '/resources'):
         return const FakeResponse(200, json: [vehicle]);
       case ('POST', '/shifts'):
@@ -303,6 +350,18 @@ class FakeCrewServer {
         positions.putIfAbsent(m.group(1)!, () => []).addAll(points);
         return FakeResponse(200, json: {'accepted': points.length});
       }
+      if (m.group(2) == 'voice') {
+        return const FakeResponse(
+          200,
+          json: {
+            'voice_id': 'v-1',
+            'text': 'تم اخماد الحريق',
+            'language': 'ar',
+            'model': 'whisper-test',
+            'duration_s': 4.2,
+          },
+        );
+      }
       final clientId =
           r.uri.queryParameters['client_id'] ??
           (r.json as Map?)?['client_id'] as String?;
@@ -329,6 +388,33 @@ class FakeCrewServer {
       }
       final body = r.json! as Map<String, dynamic>;
       switch (m.group(2)) {
+        case 'nature':
+          x['crew_nature'] = body['nature'];
+        case 'skip':
+          x['skipped'] = {
+            ...x['skipped'] as Map? ?? const {},
+            body['step'] as String: body['reason'],
+          };
+        case 'no-intervention':
+          x['no_intervention_reason'] = body['reason'];
+          x['status'] = x['status'] == 'on_scene' ? 'released' : 'cancelled';
+        case 'toll':
+          x['toll'] = {
+            'kind': 'toll',
+            'category': 'fire',
+            'severity': null,
+            'answers': {'damage': body['damage']},
+            'note': body['description'],
+            'created_at': now,
+          };
+        case 'report':
+          x['intervention_report'] = {
+            'kind': 'report',
+            'category': 'fire',
+            'severity': null,
+            'note': body['text'],
+            'created_at': now,
+          };
         case 'ack':
           x['acknowledged_at'] = '2026-10-26T09:00:10Z';
         case 'status':
@@ -422,6 +508,17 @@ class FakeCrewServer {
     return const FakeResponse(404);
   }
 }
+
+Map<String, dynamic> _fieldTokens(String access, String refresh) => {
+  'access_token': access,
+  'expires_at': '2099-01-01T00:00:00Z',
+  'refresh_token': refresh,
+  'device_id': 'dev-f',
+  'name': 'Mounir Haj',
+  'function': 'leader',
+  'gouvernorat_code': 11,
+  'charter_accepted': false,
+};
 
 extension on FakeCrewServer {
   FakeResponse _visit(SeenRequest r, String id, String? action) {
@@ -632,6 +729,26 @@ Future<MemorySecureStore> signedInStore({DateTime? expires}) async {
   );
   await store.write('staff_device_v1', 'dev-1');
   return store;
+}
+
+/// Scrolls the mission screen until the widget of [key] is on screen (the round button pushed
+/// the cards below the fold).
+Future<void> reveal(WidgetTester tester, String key) async {
+  await tester.ensureVisible(find.byKey(Key(key), skipOffstage: false));
+  await tester.pump();
+}
+
+/// Phase F: records a step by holding the round button past the room's hold time.
+Future<void> holdStep(WidgetTester tester, String step) async {
+  final button = find.byKey(Key('step-$step'));
+  await reveal(tester, 'step-$step');
+  final g = await tester.startGesture(tester.getCenter(button));
+  // The first frame starts the ring; the next ones fill it.
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 700));
+  await tester.pump(const Duration(milliseconds: 100));
+  await g.up();
+  await tester.pumpAndSettle();
 }
 
 Future<void> enterPin(WidgetTester tester, String pin) async {

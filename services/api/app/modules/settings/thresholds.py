@@ -9,7 +9,9 @@ lifetimes, signature ages) stay in the code or the environment, as the design ex
 from dataclasses import dataclass
 from typing import Any, Literal
 
-Unit = Literal["count", "days", "hours", "metres", "minutes", "percent", "per_km2", "months", "years"]
+Unit = Literal[
+    "count", "days", "hours", "metres", "minutes", "percent", "per_km2", "months", "years", "seconds", "milliseconds"
+]
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +69,13 @@ SPECS: dict[str, Spec] = {
     # Decree 93-942: the committees meet at least once a year; the plan is reviewed then, and remade every five years.
     "snacr.review_months": Spec("snacr", "months", 12, 1, 60),
     "snacr.validity_years": Spec("snacr", "years", 5, 1, 10),
+    # The field agents' phones (docs/phase-f/design-f.md §2): how long an activation code from the room chief is
+    # valid and how many wrong tries lock it, how long the round button is held to record a step, and how long the
+    # team may undo it.
+    "field.code_hours": Spec("field", "hours", 72, 1, 168),
+    "field.code_attempts": Spec("field", "count", 5, 3, 10),
+    "field.hold_ms": Spec("field", "milliseconds", 1_500, 600, 4_000),
+    "field.undo_seconds": Spec("field", "seconds", 10, 0, 60),
 }
 
 DEFAULTS: dict[str, int] = {name: spec.default for name, spec in SPECS.items()}

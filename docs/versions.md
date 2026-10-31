@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2 و L3 و L3b و UI-3 و UI-3b و R و PL و L4 و R3 و R4 و L5 و AI5 و M و N و S و S2)
+# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2 و L3 و L3b و UI-3 و UI-3b و R و PL و L4 و R3 و R4 و L5 و AI5 و M و N و S و S2 و F)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -747,3 +747,8 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
 38. المرحلة S2: لا حزمة. `alembic upgrade head` (0086) يضيف سجل المهمة: تواقيت المغادرة والمستشفى والإتاحة والرجوع،
     عدد الأعوان والموارد ومصدر كل توقيت، والقيد `ck_assignment_times_order` (NOT VALID على القديم). أحداث SMS
     `EH2` الجديدة (`left_scene` و `at_hospital` و `available` و `back_at_unit`) لا تحتاج أي ضبط.
+39. المرحلة F: لا حزمة جديدة. `alembic upgrade head` (0087) يضيف `ops.field_agent` (الهاتف والشريحة وIMEI مشفّرة بمفتاح
+    `FIELD_ENCRYPTION_KEY` الموجود) وأنواع التقرير الميداني `toll` و `report` ونقطة المهمة. رموز دخول الأعوان تصدرها المنظومة
+    نفسها (المُصدِر `urn:ehimaya:field`) بمفتاح مشتق من أسرار الخادم، فلا ضبط جديد في Keycloak. الإعدادات الأربعة
+    (`field.code_hours` 72 و `field.code_attempts` 5 و `field.hold_ms` 1500 و `field.undo_seconds` 10) بقيمها الافتراضية حتى
+    يعدّلها مدير النظام. تفريغ الصوت يستعمل خدمة التفريغ المحلية نفسها (faster-whisper، المرحلة AI5).

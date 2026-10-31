@@ -260,6 +260,13 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     crewDevices: vi.fn(() => Promise.resolve([])),
     revokeCrewDevice: vi.fn(),
     markAlertSeen: vi.fn(),
+    // Phase F: the staff app's agents and the mission point picked on the map.
+    fieldAgents: vi.fn(() => Promise.resolve([])),
+    createFieldAgent: vi.fn(),
+    updateFieldAgent: vi.fn(),
+    renewFieldCode: vi.fn(),
+    disableFieldAgent: vi.fn(),
+    setAssignmentTarget: vi.fn(),
     reportTemplates: vi.fn(() => Promise.resolve([])),
     createTemplate: vi.fn(),
     editTemplate: vi.fn(),

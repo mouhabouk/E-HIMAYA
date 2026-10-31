@@ -4954,6 +4954,30 @@ button.nav-card:hover {
   background: var(--tone-red-tint);
   color: var(--tone-red-ink);
 }
+/* Phase F: the staff app's agents (page «فريق النوبة وأجهزة الأعوان») and the mission's field flow. */
+.chip--agent-pending {
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+}
+.chip--agent-active {
+  background: var(--tone-green-tint);
+  color: var(--tone-green-ink);
+}
+.chip--agent-disabled,
+.chip--agent-deleted {
+  background: var(--tone-red-tint);
+  color: var(--tone-red-ink);
+}
+.field-code__value {
+  font-family: var(--mono);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin: 0.25rem 0;
+}
+.crew-flow .chip {
+  margin-inline-end: 0.25rem;
+}
 .crew-counters {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
@@ -7591,8 +7615,8 @@ button.nav-card:hover {
 .inventory-search__total {
   margin-block: 0 8px;
 }
-/* The decision window and the permissions page (L4), the dry run (L5a): text, date and number fields drawn like the others. */
-:is(.win-page, .perm-page, .drills-page, .drill-page)
+/* The decision window and the permissions page (L4), the dry run (L5a), the field agents (F): text, date and number fields drawn like the others. */
+:is(.win-page, .perm-page, .drills-page, .drill-page, .field-agents-page)
   :is(input:not([type]), input[type="text"], input[type="date"], input[type="datetime-local"], input[type="number"]) {
   font: inherit;
   color: var(--text);

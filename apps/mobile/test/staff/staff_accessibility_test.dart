@@ -29,6 +29,7 @@ void main() {
         TextDirection.rtl,
       );
       await check(tester, 'sign-in');
+      await reveal(tester, 'staff-sign-in');
       await tester.tap(find.byKey(const Key('staff-sign-in')));
       await tester.pump(const Duration(milliseconds: 100));
       await check(tester, 'code');
@@ -164,9 +165,11 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.tap(find.byKey(const Key('step-on_scene')));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('staff-send-sms')), findsOneWidget);
+      await holdStep(tester, 'on_scene');
+      expect(
+        find.byKey(const Key('staff-send-sms'), skipOffstage: false),
+        findsOneWidget,
+      );
       await check(tester, 'pending');
       handle.dispose();
     });

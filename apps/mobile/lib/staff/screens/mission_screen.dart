@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/http/models.dart';
-import '../../core/location/location_service.dart';
 import '../../core/settings/settings_controller.dart';
 import '../../core/ui/components.dart';
 import '../../core/ui/tokens.dart';
@@ -17,6 +17,7 @@ import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
 import 'detailed_report_screen.dart';
+import 'field_flow.dart';
 import 'field_widgets.dart';
 import 'record_screen.dart';
 import 'situation_screen.dart';
@@ -49,6 +50,8 @@ class MissionScreen extends ConsumerWidget {
         : distanceM(here, m.location!).round();
     final onScene =
         m.status == MissionStatus.onScene || m.status == MissionStatus.released;
+    // Phase F: only the leader's phone records the mission; the crew reads it.
+    final readOnly = s.me?.readOnly ?? false;
     return Scaffold(
       appBar: StaffAppBar(
         title: l10n.staffMission,
@@ -60,17 +63,58 @@ class MissionScreen extends ConsumerWidget {
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(16),
+              // A handful of cards: all built, so the ones below the round button stay reachable.
+              scrollCacheExtent: const ScrollCacheExtent.pixels(4000),
               children: [
                 _MissionCard(mission: m, away: away),
                 const SizedBox(height: 12),
                 for (final a in m.alerts) AlertLine(alert: a),
                 _Timeline(mission: m, away: away),
                 const SizedBox(height: 12),
-                _NextStep(mission: m, away: away, busy: s.busy),
+                if (readOnly)
+                  const ReadOnlyBanner()
+                else
+                  _NextStep(mission: m, away: away),
                 const StaffErrorText(),
                 const SizedBox(height: 12),
                 _QuickActions(mission: m),
-                if (onScene) ...[
+                const SizedBox(height: 12),
+                NatureChips(mission: m, readOnly: readOnly),
+                const SizedBox(height: 12),
+                MissionPointCard(mission: m),
+                const SizedBox(height: 12),
+                if (!readOnly && (m.over || m.leftSceneAt != null))
+                  NavCard(
+                    key: const Key('open-toll'),
+                    icon: Icons.summarize,
+                    tone: m.toll == null ? Tone.orange : Tone.green,
+                    title: l10n.staffToll,
+                    subtitle: m.toll == null
+                        ? l10n.staffTollDue
+                        : l10n.staffSentAt(
+                            hhmm(m.toll!.createdAt ?? m.createdAt),
+                          ),
+                    onTap: () => push(context, TollScreen(missionId: m.id)),
+                  ),
+                if (!readOnly)
+                  NavCard(
+                    key: const Key('open-report'),
+                    icon: Icons.record_voice_over,
+                    tone: Tone.navy,
+                    title: l10n.staffInterventionReport,
+                    subtitle: m.interventionReport == null
+                        ? l10n.staffInterventionReportDue
+                        : l10n.staffSentAt(
+                            hhmm(
+                              m.interventionReport!.createdAt ?? m.createdAt,
+                            ),
+                          ),
+                    onTap: () => push(
+                      context,
+                      InterventionReportScreen(missionId: m.id),
+                    ),
+                  ),
+                if (onScene && !readOnly) ...[
                   const SizedBox(height: 12),
                   NavCard(
                     key: const Key('open-situation'),
@@ -127,7 +171,7 @@ class MissionScreen extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: m.active
+      bottomNavigationBar: m.active && !readOnly
           ? BottomActionBar(
               actions: [
                 BarAction(
@@ -399,69 +443,31 @@ class _Dot extends StatelessWidget {
   }
 }
 
-/// The big button of the next step; arriving is suggested within 150 m (F-STF-03).
-class _NextStep extends ConsumerWidget {
-  const _NextStep({
-    required this.mission,
-    required this.away,
-    required this.busy,
-  });
+/// The round button of the next step (phase F) with «تجاوز المرحلة» and «بدون تدخل»; arriving is
+/// suggested within 150 m (F-STF-03).
+class _NextStep extends StatelessWidget {
+  const _NextStep({required this.mission, required this.away});
 
   final Mission mission;
   final int? away;
-  final bool busy;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final m = mission;
-    final (String status, String label, IconData icon, Tone tone)? next =
-        switch (m.status) {
-          MissionStatus.ordered => (
-            'en_route',
-            l10n.staffStepLeft,
-            Icons.directions_car,
-            Tone.orange,
-          ),
-          MissionStatus.enRoute => (
-            'on_scene',
-            l10n.staffStepArrived,
-            Icons.place,
-            Tone.orange,
-          ),
-          _ => null,
-        };
-    if (next == null) {
-      return _Milestones(mission: m, busy: busy);
-    }
     final near =
         m.status == MissionStatus.enRoute &&
         away != null &&
         away! <= StaffConfig.onSceneRadiusM;
     final caption = m.status == MissionStatus.enRoute && away != null && !near
         ? l10n.staffAwayFrom(away!)
+        : m.nextStep == 'back_at_unit'
+        ? l10n.staffBackEndsMission
         : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        BigStepButton(
-          key: Key('step-${next.$1}'),
-          label: next.$2,
-          caption: caption,
-          icon: next.$3,
-          tone: next.$4,
-          onPressed: busy
-              ? null
-              : () async {
-                  final at = await ref
-                      .read(locationServiceProvider)
-                      .bestEffort(timeout: const Duration(seconds: 3));
-                  await ref
-                      .read(staffControllerProvider.notifier)
-                      .step(m.id, next.$1, at: at);
-                  ref.invalidate(staffPositionProvider);
-                },
-        ),
+        MissionFlowPanel(mission: m, caption: caption),
         if (near)
           Semantics(
             liveRegion: true,
@@ -483,62 +489,6 @@ class _NextStep extends ConsumerWidget {
   }
 }
 
-/// The steps after the arrival (phase S2): one big button for the main one, the other beside it;
-/// back at the unit ends the mission. The time is the phone's, kept in order by the server.
-class _Milestones extends ConsumerWidget {
-  const _Milestones({required this.mission, required this.busy});
-
-  final Mission mission;
-  final bool busy;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final steps = mission.nextMilestones;
-    if (steps.isEmpty) return const SizedBox.shrink();
-    (String, IconData, Tone) look(String step) => switch (step) {
-      'left_scene' => (l10n.staffStepLeftScene, Icons.logout, Tone.orange),
-      'at_hospital' => (
-        l10n.staffStepAtHospital,
-        Icons.local_hospital,
-        Tone.red,
-      ),
-      'available' => (l10n.staffStepAvailable, Icons.check_circle, Tone.navy),
-      _ => (l10n.staffStepBackAtUnit, Icons.home_work, Tone.green),
-    };
-    Future<void> give(String step) =>
-        ref.read(staffControllerProvider.notifier).milestone(mission.id, step);
-    final (label, icon, tone) = look(steps.first);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        BigStepButton(
-          key: Key('step-${steps.first}'),
-          label: label,
-          caption: steps.first == 'back_at_unit'
-              ? l10n.staffBackEndsMission
-              : null,
-          icon: icon,
-          tone: tone,
-          onPressed: busy ? null : () => give(steps.first),
-        ),
-        for (final other in steps.skip(1)) ...[
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            key: Key('step-$other'),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(56),
-            ),
-            onPressed: busy ? null : () => give(other),
-            icon: Icon(look(other).$2),
-            label: Text(look(other).$1),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
 /// Route, room, and the reporter when the room gave a number (design §5.3).
 class _QuickActions extends ConsumerWidget {
   const _QuickActions({required this.mission});
@@ -550,7 +500,7 @@ class _QuickActions extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final launch = ref.read(staffLauncherProvider);
     final room = ref.read(staffConfigProvider).roomPhone;
-    final loc = mission.location;
+    final loc = mission.destination;
     final contact = mission.contactPhone;
     Widget quick(String key, IconData icon, String label, Uri uri) => Expanded(
       child: OutlinedButton(

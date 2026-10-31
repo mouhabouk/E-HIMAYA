@@ -2276,6 +2276,17 @@
             ],
             "title": "Crew Count"
           },
+          "crew_nature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Nature"
+          },
           "en_route_at": {
             "anyOf": [
               {
@@ -2287,6 +2298,11 @@
               }
             ],
             "title": "En Route At"
+          },
+          "field_initiated": {
+            "default": false,
+            "title": "Field Initiated",
+            "type": "boolean"
           },
           "id": {
             "format": "uuid",
@@ -2317,6 +2333,17 @@
               }
             ],
             "title": "Left Scene At"
+          },
+          "no_intervention_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "No Intervention Reason"
           },
           "on_scene_at": {
             "anyOf": [
@@ -2380,6 +2407,13 @@
               }
             ]
           },
+          "skipped": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Skipped",
+            "type": "object"
+          },
           "status": {
             "enum": [
               "ordered",
@@ -2390,6 +2424,27 @@
             ],
             "title": "Status",
             "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Note"
           },
           "time_sources": {
             "additionalProperties": {
@@ -5601,6 +5656,31 @@
         "title": "ChannelStats",
         "type": "object"
       },
+      "CharterIn": {
+        "properties": {
+          "location": {
+            "title": "Location",
+            "type": "boolean"
+          },
+          "sms": {
+            "title": "Sms",
+            "type": "boolean"
+          },
+          "version": {
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "sms",
+          "location"
+        ],
+        "title": "CharterIn",
+        "type": "object"
+      },
       "CharterOut": {
         "properties": {
           "version": {
@@ -7527,10 +7607,64 @@
         "title": "CredentialsOut",
         "type": "object"
       },
+      "CrewAgent": {
+        "properties": {
+          "function": {
+            "enum": [
+              "leader",
+              "agent",
+              "driver"
+            ],
+            "title": "Function",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "matricule": {
+            "title": "Matricule",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "matricule",
+          "function"
+        ],
+        "title": "CrewAgent",
+        "type": "object"
+      },
       "CrewMe": {
         "properties": {
+          "activated_agent": {
+            "default": false,
+            "title": "Activated Agent",
+            "type": "boolean"
+          },
+          "charter_accepted": {
+            "default": true,
+            "title": "Charter Accepted",
+            "type": "boolean"
+          },
           "device": {
             "$ref": "#/components/schemas/DeviceOut"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldSettings"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "gouvernorat_code": {
             "title": "Gouvernorat Code",
@@ -14513,6 +14647,532 @@
         "title": "FeedbackOut",
         "type": "object"
       },
+      "FieldActivateDevice": {
+        "properties": {
+          "app_build": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Build"
+          },
+          "device_ref": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Ref"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "push_token": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Push Token"
+          },
+          "sim_number": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9 ]{8,16}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sim Number"
+          }
+        },
+        "required": [
+          "platform"
+        ],
+        "title": "FieldActivateDevice",
+        "type": "object"
+      },
+      "FieldActivateIn": {
+        "properties": {
+          "code": {
+            "maxLength": 12,
+            "minLength": 8,
+            "title": "Code",
+            "type": "string"
+          },
+          "device": {
+            "$ref": "#/components/schemas/FieldActivateDevice"
+          },
+          "matricule": {
+            "pattern": "^[0-9A-Za-z]{3,20}$",
+            "title": "Matricule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "matricule",
+          "code",
+          "device"
+        ],
+        "title": "FieldActivateIn",
+        "type": "object"
+      },
+      "FieldAgentAction": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "FieldAgentAction",
+        "type": "object"
+      },
+      "FieldAgentIn": {
+        "properties": {
+          "function": {
+            "enum": [
+              "leader",
+              "agent",
+              "driver"
+            ],
+            "title": "Function",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "matricule": {
+            "pattern": "^[0-9A-Za-z]{3,20}$",
+            "title": "Matricule",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9 ]{8,16}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "shift_label": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shift Label"
+          }
+        },
+        "required": [
+          "matricule",
+          "name",
+          "function"
+        ],
+        "title": "FieldAgentIn",
+        "type": "object"
+      },
+      "FieldAgentOut": {
+        "properties": {
+          "activated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activated At"
+          },
+          "charter_accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Charter Accepted At"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "code_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Expires At"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldDeviceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "disabled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled At"
+          },
+          "disabled_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabled Reason"
+          },
+          "function": {
+            "enum": [
+              "leader",
+              "agent",
+              "driver"
+            ],
+            "title": "Function",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_position": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldPosition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "matricule": {
+            "title": "Matricule",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "shift_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shift Label"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "active",
+              "disabled",
+              "deleted"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "matricule",
+          "name",
+          "function",
+          "shift_label",
+          "phone",
+          "status",
+          "code_expires_at",
+          "charter_accepted_at",
+          "activated_at",
+          "disabled_at",
+          "disabled_reason",
+          "device",
+          "last_position"
+        ],
+        "title": "FieldAgentOut",
+        "type": "object"
+      },
+      "FieldAgentPatch": {
+        "properties": {
+          "function": {
+            "anyOf": [
+              {
+                "enum": [
+                  "leader",
+                  "agent",
+                  "driver"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Function"
+          },
+          "imei": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]{14,16}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imei"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9 ]{8,16}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "shift_label": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shift Label"
+          }
+        },
+        "title": "FieldAgentPatch",
+        "type": "object"
+      },
+      "FieldDeviceOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "device_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Ref"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "imei": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imei"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "title": "Last Seen At",
+            "type": "string"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "platform": {
+            "title": "Platform",
+            "type": "string"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "sim_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sim Number"
+          }
+        },
+        "required": [
+          "id",
+          "model",
+          "platform",
+          "device_ref",
+          "sim_number",
+          "imei",
+          "created_at",
+          "last_seen_at",
+          "revoked_at"
+        ],
+        "title": "FieldDeviceOut",
+        "type": "object"
+      },
       "FieldInspectionIn": {
         "description": "The grid filled on the phone, with the phone's id for it (a resent inspection is applied once), its clock,\nand the two signatures (design-staff.md §8.4).",
         "properties": {
@@ -14597,6 +15257,45 @@
           "representative_signature"
         ],
         "title": "FieldInspectionIn",
+        "type": "object"
+      },
+      "FieldPosition": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon",
+          "at"
+        ],
+        "title": "FieldPosition",
+        "type": "object"
+      },
+      "FieldRefreshIn": {
+        "properties": {
+          "refresh_token": {
+            "maxLength": 200,
+            "minLength": 20,
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ],
+        "title": "FieldRefreshIn",
         "type": "object"
       },
       "FieldReportOut": {
@@ -14696,7 +15395,9 @@
             "enum": [
               "first",
               "update",
-              "detailed"
+              "detailed",
+              "toll",
+              "report"
             ],
             "title": "Kind",
             "type": "string"
@@ -14772,6 +15473,80 @@
           "created_at"
         ],
         "title": "FieldReportOut",
+        "type": "object"
+      },
+      "FieldSettings": {
+        "description": "How the round button behaves (phase F, settings ``field.hold_ms`` and ``field.undo_seconds``).",
+        "properties": {
+          "hold_ms": {
+            "title": "Hold Ms",
+            "type": "integer"
+          },
+          "undo_seconds": {
+            "title": "Undo Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hold_ms",
+          "undo_seconds"
+        ],
+        "title": "FieldSettings",
+        "type": "object"
+      },
+      "FieldTokens": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "charter_accepted": {
+            "title": "Charter Accepted",
+            "type": "boolean"
+          },
+          "device_id": {
+            "format": "uuid",
+            "title": "Device Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "function": {
+            "enum": [
+              "leader",
+              "agent",
+              "driver"
+            ],
+            "title": "Function",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_at",
+          "refresh_token",
+          "device_id",
+          "name",
+          "function",
+          "gouvernorat_code",
+          "charter_accepted"
+        ],
+        "title": "FieldTokens",
         "type": "object"
       },
       "FieldVisit": {
@@ -19313,6 +20088,51 @@
         "title": "InspectionItemOut",
         "type": "object"
       },
+      "InterventionReportIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "text": {
+            "maxLength": 4000,
+            "minLength": 3,
+            "title": "Text",
+            "type": "string"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
+          }
+        },
+        "required": [
+          "client_id",
+          "text"
+        ],
+        "title": "InterventionReportIn",
+        "type": "object"
+      },
       "InvitationAccepted": {
         "properties": {
           "org_id": {
@@ -23204,6 +24024,17 @@
             ],
             "title": "Crew Count"
           },
+          "crew_nature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Nature"
+          },
           "detailed_report": {
             "anyOf": [
               {
@@ -23237,6 +24068,11 @@
             ],
             "title": "En Route At"
           },
+          "field_initiated": {
+            "default": false,
+            "title": "Field Initiated",
+            "type": "boolean"
+          },
           "field_report": {
             "anyOf": [
               {
@@ -23255,6 +24091,16 @@
           "incident": {
             "$ref": "#/components/schemas/MissionIncident"
           },
+          "intervention_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "left_scene_at": {
             "anyOf": [
               {
@@ -23266,6 +24112,17 @@
               }
             ],
             "title": "Left Scene At"
+          },
+          "no_intervention_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "No Intervention Reason"
           },
           "on_scene_at": {
             "anyOf": [
@@ -23309,6 +24166,13 @@
             ],
             "title": "Released At"
           },
+          "skipped": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Skipped",
+            "type": "object"
+          },
           "status": {
             "enum": [
               "ordered",
@@ -23319,6 +24183,27 @@
             ],
             "title": "Status",
             "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Note"
           },
           "template": {
             "anyOf": [
@@ -23341,6 +24226,16 @@
             },
             "title": "Time Sources",
             "type": "object"
+          },
+          "toll": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "transports": {
             "items": {
@@ -23675,6 +24570,49 @@
         "title": "MyRewards",
         "type": "object"
       },
+      "NatureIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "nature": {
+            "enum": [
+              "fire",
+              "flood",
+              "traffic_accident",
+              "rescue",
+              "medical",
+              "drowning",
+              "landslide",
+              "chemical_leak",
+              "animal",
+              "other"
+            ],
+            "title": "Nature",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "nature"
+        ],
+        "title": "NatureIn",
+        "type": "object"
+      },
       "NearHospital": {
         "description": "A hospital near an incident, timed on the road (phase L1b).",
         "properties": {
@@ -23930,6 +24868,45 @@
           "missing_points"
         ],
         "title": "NextBadge",
+        "type": "object"
+      },
+      "NoInterventionIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "reason": {
+            "enum": [
+              "false_alarm",
+              "put_out_before",
+              "other_agency",
+              "place_not_found",
+              "cancelled",
+              "other"
+            ],
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "reason"
+        ],
+        "title": "NoInterventionIn",
         "type": "object"
       },
       "NominationIn": {
@@ -24543,6 +25520,76 @@
           }
         },
         "title": "OpenIn",
+        "type": "object"
+      },
+      "OpenMissionIn": {
+        "description": "A mission the team opens from the field (phase F): the room is told at once.",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "nature": {
+            "enum": [
+              "fire",
+              "flood",
+              "traffic_accident",
+              "rescue",
+              "medical",
+              "drowning",
+              "landslide",
+              "chemical_leak",
+              "animal",
+              "other"
+            ],
+            "title": "Nature",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "client_id",
+          "nature",
+          "lat",
+          "lon"
+        ],
+        "title": "OpenMissionIn",
         "type": "object"
       },
       "OpenedFile": {
@@ -32153,7 +33200,8 @@
           "medical_coordinator",
           "team_leader",
           "governor",
-          "minister"
+          "minister",
+          "field_agent"
         ],
         "title": "Role",
         "type": "string"
@@ -33873,6 +34921,15 @@
             "title": "Client Id",
             "type": "string"
           },
+          "crew_agent_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 19,
+            "title": "Crew Agent Ids",
+            "type": "array"
+          },
           "crew_names": {
             "anyOf": [
               {
@@ -33919,6 +34976,13 @@
       },
       "ShiftOut": {
         "properties": {
+          "crew": {
+            "items": {
+              "$ref": "#/components/schemas/CrewAgent"
+            },
+            "title": "Crew",
+            "type": "array"
+          },
           "crew_names": {
             "anyOf": [
               {
@@ -33951,6 +35015,17 @@
             "title": "Id",
             "type": "string"
           },
+          "leader_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader Name"
+          },
           "resource": {
             "$ref": "#/components/schemas/ResourceRef"
           },
@@ -33973,6 +35048,13 @@
       },
       "ShiftRow": {
         "properties": {
+          "crew": {
+            "items": {
+              "$ref": "#/components/schemas/CrewAgent"
+            },
+            "title": "Crew",
+            "type": "array"
+          },
           "crew_names": {
             "anyOf": [
               {
@@ -34041,7 +35123,6 @@
           "crew_names",
           "started_at",
           "ended_at",
-          "leader_name",
           "gouvernorat_code"
         ],
         "title": "ShiftRow",
@@ -34339,6 +35420,53 @@
           "key"
         ],
         "title": "SkillTotal",
+        "type": "object"
+      },
+      "SkipIn": {
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "reason": {
+            "enum": [
+              "no_transport",
+              "other_transport",
+              "refused_transport",
+              "not_needed",
+              "other"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "step": {
+            "enum": [
+              "at_hospital",
+              "available"
+            ],
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "step",
+          "reason"
+        ],
+        "title": "SkipIn",
         "type": "object"
       },
       "SlotIn": {
@@ -39259,6 +40387,41 @@
         "title": "Tally",
         "type": "object"
       },
+      "TargetIn": {
+        "description": "The point the room picks on the map for a team (phase F).",
+        "properties": {
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "TargetIn",
+        "type": "object"
+      },
       "TargetOut": {
         "properties": {
           "gouvernorat_code": {
@@ -40590,6 +41753,70 @@
           "en"
         ],
         "title": "Titles",
+        "type": "object"
+      },
+      "TollIn": {
+        "description": "What the team writes at the end: material damage and a description, typed or spoken and corrected.",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "damage": {
+            "enum": [
+              "none",
+              "minor",
+              "moderate",
+              "major",
+              "total"
+            ],
+            "title": "Damage",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
+          }
+        },
+        "required": [
+          "client_id",
+          "damage"
+        ],
+        "title": "TollIn",
         "type": "object"
       },
       "TopicIn": {
@@ -55456,6 +56683,105 @@
         ]
       }
     },
+    "/api/v1/crew/agents": {
+      "get": {
+        "description": "The activated agents the leader picks the crew of a shift from (phase F).",
+        "operationId": "agents_api_v1_crew_agents_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CrewAgent"
+                  },
+                  "title": "Response Agents Api V1 Crew Agents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Agents",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/charter": {
+      "post": {
+        "operationId": "charter_api_v1_crew_charter_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CharterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Charter",
+        "tags": [
+          "field-agents"
+        ]
+      }
+    },
     "/api/v1/crew/devices": {
       "post": {
         "operationId": "register_device_api_v1_crew_devices_post",
@@ -55728,6 +57054,72 @@
           }
         ],
         "summary": "Missions",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/open": {
+      "post": {
+        "description": "A mission the team opens from the field: the room sees the new incident at once.",
+        "operationId": "open_mission_api_v1_crew_missions_open_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenMissionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open Mission",
         "tags": [
           "crew"
         ]
@@ -56450,6 +57842,156 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/nature": {
+      "post": {
+        "operationId": "nature_api_v1_crew_missions__assignment_id__nature_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NatureIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Nature",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/no-intervention": {
+      "post": {
+        "operationId": "no_intervention_api_v1_crew_missions__assignment_id__no_intervention_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoInterventionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "No Intervention",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/notes": {
       "post": {
         "operationId": "text_note_api_v1_crew_missions__assignment_id__notes_post",
@@ -56676,6 +58218,81 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/report": {
+      "post": {
+        "operationId": "intervention_report_api_v1_crew_missions__assignment_id__report_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterventionReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Intervention Report",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/situation": {
       "post": {
         "description": "A situation report (phase P4b): the first one, then updates. ``/first-report`` is the same call.",
@@ -56747,6 +58364,81 @@
           }
         ],
         "summary": "Situation",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/skip": {
+      "post": {
+        "operationId": "skip_api_v1_crew_missions__assignment_id__skip_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkipIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Skip",
         "tags": [
           "crew"
         ]
@@ -56827,6 +58519,81 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/toll": {
+      "post": {
+        "operationId": "toll_api_v1_crew_missions__assignment_id__toll_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TollIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Toll",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/transports": {
       "post": {
         "operationId": "transport_api_v1_crew_missions__assignment_id__transports_post",
@@ -56897,6 +58664,133 @@
           }
         ],
         "summary": "Transport",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/voice": {
+      "post": {
+        "description": "A spoken toll or intervention report as the raw request body: transcribed, the audio deleted, the text sent\nback for the leader to correct; nothing is kept until the corrected text is sent.",
+        "operationId": "mission_voice_api_v1_crew_missions__assignment_id__voice_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "audio/aac": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/webm": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/x-wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mission Voice",
         "tags": [
           "crew"
         ]
@@ -57820,6 +59714,88 @@
         "summary": "Public Guide",
         "tags": [
           "emergency-guide"
+        ]
+      }
+    },
+    "/api/v1/field/activate": {
+      "post": {
+        "operationId": "activate_api_v1_field_activate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldActivateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldTokens"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activate",
+        "tags": [
+          "field-agents"
+        ]
+      }
+    },
+    "/api/v1/field/token": {
+      "post": {
+        "operationId": "token_api_v1_field_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldRefreshIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldTokens"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Token",
+        "tags": [
+          "field-agents"
         ]
       }
     },
@@ -67781,6 +69757,65 @@
         ]
       }
     },
+    "/api/v1/staff/assignments/{assignment_id}/target": {
+      "put": {
+        "description": "The room picks the point the team must reach on the map and sends it to the team's phone (phase F).",
+        "operationId": "set_target_api_v1_staff_assignments__assignment_id__target_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Target",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/staff/audit": {
       "get": {
         "operationId": "list_scoped_api_v1_staff_audit_get",
@@ -75040,6 +77075,332 @@
         "summary": "Revoke Rule",
         "tags": [
           "features"
+        ]
+      }
+    },
+    "/api/v1/staff/field-agents": {
+      "get": {
+        "operationId": "list_agents_api_v1_staff_field_agents_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FieldAgentOut"
+                  },
+                  "title": "Response List Agents Api V1 Staff Field Agents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Agents",
+        "tags": [
+          "field-agents"
+        ]
+      },
+      "post": {
+        "operationId": "create_api_v1_staff_field_agents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldAgentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldAgentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create",
+        "tags": [
+          "field-agents"
+        ]
+      }
+    },
+    "/api/v1/staff/field-agents/{agent_id}": {
+      "patch": {
+        "operationId": "update_api_v1_staff_field_agents__agent_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldAgentPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldAgentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update",
+        "tags": [
+          "field-agents"
+        ]
+      }
+    },
+    "/api/v1/staff/field-agents/{agent_id}/code": {
+      "post": {
+        "operationId": "renew_code_api_v1_staff_field_agents__agent_id__code_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldAgentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Renew Code",
+        "tags": [
+          "field-agents"
+        ]
+      }
+    },
+    "/api/v1/staff/field-agents/{agent_id}/delete": {
+      "post": {
+        "operationId": "delete_api_v1_staff_field_agents__agent_id__delete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldAgentAction"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldAgentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete",
+        "tags": [
+          "field-agents"
+        ]
+      }
+    },
+    "/api/v1/staff/field-agents/{agent_id}/disable": {
+      "post": {
+        "operationId": "disable_api_v1_staff_field_agents__agent_id__disable_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldAgentAction"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldAgentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Disable",
+        "tags": [
+          "field-agents"
         ]
       }
     },

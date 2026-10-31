@@ -1679,6 +1679,12 @@ erDiagram
         smallint crew_count
         jsonb consumables
         jsonb time_sources
+        geography_point_4326 target_location
+        text target_note
+        text crew_nature
+        jsonb skipped
+        text no_intervention_reason
+        boolean field_initiated
     }
     ops__callout {
         uuid id PK
@@ -1782,6 +1788,28 @@ erDiagram
         text acked_by_name
         datetime acked_at
         text note
+    }
+    ops__field_agent {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text matricule
+        text name
+        text function
+        text shift_label
+        blob phone_enc
+        text status
+        text code_hash
+        datetime code_expires_at
+        smallint code_attempts
+        text charter_version
+        datetime charter_accepted_at
+        jsonb consents
+        text created_by
+        datetime created_at
+        datetime activated_at
+        datetime disabled_at
+        text disabled_by
+        text disabled_reason
     }
     ops__field_attachment {
         uuid id PK
@@ -1937,6 +1965,7 @@ erDiagram
         smallint gouvernorat_code FK
         smallint crew_size
         text crew_names
+        array crew_agent_ids
         datetime started_at
         datetime ended_at
     }
@@ -1954,6 +1983,13 @@ erDiagram
         datetime last_seen_at
         datetime revoked_at
         text revoked_by
+        uuid agent_id FK
+        text model
+        text device_ref
+        blob sim_number_enc
+        blob imei_enc
+        text refresh_hash
+        datetime refresh_expires_at
     }
     ops__timeline_event {
         integer id PK
@@ -1979,6 +2015,7 @@ erDiagram
     geo__delegation ||--o{ ops__saved_place : "delegation_id"
     geo__gouvernorat ||--o{ ops__directive : "issuer_scope"
     geo__gouvernorat ||--o{ ops__directive_ack : "gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__field_agent : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__incident : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__incident_gouvernorat : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__level_state : "gouvernorat_code"
@@ -2001,6 +2038,7 @@ erDiagram
     ops__callout ||--o{ ops__assignment : "callout_id"
     ops__callout ||--o{ ops__callout_target : "callout_id"
     ops__directive ||--o{ ops__directive_ack : "directive_id"
+    ops__field_agent ||--o{ ops__staff_device : "agent_id"
     ops__incident ||--o{ ops__assignment : "incident_id"
     ops__incident ||--o{ ops__callout : "incident_id"
     ops__incident ||--o{ ops__casualty_count : "incident_id"

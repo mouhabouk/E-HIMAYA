@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -67,6 +67,49 @@ export function PositionLine({ position }: { position: VehiclePosition }) {
           ? t("crew.lastPosition", { ago })
           : t("crew.lastPositionDistance", { ago, km: fmt.decimal(position.distance_m / 1000) })}
       </time>
+    </div>
+  );
+}
+
+/** Phase F: what the team's phone added to the mission: the nature it confirmed, the point the room picked, the
+ * steps it skipped and why, the end without intervention, a mission opened from the field. */
+export function FieldFlowLine({ assignment }: { assignment: Assignment }) {
+  const { t } = useTranslation();
+  const skipped = Object.entries(assignment.skipped ?? {});
+  const parts: ReactNode[] = [];
+  if (assignment.field_initiated) parts.push(<span className="chip chip--crew-waiting">{t("crew.flow.fieldInitiated")}</span>);
+  if (assignment.crew_nature) parts.push(<span>{t("crew.flow.nature", { nature: t(`crew.nature.${assignment.crew_nature}`) })}</span>);
+  if (assignment.target)
+    parts.push(
+      <span>
+        {t("crew.flow.target")}{" "}
+        <bdi dir="ltr">
+          {assignment.target.lat.toFixed(5)}, {assignment.target.lon.toFixed(5)}
+        </bdi>
+        {assignment.target_note && <span dir="auto"> ({assignment.target_note})</span>}
+      </span>,
+    );
+  for (const [step, reason] of skipped)
+    parts.push(
+      <span>
+        {t("crew.flow.skipped", { step: t(`record.step.${step}_at`), reason: t(`crew.skipReason.${reason}`) })}
+      </span>,
+    );
+  if (assignment.no_intervention_reason)
+    parts.push(
+      <span className="chip chip--crew-revoked">
+        {t("crew.flow.noIntervention", { reason: t(`crew.noInterventionReason.${assignment.no_intervention_reason}`) })}
+      </span>,
+    );
+  if (parts.length === 0) return null;
+  return (
+    <div className="cell-sub crew-flow">
+      {parts.map((p, i) => (
+        <span key={i}>
+          {i > 0 && " · "}
+          {p}
+        </span>
+      ))}
     </div>
   );
 }
@@ -271,7 +314,9 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
   const transports = incident.transports ?? [];
   const alerts = incident.alerts ?? [];
   const attachments = incident.attachments ?? [];
-  const situations = reports.filter((r) => r.kind !== "detailed");
+  const situations = reports.filter((r) => r.kind !== "detailed" && r.kind !== "toll" && r.kind !== "report");
+  // Phase F: the toll and the intervention report the team writes at the end (typed, or spoken and corrected).
+  const closing = reports.filter((r) => r.kind === "toll" || r.kind === "report");
   const detailed = reports.filter((r) => r.kind === "detailed");
   const templates = useQuery({
     queryKey: crewKeys.templates(true),
@@ -286,7 +331,8 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
     !counted &&
     transports.length === 0 &&
     alerts.length === 0 &&
-    attachments.length === 0
+    attachments.length === 0 &&
+    closing.length === 0
   )
     return null;
   // The last situation report of each vehicle.
@@ -359,6 +405,32 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
           {detailed.map((r) => (
             <DetailedReport key={r.id} report={r} templates={templates.data ?? []} />
           ))}
+        </>
+      )}
+      {closing.length > 0 && (
+        <>
+          <h3>{t("crew.closing")}</h3>
+          <ul className="crew-reports">
+            {closing.map((r) => (
+              <li key={r.id}>
+                <strong dir="auto">{r.resource_label ?? "—"}</strong> ·{" "}
+                {r.kind === "toll" ? t("crew.toll") : t("crew.interventionReport")}
+                {r.kind === "toll" && typeof r.answers?.damage === "string" && (
+                  <> · {t("crew.damage.label")}: {t(`crew.damage.${r.answers.damage}`)}</>
+                )}
+                {r.answers?.voice != null && <> <span className="chip chip--crew-ack">{t("crew.spoken")}</span></>}
+                {r.note && (
+                  <p className="report-text" dir="auto">
+                    {r.note}
+                  </p>
+                )}
+                <span className="muted">
+                  {r.author_name && <span dir="auto">{r.author_name} · </span>}
+                  <time dateTime={r.created_at}>{fmt.time(r.created_at)}</time>
+                </span>
+              </li>
+            ))}
+          </ul>
         </>
       )}
       {attachments.length > 0 && (

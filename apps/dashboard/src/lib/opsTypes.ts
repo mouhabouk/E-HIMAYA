@@ -245,6 +245,14 @@ export interface Assignment {
   time_sources?: Partial<Record<string, "app" | "sms" | "room">>;
   /** Times that hold but are not credible, for the room to check. */
   record_warnings?: string[];
+  /** Phase F: the point the room picked, the nature the team confirmed, the steps it skipped and why, the end
+   * without intervention, and a mission the team opened from the field. */
+  target?: { lat: number; lon: number } | null;
+  target_note?: string | null;
+  crew_nature?: string | null;
+  skipped?: Partial<Record<"at_hospital" | "available", string>>;
+  no_intervention_reason?: string | null;
+  field_initiated?: boolean;
 }
 
 export interface VehiclePosition {

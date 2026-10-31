@@ -16,6 +16,7 @@ void main() {
     final launched = <Uri>[];
     await pumpStaffApp(tester, server, store: store, launched: launched);
 
+    await reveal(tester, 'staff-sign-in');
     await tester.tap(find.byKey(const Key('staff-sign-in')));
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('WXYZ-ABCD'), findsOneWidget);
@@ -80,27 +81,42 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('mission-card')), findsOneWidget);
     expect(find.text('High priority'), findsOneWidget);
-    expect(find.byKey(const Key('mission-timeline')), findsOneWidget);
+    expect(
+      find.byKey(const Key('mission-timeline'), skipOffstage: false),
+      findsOneWidget,
+    );
     // No number given by the room: no "reporter" button.
     expect(find.byKey(const Key('quick-reporter')), findsNothing);
+    await reveal(tester, 'quick-room');
     await tester.tap(find.byKey(const Key('quick-room')));
     expect(launched.last.toString(), 'tel:198');
+    await reveal(tester, 'quick-route');
     await tester.tap(find.byKey(const Key('quick-route')));
     expect(launched.last.queryParameters['destination'], '36.8,10.18');
 
-    await tester.tap(find.byKey(const Key('step-en_route')));
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'en_route');
     final step = server.writes.last.json! as Map<String, dynamic>;
     expect(step['status'], 'en_route');
     expect(step['lat'], 36.8);
     // The phone stands at the incident: arrival is suggested.
-    expect(find.byKey(const Key('on-scene-hint')), findsOneWidget);
+    expect(
+      find.byKey(const Key('on-scene-hint'), skipOffstage: false),
+      findsOneWidget,
+    );
     expect(find.text('You are 0 m from the scene'), findsNothing);
-    await tester.tap(find.byKey(const Key('step-on_scene')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('open-situation')), findsOneWidget);
-    expect(find.byKey(const Key('step-left_scene')), findsOneWidget);
-    expect(find.byKey(const Key('open-record')), findsOneWidget);
+    await holdStep(tester, 'on_scene');
+    expect(
+      find.byKey(const Key('open-situation'), skipOffstage: false),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('step-left_scene'), skipOffstage: false),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('open-record'), skipOffstage: false),
+      findsOneWidget,
+    );
 
     // Backup is one tap away from the bottom bar.
     await tester.tap(find.byKey(const Key('alert-backup')));
@@ -114,7 +130,10 @@ void main() {
     expect(alert.path, '/api/v1/crew/missions/m-1/alerts');
     expect(alert.json, containsPair('kind', 'backup'));
     expect((alert.json! as Map)['items'], ['ambulance', 'ladder']);
-    expect(find.text('Waiting for the room'), findsOneWidget);
+    expect(
+      find.text('Waiting for the room', skipOffstage: false),
+      findsOneWidget,
+    );
   });
 
   testWidgets('S2: the steps after the arrival, the crew and the resources', (
@@ -137,16 +156,25 @@ void main() {
     await tester.tap(find.byKey(const Key('mission-m-1')));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('step-left_scene')));
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'left_scene');
     final left = server.writes.last;
     expect(left.path, '/api/v1/crew/missions/m-1/milestone');
     expect(left.json, containsPair('step', 'left_scene'));
-    // No one taken to hospital: the return comes first, the hospital stays at hand.
-    expect(find.byKey(const Key('step-back_at_unit')), findsOneWidget);
-    expect(find.byKey(const Key('step-at_hospital')), findsOneWidget);
+    // Phase F: the hospital comes next; no one to take, the leader skips it with the reason.
     expect(
-      find.text('Back at the unit ends the mission and frees the vehicle.'),
+      find.byKey(const Key('step-at_hospital'), skipOffstage: false),
+      findsOneWidget,
+    );
+    await reveal(tester, 'flow-skip');
+    await tester.tap(find.byKey(const Key('flow-skip')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('skip-reason-no_transport')));
+    await tester.pumpAndSettle();
+    final skipped = server.writes.last;
+    expect(skipped.path, '/api/v1/crew/missions/m-1/skip');
+    expect(skipped.json, containsPair('reason', 'no_transport'));
+    expect(
+      find.byKey(const Key('step-available'), skipOffstage: false),
       findsOneWidget,
     );
 
@@ -175,28 +203,21 @@ void main() {
     expect((record.json! as Map)['consumables'], {'water_m3': 2});
 
     // Free on the way back: the vehicle can be sent again, the return stays to be given.
-    final free = find.byKey(const Key('step-available'));
-    await tester.scrollUntilVisible(
-      free,
-      -200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(free);
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'available');
     expect(server.writes.last.json, containsPair('step', 'available'));
     expect(server.missions.single['status'], 'released');
     expect(find.byKey(const Key('step-available')), findsNothing);
     expect(find.byKey(const Key('step-at_hospital')), findsNothing);
-    expect(find.text('Free on the way back'), findsOneWidget);
+    expect(
+      find.text('Back at the unit ends the mission and frees the vehicle.'),
+      findsOneWidget,
+    );
 
-    final back = find.byKey(const Key('step-back_at_unit'));
-    await tester.tap(back);
-    await tester.pumpAndSettle();
+    await holdStep(tester, 'back_at_unit');
     expect(server.writes.last.json, containsPair('step', 'back_at_unit'));
     expect(server.missions.single['status'], 'released');
     expect(find.byKey(const Key('step-back_at_unit')), findsNothing);
-    expect(find.text('Back at the unit'), findsOneWidget);
+    expect(find.text('Back at the unit', skipOffstage: false), findsOneWidget);
   });
 
   testWidgets('situation report, counters, attachments, transport, template', (
@@ -216,6 +237,8 @@ void main() {
     await enterPin(tester, '123456');
     await tester.tap(find.byKey(const Key('mission-m-1')));
     await tester.pumpAndSettle();
+
+    await reveal(tester, 'open-situation');
 
     await tester.tap(find.byKey(const Key('open-situation')));
     await tester.pumpAndSettle();
@@ -327,6 +350,7 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    await reveal(tester, 'open-detailed');
     await tester.tap(find.byKey(const Key('open-detailed')));
     await tester.pumpAndSettle();
     expect(find.textContaining('[SIM]'), findsOneWidget);

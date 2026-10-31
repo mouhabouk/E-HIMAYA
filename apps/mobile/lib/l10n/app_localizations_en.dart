@@ -6390,4 +6390,289 @@ class AppLocalizationsEn extends AppLocalizations {
   String availabilityBetween(String from, String to) {
     return 'From $from to $to';
   }
+
+  @override
+  String get staffActivationTitle => 'Activate the phone';
+
+  @override
+  String get staffActivationHelp =>
+      'Type your professional number and the activation code the room chief gave you. The code works once.';
+
+  @override
+  String get staffActivationMatricule => 'Professional number';
+
+  @override
+  String get staffActivationCode => 'Activation code';
+
+  @override
+  String get staffActivationSubmit => 'Activate';
+
+  @override
+  String get staffActivationRefused => 'Wrong professional number or code.';
+
+  @override
+  String get staffActivationExpired =>
+      'The code has expired. Ask the room chief for a new one.';
+
+  @override
+  String get staffActivationLater => 'Too many tries. Try again later.';
+
+  @override
+  String get staffSignInAccount =>
+      'Team leaders with an account of the institution:';
+
+  @override
+  String get staffAgentWaitShift =>
+      'Your team leader will add you to their shift; its missions will show here to read.';
+
+  @override
+  String get staffCharterTitle => 'Agent\'s charter';
+
+  @override
+  String get staffCharterIntro =>
+      'Before using the app, read this charter drawn from the civil protection law:';
+
+  @override
+  String get staffCharter1 =>
+      'I record the mission\'s steps when they happen and nothing that did not.';
+
+  @override
+  String get staffCharter2 =>
+      'I keep professional secrecy: no photos or victims\' data outside the app.';
+
+  @override
+  String get staffCharter3 =>
+      'The phone is in my care: I report its loss to the room at once so it is disabled and erased.';
+
+  @override
+  String get staffCharter4 =>
+      'I give my PIN to no one and never leave the phone unlocked.';
+
+  @override
+  String get staffCharter5 =>
+      'The team\'s safety first: I ask for backup and report danger without delay.';
+
+  @override
+  String get staffCharterAccept => 'I have read the charter and commit to it';
+
+  @override
+  String get staffCharterSms => 'I agree to receive work text messages';
+
+  @override
+  String get staffCharterLocation =>
+      'I agree to send the phone\'s location during missions';
+
+  @override
+  String get staffCharterSubmit => 'I accept';
+
+  @override
+  String get staffCrewAgents => 'Agents on the shift';
+
+  @override
+  String get staffReadOnly =>
+      'Read only: only the team leader\'s phone records the steps.';
+
+  @override
+  String get staffFlowLeftUnit => 'Left the unit';
+
+  @override
+  String get staffFlowArrived => 'Arrived on scene';
+
+  @override
+  String get staffFlowLeftScene => 'Left the scene';
+
+  @override
+  String get staffFlowAtHospital => 'At the hospital';
+
+  @override
+  String get staffFlowAvailable => 'Free on the way back';
+
+  @override
+  String get staffFlowBackAtUnit => 'Back at the unit';
+
+  @override
+  String get staffFlowHoldHint => 'Press and hold to record';
+
+  @override
+  String staffFlowRecorded(String step, String time) {
+    return '\"$step\" recorded at $time';
+  }
+
+  @override
+  String staffFlowUndo(int seconds) {
+    return 'Undo ($seconds)';
+  }
+
+  @override
+  String get staffFlowSkip => 'Skip the step';
+
+  @override
+  String staffFlowSkipWhy(String step) {
+    return 'Why skip \"$step\"?';
+  }
+
+  @override
+  String get staffFlowNoIntervention => 'No intervention';
+
+  @override
+  String get staffFlowNoInterventionWhy =>
+      'Why the mission ends without intervention';
+
+  @override
+  String get staffFlowNoInterventionConfirm =>
+      'End the mission without intervention?';
+
+  @override
+  String get staffFlowNoInterventionYes => 'Yes, end it';
+
+  @override
+  String get staffReasonOther => 'Other reason';
+
+  @override
+  String get staffSkipNoTransport => 'No one to transport';
+
+  @override
+  String get staffSkipOtherTransport => 'Transported by other means';
+
+  @override
+  String get staffSkipRefused => 'Transport refused';
+
+  @override
+  String get staffSkipNotNeeded => 'Not needed';
+
+  @override
+  String get staffNoIntFalseAlarm => 'False alarm';
+
+  @override
+  String get staffNoIntPutOut => 'Put out before we arrived';
+
+  @override
+  String get staffNoIntOtherAgency => 'Handled by another service';
+
+  @override
+  String get staffNoIntNotFound => 'Place not found';
+
+  @override
+  String get staffNoIntCancelled => 'Cancelled by the room';
+
+  @override
+  String get staffNature => 'Nature of the intervention';
+
+  @override
+  String get staffNatureFire => 'Fire';
+
+  @override
+  String get staffNatureFlood => 'Flood';
+
+  @override
+  String get staffNatureTraffic => 'Traffic accident';
+
+  @override
+  String get staffNatureRescue => 'Rescue';
+
+  @override
+  String get staffNatureMedical => 'Medical';
+
+  @override
+  String get staffNatureDrowning => 'Drowning';
+
+  @override
+  String get staffNatureLandslide => 'Landslide';
+
+  @override
+  String get staffNatureChemical => 'Hazardous leak';
+
+  @override
+  String get staffNatureAnimal => 'Animal';
+
+  @override
+  String get staffNatureOther => 'Other';
+
+  @override
+  String get staffPointFromRoom => 'Mission point from the room';
+
+  @override
+  String get staffPointIncident => 'Incident location';
+
+  @override
+  String get staffPointCopy => 'Copy coordinates';
+
+  @override
+  String get staffPointCopied => 'Coordinates copied';
+
+  @override
+  String get staffToll => 'Toll';
+
+  @override
+  String get staffTollDue => 'Casualties, material damage and description';
+
+  @override
+  String get staffTollDescription => 'Description of the incident';
+
+  @override
+  String get staffDamage => 'Material damage';
+
+  @override
+  String get staffDamageNone => 'None';
+
+  @override
+  String get staffDamageMinor => 'Minor';
+
+  @override
+  String get staffDamageModerate => 'Moderate';
+
+  @override
+  String get staffDamageMajor => 'Major';
+
+  @override
+  String get staffDamageTotal => 'Total';
+
+  @override
+  String staffSentAt(String time) {
+    return 'Sent at $time';
+  }
+
+  @override
+  String get staffInterventionReport => 'Intervention report';
+
+  @override
+  String get staffInterventionReportDue => 'Type it or dictate it';
+
+  @override
+  String get staffInterventionReportHelp =>
+      'Dictate the report then correct the text, or type it. The recording is deleted after transcription.';
+
+  @override
+  String get staffVoiceSpeak => 'Dictate';
+
+  @override
+  String get staffVoiceListening => 'Transcribing…';
+
+  @override
+  String get staffVoiceDeleted =>
+      'The voice is transcribed then deleted; only the corrected text is sent.';
+
+  @override
+  String get staffOpenMission => 'Open a mission from the field';
+
+  @override
+  String get staffOpenMissionSub =>
+      'An incident met on the way; the room is told at once';
+
+  @override
+  String get staffOpenMissionHelp =>
+      'Choose the nature and add a note. The phone\'s position is sent and the room is told at once.';
+
+  @override
+  String get staffOpenMissionNote => 'Note for the room';
+
+  @override
+  String get staffOpenMissionSend => 'Open and tell the room';
+
+  @override
+  String get staffOpenMissionLocating => 'Locating…';
+
+  @override
+  String get staffOpenMissionNoFix =>
+      'No position. Move into the open and try again.';
 }

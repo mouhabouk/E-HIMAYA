@@ -14,6 +14,8 @@ import '../staff_chrome.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
+import 'field_flow.dart';
+import 'field_widgets.dart' show push;
 import 'mission_screen.dart';
 
 /// Home of a shift: the vehicle, its missions, and the full-screen alert of a new order (F-STF-03).
@@ -23,7 +25,11 @@ class MissionsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ringing = ref.watch(staffControllerProvider.select((s) => s.ringing));
-    if (ringing != null) return MissionAlert(mission: ringing);
+    // Phase F: an agent of the crew reads; only the leader acknowledges.
+    final readOnly = ref.watch(
+      staffControllerProvider.select((s) => s.me?.readOnly ?? false),
+    );
+    if (ringing != null && !readOnly) return MissionAlert(mission: ringing);
     final l10n = AppLocalizations.of(context);
     final s = ref.watch(staffControllerProvider);
     final c = ref.read(staffControllerProvider.notifier);
@@ -51,11 +57,12 @@ class MissionsScreen extends ConsumerWidget {
             onSelected: (v) =>
                 unawaited(v == 'end' ? _endShift(context, ref) : c.signOut()),
             itemBuilder: (_) => [
-              PopupMenuItem(
-                key: const Key('end-shift'),
-                value: 'end',
-                child: Text(l10n.staffEndShift),
-              ),
+              if (!readOnly)
+                PopupMenuItem(
+                  key: const Key('end-shift'),
+                  value: 'end',
+                  child: Text(l10n.staffEndShift),
+                ),
               PopupMenuItem(value: 'out', child: Text(l10n.staffSignOut)),
             ],
           ),
@@ -79,6 +86,15 @@ class MissionsScreen extends ConsumerWidget {
                         shift.vehicle.unitName,
                         l10n.staffCrewCount(shift.crewSize),
                       ].join(' · '),
+                    ),
+                  if (!readOnly)
+                    NavCard(
+                      key: const Key('open-mission'),
+                      icon: Icons.add_location_alt,
+                      tone: Tone.red,
+                      title: l10n.staffOpenMission,
+                      subtitle: l10n.staffOpenMissionSub,
+                      onTap: () => push(context, const OpenMissionScreen()),
                     ),
                   const SizedBox(height: 16),
                   SectionTitle(l10n.staffActiveMissions),

@@ -60,7 +60,7 @@ export interface FieldReport {
   id: string;
   assignment_id: string;
   resource_label: string | null;
-  kind?: "first" | "update" | "detailed";
+  kind?: "first" | "update" | "detailed" | "toll" | "report";
   category: Category;
   classification: string | null;
   severity: number | null;
@@ -186,4 +186,49 @@ export interface CrewDevice {
   revoked_at: string | null;
   on_shift: boolean;
   gouvernorat_code: number;
+}
+
+/** Phase F: an agent the room chief added for the staff app, with the phone they activated. */
+export type FieldFunction = "leader" | "agent" | "driver";
+export type FieldAgentStatus = "pending" | "active" | "disabled" | "deleted";
+
+export interface FieldDevice {
+  id: string;
+  model: string | null;
+  platform: string;
+  device_ref: string | null;
+  sim_number: string | null;
+  imei: string | null;
+  created_at: string;
+  last_seen_at: string;
+  revoked_at: string | null;
+}
+
+export interface FieldAgent {
+  id: string;
+  gouvernorat_code: number;
+  matricule: string;
+  name: string;
+  function: FieldFunction;
+  shift_label: string | null;
+  phone: string | null;
+  status: FieldAgentStatus;
+  /** The one-time activation code, only in the answer that made it. */
+  code?: string | null;
+  code_expires_at: string | null;
+  charter_accepted_at: string | null;
+  activated_at: string | null;
+  disabled_at: string | null;
+  disabled_reason: string | null;
+  device: FieldDevice | null;
+  last_position: { lat: number; lon: number; at: string } | null;
+}
+
+export interface FieldAgentInput {
+  matricule: string;
+  name: string;
+  function: FieldFunction;
+  shift_label?: string | null;
+  phone?: string | null;
+  gouvernorat_code?: number | null;
 }

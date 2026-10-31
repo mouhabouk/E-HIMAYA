@@ -67,6 +67,30 @@ enum StaffPhase {
 
   /// An inspector without the team leader role: the prevention visits (phase P4c).
   prevention,
+
+  /// Phase F: an agent activated with a code reads and accepts the charter first.
+  charter,
+}
+
+/// Phase F: a step recorded by the long press, kept on the phone for the undo window before it
+/// is written with the time of the press.
+@immutable
+class StagedStep {
+  const StagedStep({
+    required this.missionId,
+    required this.step,
+    required this.at,
+    required this.deadline,
+    this.position,
+  });
+
+  final String missionId;
+
+  /// `en_route`, `on_scene`, `left_scene`, `at_hospital`, `available` or `back_at_unit`.
+  final String step;
+  final DateTime at;
+  final DateTime deadline;
+  final GeoPoint? position;
 }
 
 /// Why the phone came back to the sign-in screen.
@@ -89,6 +113,8 @@ class StaffState {
     this.outbox = const [],
     this.syncing = false,
     this.smsCapable = false,
+    this.staged,
+    this.activation,
   });
 
   final StaffPhase phase;
@@ -115,6 +141,13 @@ class StaffState {
 
   /// A gateway number and the phone's key: the steps and alerts that wait can go by SMS.
   final bool smsCapable;
+
+  /// Phase F: the step waiting for its undo window to pass.
+  final StagedStep? staged;
+
+  /// Phase F: why the last activation was refused (`activation_refused`, `activation_expired`,
+  /// `network`, `rate_limited`).
+  final String? activation;
 
   int get pending => outbox.length;
 
@@ -161,8 +194,12 @@ class StaffState {
     List<MissionWrite>? outbox,
     bool? syncing,
     bool? smsCapable,
+    StagedStep? staged,
+    String? activation,
     bool clearError = false,
     bool clearCode = false,
+    bool clearStaged = false,
+    bool clearActivation = false,
   }) => StaffState(
     phase: phase ?? this.phase,
     code: clearCode ? null : code ?? this.code,
@@ -178,6 +215,8 @@ class StaffState {
     outbox: outbox ?? this.outbox,
     syncing: syncing ?? this.syncing,
     smsCapable: smsCapable ?? this.smsCapable,
+    staged: clearStaged ? null : staged ?? this.staged,
+    activation: clearActivation ? null : activation ?? this.activation,
   );
 }
 
@@ -186,6 +225,7 @@ class StaffController extends Notifier<StaffState> {
   Timer? _poll;
   Timer? _signIn;
   Timer? _retry;
+  Timer? _undo;
   int _signInRun = 0;
   StreamSubscription<bool>? _online;
   StreamSubscription<GeoPoint>? _tracking;
@@ -229,6 +269,7 @@ class StaffController extends Notifier<StaffState> {
       _poll?.cancel();
       _signIn?.cancel();
       _retry?.cancel();
+      _undo?.cancel();
       unawaited(_online?.cancel());
       unawaited(_tracking?.cancel());
       for (final sub in _pushSubs) {
@@ -267,6 +308,46 @@ class StaffController extends Notifier<StaffState> {
       _log.warning('device authorization failed', e, st);
       state = state.copyWith(busy: false, offline: true);
     }
+  }
+
+  /// Phase F: the agent's professional number and the one-time code the room chief gave.
+  Future<void> activate(String matricule, String code) async {
+    state = state.copyWith(busy: true, clearActivation: true, clearError: true);
+    try {
+      final a = await ref
+          .read(staffAuthProvider)
+          .activate(
+            matricule: matricule,
+            code: code,
+            platform: ref.read(staffPlatformProvider),
+            pushToken: await _pushToken(),
+          );
+      await _vault.saveTokens(a.tokens);
+      await _vault.saveDeviceId(a.deviceId);
+      state = const StaffState(phase: StaffPhase.setPin);
+    } on ActivationRefused catch (e) {
+      state = state.copyWith(
+        busy: false,
+        activation: e.code,
+        offline: e.code == 'network',
+      );
+    }
+  }
+
+  /// Phase F: the charter read and accepted, with the consent to text messages and location.
+  Future<bool> acceptCharter({
+    required String version,
+    required bool sms,
+    required bool location,
+  }) async {
+    state = state.copyWith(busy: true, clearError: true);
+    final ok = await _guard(() async {
+      await _api.acceptCharter(version: version, sms: sms, location: location);
+      return true;
+    });
+    state = state.copyWith(busy: false);
+    if (ok == true) await refresh();
+    return ok == true;
   }
 
   void cancelSignIn() {
@@ -375,7 +456,8 @@ class StaffController extends Notifier<StaffState> {
   void lock() {
     if (state.phase == StaffPhase.noShift ||
         state.phase == StaffPhase.onShift ||
-        state.phase == StaffPhase.prevention) {
+        state.phase == StaffPhase.prevention ||
+        state.phase == StaffPhase.charter) {
       _poll?.cancel();
       state = state.copyWith(phase: StaffPhase.locked, pinError: false);
     }
@@ -511,6 +593,11 @@ class StaffController extends Notifier<StaffState> {
       return;
     }
     await _vault.saveRoles(me.roles);
+    if (me.activatedAgent && !me.charterAccepted) {
+      _poll?.cancel();
+      state = state.copyWith(phase: StaffPhase.charter, me: me);
+      return;
+    }
     if (_inspectorOnly(me.roles)) {
       _poll?.cancel();
       state = state.copyWith(phase: StaffPhase.prevention, me: me);
@@ -553,9 +640,16 @@ class StaffController extends Notifier<StaffState> {
   Future<List<CrewVehicle>> vehicles() async =>
       await _guard(_api.vehicles) ?? const [];
 
-  Future<bool> startShift(CrewVehicle v, int crewSize, String? names) async {
+  Future<bool> startShift(
+    CrewVehicle v,
+    int crewSize,
+    String? names, {
+    List<String> crewAgentIds = const [],
+  }) async {
     state = state.copyWith(busy: true, clearError: true);
-    final shift = await _guard(() => _api.startShift(v.id, crewSize, names));
+    final shift = await _guard(
+      () => _api.startShift(v.id, crewSize, names, crewAgentIds: crewAgentIds),
+    );
     state = state.copyWith(busy: false);
     if (shift == null) return false;
     await refresh();
@@ -583,6 +677,7 @@ class StaffController extends Notifier<StaffState> {
     Map<String, dynamic> body, {
     CapturedMedia? media,
     Map<String, dynamic> shown = const {},
+    DateTime? at,
   }) async {
     final w = _api.write(
       missionId,
@@ -590,6 +685,7 @@ class StaffController extends Notifier<StaffState> {
       body,
       mediaType: media?.contentType,
       shown: shown,
+      at: at,
     );
     if (media != null) await _box.saveMedia(w.id, media.bytes);
     final outbox = [...state.outbox, w];
@@ -758,6 +854,114 @@ class StaffController extends Notifier<StaffState> {
     'answers': answers,
     if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
   });
+
+  // ------------------------------------------------------------------ the mission flow (phase F)
+
+  /// The step given by the long press on the round button: shown at once with an undo bar, and
+  /// written after the room's undo window with the time of the press.
+  void stage(String missionId, String step, {GeoPoint? at}) {
+    final now = DateTime.now();
+    final seconds = state.me?.undoSeconds ?? 10;
+    _undo?.cancel();
+    final previous = state.staged;
+    if (previous != null) unawaited(_commit(previous));
+    final staged = StagedStep(
+      missionId: missionId,
+      step: step,
+      at: now,
+      deadline: now.add(Duration(seconds: seconds)),
+      position: at,
+    );
+    if (seconds <= 0) {
+      unawaited(_commit(staged));
+      return;
+    }
+    state = state.copyWith(staged: staged);
+    _undo = Timer(Duration(seconds: seconds), () {
+      final s = state.staged;
+      if (s != null && identical(s, staged)) unawaited(_commit(s));
+    });
+  }
+
+  /// «تراجع»: the step is forgotten, nothing was sent.
+  void undo() {
+    _undo?.cancel();
+    state = state.copyWith(clearStaged: true);
+  }
+
+  Future<bool> _commit(StagedStep s) async {
+    if (identical(state.staged, s)) state = state.copyWith(clearStaged: true);
+    return s.step == 'en_route' || s.step == 'on_scene'
+        ? _write(s.missionId, 'status', {
+            'status': s.step,
+            'lat': ?s.position?.lat,
+            'lon': ?s.position?.lon,
+          }, at: s.at)
+        : _write(s.missionId, 'milestone', {'step': s.step}, at: s.at);
+  }
+
+  /// The nature the leader confirmed or corrected (the room's category is chosen first).
+  Future<bool> nature(String id, String nature) =>
+      _write(id, 'nature', {'nature': nature});
+
+  /// «تجاوز المرحلة»: the hospital or the stop on the way back is not needed, with why.
+  Future<bool> skip(String id, String step, String reason) =>
+      _write(id, 'skip', {'step': step, 'reason': reason});
+
+  /// «بدون تدخل», after the double confirmation.
+  Future<bool> endWithout(String id, String reason) =>
+      _write(id, 'no-intervention', {'reason': reason});
+
+  /// The toll at the end: the material damage and the description, typed or spoken and corrected
+  /// ([voiceId] names the transcript it was corrected from).
+  Future<bool> toll(
+    String id, {
+    required String damage,
+    String? description,
+    String? voiceId,
+  }) {
+    final text = description?.trim() ?? '';
+    return _write(id, 'toll', {
+      'damage': damage,
+      if (text.isNotEmpty) ...{'description': text, 'voice_id': ?voiceId},
+    });
+  }
+
+  /// The intervention report (محضر التدخل), from the mission's page.
+  Future<bool> interventionReport(String id, String text, {String? voiceId}) =>
+      _write(id, 'report', {'text': text.trim(), 'voice_id': ?voiceId});
+
+  /// A spoken toll or report sent to be transcribed (needs network; the audio is not kept).
+  Future<SpokenText?> transcribe(String id, CapturedMedia media, String lang) =>
+      _guard(() => _api.transcribe(id, media, lang: lang));
+
+  /// A mission the team opens from the field (needs network: the room must know at once).
+  Future<Mission?> openMission({
+    required String nature,
+    required GeoPoint at,
+    String? note,
+  }) async {
+    state = state.copyWith(busy: true, clearError: true);
+    final m = await _guard(
+      () => _api.openMission(
+        nature: nature,
+        lat: at.lat,
+        lon: at.lon,
+        note: note,
+      ),
+    );
+    state = state.copyWith(busy: false);
+    if (m != null) {
+      _server = [m.json, ..._server.where((x) => x['id'] != m.id)];
+      state = state.copyWith(missions: _shown());
+      _keep();
+    }
+    return m;
+  }
+
+  /// The activated agents the leader can put on the shift (empty offline).
+  Future<List<CrewAgent>> crewAgents() async =>
+      await _guard(_api.crewAgents) ?? const [];
 
   /// The nearest hospitals of the map, for the transport chips (empty offline).
   Future<List<Hospital>> hospitals(String id) async =>

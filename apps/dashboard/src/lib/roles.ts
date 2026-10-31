@@ -586,6 +586,12 @@ export function canManageCrewDevices(roles: readonly string[]): boolean {
   return any(CREW_DEVICE_ROLES, roles);
 }
 
+/** Phase F: the room chief and the regional account administrator add the staff app's agents and their codes. */
+export const FIELD_AGENT_MANAGERS = ["ops_manager", "regional_account_admin"] as const;
+export function canManageFieldAgents(roles: readonly string[]): boolean {
+  return any(FIELD_AGENT_MANAGERS, roles);
+}
+
 /** Teams on duty page: the report read roles see the shifts, the device administrators the phones too. */
 export function canOpenCrew(roles: readonly string[]): boolean {
   return hasReadAccess(roles) || canManageCrewDevices(roles);

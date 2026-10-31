@@ -73,7 +73,8 @@
     "disasters": "Catastrophes : bilan et carte",
     "strategies": "Toutes les stratégies",
     "snacr": "Analyse et couverture des risques (SNACR)",
-    "lessons": "Retours d'expérience"
+    "lessons": "Retours d'expérience",
+    "fieldAgents": "Agents et appareils"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -199,7 +200,8 @@
     "none": "Aucun",
     "close": "Fermer",
     "reasonLength": "Entre {{min}} et {{max}} caractères.",
-    "requiredNote": "Les champs marqués * sont obligatoires."
+    "requiredNote": "Les champs marqués * sont obligatoires.",
+    "confirm": "Confirmer"
   },
   "errors": {
     "authentication_required": "Session expirée. Veuillez vous reconnecter.",
@@ -3798,7 +3800,8 @@
         "alerts": "Seuils des alertes",
         "rooms": "Seuils des salles et du terrain",
         "partners": "Seuils des médecins et des établissements",
-        "snacr": "Seuils de l'analyse et de la couverture des risques (SNACR)"
+        "snacr": "Seuils de l'analyse et de la couverture des risques (SNACR)",
+        "field": "Application des agents"
       },
       "help": "Les nombres du travail quotidien : les changer ne demande pas de nouvelle version, et ils restent dans leurs bornes. Ce qui n’est pas changé garde sa valeur par défaut.",
       "bounds": "Chaque valeur est un entier dans les bornes indiquées à côté.",
@@ -3812,7 +3815,9 @@
         "percent": "pour cent",
         "per_km2": "habitants au km²",
         "months": "mois",
-        "years": "ans"
+        "years": "ans",
+        "seconds": "secondes",
+        "milliseconds": "millisecondes"
       },
       "names": {
         "crisis": {
@@ -3887,6 +3892,12 @@
           },
           "review_months": "Revue du schéma tous les",
           "validity_years": "Durée de validité du schéma"
+        },
+        "field": {
+          "code_hours": "Validité du code d'activation",
+          "code_attempts": "Essais erronés avant d'annuler le code",
+          "hold_ms": "Durée de l'appui long sur le bouton d'étape",
+          "undo_seconds": "Délai d'annulation après une étape"
         }
       }
     }
@@ -4937,7 +4948,57 @@
     "contactPhoneHint": "Facultatif. Le téléphone du chef n'affiche le bouton « Déclarant » que si vous en donnez un ; le numéro du citoyen n'est jamais transmis automatiquement.",
     "lastPosition": "Dernière position il y a {{ago}}",
     "lastPositionDistance": "Dernière position il y a {{ago}} · à {{km}} km",
-    "viaSms": "Par SMS"
+    "viaSms": "Par SMS",
+    "closing": "Bilan et procès-verbal",
+    "toll": "Bilan",
+    "interventionReport": "Procès-verbal d'intervention",
+    "spoken": "Dicté et corrigé",
+    "damage": {
+      "label": "Dégâts matériels",
+      "none": "Aucun",
+      "minor": "Légers",
+      "moderate": "Moyens",
+      "major": "Importants",
+      "total": "Totaux"
+    },
+    "nature": {
+      "fire": "Incendie",
+      "flood": "Inondation",
+      "traffic_accident": "Accident de la circulation",
+      "rescue": "Sauvetage",
+      "medical": "Secours médical",
+      "drowning": "Noyade",
+      "landslide": "Glissement de terrain",
+      "chemical_leak": "Fuite de matières dangereuses",
+      "animal": "Animal",
+      "other": "Autre"
+    },
+    "skipReason": {
+      "no_transport": "Personne à transporter",
+      "other_transport": "Transport par un autre moyen",
+      "refused_transport": "Transport refusé",
+      "not_needed": "Inutile",
+      "other": "Autre raison"
+    },
+    "noInterventionReason": {
+      "false_alarm": "Fausse alerte",
+      "put_out_before": "Éteint avant notre arrivée",
+      "other_agency": "Pris en charge par un autre service",
+      "place_not_found": "Lieu introuvable",
+      "cancelled": "Annulé par la salle",
+      "other": "Autre raison"
+    },
+    "flow": {
+      "fieldInitiated": "Ouverte par l'équipe sur le terrain",
+      "nature": "Nature : {{nature}}",
+      "target": "Point de mission :",
+      "skipped": "« {{step}} » sautée : {{reason}}",
+      "noIntervention": "Sans intervention : {{reason}}",
+      "pickTarget": "Point de mission sur la carte",
+      "moveTarget": "Changer le point",
+      "pickHint": "Cliquez sur la carte pour fixer le point que l'équipe {{who}} doit atteindre. Il part aussitôt sur le téléphone du chef.",
+      "targetNote": "Note pour l'équipe (facultative)"
+    }
   },
   "templates": {
     "pageTitle": "Modèles de rapport",
@@ -8109,5 +8170,48 @@
         "pasted": "Texte collé"
       }
     }
+  },
+  "fieldAgents": {
+    "pageTitle": "Agents et appareils",
+    "intro": "Ajoutez les agents du gouvernorat et remettez à chacun un code d'activation à usage unique avec son matricule. Un téléphone perdu se désactive ici : il s'efface à sa prochaine connexion et ses données restent enregistrées pour le suivi légal.",
+    "list": "Agents",
+    "none": "Aucun agent pour l'instant.",
+    "agent": "Agent",
+    "device": "Téléphone",
+    "lastPosition": "Dernière position",
+    "add": "Ajouter un agent",
+    "addSubmit": "Ajouter et générer le code",
+    "matricule": "Matricule",
+    "name": "Nom et prénom",
+    "function": "Fonction",
+    "shift": "Garde",
+    "phone": "Téléphone",
+    "functions": {
+      "leader": "Chef d'équipe",
+      "agent": "Agent",
+      "driver": "Conducteur"
+    },
+    "status": {
+      "pending": "En attente d'activation",
+      "active": "Activé",
+      "disabled": "Désactivé",
+      "deleted": "Supprimé"
+    },
+    "charterPending": "Charte pas encore acceptée",
+    "noDevice": "Aucun téléphone activé",
+    "sim": "SIM",
+    "imei": "IMEI",
+    "setImei": "Saisir l'IMEI",
+    "newCode": "Nouveau code",
+    "newPhone": "Code pour un nouveau téléphone",
+    "disable": "Désactiver",
+    "delete": "Supprimer le compte",
+    "reason": "Motif",
+    "disableConfirm": "Désactiver maintenant le compte de {{name}} et son téléphone ?",
+    "deleteConfirm": "Supprimer le compte de {{name}} ? Son téléphone reste enregistré.",
+    "codeFor": "Code d'activation de {{name}} (matricule {{matricule}}) :",
+    "codeOnce": "Remettez-le directement à l'agent : il ne s'affichera plus et ne sert qu'une fois.",
+    "codeUntil": "Valable jusqu'au {{time}}.",
+    "codeHanded": "Remis"
   }
 }

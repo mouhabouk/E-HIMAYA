@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,6 +13,7 @@ import '../core/ui/theme.dart';
 import '../core/ui/tokens.dart';
 import '../l10n/app_localizations.dart';
 import 'prevention/visits_screen.dart';
+import 'screens/field_flow.dart';
 import 'screens/missions_screen.dart';
 import 'screens/shift_screen.dart';
 import 'staff_chrome.dart';
@@ -108,6 +110,7 @@ class StaffHome extends ConsumerWidget {
       StaffPhase.noShift => const ShiftScreen(),
       StaffPhase.onShift => const MissionsScreen(),
       StaffPhase.prevention => const PreventionVisitsScreen(home: true),
+      StaffPhase.charter => const CharterScreen(),
     };
   }
 }
@@ -134,6 +137,7 @@ class SignInScreen extends ConsumerWidget {
       appBar: StaffAppBar(title: l10n.staffAppTitle),
       body: ListView(
         padding: const EdgeInsets.all(20),
+        scrollCacheExtent: const ScrollCacheExtent.pixels(2000),
         children: [
           const Center(child: BrandLogo(size: 72)),
           const SizedBox(height: 16),
@@ -153,17 +157,23 @@ class SignInScreen extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 24),
-          if (code == null)
-            ToneButton(
-              action: BarAction(
-                key: const Key('staff-sign-in'),
-                label: l10n.staffSignIn,
-                icon: Icons.login,
-                tone: Tone.navy,
-                onPressed: s.busy ? null : () => unawaited(c.signIn()),
+          if (code == null) ...[
+            // Phase F: agents activate the phone with their number and the room chief's code;
+            // officers with an account of the identity provider sign in on the browser.
+            const ActivationCard(),
+            const SizedBox(height: 16),
+            Text(l10n.staffSignInAccount, textAlign: TextAlign.center),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              key: const Key('staff-sign-in'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
               ),
-            )
-          else ...[
+              onPressed: s.busy ? null : () => unawaited(c.signIn()),
+              icon: const Icon(Icons.login),
+              label: Text(l10n.staffSignIn),
+            ),
+          ] else ...[
             Text(l10n.staffCodeIntro, textAlign: TextAlign.center),
             const SizedBox(height: 12),
             Semantics(

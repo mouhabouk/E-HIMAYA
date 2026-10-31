@@ -27,6 +27,7 @@ import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
 import { errorMessageKey, isApiError } from "../lib/api";
 import type { RouteProfile } from "../lib/decisionTypes";
+import type { Assignment } from "../lib/opsTypes";
 import type { BBox } from "../lib/filters";
 import { bilingual, boundsOfPositions, forecastBounds, forecastMapPolygons } from "../lib/forecast";
 import { p7Keys } from "../lib/phase7Api";
@@ -229,6 +230,20 @@ export function IncidentDetailPage() {
     profile: RouteProfile;
   } | null>(null);
   const [assignPreset, setAssignPreset] = useState<AssignPreset | null>(null);
+  // Phase F: the team whose point the room is picking on the map.
+  const [picking, setPicking] = useState<Assignment | null>(null);
+  const [targetNote, setTargetNote] = useState("");
+  const targetNoteId = useId();
+  const qcTarget = useQueryClient();
+  const target = useMutation({
+    mutationFn: ({ id, lat, lon }: { id: string; lat: number; lon: number }) =>
+      api.setAssignmentTarget(id, lat, lon, targetNote.trim() || null),
+    onSuccess: () => {
+      setPicking(null);
+      setTargetNote("");
+      void qcTarget.invalidateQueries({ queryKey: queryKeys.incident(id) });
+    },
+  });
   const route = useQuery({
     queryKey: routeRequest
       ? p7Keys.route(
@@ -371,6 +386,23 @@ export function IncidentDetailPage() {
 
         <section className="card" aria-labelledby="sec-incident-map">
           <h2 id="sec-incident-map">{t("detail.location")}</h2>
+          {picking && (
+            <div className="alert alert--info" role="status">
+              <p>{t("crew.flow.pickHint", { who: picking.resource?.label ?? "" })}</p>
+              <label htmlFor={targetNoteId}>{t("crew.flow.targetNote")}</label>{" "}
+              <input
+                id={targetNoteId}
+                value={targetNote}
+                maxLength={500}
+                dir="auto"
+                onChange={(e) => setTargetNote(e.target.value)}
+              />{" "}
+              <button type="button" className="btn btn--small" onClick={() => setPicking(null)}>
+                {t("common.cancel")}
+              </button>
+              {target.isError && <ErrorBox error={target.error} />}
+            </div>
+          )}
           {bounds ? (
             <Suspense fallback={<Loading />}>
               <LazyMapView
@@ -384,6 +416,9 @@ export function IncidentDetailPage() {
                 ariaLabel={t("incidents.detail.map")}
                 styleUrl={mapStyleUrl}
                 dir={directionOf(lang)}
+                onMapClick={
+                  picking ? (lon, lat) => target.mutate({ id: picking.id, lat, lon }) : undefined
+                }
                 centroid={
                   incident.centroid
                     ? { ...incident.centroid, label: t("incidents.detail.centroidMarker") }
@@ -495,7 +530,14 @@ export function IncidentDetailPage() {
         <ResourceRequestsPanel incident={incident} />
       </div>
 
-      <OperationsPanel incident={incident} assignPreset={assignPreset} />
+      <OperationsPanel
+        incident={incident}
+        assignPreset={assignPreset}
+        onPickTarget={(a) => {
+          setPicking(a);
+          document.getElementById("sec-incident-map")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }}
+      />
 
       <div className="detail__grid">
         <RespondersPanel incident={incident} onRoute={(from, to, profile) => setRouteRequest({ from, to, profile })} />

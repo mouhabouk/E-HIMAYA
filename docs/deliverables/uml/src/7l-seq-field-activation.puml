@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Séquence : agent activé par code, charte, puis étapes par appui long (F)
+autonumber
+actor "Chef de salle" as OPM
+participant "Tableau de bord" as UI
+actor "Agent / chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+participant "API" as API
+database "PostgreSQL\nops.field_agent,\nops.assignment" as DB
+OPM -> UI : « Ajouter un agent » (matricule, nom, fonction)
+UI -> API : POST /staff/field-agents
+API -> DB : agent ; empreinte HMAC du code (72 h, 5 essais)
+API --> UI : code affiché une seule fois
+OPM -> TL : remet le code de vive voix
+TL -> APP : matricule + code
+APP -> API : POST /field/activate {matricule, code, téléphone}
+API -> DB : code consommé ; téléphone enregistré
+API --> APP : jetons de la plateforme (10 min) et jeton de renouvellement
+TL -> APP : PIN, puis charte (SMS et position)
+APP -> API : POST /crew/charter
+TL -> APP : appui long 1,5 s sur le bouton rond
+APP -> APP : « Annuler » 10 s ; l'heure est celle de l'appui
+APP -> API : POST /crew/missions/{id}/status ou milestone
+API -> DB : étape enregistrée
+OPM -> UI : désactiver (téléphone perdu)
+UI -> API : POST /staff/field-agents/{id}/disable {motif}
+APP -> API : POST /field/token
+API --> APP : 410 device_revoked ; le téléphone s'efface
+@enduml
