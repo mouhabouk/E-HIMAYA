@@ -446,3 +446,37 @@ async def test_volunteer_answers_a_callout_by_signed_sms(
             )
         ).all()
         assert actions[-2:] == ["volunteer.sms_accept", "volunteer.sms_arrived"]
+
+
+# ---------------------------------------------------------------- S2-1: the team's voice messages give mission times
+
+
+async def test_team_voice_messages_suggest_mission_times(
+    client: httpx.AsyncClient, staff: Staff, fake_ai: Any, _isolated_infra: FakeStore
+) -> None:
+    """S2-1: a voice message of the team is read once by the local transcription; its times are suggested to the room,
+    the audio stays in the incident's gallery with its transcript."""
+    from app.modules.ops import record_suggest
+    from tests.test_crew_field import M4A, _upload
+
+    leader, path, incident_id, _ = await _mission(client, staff, on_scene=False)
+    assignment_id = path.rsplit("/", 1)[-1]
+    clock = (datetime.now(record_suggest.TUNIS) + timedelta(minutes=1)).strftime("%H:%M")
+    fake_ai.transcript = {"text": f"وصلنا على عين المكان {clock}", "language": "ar"}
+    assert (await _upload(leader, path, "voice", M4A, "audio/mp4", duration_s=6.0)).status_code == 200
+
+    operator = staff(["operator"])
+    url = f"/api/v1/staff/assignments/{assignment_id}/record/suggestions"
+    r = await client.post(url, json={}, headers=operator)
+    assert r.status_code == 200, r.text
+    got = {s["step"]: s for s in r.json()}
+    assert got["on_scene_at"]["source"] == "team_voice"
+    assert got["on_scene_at"]["words"].startswith("وصلنا")
+    assert fake_ai.transcribe_options["prompt"].startswith("محضر تدخل")
+    # Read once: the second request does not send it again; the audio was kept.
+    calls = sum(1 for name, _ in fake_ai.calls if name == "transcribe")
+    assert (await client.post(url, json={}, headers=operator)).status_code == 200
+    assert sum(1 for name, _ in fake_ai.calls if name == "transcribe") == calls
+    gallery = (await client.get(f"/api/v1/staff/incidents/{incident_id}/media", headers=operator)).json()
+    voice = next(i for i in gallery["items"] if i["kind"] == "voice")
+    assert voice["transcript"].startswith("وصلنا") and voice["url"]

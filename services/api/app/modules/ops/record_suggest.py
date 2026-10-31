@@ -1,9 +1,11 @@
 """Times of a mission read from what was written about it (phase S2, docs/phase-s/design-s2.md §6).
 
-The room's notes on the incident, the team's text notes and a radio log the operator pastes often carry the times
-("وصلنا 14:32", "رجعنا للوحدة 16h05", "arrivée sur les lieux 14.32"). They are read here as suggestions: each one is
-a step, a time and the words it came from, shown next to the field in the room's editor. Nothing is applied until the
-operator presses it, and the saved time then goes through the same rules as a typed one (record.py).
+The room's notes on the incident, the team's text notes, the team's voice messages (phase D, S2-1: read once by the
+local transcription service, faster-whisper, and kept encrypted next to the audio) and a radio log the operator pastes
+often carry the times ("وصلنا 14:32", "رجعنا للوحدة 16h05", "arrivée sur les lieux 14.32"). They are read here as
+suggestions: each one is a step, a time and the words it came from, shown next to the field in the room's editor.
+Nothing is applied until the operator presses it, and the saved time then goes through the same rules as a typed one
+(record.py).
 
 The reading is a set of plain rules (the words of each step in Derja, Arabic and French, and a clock time near them),
 not a model: it runs on the platform without the AI service, it says why it proposes a time, and it never invents
@@ -16,17 +18,25 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
+import structlog
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import Principal
+from app.core.storage import get_store
+from app.modules.ai.client import AiRejected, AiUnavailable, get_ai_client
 from app.modules.ops import schemas
 from app.modules.ops import service as incidents
+from app.modules.ops.crew_flow import FIELD_PROMPTS
 from app.modules.ops.models import Assignment, FieldAttachment, TimelineEvent
 from app.modules.ops.record import EDITABLE, FUTURE_SKEW, MAX_MISSION, _now, broken_rule, times_of
 
+log = structlog.get_logger()
+
 TUNIS = ZoneInfo("Africa/Tunis")
+#: The team's voice messages read at most per request for suggestions; the others on the next one.
+MAX_TRANSCRIBED = 8
 EXCERPT = 140
 #: Characters between a time and the words of its step beyond which the time must be the one closest to them.
 NEAR = 3
@@ -258,18 +268,69 @@ async def _written(session: AsyncSession, assignment: Assignment) -> list[Writte
         .order_by(FieldAttachment.created_at)
     )
     out += [Written("team_note", t.body or "", t.device_at or t.created_at) for t in texts]
+    voices = await session.scalars(
+        select(FieldAttachment)
+        .where(
+            FieldAttachment.assignment_id == assignment.id,
+            FieldAttachment.kind == "voice",
+            FieldAttachment.transcript.is_not(None),
+        )
+        .order_by(FieldAttachment.created_at)
+    )
+    out += [Written("team_voice", v.transcript or "", v.device_at or v.created_at) for v in voices]
     return out
+
+
+async def transcribe_voices(session: AsyncSession, assignment: Assignment) -> int:
+    """S2-1: the team's voice messages not read yet, read once by the local transcription service; the audio stays
+    (it is the team's evidence, in the incident's gallery). Without the service nothing is read and the rules work on
+    the rest; a message the service cannot decode is marked read with no text. Returns how many were read."""
+    client = get_ai_client()
+    if client is None:
+        return 0
+    store = get_store()
+    pending = await session.scalars(
+        select(FieldAttachment)
+        .where(
+            FieldAttachment.assignment_id == assignment.id,
+            FieldAttachment.kind == "voice",
+            FieldAttachment.object_key.is_not(None),
+            FieldAttachment.transcribed_at.is_(None),
+        )
+        .order_by(FieldAttachment.created_at)
+        .limit(MAX_TRANSCRIBED)
+    )
+    read_now = 0
+    for a in pending:
+        assert a.object_key is not None
+        try:
+            result = await client.transcribe(
+                store.presign_get(a.object_key, expires_s=600, internal=True), prompt=FIELD_PROMPTS["ar"]
+            )
+        except AiUnavailable as exc:
+            log.warning("record_suggest.transcription_unavailable", error=str(exc))
+            break  # read on the next request
+        except AiRejected:
+            result = {}
+        a.transcript = str(result.get("text") or "").strip()[:2000] or None
+        a.transcribed_at = _now()
+        read_now += 1
+    if read_now:
+        await session.flush()
+    return read_now
 
 
 async def suggestions(
     session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.SuggestIn
 ) -> list[schemas.TimeSuggestion]:
-    """The times the writing about a mission gives, for the operator to apply one by one (nothing is saved here)."""
+    """The times the writing about a mission gives, for the operator to apply one by one. No time is saved here; only
+    the transcripts of the team's voice messages read for the first time are."""
     assignment = await session.get(Assignment, assignment_id)
     if assignment is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     await incidents.get_in_scope(session, principal, assignment.incident_id)
     now = _now()
+    transcribed = await transcribe_voices(session, assignment)
     written = await _written(session, assignment)
     if body.text and body.text.strip():
         written.append(Written("pasted", body.text, now))
@@ -297,4 +358,6 @@ async def suggestions(
                     conflict=broken_rule(times | {step: at}, now),
                 )
             )
+    if transcribed:
+        await session.commit()
     return out[-MAX_SUGGESTIONS:]

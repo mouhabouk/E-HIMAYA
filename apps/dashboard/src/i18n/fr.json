@@ -8170,7 +8170,8 @@
       "source": {
         "room_note": "Note de la salle",
         "team_note": "Note de l'équipe",
-        "pasted": "Texte collé"
+        "pasted": "Texte collé",
+        "team_voice": "Message vocal de l'équipe"
       }
     }
   },

@@ -82,6 +82,9 @@ CREATE TABLE ai.dictation (
 CREATE INDEX ix_dictation_field ON ai.dictation (field, created_at DESC);
 
 ALTER TABLE ops.field_attachment ADD COLUMN transcript_enc bytea, ADD COLUMN transcribed_at timestamptz;
+-- The transcript is written by the room's request for suggestions, on the incidents the room sees.
+CREATE POLICY field_attachment_update ON ops.field_attachment FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM ops.incident i WHERE i.id = incident_id)) WITH CHECK (ehimaya.scope() <> 'none');
 
 -- S2-5: a volunteer's signed SMS answers to a call-out (EH3): the key, and the last message applied (no replay).
 ALTER TABLE identity.volunteer ADD COLUMN sms_key_enc bytea, ADD COLUMN sms_last_at timestamptz;
@@ -89,7 +92,8 @@ ALTER TABLE identity.volunteer ADD COLUMN sms_key_enc bytea, ADD COLUMN sms_last
 
 DOWNGRADE = """
 ALTER TABLE identity.volunteer DROP COLUMN IF EXISTS sms_key_enc, DROP COLUMN IF EXISTS sms_last_at;
-ALTER TABLE ops.field_attachment DROP COLUMN transcript_enc, DROP COLUMN transcribed_at;
+DROP POLICY IF EXISTS field_attachment_update ON ops.field_attachment;
+ALTER TABLE ops.field_attachment DROP COLUMN IF EXISTS transcript_enc, DROP COLUMN IF EXISTS transcribed_at;
 DROP TABLE ai.dictation;
 DROP TABLE org.prealert;
 DELETE FROM reports.live_stream WHERE source = 'crew';

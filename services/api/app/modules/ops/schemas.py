@@ -264,7 +264,7 @@ class RecordIn(BaseModel):
     reason: Annotated[Text, StringConstraints(max_length=300)] | None = None
 
 
-SuggestionSource = Literal["room_note", "team_note", "pasted"]
+SuggestionSource = Literal["room_note", "team_note", "team_voice", "pasted"]
 EditableStep = Literal[
     "en_route_at", "on_scene_at", "left_scene_at", "at_hospital_at", "available_at", "back_at_unit_at"
 ]
