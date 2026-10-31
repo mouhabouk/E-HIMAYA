@@ -9,6 +9,7 @@ import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/features/safety/safety_models.dart';
 import 'package:ehimaya/features/safety/safety_reminders.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -375,6 +376,52 @@ void main() {
       Uri(scheme: 'tel', path: '+21620123456'),
       Uri(scheme: 'tel', path: '198'),
     ]);
+    await unmountApp(tester);
+  });
+
+  testWidgets('received alert: WhatsApp with text and copied coordinates', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 3200);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final opened = <Uri>[];
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String?;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'en'),
+      session: testSession,
+      api: _safetyApi,
+      opened: opened,
+    );
+    await go(tester, Routes.safetyAlert('alert-1'));
+    await tester.tap(find.byKey(const Key('alert-whatsapp')));
+    await tester.pumpAndSettle();
+    expect(opened.last.host, 'wa.me');
+    expect(opened.last.queryParameters['text'], contains('e-Himaya alert'));
+    await tester.tap(find.byKey(const Key('alert-share-whatsapp')));
+    await tester.pumpAndSettle();
+    expect(opened.last.path, '/');
+    expect(opened.last.queryParameters['text'], contains('openstreetmap.org'));
+    await tester.tap(find.byKey(const Key('alert-copy-coords')));
+    await tester.pumpAndSettle();
+    expect(copied, matches(RegExp(r'^-?\d+\.\d{5}, -?\d+\.\d{5}$')));
+    expect(find.textContaining('copied'), findsOneWidget);
     await unmountApp(tester);
   });
 

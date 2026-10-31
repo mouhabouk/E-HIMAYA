@@ -11781,6 +11781,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No position. Move into the open and try again.'**
   String get staffOpenMissionNoFix;
+
+  /// No description provided for @safetyAlertWhatsAppReply.
+  ///
+  /// In en, this message translates to:
+  /// **'I got your e-Himaya alert. I am following your position and will call you.'**
+  String get safetyAlertWhatsAppReply;
+
+  /// No description provided for @safetyAlertShareWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the position on WhatsApp'**
+  String get safetyAlertShareWhatsApp;
+
+  /// No description provided for @safetyAlertShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Distress alert from {name} through e-Himaya.\nPosition: {link}\nCoordinates: {coords}'**
+  String safetyAlertShareText(String name, String link, String coords);
+
+  /// No description provided for @safetyAlertCopyCoords.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the coordinates'**
+  String get safetyAlertCopyCoords;
+
+  /// No description provided for @safetyAlertCoordsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates {coords} copied: paste them in a message or read them to 198.'**
+  String safetyAlertCoordsCopied(String coords);
+
+  /// No description provided for @prealertPushTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-alert from a camera of your institution'**
+  String get prealertPushTitle;
+
+  /// No description provided for @prealertPushBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm or cancel before it goes to the Civil Protection.'**
+  String get prealertPushBody;
+
+  /// No description provided for @prealertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-alert'**
+  String get prealertTitle;
+
+  /// No description provided for @prealertFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire'**
+  String get prealertFire;
+
+  /// No description provided for @prealertSmoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoke'**
+  String get prealertSmoke;
+
+  /// No description provided for @prealertCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the Civil Protection room in {seconds} s'**
+  String prealertCountdown(int seconds);
+
+  /// No description provided for @prealertConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and report now'**
+  String get prealertConfirm;
+
+  /// No description provided for @prealertFalseAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'False alarm'**
+  String get prealertFalseAlarm;
+
+  /// No description provided for @prealertHint.
+  ///
+  /// In en, this message translates to:
+  /// **'With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.'**
+  String get prealertHint;
+
+  /// No description provided for @prealertWhyFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'Why is it a false alarm?'**
+  String get prealertWhyFalse;
+
+  /// No description provided for @prealertReasonTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test or maintenance'**
+  String get prealertReasonTest;
+
+  /// No description provided for @prealertReasonCooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking or barbecue'**
+  String get prealertReasonCooking;
+
+  /// No description provided for @prealertReasonDrill.
+  ///
+  /// In en, this message translates to:
+  /// **'Evacuation drill'**
+  String get prealertReasonDrill;
+
+  /// No description provided for @prealertReasonCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera error'**
+  String get prealertReasonCamera;
+
+  /// No description provided for @prealertReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another reason checked on site'**
+  String get prealertReasonOther;
+
+  /// No description provided for @prealertCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled: false alarm'**
+  String get prealertCancelled;
+
+  /// No description provided for @prealertConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed, the room was told'**
+  String get prealertConfirmed;
+
+  /// No description provided for @prealertEscalated.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the room when the delay ran out'**
+  String get prealertEscalated;
+
+  /// No description provided for @prealertPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your answer'**
+  String get prealertPending;
+
+  /// No description provided for @prealertGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This pre-alert is no longer available.'**
+  String get prealertGone;
+
+  /// No description provided for @prealertRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera pre-alerts'**
+  String get prealertRecent;
+
+  /// No description provided for @prealertSimulated.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Test pre-alert from a simulated camera'**
+  String get prealertSimulated;
 }
 
 class _AppLocalizationsDelegate

@@ -394,3 +394,34 @@ class PreventionReservation(Base):
     lift_note: Mapped[str | None] = mapped_column(Text)
     lifted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Prealert(Base):
+    """A camera or sensor of an institution saw a fire or smoke: the owner is told first and has a short delay
+    (``orgs.prealert_seconds``, 90 s by default) to call it a false alarm; after it, or when the owner confirms, the
+    alert becomes a report to the room (review point 25, docs/phase-d/design-d.md §2)."""
+
+    __tablename__ = "prealert"
+    __table_args__ = _SCHEMA
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    org_id: Mapped[uuid.UUID] = _org_fk()
+    stream_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.live_stream.id", ondelete="SET NULL")
+    )
+    source: Mapped[str] = mapped_column(Text)
+    label: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[float] = mapped_column(Float(precision=24))
+    media_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.media.id", ondelete="SET NULL")
+    )
+    simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    state: Mapped[str] = mapped_column(Text, server_default="pending")
+    raised_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    deadline_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    decided_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("identity.account.user_id"))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reason: Mapped[str | None] = mapped_column(Text)
+    report_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="SET NULL")
+    )

@@ -3447,5 +3447,59 @@
   "staffOpenMissionNote": "Note for the room",
   "staffOpenMissionSend": "Open and tell the room",
   "staffOpenMissionLocating": "Locating…",
-  "staffOpenMissionNoFix": "No position. Move into the open and try again."
+  "staffOpenMissionNoFix": "No position. Move into the open and try again.",
+  "safetyAlertWhatsAppReply": "I got your e-Himaya alert. I am following your position and will call you.",
+  "safetyAlertShareWhatsApp": "Send the position on WhatsApp",
+  "safetyAlertShareText": "Distress alert from {name} through e-Himaya.\nPosition: {link}\nCoordinates: {coords}",
+  "@safetyAlertShareText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      },
+      "coords": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyAlertCopyCoords": "Copy the coordinates",
+  "safetyAlertCoordsCopied": "Coordinates {coords} copied: paste them in a message or read them to 198.",
+  "@safetyAlertCoordsCopied": {
+    "placeholders": {
+      "coords": {
+        "type": "String"
+      }
+    }
+  },
+  "prealertPushTitle": "Pre-alert from a camera of your institution",
+  "prealertPushBody": "Confirm or cancel before it goes to the Civil Protection.",
+  "prealertTitle": "Pre-alert",
+  "prealertFire": "Fire",
+  "prealertSmoke": "Smoke",
+  "prealertCountdown": "Sent to the Civil Protection room in {seconds} s",
+  "@prealertCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "prealertConfirm": "Confirm and report now",
+  "prealertFalseAlarm": "False alarm",
+  "prealertHint": "With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.",
+  "prealertWhyFalse": "Why is it a false alarm?",
+  "prealertReasonTest": "Test or maintenance",
+  "prealertReasonCooking": "Cooking or barbecue",
+  "prealertReasonDrill": "Evacuation drill",
+  "prealertReasonCamera": "Camera error",
+  "prealertReasonOther": "Another reason checked on site",
+  "prealertCancelled": "Cancelled: false alarm",
+  "prealertConfirmed": "Confirmed, the room was told",
+  "prealertEscalated": "Sent to the room when the delay ran out",
+  "prealertPending": "Waiting for your answer",
+  "prealertGone": "This pre-alert is no longer available.",
+  "prealertRecent": "Camera pre-alerts",
+  "prealertSimulated": "[SIM] Test pre-alert from a simulated camera"
 }

@@ -18,6 +18,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/home/main_shell.dart';
 import '../../features/institution/institution_sections.dart';
 import '../../features/institution/my_institution_screen.dart';
+import '../../features/institution/prealert_screen.dart';
 import '../../features/institution/register_institution_screen.dart';
 import '../../features/live/live_controller.dart';
 import '../../features/live/live_screen.dart';
@@ -97,6 +98,8 @@ abstract final class Routes {
   static const institutionRegister = '/institutions/new';
   static String institution(String id) =>
       '/institutions/${Uri.encodeComponent(id)}';
+  static String prealert(String orgId, String prealertId) =>
+      '/institutions/${Uri.encodeComponent(orgId)}/prealerts/${Uri.encodeComponent(prealertId)}';
   static String institutionSection(String id, String section) =>
       '/institutions/${Uri.encodeComponent(id)}/$section';
   // Phase 5: volunteers, notifications and alerts, safety tips.
@@ -435,6 +438,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, state) =>
                 MyInstitutionScreen(orgId: state.pathParameters['id'] ?? ''),
             routes: [
+              // Before ':section', so "prealerts" is never read as a section.
+              GoRoute(
+                path: 'prealerts/:pid',
+                builder: (_, state) => PrealertScreen(
+                  orgId: state.pathParameters['id'] ?? '',
+                  prealertId: state.pathParameters['pid'] ?? '',
+                ),
+              ),
               GoRoute(
                 path: ':section',
                 builder: (_, state) => InstitutionSectionScreen(

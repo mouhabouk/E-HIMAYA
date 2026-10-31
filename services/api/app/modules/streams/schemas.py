@@ -111,6 +111,8 @@ class FixedSourceIn(BaseModel):
     # Where a fixed camera stands (shown on the map until it reports positions).
     lat: float | None = Field(default=None, ge=LAT_MIN, le=LAT_MAX)
     lon: float | None = Field(default=None, ge=LON_MIN, le=LON_MAX)
+    # A camera of an institution (review point 25): a fire or smoke it confirms goes to the owner first (pre-alert).
+    org_id: uuid.UUID | None = None
 
 
 class FixedSourceOut(BaseModel):

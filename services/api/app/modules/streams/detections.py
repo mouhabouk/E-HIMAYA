@@ -170,6 +170,11 @@ async def record_frame(session: AsyncSession, stream: LiveStream, body: schemas.
         media = await _store_frame(session, stream, frame, label, confidence, body.model) if frame else None
         stream.vision_alerts = {**(stream.vision_alerts or {}), label: at.isoformat()}
         await _timeline(session, stream, label, confidence, media)
+        if stream.org_id is not None and stream.report_id is None:
+            # An institution's camera: the owner is told first and the room after the delay (review point 25).
+            from app.modules.orgs import prealert
+
+            await prealert.raise_for_stream(session, stream, label, confidence, media.id if media else None)
         await emit(
             session,
             "stream.alert",

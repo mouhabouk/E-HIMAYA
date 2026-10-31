@@ -93,6 +93,7 @@ import { ReportsPage } from "./pages/ReportsPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
 import { SafetyTipsPage } from "./pages/SafetyTipsPage";
 import { StreamArchivePage } from "./pages/StreamArchivePage";
+import { CamerasPage } from "./pages/CamerasPage";
 import { StreamDetailPage } from "./pages/StreamDetailPage";
 import { StreamsPage } from "./pages/StreamsPage";
 import { StreamWallPage } from "./pages/StreamWallPage";
@@ -245,6 +246,7 @@ export function AppRoutes() {
         <Route path="streams" element={reports(<StreamsPage />)} />
         <Route path="streams/wall" element={reports(<StreamWallPage />)} />
         <Route path="streams/archive" element={reports(<StreamArchivePage />)} />
+        <Route path="streams/cameras" element={reports(<CamerasPage />)} />
         <Route path="streams/:id" element={reports(<StreamDetailPage />)} />
         <Route path="settings" element={<Gate allow={canReadPlatformSettings}><SettingsPage /></Gate>} />
         <Route

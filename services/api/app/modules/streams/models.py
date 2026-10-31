@@ -50,6 +50,10 @@ class LiveStream(Base):
     # Last analysed frames [{"at", "fire", "smoke"}] (3-of-5 confirmation) and the last alert per label.
     vision_frames: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
     vision_alerts: Mapped[dict[str, str]] = mapped_column(JSONB, server_default="{}")
+    # A camera of an institution (phase D, review point 25): its detections go to the owner first (org.prealert).
+    org_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("org.organization.id", ondelete="SET NULL")
+    )
 
 
 class StreamLocation(Base):

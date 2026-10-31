@@ -6675,4 +6675,95 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffOpenMissionNoFix =>
       'No position. Move into the open and try again.';
+
+  @override
+  String get safetyAlertWhatsAppReply =>
+      'I got your e-Himaya alert. I am following your position and will call you.';
+
+  @override
+  String get safetyAlertShareWhatsApp => 'Send the position on WhatsApp';
+
+  @override
+  String safetyAlertShareText(String name, String link, String coords) {
+    return 'Distress alert from $name through e-Himaya.\nPosition: $link\nCoordinates: $coords';
+  }
+
+  @override
+  String get safetyAlertCopyCoords => 'Copy the coordinates';
+
+  @override
+  String safetyAlertCoordsCopied(String coords) {
+    return 'Coordinates $coords copied: paste them in a message or read them to 198.';
+  }
+
+  @override
+  String get prealertPushTitle => 'Pre-alert from a camera of your institution';
+
+  @override
+  String get prealertPushBody =>
+      'Confirm or cancel before it goes to the Civil Protection.';
+
+  @override
+  String get prealertTitle => 'Pre-alert';
+
+  @override
+  String get prealertFire => 'Fire';
+
+  @override
+  String get prealertSmoke => 'Smoke';
+
+  @override
+  String prealertCountdown(int seconds) {
+    return 'Sent to the Civil Protection room in $seconds s';
+  }
+
+  @override
+  String get prealertConfirm => 'Confirm and report now';
+
+  @override
+  String get prealertFalseAlarm => 'False alarm';
+
+  @override
+  String get prealertHint =>
+      'With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.';
+
+  @override
+  String get prealertWhyFalse => 'Why is it a false alarm?';
+
+  @override
+  String get prealertReasonTest => 'Test or maintenance';
+
+  @override
+  String get prealertReasonCooking => 'Cooking or barbecue';
+
+  @override
+  String get prealertReasonDrill => 'Evacuation drill';
+
+  @override
+  String get prealertReasonCamera => 'Camera error';
+
+  @override
+  String get prealertReasonOther => 'Another reason checked on site';
+
+  @override
+  String get prealertCancelled => 'Cancelled: false alarm';
+
+  @override
+  String get prealertConfirmed => 'Confirmed, the room was told';
+
+  @override
+  String get prealertEscalated => 'Sent to the room when the delay ran out';
+
+  @override
+  String get prealertPending => 'Waiting for your answer';
+
+  @override
+  String get prealertGone => 'This pre-alert is no longer available.';
+
+  @override
+  String get prealertRecent => 'Camera pre-alerts';
+
+  @override
+  String get prealertSimulated =>
+      '[SIM] Test pre-alert from a simulated camera';
 }

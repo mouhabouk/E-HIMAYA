@@ -243,7 +243,8 @@ class LocalPushNotifications implements PushNotifications {
           category:
               channel == criticalChannelId ||
                   payload.severe ||
-                  payload.kind == PushKind.safetyAlert
+                  (payload.kind == PushKind.safetyAlert ||
+                      payload.kind == PushKind.prealert)
               ? AndroidNotificationCategory.alarm
               : (urgent
                     ? AndroidNotificationCategory.event
@@ -313,7 +314,8 @@ String pushChannelFor(
 ]) {
   if (payload.severe && criticalAvailable) return criticalChannelId;
   // Phase B2: a linked contact in distress rings through Do Not Disturb when the user opted in.
-  if (payload.kind == PushKind.safetyAlert) {
+  if (payload.kind == PushKind.safetyAlert ||
+      payload.kind == PushKind.prealert) {
     return criticalAvailable ? criticalChannelId : alertChannelId;
   }
   if (requested == criticalChannelId) {

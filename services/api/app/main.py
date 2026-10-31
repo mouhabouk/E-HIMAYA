@@ -86,6 +86,9 @@ from app.modules.ops.field_router import router as field_router
 from app.modules.ops.field_router import staff_router as field_staff_router
 from app.modules.ops.router import router as ops_router
 from app.modules.orgs.field_router import router as orgs_field_router
+from app.modules.orgs.prealert import prealerts_forever
+from app.modules.orgs.prealert_router import router as orgs_prealert_router
+from app.modules.orgs.prealert_router import staff_router as orgs_prealert_staff_router
 from app.modules.orgs.prevention_router import router as orgs_prevention_router
 from app.modules.orgs.prevention_router import staff_router as orgs_prevention_staff_router
 from app.modules.orgs.router import router as orgs_router
@@ -177,6 +180,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("evidence", evidence_forever),
     ("plan-checklist", checklist_forever),
     ("learning", learning_forever),
+    ("org-prealerts", prealerts_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -302,6 +306,8 @@ def create_app() -> FastAPI:
         orgs_staff_router,
         orgs_prevention_router,
         orgs_prevention_staff_router,
+        orgs_prealert_router,
+        orgs_prealert_staff_router,
         orgs_field_router,
         ai_router,
         live_router,

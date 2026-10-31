@@ -588,6 +588,11 @@ export function canManageCrewDevices(roles: readonly string[]): boolean {
 
 /** Phase F: the room chief and the regional account administrator add the staff app's agents and their codes. */
 export const FIELD_AGENT_MANAGERS = ["ops_manager", "regional_account_admin"] as const;
+
+/** Review point 25: the ops manager registers fixed cameras, those of institutions included (API REGISTER_ROLES). */
+export function canRegisterCameras(roles: readonly string[]): boolean {
+  return roles.includes("ops_manager");
+}
 export function canManageFieldAgents(roles: readonly string[]): boolean {
   return any(FIELD_AGENT_MANAGERS, roles);
 }

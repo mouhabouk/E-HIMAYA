@@ -47,6 +47,10 @@ class RedactedPushResolver {
           title: _l10n.pushMedicalOpinionTitle,
           body: _l10n.pushMedicalOpinionBody,
         ),
+        PushKind.prealert => p.withText(
+          title: _l10n.prealertPushTitle,
+          body: _l10n.prealertPushBody,
+        ),
         PushKind.alert ||
         PushKind.alertCancelled ||
         PushKind.safetyCheckReminder => null,

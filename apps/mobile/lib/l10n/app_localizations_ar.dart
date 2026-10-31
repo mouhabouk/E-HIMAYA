@@ -6596,4 +6596,94 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get staffOpenMissionNoFix =>
       'تعذّر تحديد الموقع. اخرج إلى مكان مكشوف وأعد المحاولة.';
+
+  @override
+  String get safetyAlertWhatsAppReply =>
+      'وصلني تنبيهك عبر ء-حماية. أنا أتابع موقعك وسأتصل بك.';
+
+  @override
+  String get safetyAlertShareWhatsApp => 'أرسل الموقع عبر واتساب';
+
+  @override
+  String safetyAlertShareText(String name, String link, String coords) {
+    return 'تنبيه استغاثة من $name عبر ء-حماية.\nالموقع: $link\nالإحداثيات: $coords';
+  }
+
+  @override
+  String get safetyAlertCopyCoords => 'نسخ الإحداثيات';
+
+  @override
+  String safetyAlertCoordsCopied(String coords) {
+    return 'نُسخت الإحداثيات $coords، الصقها في رسالة أو أملِها على 198.';
+  }
+
+  @override
+  String get prealertPushTitle => 'تنبيه مسبق من كاميرا مؤسستك';
+
+  @override
+  String get prealertPushBody =>
+      'أكّد أو ألغِ قبل أن يُرفع إلى الحماية المدنية.';
+
+  @override
+  String get prealertTitle => 'تنبيه مسبق';
+
+  @override
+  String get prealertFire => 'نار';
+
+  @override
+  String get prealertSmoke => 'دخان';
+
+  @override
+  String prealertCountdown(int seconds) {
+    return 'يُرفع إلى قاعة الحماية المدنية بعد $seconds ثانية';
+  }
+
+  @override
+  String get prealertConfirm => 'أكّد وأبلغ الآن';
+
+  @override
+  String get prealertFalseAlarm => 'إنذار كاذب';
+
+  @override
+  String get prealertHint =>
+      'إن لم تُجب، تُبلَّغ القاعة آليا عند انتهاء العدّ. الإلغاء يُسجَّل بسببه.';
+
+  @override
+  String get prealertWhyFalse => 'لماذا هو إنذار كاذب؟';
+
+  @override
+  String get prealertReasonTest => 'تجربة أو صيانة';
+
+  @override
+  String get prealertReasonCooking => 'طبخ أو شواء';
+
+  @override
+  String get prealertReasonDrill => 'تمرين إخلاء';
+
+  @override
+  String get prealertReasonCamera => 'خطأ في الكاميرا';
+
+  @override
+  String get prealertReasonOther => 'سبب آخر تحقّقت منه في المكان';
+
+  @override
+  String get prealertCancelled => 'أُلغي: إنذار كاذب';
+
+  @override
+  String get prealertConfirmed => 'أُكّد وأُبلغت القاعة';
+
+  @override
+  String get prealertEscalated => 'رُفع آليا إلى القاعة بعد انتهاء المهلة';
+
+  @override
+  String get prealertPending => 'في انتظار ردّك';
+
+  @override
+  String get prealertGone => 'هذا التنبيه لم يعد متاحا.';
+
+  @override
+  String get prealertRecent => 'التنبيهات المسبقة للكاميرات';
+
+  @override
+  String get prealertSimulated => '[SIM] تنبيه تجريبي من كاميرا محاكاة';
 }

@@ -522,6 +522,9 @@ class FieldAttachment(Base):
     created_by_name: Mapped[str | None] = mapped_column(Text)
     device_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # The text of a voice message, read once by the local transcription for the mission times (phase D, S2-1).
+    transcript: Mapped[str | None] = mapped_column("transcript_enc", EncryptedText("ops.field_attachment.transcript"))
+    transcribed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class ReportTemplate(Base):

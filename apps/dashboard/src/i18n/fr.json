@@ -2323,7 +2323,8 @@
       "label": "Rubriques de la diffusion en direct",
       "live": "En cours",
       "wall": "Mur d’écrans",
-      "archive": "Archives"
+      "archive": "Archives",
+      "cameras": "Caméras des établissements"
     },
     "filters": {
       "gouvernorat": "Gouvernorat",
@@ -3860,7 +3861,8 @@
         },
         "orgs": {
           "invitation_days": "Validité d’une invitation d’établissement",
-          "reservation_due_soon_days": "Alerte avant l’échéance des réserves"
+          "reservation_due_soon_days": "Alerte avant l’échéance des réserves",
+          "prealert_seconds": "Délai du responsable avant que la pré-alerte ne remonte à la salle"
         },
         "snacr": {
           "target": {
@@ -8213,5 +8215,35 @@
     "codeOnce": "Remettez-le directement à l'agent : il ne s'affichera plus et ne sert qu'une fois.",
     "codeUntil": "Valable jusqu'au {{time}}.",
     "codeHanded": "Remis"
+  },
+  "cameras": {
+    "pageTitle": "Caméras des établissements et pré-alertes",
+    "intro": "Quand une caméra d'établissement confirme un feu ou une fumée, le responsable est prévenu d'abord ; le signalement remonte à la salle s'il confirme ou ne répond pas dans le délai (paramètres : « délai du responsable »). Les fausses alertes restent visibles ici avec leur motif.",
+    "prealerts": "Pré-alertes",
+    "none": "Aucune pré-alerte.",
+    "when": "Heure",
+    "org": "Établissement",
+    "seen": "Détection",
+    "state": "État",
+    "report": "Signalement",
+    "openReport": "Ouvrir",
+    "labels": {
+      "fire": "Feu",
+      "smoke": "Fumée"
+    },
+    "states": {
+      "pending": "Attente du responsable ({{seconds}} s)",
+      "cancelled": "Fausse alerte",
+      "confirmed": "Confirmée par le responsable",
+      "escalated": "Transmise à la fin du délai"
+    },
+    "add": "Enregistrer une caméra",
+    "addHelp": "Caméra d'un établissement (par exemple Tapo C200) ou caméra fixe de la Protection civile. Une caméra qui n'offre que le RTSP passe par le relais sur le même ordinateur.",
+    "noOrg": "Caméra de la Protection civile (sans établissement)",
+    "label": "Nom de la caméra",
+    "register": "Enregistrer",
+    "registered": "Caméra enregistrée. Lancez le relais avec cette ligne sur l'ordinateur de démonstration :",
+    "tokenOnce": "Le jeton de diffusion n'est affiché qu'une fois ; seule son empreinte est gardée.",
+    "copied": "Copié"
   }
 }

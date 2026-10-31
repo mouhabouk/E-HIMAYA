@@ -404,6 +404,44 @@ class EHimayaApi {
         return AnnualReport.fromJson(r.data!);
       });
 
+  /// Review point 25: the pre-alerts of an institution's cameras (newest first).
+  Future<List<OrgPrealert>> orgPrealerts(
+    String orgId, {
+    bool pending = false,
+  }) => guardApi(() async {
+    final r = await _dio.get<List<Object?>>(
+      '${_org(orgId)}/prealerts',
+      queryParameters: {'state': pending ? 'pending' : 'all'},
+    );
+    return [
+      for (final p in r.data!)
+        if (p is Map<String, Object?>) OrgPrealert(p),
+    ];
+  });
+
+  /// «False alarm» (`cancel`, with a reason) or «confirm» (the report goes to the room at once).
+  Future<OrgPrealert> decidePrealert(
+    String orgId,
+    String prealertId, {
+    required bool confirm,
+    String? reason,
+  }) => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '${_org(orgId)}/prealerts/${Uri.encodeComponent(prealertId)}/decision',
+      data: {'action': confirm ? 'confirm' : 'cancel', 'reason': ?reason},
+    );
+    return OrgPrealert(r.data!);
+  });
+
+  /// A short-lived link to the camera picture that raised the pre-alert.
+  Future<String> prealertFrame(String orgId, String prealertId) =>
+      guardApi(() async {
+        final r = await _dio.get<Map<String, Object?>>(
+          '${_org(orgId)}/prealerts/${Uri.encodeComponent(prealertId)}/frame',
+        );
+        return r.data!['url']! as String;
+      });
+
   static String _org(String orgId) =>
       '/api/v1/orgs/${Uri.encodeComponent(orgId)}';
 

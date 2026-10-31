@@ -25,6 +25,9 @@ export function StreamsNav() {
       <NavLink to="/streams/archive" className={({ isActive }) => `tabs__tab${isActive ? " tabs__tab--active" : ""}`}>
         {t("streams.nav.archive")}
       </NavLink>
+      <NavLink to="/streams/cameras" className={({ isActive }) => `tabs__tab${isActive ? " tabs__tab--active" : ""}`}>
+        {t("streams.nav.cameras")}
+      </NavLink>
     </nav>
   );
 }

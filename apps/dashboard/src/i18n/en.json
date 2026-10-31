@@ -2323,7 +2323,8 @@
       "label": "Live stream sections",
       "live": "Live",
       "wall": "Video wall",
-      "archive": "Archive"
+      "archive": "Archive",
+      "cameras": "Institution cameras"
     },
     "filters": {
       "gouvernorat": "Gouvernorat",
@@ -3860,7 +3861,8 @@
         },
         "orgs": {
           "invitation_days": "Validity of an institution invitation",
-          "reservation_due_soon_days": "Warning before reservations fall due"
+          "reservation_due_soon_days": "Warning before reservations fall due",
+          "prealert_seconds": "Owner's delay before a pre-alert is raised to the room"
         },
         "snacr": {
           "target": {
@@ -8213,5 +8215,35 @@
     "codeOnce": "Hand it to the agent directly: it will not show again and works once.",
     "codeUntil": "Valid until {{time}}.",
     "codeHanded": "Handed over"
+  },
+  "cameras": {
+    "pageTitle": "Institution cameras and pre-alerts",
+    "intro": "When an institution's camera confirms a fire or smoke, the owner is told first; the report reaches the room if they confirm or do not answer in time (settings: «owner's delay»). False alarms stay visible here with their reason.",
+    "prealerts": "Pre-alerts",
+    "none": "No pre-alerts yet.",
+    "when": "Time",
+    "org": "Institution",
+    "seen": "Seen",
+    "state": "State",
+    "report": "Report",
+    "openReport": "Open",
+    "labels": {
+      "fire": "Fire",
+      "smoke": "Smoke"
+    },
+    "states": {
+      "pending": "Waiting for the owner ({{seconds}} s)",
+      "cancelled": "False alarm",
+      "confirmed": "Confirmed by the owner",
+      "escalated": "Raised when the delay ran out"
+    },
+    "add": "Register a camera",
+    "addHelp": "A camera of an institution (such as a Tapo C200) or a fixed camera of the Civil Protection. A camera that only offers RTSP goes through the relay on the same computer.",
+    "noOrg": "Civil Protection camera (no institution)",
+    "label": "Camera name",
+    "register": "Register",
+    "registered": "Camera registered. Start the relay with this line on the demonstration computer:",
+    "tokenOnce": "The publish token is shown once; only its fingerprint is kept.",
+    "copied": "Copied"
   }
 }

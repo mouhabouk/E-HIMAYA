@@ -19,6 +19,7 @@ import 'institution_providers.dart';
 import 'kind_fields.dart';
 import 'org_labels.dart';
 import 'org_text.dart';
+import 'prealert_screen.dart';
 
 /// Opens "My institution": the card directly when the account has a single institution,
 /// otherwise the list.
@@ -215,6 +216,7 @@ class _SummaryBody extends ConsumerWidget {
               Routes.institutionSection(s.id, InstitutionSection.messages.name),
             ),
           ),
+        _Prealerts(orgId: s.id),
         SectionTitle(l10n.orgAlerts),
         if (s.alerts.isEmpty && s.alertsCount == 0) Text(l10n.orgNoAlerts),
         if (s.alerts.isEmpty && s.alertsCount > 0)
@@ -675,4 +677,41 @@ class _Message extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 48),
     child: Text(text, textAlign: TextAlign.center),
   );
+}
+
+/// Review point 25: the camera pre-alerts of the institution, the pending ones first (shown only
+/// when there is one).
+class _Prealerts extends ConsumerWidget {
+  const _Prealerts({required this.orgId});
+
+  final String orgId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final items = ref.watch(orgPrealertsProvider(orgId)).value ?? const [];
+    if (items.isEmpty) return const SizedBox.shrink();
+    final shown = [
+      ...items.where((p) => p.pending),
+      ...items.where((p) => !p.pending).take(3),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SectionTitle(l10n.prealertRecent),
+        for (final p in shown)
+          NavCard(
+            key: Key('org-prealert-${p.id}'),
+            icon: Icons.local_fire_department,
+            tone: p.pending ? Tone.red : Tone.slate,
+            title:
+                '${p.label == 'smoke' ? l10n.prealertSmoke : l10n.prealertFire}'
+                ' · ${(p.confidence * 100).round()}%',
+            subtitle: prealertStateLabel(l10n, p.state),
+            onTap: () => context.push(Routes.prealert(orgId, p.id)),
+          ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
 }
