@@ -8,6 +8,7 @@
   (review point 17).
 * ``identity.volunteer.sms_key_enc``/``sms_last_at``: a volunteer answers a call-out by signed SMS (``EH3``, S2-5).
 * ``ops.field_attachment.transcript_enc``: the text of a team's voice message, read once for the mission times.
+  The room writes it on the incidents it sees (RLS policy ``field_attachment_update``).
 
 Revision ID: 0088_phase_d
 Revises: 0087_field_agents

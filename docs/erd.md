@@ -67,6 +67,19 @@ erDiagram
         integer n
         datetime raised_at
     }
+    ai__dictation {
+        uuid id PK
+        text actor
+        text field
+        text language
+        text model
+        float duration_s
+        blob text_enc
+        blob kept_enc
+        float wer
+        datetime created_at
+        datetime corrected_at
+    }
     ai__learning_model {
         uuid id PK
         text task
@@ -1274,6 +1287,8 @@ erDiagram
         text review_reason
         datetime ready_until
         integer version
+        blob sms_key_enc
+        datetime sms_last_at
         datetime updated_at
     }
     identity__volunteer_review {
@@ -1826,6 +1841,8 @@ erDiagram
         text created_by_name
         datetime device_at
         datetime created_at
+        blob transcript_enc
+        datetime transcribed_at
     }
     ops__field_report {
         uuid id PK
@@ -2247,6 +2264,23 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+    org__prealert {
+        uuid id PK
+        uuid org_id FK
+        uuid stream_id FK
+        text source
+        text label
+        float confidence
+        uuid media_id FK
+        boolean simulated
+        text state
+        datetime raised_at
+        datetime deadline_at
+        uuid decided_by FK
+        datetime decided_at
+        text reason
+        uuid report_id FK
+    }
     org__prevention_photo {
         uuid id PK
         uuid visit_id FK
@@ -2340,6 +2374,7 @@ erDiagram
     identity__account ||--o{ org__maintenance : "recorded_by"
     identity__account ||--o{ org__member : "user_id"
     identity__account ||--o{ org__organization : "created_by"
+    identity__account ||--o{ org__prealert : "decided_by"
     identity__account ||--o{ org__prevention_visit : "requested_by"
     org__certificate ||--o{ org__certificate : "superseded_by"
     org__certificate ||--o{ org__certificate_stamp : "certificate_id"
@@ -2357,6 +2392,7 @@ erDiagram
     org__organization ||--o{ org__maintenance : "org_id"
     org__organization ||--o{ org__map_feature : "org_id"
     org__organization ||--o{ org__member : "org_id"
+    org__organization ||--o{ org__prealert : "org_id"
     org__organization ||--o{ org__prevention_photo : "org_id"
     org__organization ||--o{ org__prevention_reservation : "org_id"
     org__organization ||--o{ org__prevention_visit : "org_id"
@@ -2364,6 +2400,9 @@ erDiagram
     org__prevention_visit ||--o{ org__certificate : "visit_id"
     org__prevention_visit ||--o{ org__prevention_photo : "visit_id"
     org__prevention_visit ||--o{ org__prevention_reservation : "visit_id"
+    reports__live_stream ||--o{ org__prealert : "stream_id"
+    reports__media ||--o{ org__prealert : "media_id"
+    reports__report ||--o{ org__prealert : "report_id"
 ```
 
 ## programme
@@ -2702,6 +2741,9 @@ erDiagram
         datetime vision_next_attempt_at
         jsonb vision_frames
         jsonb vision_alerts
+        uuid org_id FK
+        uuid assignment_id FK
+        uuid incident_id FK
     }
     reports__media {
         uuid id PK
@@ -2848,7 +2890,10 @@ erDiagram
     geo__sector ||--o{ reports__report : "sector_code"
     identity__account ||--o{ reports__live_stream : "user_id"
     identity__account ||--o{ reports__report : "user_id"
+    ops__assignment ||--o{ reports__live_stream : "assignment_id"
+    ops__incident ||--o{ reports__live_stream : "incident_id"
     ops__incident ||--o{ reports__report : "incident_id"
+    org__organization ||--o{ reports__live_stream : "org_id"
     org__organization ||--o{ reports__report : "organization_id"
     reports__camera_tower ||--o{ reports__tower_event : "stream_id"
     reports__drone_zone ||--o{ reports__drone_alert : "zone_id"

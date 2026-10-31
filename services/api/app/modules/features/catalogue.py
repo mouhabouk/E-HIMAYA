@@ -1179,7 +1179,7 @@ CATALOGUE: tuple[Spec, ...] = (
         "orgs",
         "/orgs",
         ("المؤسسات", "Établissements", "Institutions"),
-        ("* /orgs", "* /org-events"),
+        ("* /orgs", "* /org-events", "GET /prealerts"),
         button(
             "orgs.review",
             ("دراسة التسجيل", "Examiner l'inscription", "Review the registration"),
@@ -1374,7 +1374,8 @@ CATALOGUE: tuple[Spec, ...] = (
         "system",
         "/settings/ai",
         ("الذكاء الاصطناعي", "Intelligence artificielle", "AI"),
-        ("* /ai",),
+        # Phase D (review point 19): the corrections log of the dictation, read with the AI settings.
+        ("* /ai", "GET /dictation"),
         button(
             "ai_settings.edit",
             ("تعديل إعدادات الذكاء الاصطناعي", "Modifier", "Edit"),
