@@ -1,0 +1,51 @@
+[
+ {
+  "id": "TLS_session_ticket",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "LOW",
+  "finding": "valid for 604800 seconds (>daily)"
+ },
+ {
+  "id": "cert_expirationStatus",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "HIGH",
+  "finding": "expires < 30 days (0)"
+ },
+ {
+  "id": "cert_notAfter",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "HIGH",
+  "finding": "2026-11-01 03:59"
+ },
+ {
+  "id": "cert_revocation",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "HIGH",
+  "finding": "Neither CRL nor OCSP URI provided"
+ },
+ {
+  "id": "DNS_CAArecord",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "LOW",
+  "finding": "--"
+ },
+ {
+  "id": "intermediate_cert_notAfter <#1>",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "HIGH",
+  "finding": "2026-11-07 15:59"
+ },
+ {
+  "id": "intermediate_cert_expiration <#1>",
+  "ip": "api.ehimaya.lan/192.0.2.2",
+  "port": "443",
+  "severity": "HIGH",
+  "finding": "expires <= 20 days"
+ }
+]

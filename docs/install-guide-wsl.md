@@ -448,6 +448,7 @@ $ docker compose --env-file .env -f infra/compose.yml -f infra/compose.gpu.yml -
 | تنظيف الصور القديمة | `docker system prune -a` ثم `docker builder prune` |
 | تقليص القرص الافتراضي (إن لم يعمل `sparseVhd`) | `PS> wsl --shutdown` ثم `PS> wsl --manage Ubuntu-24.04 --set-sparse true` |
 | فحوص الجودة قبل طلب الدمج | `scripts/ci-local.sh --keep-going` |
+| فحص تحصين بيئة WSL (للاطلاع فقط) | `sudo apt install lynis nmap testssl.sh` ثم `sudo infra/security/harden-host.sh --check --profile demo`؛ لا تستعمل `--apply` داخل WSL، فهو للخادم |
 
 ## 13. حل المشكلات الشائعة
 

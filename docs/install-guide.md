@@ -793,6 +793,10 @@ JDK 21 و Maven 3.9، ثم `mvn -f infra/keycloak/providers/phone-otp/pom.xml ve
 | فحص الأمن الديناميكي (OWASP ZAP 2.16.1) | `infra/security/zap/run.sh` | لا تنبيه عالي الخطورة خارج الاستثناءات الموثقة في `rules.tsv` |
 | اختبار الحمل (k6 2.3.0) | انظر `infra/loadtest/` | p95 تحت الحد في `RESULTS.md` |
 | تمرين الاستعادة | `sh infra/backup/drill.sh` | `DRILL PASSED` |
+| تحصين الخادم (Lynis 3.0.9 و nmap و testssl.sh 3.2) | `sudo infra/security/harden-host.sh --check --profile prod` ثم `--apply` | `--check` بعد `--apply` يعطي 0 تغيير |
+| قياس قبل وبعد | `sudo infra/security/audit.sh before <IP> api.<domain>` ثم `after`، ثم `python3 infra/security/compare.py audit-before audit-after` | مؤشر Lynis 80 فأكثر، منفذا TCP 80 و443 فقط، TLS 1.2 و1.3 دون ثغرة |
+
+أدوات القياس من مستودعات Ubuntu: `sudo apt install lynis nmap testssl.sh`. ‏`harden-host.sh` يقرأ `ADMIN_NET` (شبكة الإدارة المسموح لها بـ SSH) و `EHIMAYA_DIR`، والملف الحامل يبقى `demo` على حاسوب العرض و `prod` على الخادم. لا يُشغَّل `audit.sh` على الإنتاج بمعطيات حقيقية دون موافقة كتابية من الديوان. التفاصيل والنتائج في `docs/security/hardening-report.html`.
 
 التكامل المستمر على GitHub يشغّل 27 فحصا لكل طلب دمج؛ إذا تعذّر (حد الفوترة) فـ `ci-local.sh` هو البديل، أو مُشغّل ذاتي
 الاستضافة (`docs/self-hosted-runner.md`).
