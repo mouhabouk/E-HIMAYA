@@ -3384,7 +3384,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get safetyChannelApp => 'app';
+  String get safetyChannelApp => 'In-app alert';
 
   @override
   String get safetyRecentPrivacy => 'This list stays on this phone.';
@@ -6766,4 +6766,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get prealertSimulated =>
       '[SIM] Test pre-alert from a simulated camera';
+
+  @override
+  String get sosEmailSubject => 'e-Himaya: distress message';
+
+  @override
+  String safetySentEmail(int count) {
+    return 'E-mail ready for $count address(es): press Send in the mail app.';
+  }
+
+  @override
+  String safetySendBySms(int count) {
+    return 'Send by SMS to $count number(s)';
+  }
+
+  @override
+  String safetySendByEmail(int count) {
+    return 'Send by e-mail to $count address(es)';
+  }
+
+  @override
+  String get safetyChannelsTitle => 'Message channels and their order';
+
+  @override
+  String get safetyChannelsHint =>
+      'The in-app alert goes first. Then the first channel that is on and has recipients opens, the others appear as buttons in the same order.';
+
+  @override
+  String get safetyChannelAppHint =>
+      'To linked contacts, rings through silent mode. Always first.';
+
+  @override
+  String get safetyChannelSms => 'SMS';
+
+  @override
+  String get safetyChannelEmail => 'E-mail';
+
+  @override
+  String get actionMoveUp => 'Move up';
+
+  @override
+  String get actionMoveDown => 'Move down';
+
+  @override
+  String get safetyContactEmail => 'E-mail (optional)';
+
+  @override
+  String get safetyContactEmailInvalid => 'Not a valid e-mail address';
+
+  @override
+  String get nearestMapTitle => 'On the map';
+
+  @override
+  String nearestMapHint(int count) {
+    return '$count places from the copy kept on the phone, works offline';
+  }
 }

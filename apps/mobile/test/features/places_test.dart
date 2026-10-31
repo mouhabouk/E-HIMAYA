@@ -1,11 +1,14 @@
 // covers: phase B1 "nearest to me" (docs/phase-b/design.md §2): public layers and their places kept
 // offline with ETags, nearest computed on the phone, call and route, coordinates to read out.
+import 'dart:async';
+
 import 'package:ehimaya/core/http/models.dart';
 import 'package:ehimaya/features/places/nearest_screen.dart';
 import 'package:ehimaya/features/places/places_models.dart';
 import 'package:ehimaya/features/places/places_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/app_harness.dart';
@@ -263,6 +266,73 @@ void main() {
     expect(find.byKey(const Key('sim-banner')), findsNothing);
     await unmountApp(tester);
   });
+
+  testWidgets(
+    'offline, the places of the saved copy are drawn on the map (D-18)',
+    (tester) async {
+      final store = MemoryPlacesStore();
+      var online = true;
+      await pumpApp(
+        tester,
+        prefs: {...languageAndIntroDone, 'settings.locale': 'en'},
+        api: (r) {
+          if (!online) return const FakeResponse(503, json: {'detail': 'down'});
+          if (r.path == '/api/v1/layers') {
+            return FakeResponse(
+              200,
+              json: {
+                'items': [_layer('civil_protection'), _layer('hospitals')],
+              },
+            );
+          }
+          final m = RegExp(r'^/api/v1/layers/(\w+)/package$')
+              .firstMatch(r.path);
+          if (m != null) return FakeResponse(200, json: _packages[m[1]]);
+          return const FakeResponse(404, json: {'detail': 'not_found'});
+        },
+        overrides: [placesStoreProvider.overrideWithValue(store)],
+      );
+      await tester.tap(find.byKey(const Key('emergency-numbers-action')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('hub-nearest')),
+        200,
+      );
+      await tester.ensureVisible(find.byKey(const Key('hub-nearest')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('hub-nearest')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('nearest-layer-hospitals')), findsOneWidget);
+
+      // The connection goes; the copy kept on the phone still draws the markers.
+      online = false;
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(NearestScreen)),
+      );
+      unawaited(container.read(placesProvider.notifier).refresh());
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('nearest-offline')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('nearest-map-action')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(
+        find.text('4 places from the copy kept on the phone, works offline'),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('nearest-map')), findsOneWidget);
+      expect(find.byKey(const Key('marker-me')), findsOneWidget);
+      expect(find.byKey(const Key('marker-cp-tunis')), findsOneWidget);
+      expect(find.byKey(const Key('marker-h-near')), findsOneWidget);
+
+      // A marker opens the place: call and route as in the list.
+      await tester.tap(find.byKey(const Key('marker-cp-tunis')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.text('Place cp-tunis'), findsWidgets);
+      expect(find.byKey(const Key('call-cp-tunis')), findsWidgets);
+      await unmountApp(tester);
+    },
+  );
 
   test('turned-off layers are kept in the preferences', () async {
     final c = await phase5Container(

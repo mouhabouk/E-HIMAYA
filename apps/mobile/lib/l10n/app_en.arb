@@ -1802,7 +1802,7 @@
       }
     }
   },
-  "safetyChannelApp": "app",
+  "safetyChannelApp": "In-app alert",
   "safetyRecentPrivacy": "This list stays on this phone.",
   "safetyMedicalTitle": "Medical file",
   "safetyMedicalHint": "Useful information for rescuers, on this phone only",
@@ -3501,5 +3501,48 @@
   "prealertPending": "Waiting for your answer",
   "prealertGone": "This pre-alert is no longer available.",
   "prealertRecent": "Camera pre-alerts",
-  "prealertSimulated": "[SIM] Test pre-alert from a simulated camera"
+  "prealertSimulated": "[SIM] Test pre-alert from a simulated camera",
+  "sosEmailSubject": "e-Himaya: distress message",
+  "safetySentEmail": "E-mail ready for {count} address(es): press Send in the mail app.",
+  "@safetySentEmail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetySendBySms": "Send by SMS to {count} number(s)",
+  "@safetySendBySms": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetySendByEmail": "Send by e-mail to {count} address(es)",
+  "@safetySendByEmail": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyChannelsTitle": "Message channels and their order",
+  "safetyChannelsHint": "The in-app alert goes first. Then the first channel that is on and has recipients opens, the others appear as buttons in the same order.",
+  "safetyChannelAppHint": "To linked contacts, rings through silent mode. Always first.",
+  "safetyChannelSms": "SMS",
+  "safetyChannelEmail": "E-mail",
+  "actionMoveUp": "Move up",
+  "actionMoveDown": "Move down",
+  "safetyContactEmail": "E-mail (optional)",
+  "safetyContactEmailInvalid": "Not a valid e-mail address",
+  "nearestMapTitle": "On the map",
+  "nearestMapHint": "{count} places from the copy kept on the phone, works offline",
+  "@nearestMapHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

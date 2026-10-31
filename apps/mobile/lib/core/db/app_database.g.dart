@@ -1672,6 +1672,15 @@ class $EmergencyContactsTable extends EmergencyContacts
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1681,6 +1690,7 @@ class $EmergencyContactsTable extends EmergencyContacts
     linkId,
     position,
     createdAt,
+    email,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1739,6 +1749,12 @@ class $EmergencyContactsTable extends EmergencyContacts
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
     return context;
   }
 
@@ -1776,6 +1792,10 @@ class $EmergencyContactsTable extends EmergencyContacts
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
     );
   }
 
@@ -1798,6 +1818,9 @@ class EmergencyContact extends DataClass
   final String? linkId;
   final int position;
   final DateTime createdAt;
+
+  /// Review point 6 (phase D): an optional e-mail, for the e-mail channel of the SOS message.
+  final String? email;
   const EmergencyContact({
     required this.id,
     required this.name,
@@ -1806,6 +1829,7 @@ class EmergencyContact extends DataClass
     this.linkId,
     required this.position,
     required this.createdAt,
+    this.email,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1819,6 +1843,9 @@ class EmergencyContact extends DataClass
     }
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
     return map;
   }
 
@@ -1833,6 +1860,9 @@ class EmergencyContact extends DataClass
           : Value(linkId),
       position: Value(position),
       createdAt: Value(createdAt),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
     );
   }
 
@@ -1849,6 +1879,7 @@ class EmergencyContact extends DataClass
       linkId: serializer.fromJson<String?>(json['linkId']),
       position: serializer.fromJson<int>(json['position']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      email: serializer.fromJson<String?>(json['email']),
     );
   }
   @override
@@ -1862,6 +1893,7 @@ class EmergencyContact extends DataClass
       'linkId': serializer.toJson<String?>(linkId),
       'position': serializer.toJson<int>(position),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'email': serializer.toJson<String?>(email),
     };
   }
 
@@ -1873,6 +1905,7 @@ class EmergencyContact extends DataClass
     Value<String?> linkId = const Value.absent(),
     int? position,
     DateTime? createdAt,
+    Value<String?> email = const Value.absent(),
   }) => EmergencyContact(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1881,6 +1914,7 @@ class EmergencyContact extends DataClass
     linkId: linkId.present ? linkId.value : this.linkId,
     position: position ?? this.position,
     createdAt: createdAt ?? this.createdAt,
+    email: email.present ? email.value : this.email,
   );
   EmergencyContact copyWithCompanion(EmergencyContactsCompanion data) {
     return EmergencyContact(
@@ -1891,6 +1925,7 @@ class EmergencyContact extends DataClass
       linkId: data.linkId.present ? data.linkId.value : this.linkId,
       position: data.position.present ? data.position.value : this.position,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      email: data.email.present ? data.email.value : this.email,
     );
   }
 
@@ -1903,14 +1938,15 @@ class EmergencyContact extends DataClass
           ..write('groups: $groups, ')
           ..write('linkId: $linkId, ')
           ..write('position: $position, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('email: $email')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, name, phone, groups, linkId, position, createdAt);
+      Object.hash(id, name, phone, groups, linkId, position, createdAt, email);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1921,7 +1957,8 @@ class EmergencyContact extends DataClass
           other.groups == this.groups &&
           other.linkId == this.linkId &&
           other.position == this.position &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.email == this.email);
 }
 
 class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
@@ -1932,6 +1969,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
   final Value<String?> linkId;
   final Value<int> position;
   final Value<DateTime> createdAt;
+  final Value<String?> email;
   const EmergencyContactsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1940,6 +1978,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
     this.linkId = const Value.absent(),
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.email = const Value.absent(),
   });
   EmergencyContactsCompanion.insert({
     this.id = const Value.absent(),
@@ -1949,6 +1988,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
     this.linkId = const Value.absent(),
     this.position = const Value.absent(),
     required DateTime createdAt,
+    this.email = const Value.absent(),
   }) : name = Value(name),
        phone = Value(phone),
        createdAt = Value(createdAt);
@@ -1960,6 +2000,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
     Expression<String>? linkId,
     Expression<int>? position,
     Expression<DateTime>? createdAt,
+    Expression<String>? email,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1969,6 +2010,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
       if (linkId != null) 'link_id': linkId,
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
+      if (email != null) 'email': email,
     });
   }
 
@@ -1980,6 +2022,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
     Value<String?>? linkId,
     Value<int>? position,
     Value<DateTime>? createdAt,
+    Value<String?>? email,
   }) {
     return EmergencyContactsCompanion(
       id: id ?? this.id,
@@ -1989,6 +2032,7 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
       linkId: linkId ?? this.linkId,
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
+      email: email ?? this.email,
     );
   }
 
@@ -2016,6 +2060,9 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
     return map;
   }
 
@@ -2028,7 +2075,8 @@ class EmergencyContactsCompanion extends UpdateCompanion<EmergencyContact> {
           ..write('groups: $groups, ')
           ..write('linkId: $linkId, ')
           ..write('position: $position, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('email: $email')
           ..write(')'))
         .toString();
   }
@@ -4117,6 +4165,7 @@ typedef $$EmergencyContactsTableCreateCompanionBuilder =
       Value<String?> linkId,
       Value<int> position,
       required DateTime createdAt,
+      Value<String?> email,
     });
 typedef $$EmergencyContactsTableUpdateCompanionBuilder =
     EmergencyContactsCompanion Function({
@@ -4127,6 +4176,7 @@ typedef $$EmergencyContactsTableUpdateCompanionBuilder =
       Value<String?> linkId,
       Value<int> position,
       Value<DateTime> createdAt,
+      Value<String?> email,
     });
 
 class $$EmergencyContactsTableFilterComposer
@@ -4170,6 +4220,11 @@ class $$EmergencyContactsTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4217,6 +4272,11 @@ class $$EmergencyContactsTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$EmergencyContactsTableAnnotationComposer
@@ -4248,6 +4308,9 @@ class $$EmergencyContactsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
 }
 
 class $$EmergencyContactsTableTableManager
@@ -4297,6 +4360,7 @@ class $$EmergencyContactsTableTableManager
                 Value<String?> linkId = const Value.absent(),
                 Value<int> position = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> email = const Value.absent(),
               }) => EmergencyContactsCompanion(
                 id: id,
                 name: name,
@@ -4305,6 +4369,7 @@ class $$EmergencyContactsTableTableManager
                 linkId: linkId,
                 position: position,
                 createdAt: createdAt,
+                email: email,
               ),
           createCompanionCallback:
               ({
@@ -4315,6 +4380,7 @@ class $$EmergencyContactsTableTableManager
                 Value<String?> linkId = const Value.absent(),
                 Value<int> position = const Value.absent(),
                 required DateTime createdAt,
+                Value<String?> email = const Value.absent(),
               }) => EmergencyContactsCompanion.insert(
                 id: id,
                 name: name,
@@ -4323,6 +4389,7 @@ class $$EmergencyContactsTableTableManager
                 linkId: linkId,
                 position: position,
                 createdAt: createdAt,
+                email: email,
               ),
           withReferenceMapper: (p0) => p0
               .map(

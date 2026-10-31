@@ -3349,7 +3349,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get safetyChannelApp => 'التطبيق';
+  String get safetyChannelApp => 'تنبيه داخل التطبيق';
 
   @override
   String get safetyRecentPrivacy => 'تبقى هذه القائمة على هذا الهاتف.';
@@ -6686,4 +6686,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get prealertSimulated => '[SIM] تنبيه تجريبي من كاميرا محاكاة';
+
+  @override
+  String get sosEmailSubject => 'ء-حماية: رسالة استغاثة';
+
+  @override
+  String safetySentEmail(int count) {
+    return 'البريد جاهز لـ $count عنوان: اضغط «إرسال» في تطبيق البريد.';
+  }
+
+  @override
+  String safetySendBySms(int count) {
+    return 'إرسال برسالة قصيرة إلى $count رقم';
+  }
+
+  @override
+  String safetySendByEmail(int count) {
+    return 'إرسال بالبريد إلى $count عنوان';
+  }
+
+  @override
+  String get safetyChannelsTitle => 'قنوات الرسالة وترتيبها';
+
+  @override
+  String get safetyChannelsHint =>
+      'التنبيه داخل التطبيق يذهب أولا. ثم تُفتح أول قناة مفعّلة لها مستلمون، وتظهر البقية أزرارا بالترتيب نفسه.';
+
+  @override
+  String get safetyChannelAppHint =>
+      'لجهات الاتصال المربوطة، يرنّ رغم الوضع الصامت. دائما أولا.';
+
+  @override
+  String get safetyChannelSms => 'رسالة قصيرة';
+
+  @override
+  String get safetyChannelEmail => 'البريد الإلكتروني';
+
+  @override
+  String get actionMoveUp => 'إلى الأعلى';
+
+  @override
+  String get actionMoveDown => 'إلى الأسفل';
+
+  @override
+  String get safetyContactEmail => 'البريد الإلكتروني (اختياري)';
+
+  @override
+  String get safetyContactEmailInvalid => 'عنوان بريد غير صالح';
+
+  @override
+  String get nearestMapTitle => 'على الخريطة';
+
+  @override
+  String nearestMapHint(int count) {
+    return '$count مكانا من النسخة المحفوظة على الهاتف، تعمل دون اتصال';
+  }
 }

@@ -108,6 +108,9 @@ class EmergencyContacts extends Table {
   TextColumn get linkId => text().nullable()();
   IntColumn get position => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime()();
+
+  /// Review point 6 (phase D): an optional e-mail, for the e-mail channel of the SOS message.
+  TextColumn get email => text().nullable()();
 }
 
 @DataClassName('ContactGroup')
@@ -164,8 +167,9 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   /// 2 (phase B2): emergency contacts and groups, alert history, medical file.
+  /// 3 (phase D): an optional e-mail per emergency contact.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -176,6 +180,9 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(contactGroups);
         await m.createTable(safetyAlertHistory);
         await m.createTable(medicalProfiles);
+      }
+      if (from >= 2 && from < 3) {
+        await m.addColumn(emergencyContacts, emergencyContacts.email);
       }
     },
     beforeOpen: (details) async {

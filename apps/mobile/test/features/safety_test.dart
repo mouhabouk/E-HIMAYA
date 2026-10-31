@@ -8,6 +8,7 @@ import 'package:ehimaya/core/push/push_messaging.dart';
 import 'package:ehimaya/core/push/push_notifications.dart';
 import 'package:ehimaya/core/push/push_payload.dart';
 import 'package:ehimaya/core/routing/app_router.dart';
+import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/features/safety/safety_models.dart';
 import 'package:ehimaya/features/safety/safety_providers.dart';
 import 'package:ehimaya/features/safety/safety_reminders.dart';
@@ -229,7 +230,57 @@ void main() {
       );
       expect(medicalOf(await db.medical())?.bloodGroup, 'O+');
       final version = await db.customSelect('PRAGMA user_version').getSingle();
-      expect(version.data.values.single, 2);
+      expect(version.data.values.single, 3);
+    },
+  );
+
+  test(
+    'local database 2 → 3: contacts keep their data and gain an e-mail',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('ehimaya-db');
+      addTearDown(() => dir.delete(recursive: true));
+      final file = File('${dir.path}/app.db');
+      var db = AppDatabase(NativeDatabase(file));
+      await db.addContact(
+        EmergencyContactsCompanion.insert(
+          name: 'Karim',
+          phone: '+21698765432',
+          createdAt: DateTime(2026),
+        ),
+      );
+      await db.customStatement(
+        'ALTER TABLE emergency_contacts DROP COLUMN email',
+      );
+      await db.customStatement('PRAGMA user_version = 2');
+      await db.close();
+
+      db = AppDatabase(NativeDatabase(file));
+      addTearDown(db.close);
+      final c = (await db.allContacts()).single;
+      expect((c.name, c.email), ('Karim', null));
+      await db.updateContact(
+        c.id,
+        const EmergencyContactsCompanion(email: Value('karim@example.tn')),
+      );
+      expect((await db.allContacts()).single.email, 'karim@example.tn');
+    },
+  );
+
+  test(
+    'SOS channels: the user order, unknown names dropped, missing ones last',
+    () {
+      expect(normaliseSosChannels(null), ['sms', 'whatsapp', 'email']);
+      expect(normaliseSosChannels(['email', 'fax', 'email']), [
+        'email',
+        'sms',
+        'whatsapp',
+      ]);
+      expect(normalizeContactEmail(' Karim@Example.TN '), 'karim@example.tn');
+      expect(normalizeContactEmail('karim@'), isNull);
+      final uri = emailGroupUri(['a@x.tn', 'b@x.tn'], 'SOS', 'Help\nnow');
+      expect(uri.scheme, 'mailto');
+      expect(uri.query, contains('bcc=a%40x.tn,b%40x.tn'));
+      expect(uri.query, contains('body=Help%0Anow'));
     },
   );
 }

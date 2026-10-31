@@ -3415,7 +3415,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get safetyChannelApp => 'application';
+  String get safetyChannelApp => 'Alerte dans l\'application';
 
   @override
   String get safetyRecentPrivacy => 'Cette liste reste sur ce téléphone.';
@@ -6826,4 +6826,59 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get prealertSimulated =>
       '[SIM] Pré-alerte d\'essai d\'une caméra simulée';
+
+  @override
+  String get sosEmailSubject => 'e-Himaya : message de détresse';
+
+  @override
+  String safetySentEmail(int count) {
+    return 'E-mail prêt pour $count adresse(s) : appuyez sur Envoyer dans l\'application de messagerie.';
+  }
+
+  @override
+  String safetySendBySms(int count) {
+    return 'Envoyer par SMS à $count numéro(s)';
+  }
+
+  @override
+  String safetySendByEmail(int count) {
+    return 'Envoyer par e-mail à $count adresse(s)';
+  }
+
+  @override
+  String get safetyChannelsTitle => 'Canaux du message et leur ordre';
+
+  @override
+  String get safetyChannelsHint =>
+      'L\'alerte dans l\'application part d\'abord. Le premier canal actif qui a des destinataires s\'ouvre ensuite, les autres apparaissent en boutons dans le même ordre.';
+
+  @override
+  String get safetyChannelAppHint =>
+      'Aux contacts liés, sonne même en silencieux. Toujours en premier.';
+
+  @override
+  String get safetyChannelSms => 'SMS';
+
+  @override
+  String get safetyChannelEmail => 'E-mail';
+
+  @override
+  String get actionMoveUp => 'Monter';
+
+  @override
+  String get actionMoveDown => 'Descendre';
+
+  @override
+  String get safetyContactEmail => 'E-mail (facultatif)';
+
+  @override
+  String get safetyContactEmailInvalid => 'Adresse e-mail non valide';
+
+  @override
+  String get nearestMapTitle => 'Sur la carte';
+
+  @override
+  String nearestMapHint(int count) {
+    return '$count lieux de la copie gardée sur le téléphone, sans connexion';
+  }
 }

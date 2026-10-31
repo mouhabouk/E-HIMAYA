@@ -5863,7 +5863,7 @@ abstract class AppLocalizations {
   /// No description provided for @safetyChannelApp.
   ///
   /// In en, this message translates to:
-  /// **'app'**
+  /// **'In-app alert'**
   String get safetyChannelApp;
 
   /// No description provided for @safetyRecentPrivacy.
@@ -11943,6 +11943,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'[SIM] Test pre-alert from a simulated camera'**
   String get prealertSimulated;
+
+  /// No description provided for @sosEmailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya: distress message'**
+  String get sosEmailSubject;
+
+  /// No description provided for @safetySentEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail ready for {count} address(es): press Send in the mail app.'**
+  String safetySentEmail(int count);
+
+  /// No description provided for @safetySendBySms.
+  ///
+  /// In en, this message translates to:
+  /// **'Send by SMS to {count} number(s)'**
+  String safetySendBySms(int count);
+
+  /// No description provided for @safetySendByEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send by e-mail to {count} address(es)'**
+  String safetySendByEmail(int count);
+
+  /// No description provided for @safetyChannelsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Message channels and their order'**
+  String get safetyChannelsTitle;
+
+  /// No description provided for @safetyChannelsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The in-app alert goes first. Then the first channel that is on and has recipients opens, the others appear as buttons in the same order.'**
+  String get safetyChannelsHint;
+
+  /// No description provided for @safetyChannelAppHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To linked contacts, rings through silent mode. Always first.'**
+  String get safetyChannelAppHint;
+
+  /// No description provided for @safetyChannelSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get safetyChannelSms;
+
+  /// No description provided for @safetyChannelEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail'**
+  String get safetyChannelEmail;
+
+  /// No description provided for @actionMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get actionMoveUp;
+
+  /// No description provided for @actionMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get actionMoveDown;
+
+  /// No description provided for @safetyContactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail (optional)'**
+  String get safetyContactEmail;
+
+  /// No description provided for @safetyContactEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a valid e-mail address'**
+  String get safetyContactEmailInvalid;
+
+  /// No description provided for @nearestMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On the map'**
+  String get nearestMapTitle;
+
+  /// No description provided for @nearestMapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} places from the copy kept on the phone, works offline'**
+  String nearestMapHint(int count);
 }
 
 class _AppLocalizationsDelegate
