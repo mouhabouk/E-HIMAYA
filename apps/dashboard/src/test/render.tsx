@@ -206,8 +206,6 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
       Promise.resolve({ days: 90, count: 0, average: null, by_stars: {}, by_build: [], remarks: [] }),
     ),
     kpis: vi.fn(),
-    // Phase D: the incident's media gallery (review point 21).
-    incidentMedia: vi.fn(() => Promise.resolve({ counts: {}, live_streams: 0, items: [] })),
     reports: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
     report: vi.fn(),
     // Phase N: a report entered by a room.

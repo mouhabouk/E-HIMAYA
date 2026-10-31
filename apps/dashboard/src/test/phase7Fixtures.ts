@@ -268,6 +268,10 @@ export function fakePhase7Api(): Phase7Api {
     conferences: vi.fn(() => Promise.resolve([])),
     startConference: vi.fn(() => Promise.resolve({ room: "crisis-1", join_uri: "sip:crisis-1@ehimaya.test" })),
     endConference: vi.fn(() => Promise.resolve({})),
+    // Phase D: the incident's media gallery (review point 21) and the dictation (review point 19).
+    incidentMedia: vi.fn(() => Promise.resolve({ counts: {}, live_streams: 0, items: [] })),
+    dictate: vi.fn(() => Promise.resolve({ dictation_id: "d-1", text: "", language: "ar", duration_s: 0, model: "whisper" })),
+    dictationKept: vi.fn(() => Promise.resolve({ words: 0, word_errors: 0, wer: null })),
   };
 }
 
