@@ -1,0 +1,168 @@
+{
+ "label": "audit-after",
+ "lynis": {
+  "index": 82,
+  "tests": 251,
+  "warnings": [
+   {
+    "id": "LOGG-2138",
+    "text": "klogd is not running, which could lead to missing kernel messages in log files"
+   }
+  ],
+  "suggestions": [
+   {
+    "id": "LYNIS",
+    "text": "This release is more than 4 months old. Check the website or GitHub to see if there is an update available."
+   },
+   {
+    "id": "DEB-0810",
+    "text": "Install apt-listbugs to display a list of critical bugs prior to each APT installation."
+   },
+   {
+    "id": "BOOT-5180",
+    "text": "Determine runlevel and services at startup"
+   },
+   {
+    "id": "BOOT-5264",
+    "text": "Consider hardening system services"
+   },
+   {
+    "id": "KRNL-5788",
+    "text": "Determine why /vmlinuz or /boot/vmlinuz is missing on this Debian/Ubuntu system."
+   },
+   {
+    "id": "AUTH-9284",
+    "text": "Look at the locked accounts and consider removing them"
+   },
+   {
+    "id": "FILE-6310",
+    "text": "To decrease the impact of a full /home file system, place /home on a separate partition"
+   },
+   {
+    "id": "FILE-6310",
+    "text": "To decrease the impact of a full /tmp file system, place /tmp on a separate partition"
+   },
+   {
+    "id": "FILE-6310",
+    "text": "To decrease the impact of a full /var file system, place /var on a separate partition"
+   },
+   {
+    "id": "NAME-4028",
+    "text": "Check DNS configuration for the dns domain name"
+   },
+   {
+    "id": "FIRE-4513",
+    "text": "Check iptables rules to see which rules are currently not used"
+   },
+   {
+    "id": "LOGG-2130",
+    "text": "Check if any syslog daemon is running and correctly configured."
+   },
+   {
+    "id": "LOGG-2190",
+    "text": "Check what deleted files are still in use and why."
+   },
+   {
+    "id": "MACF-6208",
+    "text": "Check output of aa-status"
+   },
+   {
+    "id": "FINT-4350",
+    "text": "Install a file integrity tool to monitor changes to critical and sensitive files"
+   },
+   {
+    "id": "TOOL-5002",
+    "text": "Determine if automation tools are present for system management"
+   },
+   {
+    "id": "HOME-9304",
+    "text": "Double check the permissions of home directories as some might be not strict enough."
+   },
+   {
+    "id": "KRNL-6000",
+    "text": "One or more sysctl values differ from the scan profile and could be tweaked"
+   }
+  ],
+  "version": "3.0.9",
+  "os": "Ubuntu 24.04.5 LTS"
+ },
+ "nmap_tcp": [
+  {
+   "port": 80,
+   "proto": "tcp",
+   "state": "open",
+   "service": "http",
+   "product": "Caddy httpd"
+  },
+  {
+   "port": 443,
+   "proto": "tcp",
+   "state": "open",
+   "service": "https",
+   "product": ""
+  }
+ ],
+ "nmap_udp": [
+  {
+   "port": 443,
+   "proto": "udp",
+   "state": "open|filtered",
+   "service": "https",
+   "product": ""
+  }
+ ],
+ "testssl": {
+  "protocols": [
+   "TLS1.2",
+   "TLS1.3"
+  ],
+  "counts": {
+   "CRITICAL": 1,
+   "HIGH": 5,
+   "MEDIUM": 0,
+   "LOW": 2
+  },
+  "findings": {
+   "CRITICAL": [
+    {
+     "id": "cert_chain_of_trust",
+     "finding": "failed (chain incomplete)."
+    }
+   ],
+   "HIGH": [
+    {
+     "id": "cert_expirationStatus",
+     "finding": "expires < 30 days (0)"
+    },
+    {
+     "id": "cert_notAfter",
+     "finding": "2026-11-01 03:59"
+    },
+    {
+     "id": "cert_revocation",
+     "finding": "Neither CRL nor OCSP URI provided"
+    },
+    {
+     "id": "intermediate_cert_notAfter <#1>",
+     "finding": "2026-11-07 15:59"
+    },
+    {
+     "id": "intermediate_cert_expiration <#1>",
+     "finding": "expires <= 20 days"
+    }
+   ],
+   "MEDIUM": [],
+   "LOW": [
+    {
+     "id": "TLS_session_ticket",
+     "finding": "valid for 604800 seconds (>daily)"
+    },
+    {
+     "id": "DNS_CAArecord",
+     "finding": "--"
+    }
+   ]
+  }
+ },
+ "zap": null
+}

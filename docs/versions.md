@@ -757,3 +757,8 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     الصوتية للفرق. الإعدادان `orgs.prealert_seconds` (90) و `menu.order` بقيمتيهما الافتراضيتين. العرض دون إنترنت
     (`scripts/demo.sh`) يستعمل الصور المثبتة نفسها، و dnsmasq اختياري على الحاسوب، كما في `docs/demo.md`. تطبيق
     الهاتف: مخطط drift 3 (بريد جهة الاتصال) يُرحَّل تلقائيا عند التحديث.
+41. المرحلة T: لا حزمة في المنظومة ولا ترحيل. أدوات القياس الجديدة على الخادم: Lynis 3.0.9 و nmap و testssl.sh 3.2rc3
+    (`apt install lynis nmap testssl.sh`)، و OWASP ZAP 2.16.1 عبر Docker كما في السابق. سكربت التحصين
+    `infra/security/harden-host.sh` (`--check` أو `--apply`، الملف الحامل `demo` أو `prod`) وسكربت القياس `audit.sh`
+    و `compare.py` (مكتبة Python القياسية فقط). مولّدات الوثائق في `docs/deliverables` تحتاج `npm install` هناك
+    (docx 9.5، pptxgenjs 4.0، bpmn-js 18، sharp 0.35) و LibreOffice للتحويل إلى PDF.

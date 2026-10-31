@@ -1,0 +1,670 @@
+{
+ "before": {
+  "label": "audit-before",
+  "lynis": {
+   "index": 57,
+   "tests": 243,
+   "warnings": [
+    {
+     "id": "FIRE-4512",
+     "text": "iptables module(s) loaded, but no rules active"
+    },
+    {
+     "id": "LOGG-2138",
+     "text": "klogd is not running, which could lead to missing kernel messages in log files"
+    }
+   ],
+   "suggestions": [
+    {
+     "id": "LYNIS",
+     "text": "This release is more than 4 months old. Check the website or GitHub to see if there is an update available."
+    },
+    {
+     "id": "DEB-0280",
+     "text": "Install libpam-tmpdir to set $TMP and $TMPDIR for PAM sessions"
+    },
+    {
+     "id": "DEB-0810",
+     "text": "Install apt-listbugs to display a list of critical bugs prior to each APT installation."
+    },
+    {
+     "id": "DEB-0811",
+     "text": "Install apt-listchanges to display any significant changes prior to any upgrade via APT."
+    },
+    {
+     "id": "DEB-0831",
+     "text": "Install needrestart, alternatively to debian-goodies, so that you can run needrestart after upgrades to determine which daemons are using old versions of libraries and need restarting."
+    },
+    {
+     "id": "DEB-0880",
+     "text": "Install fail2ban to automatically ban hosts that commit multiple authentication errors."
+    },
+    {
+     "id": "BOOT-5180",
+     "text": "Determine runlevel and services at startup"
+    },
+    {
+     "id": "BOOT-5264",
+     "text": "Consider hardening system services"
+    },
+    {
+     "id": "KRNL-5788",
+     "text": "Determine why /vmlinuz or /boot/vmlinuz is missing on this Debian/Ubuntu system."
+    },
+    {
+     "id": "KRNL-5820",
+     "text": "If not required, consider explicit disabling of core dump in /etc/security/limits.conf file"
+    },
+    {
+     "id": "AUTH-9230",
+     "text": "Configure password hashing rounds in /etc/login.defs"
+    },
+    {
+     "id": "AUTH-9262",
+     "text": "Install a PAM module for password strength testing like pam_cracklib or pam_passwdqc"
+    },
+    {
+     "id": "AUTH-9284",
+     "text": "Look at the locked accounts and consider removing them"
+    },
+    {
+     "id": "AUTH-9286",
+     "text": "Configure minimum password age in /etc/login.defs"
+    },
+    {
+     "id": "AUTH-9286",
+     "text": "Configure maximum password age in /etc/login.defs"
+    },
+    {
+     "id": "AUTH-9328",
+     "text": "Default umask in /etc/login.defs could be more strict like 027"
+    },
+    {
+     "id": "FILE-6310",
+     "text": "To decrease the impact of a full /home file system, place /home on a separate partition"
+    },
+    {
+     "id": "FILE-6310",
+     "text": "To decrease the impact of a full /tmp file system, place /tmp on a separate partition"
+    },
+    {
+     "id": "FILE-6310",
+     "text": "To decrease the impact of a full /var file system, place /var on a separate partition"
+    },
+    {
+     "id": "USB-1000",
+     "text": "Disable drivers like USB storage when not used, to prevent unauthorized storage or data theft"
+    },
+    {
+     "id": "STRG-1846",
+     "text": "Disable drivers like firewire storage when not used, to prevent unauthorized storage or data theft"
+    },
+    {
+     "id": "NAME-4028",
+     "text": "Check DNS configuration for the dns domain name"
+    },
+    {
+     "id": "PKGS-7370",
+     "text": "Install debsums utility for the verification of packages with known good database."
+    },
+    {
+     "id": "PKGS-7394",
+     "text": "Install package apt-show-versions for patch management purposes"
+    },
+    {
+     "id": "PKGS-7420",
+     "text": "Consider using a tool to automatically apply upgrades"
+    },
+    {
+     "id": "NETW-3200",
+     "text": "Determine if protocol 'dccp' is really needed on this system"
+    },
+    {
+     "id": "NETW-3200",
+     "text": "Determine if protocol 'sctp' is really needed on this system"
+    },
+    {
+     "id": "NETW-3200",
+     "text": "Determine if protocol 'rds' is really needed on this system"
+    },
+    {
+     "id": "NETW-3200",
+     "text": "Determine if protocol 'tipc' is really needed on this system"
+    },
+    {
+     "id": "LOGG-2130",
+     "text": "Check if any syslog daemon is running and correctly configured."
+    },
+    {
+     "id": "LOGG-2190",
+     "text": "Check what deleted files are still in use and why."
+    },
+    {
+     "id": "BANN-7126",
+     "text": "Add a legal banner to /etc/issue, to warn unauthorized users"
+    },
+    {
+     "id": "BANN-7130",
+     "text": "Add legal banner to /etc/issue.net, to warn unauthorized users"
+    },
+    {
+     "id": "ACCT-9622",
+     "text": "Enable process accounting"
+    },
+    {
+     "id": "ACCT-9626",
+     "text": "Enable sysstat to collect accounting (no results)"
+    },
+    {
+     "id": "ACCT-9628",
+     "text": "Enable auditd to collect audit information"
+    },
+    {
+     "id": "MACF-6208",
+     "text": "Check output of aa-status"
+    },
+    {
+     "id": "FINT-4350",
+     "text": "Install a file integrity tool to monitor changes to critical and sensitive files"
+    },
+    {
+     "id": "TOOL-5002",
+     "text": "Determine if automation tools are present for system management"
+    },
+    {
+     "id": "FILE-7524",
+     "text": "Consider restricting file permissions"
+    },
+    {
+     "id": "HOME-9304",
+     "text": "Double check the permissions of home directories as some might be not strict enough."
+    },
+    {
+     "id": "KRNL-6000",
+     "text": "One or more sysctl values differ from the scan profile and could be tweaked"
+    },
+    {
+     "id": "HRDN-7222",
+     "text": "Harden compilers like restricting access to root user only"
+    },
+    {
+     "id": "HRDN-7230",
+     "text": "Harden the system by installing at least one malware scanner, to perform periodic file system scans"
+    }
+   ],
+   "version": "3.0.9",
+   "os": "Ubuntu 24.04.5 LTS"
+  },
+  "nmap_tcp": [
+   {
+    "port": 80,
+    "proto": "tcp",
+    "state": "open",
+    "service": "http",
+    "product": "Caddy httpd"
+   },
+   {
+    "port": 443,
+    "proto": "tcp",
+    "state": "open",
+    "service": "https",
+    "product": ""
+   }
+  ],
+  "nmap_udp": [
+   {
+    "port": 443,
+    "proto": "udp",
+    "state": "open|filtered",
+    "service": "https",
+    "product": ""
+   }
+  ],
+  "testssl": {
+   "protocols": [
+    "TLS1.2",
+    "TLS1.3"
+   ],
+   "counts": {
+    "CRITICAL": 1,
+    "HIGH": 5,
+    "MEDIUM": 0,
+    "LOW": 2
+   },
+   "findings": {
+    "CRITICAL": [
+     {
+      "id": "cert_chain_of_trust",
+      "finding": "failed (chain incomplete)."
+     }
+    ],
+    "HIGH": [
+     {
+      "id": "cert_expirationStatus",
+      "finding": "expires < 30 days (0)"
+     },
+     {
+      "id": "cert_notAfter",
+      "finding": "2026-11-01 03:59"
+     },
+     {
+      "id": "cert_revocation",
+      "finding": "Neither CRL nor OCSP URI provided"
+     },
+     {
+      "id": "intermediate_cert_notAfter <#1>",
+      "finding": "2026-11-07 15:59"
+     },
+     {
+      "id": "intermediate_cert_expiration <#1>",
+      "finding": "expires <= 20 days"
+     }
+    ],
+    "MEDIUM": [],
+    "LOW": [
+     {
+      "id": "TLS_session_ticket",
+      "finding": "valid for 604800 seconds (>daily)"
+     },
+     {
+      "id": "DNS_CAArecord",
+      "finding": "--"
+     }
+    ]
+   }
+  },
+  "zap": null
+ },
+ "after": {
+  "label": "audit-after",
+  "lynis": {
+   "index": 82,
+   "tests": 251,
+   "warnings": [
+    {
+     "id": "LOGG-2138",
+     "text": "klogd is not running, which could lead to missing kernel messages in log files"
+    }
+   ],
+   "suggestions": [
+    {
+     "id": "LYNIS",
+     "text": "This release is more than 4 months old. Check the website or GitHub to see if there is an update available."
+    },
+    {
+     "id": "DEB-0810",
+     "text": "Install apt-listbugs to display a list of critical bugs prior to each APT installation."
+    },
+    {
+     "id": "BOOT-5180",
+     "text": "Determine runlevel and services at startup"
+    },
+    {
+     "id": "BOOT-5264",
+     "text": "Consider hardening system services"
+    },
+    {
+     "id": "KRNL-5788",
+     "text": "Determine why /vmlinuz or /boot/vmlinuz is missing on this Debian/Ubuntu system."
+    },
+    {
+     "id": "AUTH-9284",
+     "text": "Look at the locked accounts and consider removing them"
+    },
+    {
+     "id": "FILE-6310",
+     "text": "To decrease the impact of a full /home file system, place /home on a separate partition"
+    },
+    {
+     "id": "FILE-6310",
+     "text": "To decrease the impact of a full /tmp file system, place /tmp on a separate partition"
+    },
+    {
+     "id": "FILE-6310",
+     "text": "To decrease the impact of a full /var file system, place /var on a separate partition"
+    },
+    {
+     "id": "NAME-4028",
+     "text": "Check DNS configuration for the dns domain name"
+    },
+    {
+     "id": "FIRE-4513",
+     "text": "Check iptables rules to see which rules are currently not used"
+    },
+    {
+     "id": "LOGG-2130",
+     "text": "Check if any syslog daemon is running and correctly configured."
+    },
+    {
+     "id": "LOGG-2190",
+     "text": "Check what deleted files are still in use and why."
+    },
+    {
+     "id": "MACF-6208",
+     "text": "Check output of aa-status"
+    },
+    {
+     "id": "FINT-4350",
+     "text": "Install a file integrity tool to monitor changes to critical and sensitive files"
+    },
+    {
+     "id": "TOOL-5002",
+     "text": "Determine if automation tools are present for system management"
+    },
+    {
+     "id": "HOME-9304",
+     "text": "Double check the permissions of home directories as some might be not strict enough."
+    },
+    {
+     "id": "KRNL-6000",
+     "text": "One or more sysctl values differ from the scan profile and could be tweaked"
+    }
+   ],
+   "version": "3.0.9",
+   "os": "Ubuntu 24.04.5 LTS"
+  },
+  "nmap_tcp": [
+   {
+    "port": 80,
+    "proto": "tcp",
+    "state": "open",
+    "service": "http",
+    "product": "Caddy httpd"
+   },
+   {
+    "port": 443,
+    "proto": "tcp",
+    "state": "open",
+    "service": "https",
+    "product": ""
+   }
+  ],
+  "nmap_udp": [
+   {
+    "port": 443,
+    "proto": "udp",
+    "state": "open|filtered",
+    "service": "https",
+    "product": ""
+   }
+  ],
+  "testssl": {
+   "protocols": [
+    "TLS1.2",
+    "TLS1.3"
+   ],
+   "counts": {
+    "CRITICAL": 1,
+    "HIGH": 5,
+    "MEDIUM": 0,
+    "LOW": 2
+   },
+   "findings": {
+    "CRITICAL": [
+     {
+      "id": "cert_chain_of_trust",
+      "finding": "failed (chain incomplete)."
+     }
+    ],
+    "HIGH": [
+     {
+      "id": "cert_expirationStatus",
+      "finding": "expires < 30 days (0)"
+     },
+     {
+      "id": "cert_notAfter",
+      "finding": "2026-11-01 03:59"
+     },
+     {
+      "id": "cert_revocation",
+      "finding": "Neither CRL nor OCSP URI provided"
+     },
+     {
+      "id": "intermediate_cert_notAfter <#1>",
+      "finding": "2026-11-07 15:59"
+     },
+     {
+      "id": "intermediate_cert_expiration <#1>",
+      "finding": "expires <= 20 days"
+     }
+    ],
+    "MEDIUM": [],
+    "LOW": [
+     {
+      "id": "TLS_session_ticket",
+      "finding": "valid for 604800 seconds (>daily)"
+     },
+     {
+      "id": "DNS_CAArecord",
+      "finding": "--"
+     }
+    ]
+   }
+  },
+  "zap": null
+ },
+ "lynis": {
+  "index": [
+   57,
+   82
+  ],
+  "resolved": [
+   {
+    "id": "ACCT-9622",
+    "text": "Enable process accounting"
+   },
+   {
+    "id": "ACCT-9626",
+    "text": "Enable sysstat to collect accounting (no results)"
+   },
+   {
+    "id": "ACCT-9628",
+    "text": "Enable auditd to collect audit information"
+   },
+   {
+    "id": "AUTH-9230",
+    "text": "Configure password hashing rounds in /etc/login.defs"
+   },
+   {
+    "id": "AUTH-9262",
+    "text": "Install a PAM module for password strength testing like pam_cracklib or pam_passwdqc"
+   },
+   {
+    "id": "AUTH-9286",
+    "text": "Configure maximum password age in /etc/login.defs"
+   },
+   {
+    "id": "AUTH-9286",
+    "text": "Configure minimum password age in /etc/login.defs"
+   },
+   {
+    "id": "AUTH-9328",
+    "text": "Default umask in /etc/login.defs could be more strict like 027"
+   },
+   {
+    "id": "BANN-7126",
+    "text": "Add a legal banner to /etc/issue, to warn unauthorized users"
+   },
+   {
+    "id": "BANN-7130",
+    "text": "Add legal banner to /etc/issue.net, to warn unauthorized users"
+   },
+   {
+    "id": "DEB-0280",
+    "text": "Install libpam-tmpdir to set $TMP and $TMPDIR for PAM sessions"
+   },
+   {
+    "id": "DEB-0811",
+    "text": "Install apt-listchanges to display any significant changes prior to any upgrade via APT."
+   },
+   {
+    "id": "DEB-0831",
+    "text": "Install needrestart, alternatively to debian-goodies, so that you can run needrestart after upgrades to determine which daemons are using old versions of libraries and need restarting."
+   },
+   {
+    "id": "DEB-0880",
+    "text": "Install fail2ban to automatically ban hosts that commit multiple authentication errors."
+   },
+   {
+    "id": "FILE-7524",
+    "text": "Consider restricting file permissions"
+   },
+   {
+    "id": "FIRE-4512",
+    "text": "iptables module(s) loaded, but no rules active"
+   },
+   {
+    "id": "HRDN-7222",
+    "text": "Harden compilers like restricting access to root user only"
+   },
+   {
+    "id": "HRDN-7230",
+    "text": "Harden the system by installing at least one malware scanner, to perform periodic file system scans"
+   },
+   {
+    "id": "KRNL-5820",
+    "text": "If not required, consider explicit disabling of core dump in /etc/security/limits.conf file"
+   },
+   {
+    "id": "NETW-3200",
+    "text": "Determine if protocol 'dccp' is really needed on this system"
+   },
+   {
+    "id": "NETW-3200",
+    "text": "Determine if protocol 'rds' is really needed on this system"
+   },
+   {
+    "id": "NETW-3200",
+    "text": "Determine if protocol 'sctp' is really needed on this system"
+   },
+   {
+    "id": "NETW-3200",
+    "text": "Determine if protocol 'tipc' is really needed on this system"
+   },
+   {
+    "id": "PKGS-7370",
+    "text": "Install debsums utility for the verification of packages with known good database."
+   },
+   {
+    "id": "PKGS-7394",
+    "text": "Install package apt-show-versions for patch management purposes"
+   },
+   {
+    "id": "PKGS-7420",
+    "text": "Consider using a tool to automatically apply upgrades"
+   },
+   {
+    "id": "STRG-1846",
+    "text": "Disable drivers like firewire storage when not used, to prevent unauthorized storage or data theft"
+   },
+   {
+    "id": "USB-1000",
+    "text": "Disable drivers like USB storage when not used, to prevent unauthorized storage or data theft"
+   }
+  ],
+  "remaining": [
+   {
+    "id": "AUTH-9284",
+    "text": "Look at the locked accounts and consider removing them"
+   },
+   {
+    "id": "BOOT-5180",
+    "text": "Determine runlevel and services at startup"
+   },
+   {
+    "id": "BOOT-5264",
+    "text": "Consider hardening system services"
+   },
+   {
+    "id": "DEB-0810",
+    "text": "Install apt-listbugs to display a list of critical bugs prior to each APT installation."
+   },
+   {
+    "id": "FILE-6310",
+    "text": "To decrease the impact of a full /home file system, place /home on a separate partition"
+   },
+   {
+    "id": "FILE-6310",
+    "text": "To decrease the impact of a full /tmp file system, place /tmp on a separate partition"
+   },
+   {
+    "id": "FILE-6310",
+    "text": "To decrease the impact of a full /var file system, place /var on a separate partition"
+   },
+   {
+    "id": "FINT-4350",
+    "text": "Install a file integrity tool to monitor changes to critical and sensitive files"
+   },
+   {
+    "id": "HOME-9304",
+    "text": "Double check the permissions of home directories as some might be not strict enough."
+   },
+   {
+    "id": "KRNL-5788",
+    "text": "Determine why /vmlinuz or /boot/vmlinuz is missing on this Debian/Ubuntu system."
+   },
+   {
+    "id": "KRNL-6000",
+    "text": "One or more sysctl values differ from the scan profile and could be tweaked"
+   },
+   {
+    "id": "LOGG-2130",
+    "text": "Check if any syslog daemon is running and correctly configured."
+   },
+   {
+    "id": "LOGG-2138",
+    "text": "klogd is not running, which could lead to missing kernel messages in log files"
+   },
+   {
+    "id": "LOGG-2190",
+    "text": "Check what deleted files are still in use and why."
+   },
+   {
+    "id": "LYNIS",
+    "text": "This release is more than 4 months old. Check the website or GitHub to see if there is an update available."
+   },
+   {
+    "id": "MACF-6208",
+    "text": "Check output of aa-status"
+   },
+   {
+    "id": "NAME-4028",
+    "text": "Check DNS configuration for the dns domain name"
+   },
+   {
+    "id": "TOOL-5002",
+    "text": "Determine if automation tools are present for system management"
+   }
+  ],
+  "new": [
+   {
+    "id": "FIRE-4513",
+    "text": "Check iptables rules to see which rules are currently not used"
+   }
+  ]
+ },
+ "nmap_tcp": {
+  "closed": [],
+  "opened": [],
+  "kept": [
+   [
+    "tcp",
+    80
+   ],
+   [
+    "tcp",
+    443
+   ]
+  ]
+ },
+ "nmap_udp": {
+  "closed": [],
+  "opened": [],
+  "kept": [
+   [
+    "udp",
+    443
+   ]
+  ]
+ }
+}

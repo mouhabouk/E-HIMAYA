@@ -1,0 +1,11 @@
+{
+  "name": "ehimaya-deliverables",
+  "private": true,
+  "description": "Generators of the Word, PowerPoint and BPMN deliverables (docs/phase-end.md). Run npm install here once.",
+  "dependencies": {
+    "bpmn-js": "^18.0.0",
+    "docx": "^9.5.0",
+    "pptxgenjs": "^4.0.1",
+    "sharp": "^0.35.0"
+  }
+}

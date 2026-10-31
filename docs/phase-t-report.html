@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة T</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة T (المرحلة 4 من خطة المراحل الخمس): الوثائق والأمن. مخططات سير العمل BPMN وبطاقاتها، الملف التقني والأمني الموحّد، قاموس البيانات 2.0، كراس الشروط بمواصفات الأجهزة والخوادم، تحصين الخادم مقيسا قبل وبعد، وعرض اللجنة بأسلوب Prezi.</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-31</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-xq2ez8</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج</div>
+    <div><b>المراجع</b><a href="security/hardening-report.html">تقرير التحصين</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">المؤجّل</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة</h2>
+<p>المرحلة لا تضيف وظيفة للمنظومة ولا ترحيلا: تحوّل ما أُنجز إلى وثائق يمكن تسليمها للجنة وإدراجها في كراس الشروط، وتقيس أمن الخادم بأدوات معروفة بدل التقييم الذاتي وحده. الترتيب المعتمد: 11 ثم 14 ثم 20 ثم 12 (ومعه 28) ثم 15 ثم 13.</p>
+</section>
+
+<section>
+<h2>2. التسليمات</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>التسليم</th><th>الملف في ملفات المشروع</th><th>الصفحات</th><th>المولّد في المستودع</th></tr>
+<tr><td>11</td><td>ثلاثة مخططات BPMN 2.0 (من البلاغ إلى القرار، الإنذار الأولي لصاحب المؤسسة، الكارثة) وبطاقات وظيفية وغير وظيفية وتقنية</td><td><code>spec/e-Himaya_Fiches_BPMN.pdf</code> و <code>diagrams/bpmn/</code></td><td>29</td><td><code>docs/deliverables/bpmn</code> و <code>cards</code></td></tr>
+<tr><td>14</td><td>الملف التقني والأمني: مصفوفة المنافذ، 38 سرّا يجب تغييرها، التحصين، تعريف البروتوكولات، قائمة ما قبل الإطلاق</td><td><code>guide/e-Himaya_Securite_Technique.pdf</code></td><td>11</td><td><code>docs/deliverables/security</code></td></tr>
+<tr><td>20</td><td>قاموس البيانات 2.0 مستخرج آليا من القاعدة بعد الترحيل 0088: 35 مخططا، 219 جدولا، 2586 عمودا، 133 جدولا بأمن الصفوف، 44 حقلا مشفّرا</td><td><code>database/e-Himaya_Dictionnaire_donnees.pdf</code></td><td>122</td><td><code>docs/deliverables/data-dictionary</code></td></tr>
+<tr><td>12 و 28</td><td>كراس الشروط من الوضع الحالي إلى الهدف، بأرقام <span class="sim">[SIM]</span> حيث تنقص المعطيات، ومواصفات الأجهزة والخوادم</td><td><code>spec/e-Himaya_Cahier_des_charges.pdf</code></td><td>15</td><td><code>docs/deliverables/specification</code></td></tr>
+<tr><td>15</td><td>سكربت التحصين وسكربت القياس وتقرير قبل وبعد</td><td><code>reports/hardening-report.html</code></td><td>—</td><td><code>infra/security</code></td></tr>
+<tr><td>13</td><td>عرض اللجنة بأسلوب Prezi: خريطة رئيسية بسبع محطات، انتقال Morph في 19 شريحة، رجوع إلى الخريطة من كل محطة</td><td><code>presentation/e-Himaya_Presentation_Comite.pptx</code></td><td>20 شريحة</td><td><code>docs/deliverables/presentation/build-committee.js</code></td></tr>
+</table></div>
+<p><img src="phase-t/bpmn-01-report-to-decision.png" alt="مخطط BPMN من البلاغ إلى القرار" style="max-width:100%;border:1px solid var(--line);border-radius:8px"></p>
+</section>
+
+<section>
+<h2>3. قياس التحصين (البند 15)</h2>
+<div class="tbl"><table>
+<tr><th>المقياس</th><th>قبل</th><th>بعد</th></tr>
+<tr><td>مؤشر Lynis 3.0.9</td><td>57</td><td><b>82</b></td></tr>
+<tr><td>بنود Lynis</td><td>—</td><td>28 محلولا، 18 باقيا (أغلبها نواة وsystemd لا توجد في بيئة القياس)، 1 جديد (FIRE-4513)</td></tr>
+<tr><td>المنافذ المفتوحة (nmap)</td><td>—</td><td>TCP 80 و443، UDP 443 (QUIC) فقط</td></tr>
+<tr><td>TLS (testssl.sh 3.2)</td><td>—</td><td>TLS 1.2 و1.3 فقط، دون ثغرة معروفة؛ تنبيه السلسلة يزول بإضافة الشهادة الجذرية المحلية</td></tr>
+</table></div>
+<div class="note warn"><b>حدود القياس:</b> القياس في حاوية دون systemd ولا نواة خاصة ولا Docker، بـ Caddy 2.6 بدل 2.10. فحص ZAP لم يُجر (السكربت <code>infra/security/zap/run.sh</code> جاهز)، وإعادة القياس على خادم حقيقي ومن جهاز آخر في الشبكة مدرجة في المؤجّل (T-1 و T-2). <code>harden-host.sh --check</code> بعد <code>--apply</code> يعطي 0 تغيير.</div>
+</section>
+
+<section>
+<h2>4. تحديثات نهاية المرحلة</h2>
+<ul>
+  <li>الملف الوصفي V33 (51 صفحة): ما الجديد، NFR-05 مقيسا، التسليمات، سطر المرحلة T في خارطة الطريق.</li>
+  <li>المخططات UML (96 صفحة): باب سادس لمخططات BPMN بمصادرها، وأرقام القاعدة 35 مخططا و219 جدولا.</li>
+  <li>العرض الرسمي (14 شريحة): 55 مرحلة، سطر «الصلاحيات والتحصين والوثائق».</li>
+  <li>مرجع التصميم أعيد توليده دون تغيير (لا شاشة جديدة).</li>
+  <li><code>versions.md</code> البند 41، ودليلا التثبيت (فحوص التحصين)، و <code>backlog.md</code> القسم 3.13.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. ما يلي</h2>
+<p>الدمج، ثم المرحلة 5: وثائق الإنتاج، وثيقة النشر، دراسة اللجنة، والأسئلة والأجوبة.</p>
+</section>
+<footer>ء-حماية · المرحلة T · 2026-10-31</footer>
+</div>
+</body>
+</html>
