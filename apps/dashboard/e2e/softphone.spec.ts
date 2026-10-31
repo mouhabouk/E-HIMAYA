@@ -346,6 +346,8 @@ async function mockApi(page: Page, creds: SipCredentials) {
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/volunteer-suggestions") return json(route, []);
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/conference") return json(route, []);
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/hospitals") return json(route, []);
+    // The incident's media gallery (phase D, review point 21): empty.
+    if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/media") return json(route, { counts: {}, live_streams: 0, items: [] });
     if (verb === "POST" && pathname === "/api/v1/staff/incidents/i-1/conference") {
       m.conferences.push("crisis-i-1");
       return json(route, { room: "crisis-i-1", join_uri: `sip:crisis-i-1@${SIP_DOMAIN}` });

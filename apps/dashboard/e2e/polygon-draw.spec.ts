@@ -140,6 +140,8 @@ async function mockApi(page: Page): Promise<ApiMock> {
     }
     // What the system administrator grants and hides (phase L4 §8): nothing here.
     if (method === "GET" && pathname === "/api/v1/staff/features/mine") return json(route, { granted: [], hidden: [], lent: {} });
+    // The menu order (phase D, review point 9): the built-in order.
+    if (method === "GET" && pathname === "/api/v1/staff/settings") return json(route, { items: [] });
     // The decision window (phase L4b): no delegation opens it here.
     if (method === "GET" && pathname === "/api/v1/staff/window/access")
       return json(route, { full: false, delegated: false, may_delegate: false, keeps_dictionary: false, delegations: [] });
