@@ -4,6 +4,7 @@ Codes never change with the language; the dashboard translates the keys. Default
 0018 and apply when a row is missing.
 """
 
+import re
 from collections.abc import Callable
 from typing import Any, Literal
 
@@ -39,6 +40,11 @@ CRISIS_SITREP_HOURS = "crisis.sitrep_hours"
 LEARNING_SCHEDULE = "learning.schedule"
 # Phase N (review point 27): the operational thresholds, see ``thresholds``.
 THRESHOLDS = "operations.thresholds"
+# Phase D (review point 9): the order of the dashboard's menu, set by the system administrator by drag and drop.
+# Empty lists keep the built-in order; groups and links not named keep theirs after the named ones.
+MENU_ORDER = "menu.order"
+MENU_GROUPS = ("ops", "crisis", "strategies", "disasters", "alerts", "people", "orgs", "knowledge", "system")
+MENU_PATH = r"^/[a-z0-9/_-]{0,80}$"
 LEARNING_TASKS = (
     "report_category",
     "report_lives",
@@ -158,6 +164,26 @@ def _learning_schedule(value: Any) -> Any:
     return {k: out.get(k, {"enabled": False, "every_days": 7}) for k in LEARNING_TASKS}
 
 
+class MenuOrder(BaseModel):
+    """The groups of the dashboard's menu in order, and the links of each group (their paths) in order."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    groups: list[Literal[MENU_GROUPS]] = Field(default_factory=list, max_length=len(MENU_GROUPS))  # type: ignore[valid-type]
+    items: dict[Literal[MENU_GROUPS], list[str]] = Field(default_factory=dict)  # type: ignore[valid-type]
+
+    @model_validator(mode="after")
+    def _unique(self) -> "MenuOrder":
+        if len(set(self.groups)) != len(self.groups):
+            raise ValueError("a group is named twice")
+        for paths in self.items.values():
+            if len(paths) > 60 or len(set(paths)) != len(paths):
+                raise ValueError("a link is named twice, or too many links")
+            if any(re.fullmatch(MENU_PATH, p) is None for p in paths):
+                raise ValueError("a link is not a path of the dashboard")
+        return self
+
+
 def _boolean(value: Any) -> Any:
     if not isinstance(value, bool):
         raise ValueError("expected true or false")
@@ -195,6 +221,7 @@ DEFAULTS: dict[str, Any] = {
     CRISIS_SITREP_HOURS: {"1": 24, "2": 12, "3": 6, "4": 2},
     LEARNING_SCHEDULE: {key: {"enabled": False, "every_days": 7} for key in LEARNING_TASKS},
     THRESHOLDS: thresholds.DEFAULTS,
+    MENU_ORDER: {"groups": [], "items": {}},
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -213,6 +240,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     CRISIS_SITREP_HOURS: frozenset({Role.SYSADMIN}),
     LEARNING_SCHEDULE: frozenset({Role.SYSADMIN, Role.AI_ADMIN}),
     THRESHOLDS: frozenset({Role.SYSADMIN, Role.CENTRAL_COMMITTEE}),
+    MENU_ORDER: frozenset({Role.SYSADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -232,6 +260,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     CRISIS_SITREP_HOURS: _sitrep_hours,
     LEARNING_SCHEDULE: _learning_schedule,
     THRESHOLDS: thresholds.validate,
+    MENU_ORDER: _model(MenuOrder),
 }
 
 

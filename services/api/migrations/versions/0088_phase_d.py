@@ -6,6 +6,7 @@
   the word error rate); the audio itself is never stored.
 * ``reports.live_stream.assignment_id``/``incident_id`` and the source ``crew``: a team streams from the staff app
   (review point 17).
+* ``identity.volunteer.sms_key_enc``/``sms_last_at``: a volunteer answers a call-out by signed SMS (``EH3``, S2-5).
 * ``ops.field_attachment.transcript_enc``: the text of a team's voice message, read once for the mission times.
 
 Revision ID: 0088_phase_d
@@ -81,9 +82,13 @@ CREATE TABLE ai.dictation (
 CREATE INDEX ix_dictation_field ON ai.dictation (field, created_at DESC);
 
 ALTER TABLE ops.field_attachment ADD COLUMN transcript_enc bytea, ADD COLUMN transcribed_at timestamptz;
+
+-- S2-5: a volunteer's signed SMS answers to a call-out (EH3): the key, and the last message applied (no replay).
+ALTER TABLE identity.volunteer ADD COLUMN sms_key_enc bytea, ADD COLUMN sms_last_at timestamptz;
 """
 
 DOWNGRADE = """
+ALTER TABLE identity.volunteer DROP COLUMN IF EXISTS sms_key_enc, DROP COLUMN IF EXISTS sms_last_at;
 ALTER TABLE ops.field_attachment DROP COLUMN transcript_enc, DROP COLUMN transcribed_at;
 DROP TABLE ai.dictation;
 DROP TABLE org.prealert;

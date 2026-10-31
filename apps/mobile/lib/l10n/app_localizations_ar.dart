@@ -6759,4 +6759,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffLiveBack => 'رجوع إلى المهمة';
+
+  @override
+  String get calloutBySms =>
+      'لا يوجد اتصال بالإنترنت: جهّزنا ردّك في رسالة قصيرة موقّعة. اضغط «إرسال» في تطبيق الرسائل.';
 }

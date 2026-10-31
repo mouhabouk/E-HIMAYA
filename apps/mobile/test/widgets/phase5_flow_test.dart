@@ -1,4 +1,6 @@
 import 'package:ehimaya/core/push/push_messaging.dart';
+import 'package:ehimaya/features/report/sms_fallback.dart';
+import 'package:ehimaya/features/volunteer/callout_sms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -225,6 +227,100 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Sur place'), findsOneWidget);
       expect(find.byKey(Key('callout-arrived-$id')), findsNothing);
+      await unmountApp(tester);
+    },
+  );
+
+  test('EH3: the signed answer matches the server (S2-5)', () {
+    final body = eh3Body(
+      key: '0123456789abcdef0123456789abcdef',
+      volunteerId: '0f0f0f0f-0f0f-0f0f-0f0f-0f0f0f0f0f0f',
+      calloutId: '1a1a1a1a-1a1a-1a1a-1a1a-1a1a1a1a1a1a',
+      reply: 'accept',
+      eta: 15,
+      at: DateTime.fromMillisecondsSinceEpoch(1793440800 * 1000, isUtc: true),
+    );
+    expect(
+      body,
+      'EH3 ${'0f' * 16} ${'1a' * 16} accept 15 1793440800 5ecd7484666c7b9a',
+    );
+    expect(
+      eh3Body(
+        key: 'k',
+        volunteerId: '0f' * 16,
+        calloutId: '1a' * 16,
+        reply: 'decline',
+        eta: 9,
+        at: DateTime.fromMillisecondsSinceEpoch(1793440800 * 1000),
+      ).split(' ')[4],
+      '0',
+    );
+  });
+
+  testWidgets(
+    'offline, the volunteer accepts a call-out by signed SMS (S2-5)',
+    (tester) async {
+      final callout = calloutJson();
+      final sms = <Uri>[];
+      var keys = 0;
+      await pumpApp(
+        tester,
+        prefs: registeredPrefs(locale: 'fr'),
+        session: testSession,
+        overrides: [
+          noPush,
+          smsReportNumberProvider.overrideWithValue('+21671000000'),
+          smsComposerProvider.overrideWithValue((uri) async {
+            sms.add(uri);
+            return true;
+          }),
+        ],
+        api: (r) {
+          switch ((r.method, r.path)) {
+            case ('GET', '/api/v1/me/volunteer'):
+              return FakeResponse(200, json: volunteerJson());
+            case ('GET', '/api/v1/me/callouts'):
+              return FakeResponse(200, json: [callout]);
+            case ('POST', '/api/v1/me/volunteer/sms-key'):
+              keys++;
+              return FakeResponse(
+                200,
+                json: {
+                  'key': '0123456789abcdef0123456789abcdef',
+                  'volunteer_id': '0f0f0f0f-0f0f-0f0f-0f0f-0f0f0f0f0f0f',
+                },
+              );
+            case ('POST', final p) when p.endsWith('/respond'):
+              return const FakeResponse.network();
+          }
+          return defaultApiResponse(r);
+        },
+      );
+      await scrollTo(tester, 'home-volunteer');
+      await tester.tap(find.byKey(const Key('home-volunteer')));
+      await tester.pumpAndSettle();
+      await scrollTo(tester, 'volunteer-callouts');
+      await tester.tap(find.byKey(const Key('volunteer-callouts')));
+      await tester.pumpAndSettle();
+      expect(keys, 1);
+      final id = callout['id']! as String;
+      await tester.tap(find.byKey(Key('callout-accept-$id')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('callout-eta')), '20');
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('callout-eta-ok')));
+      await tester.pumpAndSettle();
+      expect(sms, hasLength(1));
+      expect(sms.single.path, '+21671000000');
+      final parts = sms.single.queryParameters['body']!.split(' ');
+      expect(parts.take(4), [
+        'EH3',
+        '0f' * 16,
+        id.replaceAll('-', ''),
+        'accept',
+      ]);
+      expect(parts[4], '20');
+      expect(parts.last, hasLength(16));
       await unmountApp(tester);
     },
   );

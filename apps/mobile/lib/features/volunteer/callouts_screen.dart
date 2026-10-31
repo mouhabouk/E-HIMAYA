@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/error_messages.dart';
 import '../../core/http/models.dart';
@@ -10,6 +11,8 @@ import '../../core/ui/emergency_action.dart';
 import '../../l10n/app_localizations.dart';
 import '../alerts/alert_labels.dart';
 import '../report/category_labels.dart';
+import '../report/sms_fallback.dart';
+import 'callout_sms.dart';
 import 'volunteer_providers.dart';
 import 'volunteer_screen.dart';
 
@@ -22,6 +25,8 @@ class CalloutsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final callouts = ref.watch(myCalloutsProvider);
+    // S2-5: the key of the SMS answers is fetched while online, for the day there is none.
+    ref.watch(volunteerSmsKeyProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.calloutsTitle),
@@ -64,10 +69,19 @@ class _CalloutCard extends ConsumerStatefulWidget {
 class _CalloutCardState extends ConsumerState<_CalloutCard> {
   bool _busy = false;
 
-  Future<void> _run(Future<void> Function(EHimayaApi api) action) async {
+  /// [reply] and [eta] say the same answer as an SMS (S2-5), sent when there is no internet.
+  Future<void> _run(
+    Future<void> Function(EHimayaApi api) action, {
+    required String reply,
+    int eta = 0,
+  }) async {
     setState(() => _busy = true);
     try {
       await action(ref.read(apiProvider));
+      ref.invalidate(myCalloutsProvider);
+    } on ApiException catch (e) {
+      final bySms = e.code == ApiErrorCode.network && await _sms(reply, eta);
+      if (mounted && !bySms) showVolunteerError(context, e);
       ref.invalidate(myCalloutsProvider);
     } on Object catch (e) {
       if (mounted) showVolunteerError(context, e);
@@ -75,6 +89,32 @@ class _CalloutCardState extends ConsumerState<_CalloutCard> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// No internet: the signed answer in the SMS app, to the platform's number; the volunteer
+  /// presses Send. False when the phone has no key yet or no number is configured.
+  Future<bool> _sms(String reply, int eta) async {
+    final number = ref.read(smsReportNumberProvider);
+    final key = ref.read(volunteerSmsKeyProvider).value;
+    if (number == null || key == null) return false;
+    final body = eh3Body(
+      key: key.key,
+      volunteerId: key.volunteerId,
+      calloutId: widget.callout.id,
+      reply: reply,
+      eta: eta,
+      at: DateTime.now(),
+    );
+    final opened = await ref.read(smsComposerProvider)(smsUri(number, body));
+    if (opened && mounted) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).calloutBySms),
+          duration: const Duration(seconds: 8),
+        ),
+      );
+    }
+    return opened;
   }
 
   Future<void> _accept() async {
@@ -86,6 +126,8 @@ class _CalloutCardState extends ConsumerState<_CalloutCard> {
     await _run(
       (api) =>
           api.respondCallout(widget.callout.id, accept: true, etaMinutes: eta),
+      reply: 'accept',
+      eta: eta,
     );
   }
 
@@ -159,6 +201,7 @@ class _CalloutCardState extends ConsumerState<_CalloutCard> {
                           ? null
                           : () => _run(
                               (api) => api.respondCallout(c.id, accept: false),
+                              reply: 'decline',
                             ),
                       child: Text(l10n.calloutDecline),
                     ),
@@ -180,7 +223,10 @@ class _CalloutCardState extends ConsumerState<_CalloutCard> {
                 label: Text(l10n.calloutArrived),
                 onPressed: _busy
                     ? null
-                    : () => _run((api) => api.calloutArrived(c.id)),
+                    : () => _run(
+                        (api) => api.calloutArrived(c.id),
+                        reply: 'arrived',
+                      ),
               ),
           ],
         ),

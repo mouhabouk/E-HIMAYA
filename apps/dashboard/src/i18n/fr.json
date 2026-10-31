@@ -8282,5 +8282,20 @@
       "recording": "Enregistrement du direct"
     },
     "liveNow": "En direct maintenant : {{count}}"
+  },
+  "menuOrder": {
+    "title": "Ordre du menu",
+    "back": "Retour aux paramètres",
+    "intro": "Glissez les groupes et les liens dans l'ordre voulu, ou utilisez les flèches. L'ordre vaut pour tous ; chacun ne voit que ce que ses rôles permettent.",
+    "readOnly": "Seul l'administrateur système change l'ordre du menu.",
+    "groups": "Groupes",
+    "up": "Monter {{name}}",
+    "down": "Descendre {{name}}",
+    "reason": "Motif du changement",
+    "save": "Enregistrer l'ordre",
+    "undo": "Annuler les changements",
+    "builtIn": "Ordre d'origine",
+    "builtInHint": "Remet l'ordre d'origine dans le brouillon ; rien n'est enregistré avant « Enregistrer l'ordre ».",
+    "saved": "Ordre enregistré. Le nouveau menu s'affiche pour tous."
   }
 }

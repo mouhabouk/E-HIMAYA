@@ -12069,6 +12069,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to the mission'**
   String get staffLiveBack;
+
+  /// No description provided for @calloutBySms.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet: your answer is ready in a signed SMS. Press Send in the messaging app.'**
+  String get calloutBySms;
 }
 
 class _AppLocalizationsDelegate

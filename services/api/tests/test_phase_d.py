@@ -361,3 +361,88 @@ async def test_incident_media_in_one_gallery(
             {"t": f"incident:{incident_id}"},
         )
         assert n == 1
+
+
+async def test_menu_order_set_by_the_system_administrator(client: httpx.AsyncClient, staff: Staff) -> None:
+    """Review point 9: the menu's order is a national setting the system administrator saves; checked and audited."""
+    sysadmin = staff(["sysadmin"], gouvernorat=None)
+    items = (await client.get("/api/v1/staff/settings", headers=staff(["operator"]))).json()["items"]
+    current = next(i for i in items if i["key"] == "menu.order")
+    assert current["editable"] is False
+    url = "/api/v1/staff/settings/menu.order"
+    order = {"groups": ["alerts", "ops"], "items": {"ops": ["/map", "/incidents", "/"]}}
+    body = {"value": order, "version": current["version"], "reason": "ترتيب القائمة للعرض"}
+    assert (await client.put(url, json=body, headers=staff(["operator"], gouvernorat=None))).status_code == 403
+    for bad in (
+        {"groups": ["ops", "ops"], "items": {}},
+        {"groups": ["nowhere"], "items": {}},
+        {"groups": [], "items": {"ops": ["javascript:alert(1)"]}},
+    ):
+        r = await client.put(url, json={**body, "value": bad}, headers=sysadmin)
+        assert (r.status_code, r.json()["detail"]) == (422, "invalid_setting")
+    r = await client.put(url, json=body, headers=sysadmin)
+    assert r.status_code == 200, r.text
+    assert r.json()["value"] == order
+    # Back to the built-in order for the other tests.
+    reset = {
+        "value": {"groups": [], "items": {}},
+        "version": r.json()["version"],
+        "reason": "العودة إلى الترتيب الأصلي",
+    }
+    assert (await client.put(url, json=reset, headers=sysadmin)).status_code == 200
+
+
+# ---------------------------------------------------------------- S2-5: a volunteer answers a call-out by SMS
+
+
+def _eh3(key: str, volunteer: str, callout: str, reply: str, eta: int = 0, at: datetime | None = None) -> str:
+    """The message the citizen app writes (apps/mobile/lib/features/volunteer/callout_sms.dart)."""
+    from app.modules.volunteers import callout_sms
+
+    ts = str(int((at or datetime.now(UTC)).timestamp()))
+    v, c = volunteer.replace("-", ""), callout.replace("-", "")
+    signed = "|".join(("EH3", v, c, reply, str(eta), ts))
+    return f"EH3 {v} {c} {reply} {eta} {ts} {callout_sms.sign(key, signed)}"
+
+
+async def test_volunteer_answers_a_callout_by_signed_sms(
+    client: httpx.AsyncClient, staff: Staff, make_token: TokenFactory, channels: Any
+) -> None:
+    from tests.test_crew_offline import _sms
+    from tests.test_operations import approved_volunteer, near, new_incident, random_place
+
+    place = random_place()
+    incident_id, _ = await new_incident(client, staff, place)
+    me = bearer(make_token(roles=["citizen"], email=f"v{uuid.uuid4().hex[:8]}@example.tn", email_verified=True))
+    volunteer = await approved_volunteer(client, staff, me, near(place, 0.01))
+    r = await client.post(
+        f"/api/v1/staff/incidents/{incident_id}/callouts",
+        json={"skill": "diving", "requested": 1, "radius_km": 10, "message": "غريق", "volunteer_ids": [volunteer]},
+        headers=staff(["operator"]),
+    )
+    assert r.status_code == 201, r.text
+    callout = r.json()["id"]
+    key = (await client.post("/api/v1/me/volunteer/sms-key", headers=me)).json()
+    assert key["volunteer_id"] == volunteer
+    again = (await client.post("/api/v1/me/volunteer/sms-key", headers=me)).json()
+    assert again["key"] == key["key"]  # made once, kept on the phone
+
+    # A wrong key, an accept without minutes: ignored, nothing changes.
+    assert (await _sms(client, _eh3("0" * 32, volunteer, callout, "accept", 15)))["reason"] == "invalid_signature"
+    assert (await _sms(client, _eh3(key["key"], volunteer, callout, "accept", 0)))["reason"] == "eta_required"
+    accepted = _eh3(key["key"], volunteer, callout, "accept", 15, datetime.now(UTC) - timedelta(seconds=30))
+    assert (await _sms(client, accepted))["status"] == "applied"
+    mine = (await client.get("/api/v1/me/callouts", headers=me)).json()
+    assert mine[0]["my_status"] == "accepted"
+    # The same message again (a replay) is ignored; then «وصلت».
+    assert (await _sms(client, accepted))["reason"] == "replayed"
+    assert (await _sms(client, _eh3(key["key"], volunteer, callout, "arrived")))["status"] == "applied"
+    mine = (await client.get("/api/v1/me/callouts", headers=me)).json()
+    assert mine[0]["my_status"] == "arrived"
+    async with get_system_sessionmaker()() as s:
+        actions = (
+            await s.scalars(
+                text("SELECT action FROM audit.log WHERE target = :t ORDER BY at"), {"t": f"callout:{callout}"}
+            )
+        ).all()
+        assert actions[-2:] == ["volunteer.sms_accept", "volunteer.sms_arrived"]

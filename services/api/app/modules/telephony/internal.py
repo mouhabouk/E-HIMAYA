@@ -29,6 +29,7 @@ from app.modules.streams.internal import _secret_matches
 from app.modules.telephony import schemas, sms
 from app.modules.telephony.domain import Source, normalize_caller
 from app.modules.telephony.models import Call
+from app.modules.volunteers import callout_sms
 
 log = structlog.get_logger()
 router = APIRouter(include_in_schema=False)
@@ -82,6 +83,14 @@ async def sms_inbound(
 async def _receive(session: AsyncSession, message: schemas.SmsInboundIn) -> schemas.SmsInboundOut:
     """One received SMS, whichever gateway brought it: a team's step (EH2) or a citizen's report (EH1)."""
     sender_key = sms.sender_hash(message.sender).hex()[:32]
+    if callout_sms.is_callout_sms(message.text):
+        verdict = await ratelimit.check(f"callout-sms-in:{sender_key}", CREW_SMS_PER_SENDER_PER_HOUR, 3600)
+        if verdict.exceeded:
+            return schemas.SmsInboundOut(status="ignored", reason="rate_limited")
+        answer = await callout_sms.receive(session, message.text)
+        await session.commit()
+        log.info("callout_sms.inbound", outcome=answer.status, reason=answer.reason)
+        return schemas.SmsInboundOut(status=answer.status, reason=answer.reason)
     if crew_sms.is_crew_sms(message.text):
         verdict = await ratelimit.check(f"crew-sms-in:{sender_key}", CREW_SMS_PER_SENDER_PER_HOUR, 3600)
         if verdict.exceeded:

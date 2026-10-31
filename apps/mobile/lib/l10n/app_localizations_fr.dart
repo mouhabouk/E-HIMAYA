@@ -6901,4 +6901,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get staffLiveBack => 'Retour à la mission';
+
+  @override
+  String get calloutBySms =>
+      'Pas d\'internet : votre réponse est prête dans un SMS signé. Appuyez sur « Envoyer » dans l\'application Messages.';
 }

@@ -805,6 +805,17 @@ class EHimayaApi {
     return MyCallout.fromJson(r.data!);
   });
 
+  /// Phase D (S2-5): the key of the signed SMS answers to call-outs, made once by the server.
+  Future<VolunteerSmsKey> volunteerSmsKey() => guardApi(() async {
+    final r = await _dio.post<Map<String, Object?>>(
+      '/api/v1/me/volunteer/sms-key',
+    );
+    return VolunteerSmsKey(
+      r.data!['key']! as String,
+      r.data!['volunteer_id']! as String,
+    );
+  });
+
   Future<MyCallout> calloutArrived(String id) => guardApi(() async {
     final r = await _dio.post<Map<String, Object?>>(
       '/api/v1/me/callouts/${Uri.encodeComponent(id)}/arrived',

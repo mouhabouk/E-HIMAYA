@@ -1994,5 +1994,6 @@
   "staffLiveHint": "La salle voit le direct sur le mur d'écrans et la page de l'intervention",
   "staffLiveEnded": "Direct terminé. L'enregistrement est gardé au dossier.",
   "staffLiveAgain": "Relancer le direct",
-  "staffLiveBack": "Retour à la mission"
+  "staffLiveBack": "Retour à la mission",
+  "calloutBySms": "Pas d'internet : votre réponse est prête dans un SMS signé. Appuyez sur « Envoyer » dans l'application Messages."
 }

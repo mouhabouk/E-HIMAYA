@@ -3550,5 +3550,6 @@
   "staffLiveHint": "The room sees it on the video wall and the incident page",
   "staffLiveEnded": "Stream over. The recording is kept with the incident.",
   "staffLiveAgain": "Stream again",
-  "staffLiveBack": "Back to the mission"
+  "staffLiveBack": "Back to the mission",
+  "calloutBySms": "No internet: your answer is ready in a signed SMS. Press Send in the messaging app."
 }

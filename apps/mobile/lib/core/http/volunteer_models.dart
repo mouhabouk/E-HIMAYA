@@ -241,3 +241,10 @@ class MyCallout {
     );
   }
 }
+
+/// Phase D (S2-5): the key of the volunteer's signed SMS answers (EH3) and the volunteer's id.
+class VolunteerSmsKey {
+  const VolunteerSmsKey(this.key, this.volunteerId);
+  final String key;
+  final String volunteerId;
+}

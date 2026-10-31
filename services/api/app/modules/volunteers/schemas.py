@@ -128,6 +128,11 @@ class MyCallout(BaseModel):
     created_at: datetime
 
 
+class SmsKeyOut(BaseModel):
+    key: str
+    volunteer_id: uuid.UUID
+
+
 class RespondIn(BaseModel):
     response: Literal["accept", "decline"]
     eta_minutes: int | None = Field(default=None, ge=1, le=600)

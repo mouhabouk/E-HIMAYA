@@ -8282,5 +8282,20 @@
       "recording": "Stream recording"
     },
     "liveNow": "Live now: {{count}}"
+  },
+  "menuOrder": {
+    "title": "Menu order",
+    "back": "Back to the settings",
+    "intro": "Drag the groups and links into the order you want, or use the arrows. The order applies to everyone; each user only sees what their roles allow.",
+    "readOnly": "Only the system administrator changes the menu order.",
+    "groups": "Groups",
+    "up": "Move {{name}} up",
+    "down": "Move {{name}} down",
+    "reason": "Reason for the change",
+    "save": "Save the order",
+    "undo": "Undo the changes",
+    "builtIn": "Built-in order",
+    "builtInHint": "Puts the built-in order in the draft; nothing is saved before «Save the order».",
+    "saved": "Order saved. Everyone now sees the new menu."
   }
 }

@@ -1,5 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useRef, useState, type TextareaHTMLAttributes } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type TextareaHTMLAttributes,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useServices } from "../context/services";
 import { useLanguage } from "../lib/hooks";
@@ -10,7 +15,11 @@ import { MutationError } from "./IncidentDecision";
 export const DICTATION_MAX_S = 60;
 
 function canRecord(): boolean {
-  return typeof MediaRecorder !== "undefined" && typeof navigator !== "undefined" && !!navigator.mediaDevices;
+  return (
+    typeof MediaRecorder !== "undefined" &&
+    typeof navigator !== "undefined" &&
+    !!navigator.mediaDevices
+  );
 }
 
 /**
@@ -60,7 +69,8 @@ export function DictatedTextarea({
     if (!form) return;
     const sent = () => {
       const ids = pending.current.splice(0);
-      for (const id of ids) void api.dictationKept(id, latest.current).catch(() => undefined);
+      for (const id of ids)
+        void api.dictationKept(id, latest.current).catch(() => undefined);
     };
     form.addEventListener("submit", sent);
     return () => form.removeEventListener("submit", sent);
@@ -125,7 +135,13 @@ export function DictatedTextarea({
   return (
     <>
       <div className="dictated">
-        <textarea ref={box} dir="auto" {...textarea} value={value} onChange={(e) => onText(e.target.value)} />
+        <textarea
+          ref={box}
+          dir="auto"
+          {...textarea}
+          value={value}
+          onChange={(e) => onText(e.target.value)}
+        />
         {canRecord() && (
           <button
             type="button"
@@ -137,7 +153,9 @@ export function DictatedTextarea({
             onClick={() => (recording ? stop() : void start())}
           >
             <Icon name={recording ? "stop" : "mic"} size={18} />
-            {recording && <span aria-hidden="true"> {DICTATION_MAX_S - seconds}</span>}
+            {recording && (
+              <span aria-hidden="true"> {DICTATION_MAX_S - seconds}</span>
+            )}
           </button>
         )}
       </div>

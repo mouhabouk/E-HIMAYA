@@ -100,6 +100,7 @@ import { StreamWallPage } from "./pages/StreamWallPage";
 import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
 import { VolunteersPage } from "./pages/VolunteersPage";
 import { WeatherSuggestionsPage } from "./pages/WeatherSuggestionsPage";
+import { MenuOrderPage } from "./pages/MenuOrderPage";
 
 // Phase 8 screens are loaded on demand: they bring the chart (uPlot) and Markdown (markdown-it, DOMPurify) code.
 const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) =>
@@ -253,6 +254,7 @@ export function AppRoutes() {
           path="settings/ai"
           element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
         />
+        <Route path="settings/menu" element={<Gate allow={canReadPlatformSettings}><MenuOrderPage /></Gate>} />
         <Route path="settings/ai/models" element={scoped(canReadModelCards, <ModelCardsPage />)} />
         <Route path="settings/ai/learning" element={scoped(canOpenLearning, <LearningPage />)} />
         <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
