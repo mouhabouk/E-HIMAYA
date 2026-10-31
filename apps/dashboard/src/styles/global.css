@@ -9662,3 +9662,40 @@ button.nav-card:hover {
   inset-inline-end: 0.4rem;
   inset-block-start: 0.4rem;
 }
+
+/* Phase D, review point 21: the incident's media in one gallery. */
+.gallery__summary {
+  font-weight: 600;
+}
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+.gallery__item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.gallery__item img,
+.gallery__item video {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  background: #e5e7eb;
+}
+.gallery__item audio {
+  width: 100%;
+}
+.gallery__item figcaption {
+  font-size: 0.8rem;
+  color: var(--muted, #475569);
+}
+.gallery__transcript {
+  margin: 0;
+  font-size: 0.85rem;
+  border-inline-start: 3px solid #cbd5e1;
+  padding-inline-start: 0.5rem;
+}

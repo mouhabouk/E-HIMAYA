@@ -86,6 +86,7 @@ from app.modules.ops.crew_stream import router as crew_stream_router
 from app.modules.ops.field_router import crew_router as field_crew_router
 from app.modules.ops.field_router import router as field_router
 from app.modules.ops.field_router import staff_router as field_staff_router
+from app.modules.ops.gallery import router as gallery_router
 from app.modules.ops.router import router as ops_router
 from app.modules.orgs.field_router import router as orgs_field_router
 from app.modules.orgs.prealert import prealerts_forever
@@ -338,6 +339,7 @@ def create_app() -> FastAPI:
         appinfo_feedback_router,
         crew_router,
         crew_stream_router,
+        gallery_router,
         crew_staff_router,
         field_router,
         field_staff_router,

@@ -30,6 +30,29 @@ import type { Language } from "../i18n";
 
 const enc = encodeURIComponent;
 
+/** `GET /api/v1/staff/incidents/{id}/media` (phase D, review point 21). */
+export interface GalleryItem {
+  id: string;
+  kind: "photo" | "video" | "voice" | "frame" | "recording" | "stream";
+  origin: "citizen" | "team" | "camera" | "vision";
+  at: string;
+  url: string | null;
+  content_type: string | null;
+  duration_s: number | null;
+  label: string | null;
+  report_id: string | null;
+  stream_id: string | null;
+  transcript: string | null;
+  live: boolean;
+  simulated: boolean;
+}
+
+export interface IncidentGallery {
+  counts: Partial<Record<GalleryItem["kind"], number>>;
+  live_streams: number;
+  items: GalleryItem[];
+}
+
 /** `POST /api/v1/staff/dictation`. */
 export interface DictationResult {
   dictation_id: string;
@@ -123,6 +146,10 @@ export function phase7Api(api: ApiClient) {
         body: { text, lang: lang === "ar" ? "ar" : "fr", ...(voiceId ? { voice_id: voiceId } : {}) },
       }),
 
+    /** Phase D, review point 21: the incident's media in one gallery, with the counts of the summary line. */
+    incidentMedia: (incidentId: string, signal?: AbortSignal) =>
+      api.request<IncidentGallery>(`${incidentPath(incidentId)}/media`, { signal }),
+
     /** Phase D, review point 19: dictation of a free-text field; the audio is deleted once transcribed. */
     dictate: (field: string, audio: Blob, lang: Language) =>
       api.request<DictationResult>("/api/v1/staff/dictation", {
@@ -208,6 +235,7 @@ export const p7Keys = {
   suggestions: ["weather-suggestions"] as const,
   recommendations: (incidentId: string) => ["recommendations", incidentId] as const,
   commandBoard: (incidentId: string) => ["command-board", incidentId] as const,
+  incidentMedia: (incidentId: string) => ["incident-media", incidentId] as const,
   responders: (incidentId: string) => ["responders", incidentId] as const,
   forecast: (incidentId: string, kind: "fire" | "flood") => ["forecast", incidentId, kind] as const,
   route: (from: string, to: string, profile: string) => ["route", from, to, profile] as const,

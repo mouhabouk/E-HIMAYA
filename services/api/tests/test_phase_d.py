@@ -330,3 +330,34 @@ async def test_dictation_of_a_free_text_field(
     async with get_system_sessionmaker()() as s:
         raw = await s.scalar(text("SELECT text_enc FROM ai.dictation WHERE id = :i"), {"i": heard["dictation_id"]})
         assert raw is not None and "حريق".encode() not in bytes(raw)
+
+
+async def test_incident_media_in_one_gallery(
+    client: httpx.AsyncClient, staff: Staff, fake_mediamtx: FakeMediamtx, _isolated_infra: FakeStore
+) -> None:
+    """Review point 21: the team's photos and voice notes and the streams, in time order, with the counts."""
+    from tests.test_crew_field import JPEG, M4A, _upload
+
+    leader, path, incident_id, _ = await _mission(client, staff)
+    assert (await _upload(leader, path, "photo", JPEG, "image/jpeg")).status_code == 200
+    assert (await _upload(leader, path, "voice", M4A, "audio/mp4", duration_s=8.0)).status_code == 200
+    created = (await leader.post(f"{path}/stream")).json()
+    await go_live(client, created["path"])
+
+    url = f"/api/v1/staff/incidents/{incident_id}/media"
+    r = await client.get(url, headers=staff(["operator"]))
+    assert r.status_code == 200, r.text
+    gallery = r.json()
+    assert gallery["counts"] == {"photo": 1, "voice": 1, "stream": 1}
+    assert gallery["live_streams"] == 1
+    kinds = [(i["kind"], i["origin"], bool(i["url"])) for i in gallery["items"]]
+    assert kinds == [("photo", "team", True), ("voice", "team", True), ("stream", "team", False)]
+    assert gallery["items"][2]["live"] is True and gallery["items"][2]["stream_id"] == created["stream_id"]
+    # Another gouvernorat's room does not see it; the reading is audited.
+    assert (await client.get(url, headers=staff(["operator"], gouvernorat=11))).status_code == 404
+    async with get_system_sessionmaker()() as s:
+        n = await s.scalar(
+            text("SELECT count(*) FROM audit.log WHERE action = 'incident.media' AND target = :t"),
+            {"t": f"incident:{incident_id}"},
+        )
+        assert n == 1

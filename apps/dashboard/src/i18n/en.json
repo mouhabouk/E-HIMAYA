@@ -8252,5 +8252,35 @@
     "stop": "Stop ({{seconds}} s)",
     "transcribing": "Transcribing…",
     "refused": "The browser did not allow the microphone."
+  },
+  "gallery": {
+    "title": "Incident media",
+    "none": "No media yet.",
+    "count": {
+      "photo": "Photos: {{count}}",
+      "video": "Videos: {{count}}",
+      "voice": "Voice notes: {{count}}",
+      "frame": "Vision frames: {{count}}",
+      "recording": "Recordings: {{count}}",
+      "stream": "Streams: {{count}}"
+    },
+    "origin": {
+      "citizen": "Citizen",
+      "team": "Team",
+      "camera": "Camera",
+      "vision": "Vision"
+    },
+    "live": "Live",
+    "ended": "Ended",
+    "openStream": "Open the stream",
+    "unavailable": "File not available.",
+    "alt": {
+      "photo": "Photo of the scene",
+      "frame": "Frame where the vision service saw fire or smoke",
+      "voice": "Voice note",
+      "video": "Video of the scene",
+      "recording": "Stream recording"
+    },
+    "liveNow": "Live now: {{count}}"
   }
 }

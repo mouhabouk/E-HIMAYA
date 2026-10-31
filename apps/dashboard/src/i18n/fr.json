@@ -8252,5 +8252,35 @@
     "stop": "Arrêter ({{seconds}} s)",
     "transcribing": "Transcription…",
     "refused": "Le navigateur n'a pas autorisé le micro."
+  },
+  "gallery": {
+    "title": "Médias de l'intervention",
+    "none": "Aucun média pour l'instant.",
+    "count": {
+      "photo": "Photos : {{count}}",
+      "video": "Vidéos : {{count}}",
+      "voice": "Messages vocaux : {{count}}",
+      "frame": "Images de la vision : {{count}}",
+      "recording": "Enregistrements : {{count}}",
+      "stream": "Directs : {{count}}"
+    },
+    "origin": {
+      "citizen": "Citoyen",
+      "team": "Équipe",
+      "camera": "Caméra",
+      "vision": "Vision"
+    },
+    "live": "En direct",
+    "ended": "Terminé",
+    "openStream": "Ouvrir le direct",
+    "unavailable": "Fichier indisponible.",
+    "alt": {
+      "photo": "Photo des lieux",
+      "frame": "Image où la vision a vu du feu ou de la fumée",
+      "voice": "Message vocal",
+      "video": "Vidéo des lieux",
+      "recording": "Enregistrement du direct"
+    },
+    "liveNow": "En direct maintenant : {{count}}"
   }
 }
