@@ -26,6 +26,38 @@ import 'live_publisher.dart';
 
 final _log = logger('live');
 
+/// The four calls of a live session. The citizen app streams a report
+/// (`/api/v1/reports/{id}/streams`); the staff app overrides [liveStreamApiProvider] to stream a
+/// mission (`/api/v1/crew/missions/{id}/stream`, phase D, review point 17). Errors are
+/// [ApiException]s either way.
+abstract class LiveStreamApi {
+  Future<LiveStreamGrant> startStream(String targetId);
+  Future<void> postStreamLocation(String streamId, GeoPoint position);
+  Future<LiveStreamInfo?> stopStream(String streamId);
+  Future<LiveStreamInfo> getStream(String streamId);
+}
+
+class _CitizenLiveStreamApi implements LiveStreamApi {
+  const _CitizenLiveStreamApi(this._api);
+  final EHimayaApi _api;
+
+  @override
+  Future<LiveStreamGrant> startStream(String targetId) =>
+      _api.startStream(targetId);
+  @override
+  Future<void> postStreamLocation(String streamId, GeoPoint position) =>
+      _api.postStreamLocation(streamId, position);
+  @override
+  Future<LiveStreamInfo?> stopStream(String streamId) =>
+      _api.stopStream(streamId);
+  @override
+  Future<LiveStreamInfo> getStream(String streamId) => _api.getStream(streamId);
+}
+
+final liveStreamApiProvider = Provider<LiveStreamApi>(
+  (ref) => _CitizenLiveStreamApi(ref.read(apiProvider)),
+);
+
 /// Where the stream goes: a new report created on the spot (home Live button) or a report that
 /// was just submitted / is listed in "My reports".
 class LiveTarget {
@@ -308,7 +340,7 @@ class LiveController extends Notifier<LiveState> {
 
   DateTime _now() => ref.read(clockProvider)();
   LiveTimings get _t => ref.read(liveTimingsProvider);
-  EHimayaApi get _api => ref.read(apiProvider);
+  LiveStreamApi get _api => ref.read(liveStreamApiProvider);
 
   /// Clears an ended or failed session (the screen opens on the pre-start panel again).
   void reset() {

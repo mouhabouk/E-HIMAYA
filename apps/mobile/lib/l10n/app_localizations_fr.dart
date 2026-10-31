@@ -6881,4 +6881,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String nearestMapHint(int count) {
     return '$count lieux de la copie gardée sur le téléphone, sans connexion';
   }
+
+  @override
+  String get staffLive => 'Direct vers la salle';
+
+  @override
+  String get staffLiveSub => 'La salle voit les lieux comme vous';
+
+  @override
+  String get staffLiveHint =>
+      'La salle voit le direct sur le mur d\'écrans et la page de l\'intervention';
+
+  @override
+  String get staffLiveEnded =>
+      'Direct terminé. L\'enregistrement est gardé au dossier.';
+
+  @override
+  String get staffLiveAgain => 'Relancer le direct';
+
+  @override
+  String get staffLiveBack => 'Retour à la mission';
 }

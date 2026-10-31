@@ -468,7 +468,10 @@ class _NearestMapScreenState extends ConsumerState<NearestMapScreen> {
           (layer, p),
     ];
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.nearestMapTitle)),
+      appBar: AppBar(
+        title: Text(l10n.nearestMapTitle),
+        actions: const [LanguageMenuAction()],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

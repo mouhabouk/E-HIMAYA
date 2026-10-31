@@ -93,6 +93,7 @@ def staff_stream(row: Any, now: datetime | None = None) -> schemas.StaffStream:
         max_smoke_confidence=stream.max_smoke_confidence,
         recordings_count=int(recordings or 0),
         simulated=stream.source == Source.SIM,
+        incident_id=stream.incident_id,
     )
 
 
@@ -250,6 +251,54 @@ async def create_for_report(session: AsyncSession, user_id: uuid.UUID, report_id
         await session.flush()
     except IntegrityError:
         # A concurrent request created the report's stream first (unique partial index).
+        await session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "stream_already_active") from None
+    return stream, token
+
+
+# ---------------------------------------------------------------- a team's streams (phase D, review point 17)
+
+
+async def create_for_crew(
+    session: AsyncSession, assignment_id: uuid.UUID, incident_id: uuid.UUID, gouvernorat: int | None, actor: str
+) -> tuple[LiveStream, str]:
+    """A stream of a mission, published from the staff app with WHIP like a citizen's. One active stream per mission;
+    a pending one never published within its start window is expired first."""
+    settings = get_settings()
+    now = datetime.now(UTC)
+    active = await session.scalar(
+        select(LiveStream)
+        .where(LiveStream.assignment_id == assignment_id, LiveStream.status.in_(ACTIVE))
+        .with_for_update()
+    )
+    if active is not None:
+        if active.status == StreamStatus.PENDING and active.expires_at is not None and active.expires_at <= now:
+            await expire(session, active, now)
+        else:
+            raise HTTPException(status.HTTP_409_CONFLICT, "stream_already_active")
+    report_id = await session.scalar(
+        select(Report.id).where(Report.incident_id == incident_id).order_by(Report.created_at).limit(1)
+    )
+    token = new_publish_token()
+    stream_id = uuid.uuid4()
+    stream = LiveStream(
+        id=stream_id,
+        report_id=report_id,
+        source=Source.CREW.value,
+        path=path_of(stream_id),
+        publish_token_hash=publish_token_hash(token),
+        status=StreamStatus.PENDING.value,
+        created_at=now,
+        expires_at=now + timedelta(seconds=settings.stream_start_window_s),
+        gouvernorat_code=gouvernorat,
+        created_by=actor,
+        assignment_id=assignment_id,
+        incident_id=incident_id,
+    )
+    session.add(stream)
+    try:
+        await session.flush()
+    except IntegrityError:
         await session.rollback()
         raise HTTPException(status.HTTP_409_CONFLICT, "stream_already_active") from None
     return stream, token

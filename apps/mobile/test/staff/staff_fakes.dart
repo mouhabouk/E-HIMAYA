@@ -6,9 +6,13 @@ import 'package:ehimaya/core/connectivity/connectivity.dart';
 import 'package:ehimaya/core/location/location_service.dart';
 import 'package:ehimaya/core/storage/app_prefs.dart';
 import 'package:ehimaya/core/storage/secure_store.dart';
+import 'package:ehimaya/core/webrtc/whip_client.dart';
+import 'package:ehimaya/features/live/live_controller.dart';
+import 'package:ehimaya/features/live/live_publisher.dart';
 import 'package:ehimaya/staff/mission_box.dart';
 import 'package:ehimaya/staff/prevention/prevention_store.dart';
 import 'package:ehimaya/staff/prevention/sign_screen.dart';
+import 'package:ehimaya/staff/staff_api.dart';
 import 'package:ehimaya/staff/staff_app.dart';
 import 'package:ehimaya/staff/staff_capture.dart';
 import 'package:ehimaya/staff/staff_config.dart';
@@ -22,6 +26,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/app_harness.dart';
 import '../helpers/fake_http.dart';
+import '../helpers/live_fakes.dart';
 
 /// Keycloak's device grant and `/api/v1/crew`, in memory (phase P4a).
 class FakeCrewServer {
@@ -204,8 +209,53 @@ class FakeCrewServer {
     },
   ];
 
+  /// Phase D, review point 17: the team's live streams and their stops.
+  final liveStreams = <String>[];
+  final liveStops = <String>[];
+  final whipPosts = <SeenRequest>[];
+
   FakeResponse _handle(SeenRequest r) {
     final p = r.path;
+    if (r.uri.host == 'media.test') {
+      if (r.method == 'POST') {
+        whipPosts.add(r);
+        return FakeResponse(
+          201,
+          text: sdpAnswer,
+          headers: {'Location': '${r.uri.path}/session-1'},
+        );
+      }
+      return const FakeResponse(200);
+    }
+    final live = RegExp(r'^/api/v1/crew/missions/([^/]+)/stream$')
+        .firstMatch(p);
+    if (live != null && r.method == 'POST') {
+      final id = 'cs-${liveStreams.length + 1}';
+      liveStreams.add(live.group(1)!);
+      return FakeResponse(201, json: grantJson(id));
+    }
+    final crewStream = RegExp(
+      r'^/api/v1/crew/streams/([^/]+)(/(location|stop))?$',
+    ).firstMatch(p);
+    if (crewStream != null) {
+      final id = crewStream.group(1)!;
+      switch (crewStream.group(3)) {
+        case 'location':
+          return const FakeResponse(204);
+        case 'stop':
+          liveStops.add(id);
+          return FakeResponse(
+            200,
+            json: streamInfoJson(
+              id,
+              status: 'ended',
+              reason: 'publisher_stopped',
+            ),
+          );
+        default:
+          return FakeResponse(200, json: streamInfoJson(id));
+      }
+    }
     if (p.endsWith('/auth/device')) {
       return const FakeResponse(
         200,
@@ -674,6 +724,7 @@ Future<void> pumpStaffApp(
   SignatureEncoder? signature,
   StaffPush? push,
   String smsNumber = '',
+  LivePublisher? publisher,
 }) async {
   // A tall phone: the forms fit without scrolling.
   tester.view.physicalSize = const Size(1080, 2400);
@@ -713,6 +764,14 @@ Future<void> pumpStaffApp(
           ),
         connectivityProvider.overrideWithValue(FakeConnectivity()),
         signatureEncoderProvider.overrideWithValue(signature ?? fakeSignature),
+        // As in main_staff.dart: the live session streams a mission.
+        liveStreamApiProvider.overrideWith(
+          (ref) => CrewLiveStreamApi(ref.read(staffApiProvider)),
+        ),
+        whipDioProvider.overrideWithValue(server.dio()),
+        livePublisherFactoryProvider.overrideWithValue(
+          () => publisher ?? FakeLivePublisher(),
+        ),
       ],
       child: StaffApp(clock: (clock ?? TestClock()).call),
     ),

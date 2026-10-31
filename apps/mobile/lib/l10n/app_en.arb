@@ -3544,5 +3544,11 @@
         "type": "int"
       }
     }
-  }
+  },
+  "staffLive": "Live to the room",
+  "staffLiveSub": "The room sees the scene as you do",
+  "staffLiveHint": "The room sees it on the video wall and the incident page",
+  "staffLiveEnded": "Stream over. The recording is kept with the incident.",
+  "staffLiveAgain": "Stream again",
+  "staffLiveBack": "Back to the mission"
 }

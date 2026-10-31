@@ -29,6 +29,15 @@ import type { WeatherGrid, WeatherPointDetail, WeatherSuggestion } from "./weath
 import type { Language } from "../i18n";
 
 const enc = encodeURIComponent;
+
+/** `POST /api/v1/staff/dictation`. */
+export interface DictationResult {
+  dictation_id: string;
+  text: string;
+  language: string | null;
+  model: string | null;
+  duration_s: number;
+}
 const incidentPath = (id: string) => `/api/v1/staff/incidents/${enc(id)}`;
 const suggestionPath = (id: string) => `/api/v1/staff/weather/suggestions/${enc(id)}`;
 const callPath = (id: string) => `/api/v1/staff/calls/${enc(id)}`;
@@ -113,6 +122,22 @@ export function phase7Api(api: ApiClient) {
         method: "POST",
         body: { text, lang: lang === "ar" ? "ar" : "fr", ...(voiceId ? { voice_id: voiceId } : {}) },
       }),
+
+    /** Phase D, review point 19: dictation of a free-text field; the audio is deleted once transcribed. */
+    dictate: (field: string, audio: Blob, lang: Language) =>
+      api.request<DictationResult>("/api/v1/staff/dictation", {
+        method: "POST",
+        query: { field, lang: lang === "ar" ? "ar" : "fr" },
+        rawBody: audio,
+        rawType: audio.type.split(";")[0] || "audio/webm",
+      }),
+
+    /** The text the user kept when the form was sent: the word errors against the transcript. */
+    dictationKept: (dictationId: string, text: string) =>
+      api.request<{ words: number; word_errors: number; wer: number | null }>(
+        `/api/v1/staff/dictation/${enc(dictationId)}/kept`,
+        { method: "POST", body: { text } },
+      ),
 
     /** A recorded voice message (AI5b): transcribed locally and returned for correction; nothing is sent yet. */
     commandVoice: (incidentId: string, audio: Blob, lang: Language) =>

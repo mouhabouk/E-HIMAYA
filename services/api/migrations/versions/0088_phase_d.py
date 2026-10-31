@@ -4,6 +4,8 @@
   answer within the delay (``orgs.prealert_seconds``) and the report it became.
 * ``ai.dictation``: one line per dictated text (who, which field, the model's text and the text the user kept,
   the word error rate); the audio itself is never stored.
+* ``reports.live_stream.assignment_id``/``incident_id`` and the source ``crew``: a team streams from the staff app
+  (review point 17).
 * ``ops.field_attachment.transcript_enc``: the text of a team's voice message, read once for the mission times.
 
 Revision ID: 0088_phase_d
@@ -25,6 +27,17 @@ ALTER TABLE reports.live_stream
     ADD COLUMN org_id uuid REFERENCES org.organization(id) ON DELETE SET NULL,
     ADD CONSTRAINT ck_live_stream_org_camera CHECK (org_id IS NULL OR source IN ('camera', 'sim'));
 CREATE INDEX ix_live_stream_org ON reports.live_stream (org_id) WHERE org_id IS NOT NULL;
+
+-- A team streams from the staff app (review point 17): its mission and incident, one active stream per mission.
+ALTER TABLE reports.live_stream
+    DROP CONSTRAINT ck_live_stream_source,
+    ADD CONSTRAINT ck_live_stream_source CHECK (source IN ('app', 'drone', 'camera', 'sim', 'crew')),
+    ADD COLUMN assignment_id uuid REFERENCES ops.assignment(id) ON DELETE SET NULL,
+    ADD COLUMN incident_id uuid REFERENCES ops.incident(id) ON DELETE SET NULL,
+    ADD CONSTRAINT ck_live_stream_crew CHECK (source <> 'crew' OR (assignment_id IS NOT NULL AND created_by IS NOT NULL));
+CREATE UNIQUE INDEX ux_live_stream_crew_active ON reports.live_stream (assignment_id)
+    WHERE assignment_id IS NOT NULL AND status IN ('pending', 'live');
+CREATE INDEX ix_live_stream_incident ON reports.live_stream (incident_id) WHERE incident_id IS NOT NULL;
 
 CREATE TABLE org.prealert (
     id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -74,6 +87,13 @@ DOWNGRADE = """
 ALTER TABLE ops.field_attachment DROP COLUMN transcript_enc, DROP COLUMN transcribed_at;
 DROP TABLE ai.dictation;
 DROP TABLE org.prealert;
+DELETE FROM reports.live_stream WHERE source = 'crew';
+ALTER TABLE reports.live_stream
+    DROP CONSTRAINT IF EXISTS ck_live_stream_crew,
+    DROP COLUMN IF EXISTS assignment_id,
+    DROP COLUMN IF EXISTS incident_id,
+    DROP CONSTRAINT ck_live_stream_source,
+    ADD CONSTRAINT ck_live_stream_source CHECK (source IN ('app', 'drone', 'camera', 'sim'));
 ALTER TABLE reports.live_stream DROP CONSTRAINT ck_live_stream_org_camera, DROP COLUMN org_id;
 """
 

@@ -1,4 +1,4 @@
-# covers: review points 3 and 25 (phase D, docs/phase-d/design-d.md)
+# covers: review points 3, 17 and 25 (phase D, docs/phase-d/design-d.md)
 """Phase D: the pre-alert of an institution's camera (owner first, the room after the delay) and the push guard."""
 
 import uuid
@@ -14,9 +14,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_system_sessionmaker
 from app.modules.notify import outbox
 from app.modules.orgs import prealert
-from tests.conftest import FakeStore, TokenFactory, bearer
+from tests.conftest import FakeMediamtx, FakeStore, TokenFactory, bearer
+from tests.test_crew import write
+from tests.test_crew_field import _mission
 from tests.test_orgs import add_member, register
-from tests.test_streams import frame, go_live
+from tests.test_streams import auth, frame, go_live
 
 Staff = Callable[..., dict[str, str]]
 User = Callable[..., dict[str, str]]
@@ -228,9 +230,103 @@ async def test_demo_seed_is_idempotent_and_raises_a_simulated_prealert(session: 
         )
     ).one()
     assert (row.state, row.simulated, row.label) == ("pending", True, "smoke")
-    member = (
-        (await session.execute(text("SELECT role FROM org.member WHERE org_id = :o"), {"o": first["org_id"]}))
+    # The shared test database keeps the institution between runs: this run's owner is its admin, once.
+    roles = (
+        (
+            await session.execute(
+                text("SELECT role FROM org.member WHERE org_id = :o AND user_id = :u"),
+                {"o": first["org_id"], "u": first["owner_user_id"]},
+            )
+        )
         .scalars()
         .all()
     )
-    assert member == ["admin"]
+    assert roles == ["admin"]
+
+
+async def test_team_streams_from_the_staff_app(
+    client: httpx.AsyncClient, staff: Staff, fake_mediamtx: FakeMediamtx
+) -> None:
+    """Review point 17: the leader streams the scene of his mission; the room sees it with the incident."""
+    leader, path, incident_id, place = await _mission(client, staff)
+    r = await leader.post(f"{path}/stream")
+    assert r.status_code == 201, r.text
+    created = r.json()
+    assert created["whip_url"].endswith(f"/{created['path']}/whip")
+    assert (await leader.post(f"{path}/stream")).json()["detail"] == "stream_already_active"
+    # WebRTC only, with its token.
+    assert (
+        await auth(client, action="publish", path=created["path"], protocol="rtmp", token=created["publish_token"])
+        == 401
+    )
+    assert (
+        await auth(client, action="publish", path=created["path"], protocol="webrtc", token=created["publish_token"])
+        == 200
+    )
+    await go_live(client, created["path"])
+    stream_id = created["stream_id"]
+    assert (await leader.post(f"/streams/{stream_id}/location", place)).status_code == 204
+
+    room = staff(["operator"])
+    wall = await client.get("/api/v1/staff/streams", params={"status": "live"}, headers=room)
+    assert wall.status_code == 200, wall.text
+    mine = next(s for s in wall.json()["items"] if s["id"] == stream_id)
+    assert mine["source"] == "crew"
+    assert mine["incident_id"] == incident_id
+    assert mine["tracking_code"]  # the incident's first report
+
+    # Another leader's phone does not reach it.
+    other, *_ = await _mission(client, staff)
+    assert (await other.get(f"/streams/{stream_id}")).status_code == 404
+
+    stopped = await leader.post(f"/streams/{stream_id}/stop")
+    assert stopped.json()["status"] == "ended"
+    assert created["path"] in fake_mediamtx.kicked
+    # Released, the mission no longer streams.
+    assert (await leader.post(f"{path}/status", write(status="released"))).status_code == 200
+    assert (await leader.post(f"{path}/stream")).json()["detail"] == "mission_closed"
+
+
+async def test_dictation_of_a_free_text_field(
+    client: httpx.AsyncClient, staff: Staff, fake_ai: Any, fake_store: Any
+) -> None:
+    """Review point 19: the text for the field, the audio deleted, the text kept measured, the log for the AI admin."""
+    operator = staff(["operator"])
+    field = f"report.note{uuid.uuid4().hex[:6]}"
+    fake_ai.transcript = {"text": "حريق في غابة قرب المعتمدية", "language": "ar"}
+    r = await client.post(
+        "/api/v1/staff/dictation",
+        params={"field": field, "lang": "ar"},
+        content=b"OggS-audio",
+        headers={**operator, "Content-Type": "audio/ogg"},
+    )
+    assert r.status_code == 200, r.text
+    heard = r.json()
+    assert heard["text"] == "حريق في غابة قرب المعتمدية"
+    assert fake_store.objects == {} and fake_store.deleted[-1].startswith("dictation/")
+    # Never a field that is not free text by name: the pattern refuses spaces and capitals.
+    bad = await client.post(
+        "/api/v1/staff/dictation",
+        params={"field": "Bad Field"},
+        content=b"x",
+        headers={**operator, "Content-Type": "audio/ogg"},
+    )
+    assert bad.status_code == 422
+
+    url = f"/api/v1/staff/dictation/{heard['dictation_id']}/kept"
+    assert (await client.post(url, json={"text": "x y"}, headers=staff(["operator"]))).status_code == 404
+    kept = await client.post(url, json={"text": "حريق في غابة قرب معتمدية نابل"}, headers=operator)
+    assert kept.status_code == 200, kept.text
+    assert kept.json() == {"words": 6, "word_errors": 1, "wer": 0.1667}
+    assert (await client.post(url, json={"text": "x"}, headers=operator)).json()["detail"] == "dictation_already_kept"
+
+    assert (await client.get("/api/v1/staff/dictation", headers=operator)).status_code == 403
+    log = await client.get("/api/v1/staff/dictation", params={"field": field}, headers=staff(["ai_admin"]))
+    assert log.status_code == 200, log.text
+    body = log.json()
+    stat = next(f for f in body["fields"] if f["field"] == field)
+    assert stat == {"field": field, "dictations": 1, "kept": 1, "mean_wer": 0.1667}
+    assert body["items"][0]["kept"] == "حريق في غابة قرب معتمدية نابل"
+    async with get_system_sessionmaker()() as s:
+        raw = await s.scalar(text("SELECT text_enc FROM ai.dictation WHERE id = :i"), {"i": heard["dictation_id"]})
+        assert raw is not None and "حريق".encode() not in bytes(raw)

@@ -2346,7 +2346,8 @@
       "app": "Application citoyenne",
       "drone": "Drone",
       "camera": "Caméra fixe",
-      "sim": "Source simulée"
+      "sim": "Source simulée",
+      "crew": "Équipe sur le terrain"
     },
     "status": {
       "pending": "En attente",
@@ -8245,5 +8246,11 @@
     "registered": "Caméra enregistrée. Lancez le relais avec cette ligne sur l'ordinateur de démonstration :",
     "tokenOnce": "Le jeton de diffusion n'est affiché qu'une fois ; seule son empreinte est gardée.",
     "copied": "Copié"
+  },
+  "dictation": {
+    "record": "Dicter",
+    "stop": "Arrêter ({{seconds}} s)",
+    "transcribing": "Transcription…",
+    "refused": "Le navigateur n'a pas autorisé le micro."
   }
 }

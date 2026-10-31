@@ -3,6 +3,10 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../core/http/api_error.dart';
+import '../core/http/models.dart' show GeoPoint;
+import '../core/http/stream_models.dart';
+import '../features/live/live_controller.dart' show LiveStreamApi;
 import 'mission_box.dart';
 import 'prevention/prevention_models.dart';
 import 'staff_auth.dart';
@@ -278,6 +282,34 @@ class StaffApi {
   Future<String> smsKey() async =>
       (await _call('POST', '/devices/current/sms-key'))['key'] as String;
 
+  // ---------------------------------------------------------------- live (phase D, review point 17)
+
+  /// Opens the live stream of a mission: the app publishes with WHIP like the citizen app.
+  /// `409 stream_already_active`, `409 mission_closed`.
+  Future<LiveStreamGrant> startMissionStream(String missionId) async =>
+      LiveStreamGrant.fromJson(
+        await _call(
+          'POST',
+          '/missions/${Uri.encodeComponent(missionId)}/stream',
+        ),
+      );
+
+  Future<void> postCrewStreamLocation(String streamId, GeoPoint p) => _call(
+    'POST',
+    '/streams/${Uri.encodeComponent(streamId)}/location',
+    body: {'lat': p.lat, 'lon': p.lon, 'accuracy_m': ?p.accuracyM},
+  );
+
+  Future<LiveStreamInfo> stopCrewStream(String streamId) async =>
+      LiveStreamInfo.fromJson(
+        await _call('POST', '/streams/${Uri.encodeComponent(streamId)}/stop'),
+      );
+
+  Future<LiveStreamInfo> crewStream(String streamId) async =>
+      LiveStreamInfo.fromJson(
+        await _call('GET', '/streams/${Uri.encodeComponent(streamId)}'),
+      );
+
   Future<List<Hospital>> hospitals(String id) async {
     final j = await _call('GET', '/missions/$id/hospitals');
     return [
@@ -335,4 +367,41 @@ class StaffApi {
   ) async => FieldVisit(
     await _call('POST', '/prevention/visits/$id/decision', body: body),
   );
+}
+
+/// The live session of the shared controller on a mission (the target id is the mission's).
+/// Crew errors become [ApiException]s, as the controller expects.
+class CrewLiveStreamApi implements LiveStreamApi {
+  const CrewLiveStreamApi(this._api);
+  final StaffApi _api;
+
+  Future<T> _guard<T>(Future<T> Function() call) async {
+    try {
+      return await call();
+    } on CrewError catch (e) {
+      throw ApiException(
+        ApiErrorCode.fromWire(e.code) ??
+            (e.status >= 500 ? ApiErrorCode.server : ApiErrorCode.unknown),
+        statusCode: e.status,
+      );
+    } on DioException {
+      throw const ApiException(ApiErrorCode.network);
+    }
+  }
+
+  @override
+  Future<LiveStreamGrant> startStream(String targetId) =>
+      _guard(() => _api.startMissionStream(targetId));
+
+  @override
+  Future<void> postStreamLocation(String streamId, GeoPoint position) =>
+      _guard(() => _api.postCrewStreamLocation(streamId, position));
+
+  @override
+  Future<LiveStreamInfo?> stopStream(String streamId) =>
+      _guard(() => _api.stopCrewStream(streamId));
+
+  @override
+  Future<LiveStreamInfo> getStream(String streamId) =>
+      _guard(() => _api.crewStream(streamId));
 }

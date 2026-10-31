@@ -2346,7 +2346,8 @@
       "app": "Citizen app",
       "drone": "Drone",
       "camera": "Fixed camera",
-      "sim": "Simulated source"
+      "sim": "Simulated source",
+      "crew": "Team in the field"
     },
     "status": {
       "pending": "Pending",
@@ -8245,5 +8246,11 @@
     "registered": "Camera registered. Start the relay with this line on the demonstration computer:",
     "tokenOnce": "The publish token is shown once; only its fingerprint is kept.",
     "copied": "Copied"
+  },
+  "dictation": {
+    "record": "Dictate",
+    "stop": "Stop ({{seconds}} s)",
+    "transcribing": "Transcribing…",
+    "refused": "The browser did not allow the microphone."
   }
 }

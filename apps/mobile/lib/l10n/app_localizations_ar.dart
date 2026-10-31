@@ -6741,4 +6741,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String nearestMapHint(int count) {
     return '$count مكانا من النسخة المحفوظة على الهاتف، تعمل دون اتصال';
   }
+
+  @override
+  String get staffLive => 'بث مباشر للقاعة';
+
+  @override
+  String get staffLiveSub => 'القاعة ترى المكان كما تراه';
+
+  @override
+  String get staffLiveHint => 'القاعة ترى البث في جدار الشاشات وصفحة الحادث';
+
+  @override
+  String get staffLiveEnded => 'انتهى البث. حُفظ التسجيل في ملف الحادث.';
+
+  @override
+  String get staffLiveAgain => 'بث من جديد';
+
+  @override
+  String get staffLiveBack => 'رجوع إلى المهمة';
 }

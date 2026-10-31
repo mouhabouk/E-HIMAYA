@@ -104,7 +104,7 @@ async def decide(session: AsyncSession, body: schemas.MediamtxAuthIn, now: datet
     if action == "publish":
         if not service.may_publish(stream, now):
             return Decision(False, f"not_publishable_{stream.status}")
-        if stream.source == Source.APP and body.protocol != "webrtc":
+        if stream.source in (Source.APP, Source.CREW) and body.protocol != "webrtc":
             return Decision(False, "protocol_not_allowed")
         ok = publish_token_matches(token, stream.publish_token_hash)
         return Decision(ok, "publish_token" if ok else "bad_publish_token")

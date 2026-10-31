@@ -60,6 +60,8 @@ class StaffStream(BaseModel):
     max_smoke_confidence: float | None
     recordings_count: int
     simulated: bool
+    # A team's stream (phase D): its incident, for the incident page and the wall.
+    incident_id: uuid.UUID | None = None
 
 
 class StaffStreamPage(BaseModel):

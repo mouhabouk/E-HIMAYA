@@ -1988,5 +1988,11 @@
   "safetyContactEmail": "البريد الإلكتروني (اختياري)",
   "safetyContactEmailInvalid": "عنوان بريد غير صالح",
   "nearestMapTitle": "على الخريطة",
-  "nearestMapHint": "{count} مكانا من النسخة المحفوظة على الهاتف، تعمل دون اتصال"
+  "nearestMapHint": "{count} مكانا من النسخة المحفوظة على الهاتف، تعمل دون اتصال",
+  "staffLive": "بث مباشر للقاعة",
+  "staffLiveSub": "القاعة ترى المكان كما تراه",
+  "staffLiveHint": "القاعة ترى البث في جدار الشاشات وصفحة الحادث",
+  "staffLiveEnded": "انتهى البث. حُفظ التسجيل في ملف الحادث.",
+  "staffLiveAgain": "بث من جديد",
+  "staffLiveBack": "رجوع إلى المهمة"
 }

@@ -54,6 +54,13 @@ class LiveStream(Base):
     org_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("org.organization.id", ondelete="SET NULL")
     )
+    # A team's stream (phase D, review point 17): the mission and its incident.
+    assignment_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="SET NULL")
+    )
+    incident_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="SET NULL")
+    )
 
 
 class StreamLocation(Base):

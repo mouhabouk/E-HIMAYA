@@ -1988,5 +1988,11 @@
   "safetyContactEmail": "E-mail (facultatif)",
   "safetyContactEmailInvalid": "Adresse e-mail non valide",
   "nearestMapTitle": "Sur la carte",
-  "nearestMapHint": "{count} lieux de la copie gardée sur le téléphone, sans connexion"
+  "nearestMapHint": "{count} lieux de la copie gardée sur le téléphone, sans connexion",
+  "staffLive": "Direct vers la salle",
+  "staffLiveSub": "La salle voit les lieux comme vous",
+  "staffLiveHint": "La salle voit le direct sur le mur d'écrans et la page de l'intervention",
+  "staffLiveEnded": "Direct terminé. L'enregistrement est gardé au dossier.",
+  "staffLiveAgain": "Relancer le direct",
+  "staffLiveBack": "Retour à la mission"
 }

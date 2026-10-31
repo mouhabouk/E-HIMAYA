@@ -6821,4 +6821,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String nearestMapHint(int count) {
     return '$count places from the copy kept on the phone, works offline';
   }
+
+  @override
+  String get staffLive => 'Live to the room';
+
+  @override
+  String get staffLiveSub => 'The room sees the scene as you do';
+
+  @override
+  String get staffLiveHint =>
+      'The room sees it on the video wall and the incident page';
+
+  @override
+  String get staffLiveEnded =>
+      'Stream over. The recording is kept with the incident.';
+
+  @override
+  String get staffLiveAgain => 'Stream again';
+
+  @override
+  String get staffLiveBack => 'Back to the mission';
 }

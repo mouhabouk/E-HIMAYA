@@ -9648,3 +9648,17 @@ button.nav-card:hover {
 .record-suggest__list q {
   quotes: "«" "»";
 }
+
+/* Phase D, review point 19: a free-text field with its microphone at the end of the line. */
+.dictated {
+  position: relative;
+}
+.dictated textarea {
+  width: 100%;
+  padding-inline-end: 3rem;
+}
+.dictated__mic {
+  position: absolute;
+  inset-inline-end: 0.4rem;
+  inset-block-start: 0.4rem;
+}

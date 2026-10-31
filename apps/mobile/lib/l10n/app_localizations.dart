@@ -12033,6 +12033,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} places from the copy kept on the phone, works offline'**
   String nearestMapHint(int count);
+
+  /// No description provided for @staffLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live to the room'**
+  String get staffLive;
+
+  /// No description provided for @staffLiveSub.
+  ///
+  /// In en, this message translates to:
+  /// **'The room sees the scene as you do'**
+  String get staffLiveSub;
+
+  /// No description provided for @staffLiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The room sees it on the video wall and the incident page'**
+  String get staffLiveHint;
+
+  /// No description provided for @staffLiveEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream over. The recording is kept with the incident.'**
+  String get staffLiveEnded;
+
+  /// No description provided for @staffLiveAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream again'**
+  String get staffLiveAgain;
+
+  /// No description provided for @staffLiveBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the mission'**
+  String get staffLiveBack;
 }
 
 class _AppLocalizationsDelegate
