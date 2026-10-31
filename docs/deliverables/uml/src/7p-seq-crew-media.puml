@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Séquence : direct de l'équipe, messages vocaux et galerie de l'intervention (D)
+autonumber
+actor "Chef d'agrès" as TL
+participant "Application\ndes équipes" as APP
+participant "MediaMTX\n(WHIP)" as MTX
+participant "API" as API
+participant "Transcription\nlocale" as STT
+actor "Opérateur" as OP
+participant "Tableau de bord" as UI
+database "PostgreSQL" as DB
+TL -> APP : « Diffusion en direct » (mission ouverte)
+APP -> API : POST /crew/missions/{id}/stream
+API -> DB : live_stream (source crew, une active par mission)
+API --> APP : chemin WHIP
+APP -> MTX : WebRTC
+TL -> APP : message vocal
+APP -> API : POST …/attachments?kind=voice
+API -> DB : field_attachment (audio conservé)
+OP -> UI : « Heures suggérées » du registre de mission
+UI -> API : POST /staff/assignments/{id}/record/suggestions
+API -> STT : messages vocaux non lus (une fois chacun)
+API -> DB : transcript chiffré, transcribed_at
+API --> UI : heures (source : message vocal de l'équipe)
+OP -> UI : page de l'intervention
+UI -> API : GET /staff/incidents/{id}/media
+API --> UI : photos, vocaux et transcription, direct en cours ; ligne de synthèse
+API -> DB : audit incident.media
+@enduml
