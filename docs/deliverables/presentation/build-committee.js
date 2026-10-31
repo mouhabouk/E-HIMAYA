@@ -2,10 +2,11 @@
 // each station and back to the map, the map as a clickable summary. Arabic, right to left, speaker notes.
 //   cd docs/deliverables/presentation && node prep.js && node build-committee.js e-Himaya_Presentation_Comite.pptx
 // PowerPoint 2019/365 plays the Morph transition (objects named "!!…" are matched across slides); older viewers and
-// LibreOffice fall back to a fade. The map's stations link to their first slide, and every slide links back to the map
+// LibreOffice fall back to a fade. Transitions and the timing of every slide (MIN, about 21 minutes) are written as
+// PowerPoint writes them, so both can be changed in its Transitions tab; the show waits for clicks until "Use Timings". The map's stations link to their first slide, and every slide links back to the map
 // (PowerPoint's Summary Zoom cannot be written by a generator; the links give the same navigation).
 const pptxgen = require('pptxgenjs');
-const JSZip = require('jszip');
+const { applyTransitions, mmss } = require('../lib/transitions');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
@@ -70,6 +71,15 @@ pres.title = 'ء-حماية: العرض أمام اللجنة';
 pres.author = 'e-Himaya';
 pres.theme = { headFontFace: FONT, bodyFontFace: FONT };
 
+// Minutes per slide, in order (seconds): the talk's time plan, shown in the notes and stored as each slide's "After".
+const MIN = [30, 60, 90, 15, 120, 90, 15, 120, 75, 15, 120, 60, 15, 120, 15, 90, 75, 15, 120, 30];
+let slideCount = 0;
+function newSlide() { const s = pres.addSlide(); s.n = slideCount++; return s; }
+function notes(s, t) {
+  const done = MIN.slice(0, s.n + 1).reduce((a, b) => a + b, 0);
+  s.addNotes(`⏱ ${mmss(MIN[s.n])} لهذه الشريحة · ${mmss(done)} من ${mmss(MIN.reduce((a, b) => a + b, 0))} عند نهايتها\n\n${t}`);
+}
+
 function text(s, t, o) { s.addText(t, { isTextBox: true, margin: 0, align: 'right', valign: 'top', color: T.ink, fontSize: 16, ...AR, ...o }); }
 
 // The map drawn at a zoom: k and the point (fx, fy) of the map that lands at the slide centre.
@@ -104,9 +114,9 @@ function drawMap(s, { k = 1, fx = CX, fy = CY, focus = -1, visited = [], links =
 }
 
 // A section slide: the map zoomed so that station i fills the slide, then the station's own content.
-function section(i, heading, notes, body) {
+function section(i, heading, speech, body) {
   const st = ST[i];
-  const s = pres.addSlide();
+  const s = newSlide();
   s.background = { color: 'C9D2E6' };
   drawMap(s, { k: W / FW, fx: st.cx, fy: st.cy, focus: i });
   // The station's tile, number and title become the header (same names: Morph moves them).
@@ -120,7 +130,7 @@ function section(i, heading, notes, body) {
   text(s, '◀ الخريطة', { x: 0.6, y: H - 0.62, w: 1.75, h: 0.38, fontSize: 12, bold: true, color: T.navy, align: 'center', valign: 'middle', hyperlink: { slide: 2, tooltip: 'العودة إلى الخريطة' } });
   text(s, 'ء-حماية · الديوان الوطني للحماية المدنية', { x: W - 6.6, y: H - 0.6, w: 6, h: 0.34, fontSize: 10, color: T.muted, valign: 'middle' });
   body(s);
-  s.addNotes(notes);
+  notes(s, speech);
   return s;
 }
 function card(s, x, y, w, h, o = {}) {
@@ -154,20 +164,20 @@ function build() {
 
   // 1. Cover: the map far away, the title.
   {
-    const s = pres.addSlide(); s.background = { color: T.deep };
+    const s = newSlide(); s.background = { color: T.deep };
     drawMap(s, { k: 0.35, fx: CX, fy: CY - 4.5 });
     text(s, 'ء-حماية', { x: 0.8, y: 1.0, w: W - 1.6, h: 1.2, fontSize: 64, bold: true, color: 'FFFFFF', align: 'center' });
     text(s, 'منظومة ذكية للتبليغ والمشاركة المجتمعية والمؤسساتية في الوقاية والسلامة وإدارة المخاطر', { x: 1.5, y: 2.25, w: W - 3, h: 0.9, fontSize: 21, color: 'E8ECF5', align: 'center' });
     text(s, 'من التبليغ إلى أخذ القرار', { x: 1.5, y: 3.2, w: W - 3, h: 0.6, fontSize: 26, bold: true, color: 'FFA733', align: 'center' });
     text(s, 'العرض أمام اللجنة · الديوان الوطني للحماية المدنية · 2026', { x: 1.5, y: 6.6, w: W - 3, h: 0.4, fontSize: 14, color: 'A6AFC4', align: 'center' });
-    s.addNotes('أصحاب المعالي والسعادة، نقدّم ء-حماية في سبع محطات على خريطة واحدة. كل محطة تُفتح بالتكبير ثم نعود إلى الخريطة. يمكن الضغط على أي محطة للانتقال إليها مباشرة حسب أسئلة اللجنة.');
+    notes(s, 'أصحاب المعالي والسعادة، نقدّم ء-حماية في سبع محطات على خريطة واحدة. كل محطة تُفتح بالتكبير ثم نعود إلى الخريطة. يمكن الضغط على أي محطة للانتقال إليها مباشرة حسب أسئلة اللجنة.');
   }
   const mapSlide = visited => {
-    const s = pres.addSlide(); s.background = { color: 'FFFFFF' };
+    const s = newSlide(); s.background = { color: 'FFFFFF' };
     drawMap(s, { visited, links: true });
     text(s, 'سبع محطات: من التبليغ إلى أخذ القرار', { x: 0.6, y: 0.3, w: W - 1.2, h: 0.5, fontSize: 22, bold: true, color: T.navy });
     text(s, 'اضغط على محطة للانتقال إليها', { x: 0.6, y: H - 0.55, w: W - 1.2, h: 0.35, fontSize: 11, color: T.muted });
-    s.addNotes(visited.length ? `عدنا إلى الخريطة: ${visited.length} من ${ST.length} محطات. المحطة التالية: ${ST[visited.length] ? ST[visited.length].title : ''}.`
+    notes(s, visited.length ? `عدنا إلى الخريطة: ${visited.length} من ${ST.length} محطات. المحطة التالية: ${ST[visited.length] ? ST[visited.length].title : ''}.`
       : 'هذه خريطة العرض: المواطن والمؤسسة يبلّغان، القاعة والفريق يتدخلان، القائد واللجان يقررون، التحليل يبني المخطط، والأمن يحمي الكل. نبدأ بالوضع الحالي.');
   };
   mapSlide([]);
@@ -285,36 +295,21 @@ function build() {
 
   // Closing: back to the whole map, every station done.
   {
-    const s = pres.addSlide(); s.background = { color: 'FFFFFF' };
+    const s = newSlide(); s.background = { color: 'FFFFFF' };
     drawMap(s, { visited: [0, 1, 2, 3, 4, 5, 6], links: true });
     text(s, 'شكرا. أسئلتكم؟', { x: 0.6, y: 0.3, w: W - 1.2, h: 0.6, fontSize: 26, bold: true, color: T.navy });
     text(s, 'الوثائق: كراس الشروط، البطاقات و BPMN، الملف التقني والأمني، قاموس البيانات، تقرير التحصين', { x: 0.6, y: H - 0.6, w: W - 1.2, h: 0.4, fontSize: 12, color: T.muted });
-    s.addNotes('نعود إلى الخريطة كاملة. أي محطة تحتاج تفصيلا يمكن فتحها بالضغط عليها.');
+    notes(s, 'نعود إلى الخريطة كاملة. أي محطة تحتاج تفصيلا يمكن فتحها بالضغط عليها.');
   }
-}
-
-// Morph on every slide after the first (fade where Morph is not supported).
-async function addMorph(file) {
-  const zip = await JSZip.loadAsync(fs.readFileSync(file));
-  const morph = '<mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"><mc:Choice xmlns:p159="http://schemas.microsoft.com/office/powerpoint/2015/09/main" Requires="p159"><p:transition spd="slow" p14:dur="1400" xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main"><p159:morph option="byObject"/></p:transition></mc:Choice><mc:Fallback><p:transition spd="slow"><p:fade/></p:transition></mc:Fallback></mc:AlternateContent>';
-  const slides = Object.keys(zip.files).filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f));
-  let done = 0;
-  for (const f of slides) {
-    if (f === 'ppt/slides/slide1.xml') continue;
-    let x = await zip.file(f).async('string');
-    x = x.replace(/<p:transition[\s\S]*?<\/p:transition>/, '');
-    if (!x.includes('</p:clrMapOvr>')) throw new Error('no clrMapOvr in ' + f);
-    x = x.replace('</p:clrMapOvr>', '</p:clrMapOvr>' + morph);
-    zip.file(f, x); done++;
-  }
-  fs.writeFileSync(file, await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' }));
-  console.log(`morph on ${done} slides`);
 }
 
 (async () => {
   await prepare();
   build();
   await pres.writeFile({ fileName: OUT });
-  await addMorph(OUT);
+  if (slideCount !== MIN.length) throw new Error(`MIN has ${MIN.length} entries for ${slideCount} slides`);
+  // The cover fades in; every other slide morphs from the previous one.
+  const r = await applyTransitions(OUT, MIN.map((sec, k) => ({ effect: k ? 'morph' : 'fade', durMs: k ? 1400 : 800, afterSec: sec })));
+  console.log(`transitions on ${r.slides} slides, ${mmss(r.total)} in all`);
   console.log('written', OUT);
 })();

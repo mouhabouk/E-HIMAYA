@@ -4,6 +4,7 @@
 const pptxgen = require('pptxgenjs');
 const { applyTheme } = require(process.env.PPTX_SKILL + '/scripts/apply_theme.js');
 const fs = require('fs');
+const { applyTransitions, mmss } = require('../lib/transitions');
 
 const THEME = {
   name: 'e-Himaya',
@@ -21,6 +22,23 @@ const HEX = { navy: '1F3FA0', ink: '182038', muted: '5B6478', line: 'E3E7EF', pa
 const TONE = { navy: '1F3FA0', red: 'D7141A', orange: 'C25E00', green: '188038', purple: '7838A0', teal: '00806A', amber: 'F5B400', pink: 'C2185B', sky: '1976D2', slate: '5B6478' };
 
 const pres = new pptxgen();
+// Minutes per slide (seconds, about 14 minutes): written into the notes and as each slide's "After" time with a fade, the
+// way PowerPoint writes them, so the Transitions tab can change both (lib/transitions.js). The show waits for clicks
+// until "Use Timings" is ticked.
+const MIN = [30, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60];
+{
+  const add = pres.addSlide.bind(pres);
+  let n = 0;
+  pres.addSlide = (...a) => {
+    const s = add(...a); const k = n++;
+    const own = s.addNotes.bind(s);
+    s.addNotes = t => {
+      const done = MIN.slice(0, k + 1).reduce((x, y) => x + y, 0), all = MIN.reduce((x, y) => x + y, 0);
+      return own(`⏱ ${mmss(MIN[k])} لهذه الشريحة · ${mmss(done)} من ${mmss(all)} عند نهايتها\n\n${t}`);
+    };
+    return s;
+  };
+}
 pres.layout = 'LAYOUT_WIDE'; // 13.333 x 7.5 in
 pres.rtlMode = true;
 pres.title = 'ء-حماية: عرض تقديمي';
@@ -419,5 +437,6 @@ pres.addSection({ title: 'الخطوات القادمة' });
   const out = process.argv[2] || 'deck.pptx';
   await pres.writeFile({ fileName: out });
   await applyTheme(out, THEME);
-  console.log('ok', out);
+  const r = await applyTransitions(out, MIN.map((sec, k) => ({ effect: 'fade', durMs: k ? 700 : 1000, afterSec: sec })));
+  console.log('ok', out, `${r.slides} slides, ${mmss(r.total)}`);
 })();
