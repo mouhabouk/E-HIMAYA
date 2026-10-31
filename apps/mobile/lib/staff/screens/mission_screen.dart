@@ -21,6 +21,7 @@ import 'field_flow.dart';
 import 'field_widgets.dart';
 import 'record_screen.dart';
 import 'situation_screen.dart';
+import 'staff_live_screen.dart';
 import 'transport_screen.dart';
 
 /// One mission (phase P4b, design §5.3): the card, the path of the five steps, one big button for
@@ -113,6 +114,17 @@ class MissionScreen extends ConsumerWidget {
                       context,
                       InterventionReportScreen(missionId: m.id),
                     ),
+                  ),
+                // Phase D, review point 17: the room sees the scene live.
+                if (!readOnly && !m.over)
+                  NavCard(
+                    key: const Key('open-live'),
+                    icon: Icons.videocam,
+                    tone: Tone.red,
+                    title: l10n.staffLive,
+                    subtitle: l10n.staffLiveSub,
+                    onTap: () =>
+                        push(context, StaffLiveScreen(missionId: m.id)),
                   ),
                 if (onScene && !readOnly) ...[
                   const SizedBox(height: 12),

@@ -7457,6 +7457,91 @@
         "title": "CopyIn",
         "type": "object"
       },
+      "CorrectionRow": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kept": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kept"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "wer": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wer"
+          }
+        },
+        "required": [
+          "id",
+          "field",
+          "language",
+          "model",
+          "created_at",
+          "text",
+          "kept",
+          "wer"
+        ],
+        "title": "CorrectionRow",
+        "type": "object"
+      },
       "CounterView": {
         "description": "What the agent at the counter of a regional administration sees after scanning a certificate (phase P3a).",
         "properties": {
@@ -8119,43 +8204,6 @@
           "factors"
         ],
         "title": "DayRisk",
-        "type": "object"
-      },
-      "DecisionIn": {
-        "properties": {
-          "decision": {
-            "enum": [
-              "approved",
-              "withdrawn"
-            ],
-            "title": "Decision",
-            "type": "string"
-          },
-          "note": {
-            "default": "",
-            "maxLength": 500,
-            "title": "Note",
-            "type": "string"
-          },
-          "reference": {
-            "maxLength": 200,
-            "minLength": 3,
-            "title": "Reference",
-            "type": "string"
-          },
-          "version": {
-            "maxLength": 80,
-            "minLength": 1,
-            "title": "Version",
-            "type": "string"
-          }
-        },
-        "required": [
-          "decision",
-          "version",
-          "reference"
-        ],
-        "title": "DecisionIn",
         "type": "object"
       },
       "DecisionNow": {
@@ -9143,6 +9191,78 @@
           }
         },
         "title": "DialIn",
+        "type": "object"
+      },
+      "DictationLog": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldStat"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CorrectionRow"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "fields",
+          "items"
+        ],
+        "title": "DictationLog",
+        "type": "object"
+      },
+      "DictationOut": {
+        "properties": {
+          "dictation_id": {
+            "format": "uuid",
+            "title": "Dictation Id",
+            "type": "string"
+          },
+          "duration_s": {
+            "title": "Duration S",
+            "type": "number"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dictation_id",
+          "text",
+          "language",
+          "model",
+          "duration_s"
+        ],
+        "title": "DictationOut",
         "type": "object"
       },
       "DiffOut": {
@@ -15494,6 +15614,41 @@
         "title": "FieldSettings",
         "type": "object"
       },
+      "FieldStat": {
+        "properties": {
+          "dictations": {
+            "title": "Dictations",
+            "type": "integer"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "kept": {
+            "title": "Kept",
+            "type": "integer"
+          },
+          "mean_wer": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Wer"
+          }
+        },
+        "required": [
+          "field",
+          "dictations",
+          "kept",
+          "mean_wer"
+        ],
+        "title": "FieldStat",
+        "type": "object"
+      },
       "FieldTokens": {
         "properties": {
           "access_token": {
@@ -16443,6 +16598,18 @@
             ],
             "title": "Lon"
           },
+          "org_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Id"
+          },
           "source": {
             "enum": [
               "drone",
@@ -16647,6 +16814,19 @@
         "title": "FollowIn",
         "type": "object"
       },
+      "FrameOut": {
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "FrameOut",
+        "type": "object"
+      },
       "FreeResource": {
         "properties": {
           "id": {
@@ -16674,6 +16854,168 @@
           "unit"
         ],
         "title": "FreeResource",
+        "type": "object"
+      },
+      "Gallery": {
+        "properties": {
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GalleryItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "live_streams": {
+            "title": "Live Streams",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "counts",
+          "live_streams",
+          "items"
+        ],
+        "title": "Gallery",
+        "type": "object"
+      },
+      "GalleryItem": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "photo",
+              "video",
+              "voice",
+              "frame",
+              "recording",
+              "stream"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "live": {
+            "default": false,
+            "title": "Live",
+            "type": "boolean"
+          },
+          "origin": {
+            "enum": [
+              "citizen",
+              "team",
+              "camera",
+              "vision"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "report_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Id"
+          },
+          "simulated": {
+            "default": false,
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "stream_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Id"
+          },
+          "transcript": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "origin",
+          "at"
+        ],
+        "title": "GalleryItem",
         "type": "object"
       },
       "GenerateIn": {
@@ -20583,6 +20925,50 @@
           "can_manage"
         ],
         "title": "ItemsOut",
+        "type": "object"
+      },
+      "KeptIn": {
+        "properties": {
+          "text": {
+            "maxLength": 4000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "KeptIn",
+        "type": "object"
+      },
+      "KeptOut": {
+        "properties": {
+          "wer": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wer"
+          },
+          "word_errors": {
+            "title": "Word Errors",
+            "type": "integer"
+          },
+          "words": {
+            "title": "Words",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "words",
+          "word_errors",
+          "wer"
+        ],
+        "title": "KeptOut",
         "type": "object"
       },
       "KeyBackup": {
@@ -28803,6 +29189,128 @@
         "title": "PositionsOut",
         "type": "object"
       },
+      "PrealertOut": {
+        "properties": {
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "deadline_at": {
+            "format": "date-time",
+            "title": "Deadline At",
+            "type": "string"
+          },
+          "has_frame": {
+            "title": "Has Frame",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "org_id": {
+            "format": "uuid",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "org_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Name"
+          },
+          "raised_at": {
+            "format": "date-time",
+            "title": "Raised At",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "report_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Id"
+          },
+          "seconds_left": {
+            "title": "Seconds Left",
+            "type": "integer"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "cancelled",
+              "confirmed",
+              "escalated"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "stream_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Id"
+          }
+        },
+        "required": [
+          "id",
+          "org_id",
+          "stream_id",
+          "source",
+          "label",
+          "confidence",
+          "simulated",
+          "state",
+          "raised_at",
+          "deadline_at",
+          "seconds_left",
+          "reason",
+          "report_id",
+          "has_frame"
+        ],
+        "title": "PrealertOut",
+        "type": "object"
+      },
       "PresenceIn": {
         "properties": {
           "token": {
@@ -35647,20 +36155,6 @@
         "title": "SlotsOut",
         "type": "object"
       },
-      "SmsKeyOut": {
-        "description": "The phone's own key for its signed EH2 text messages (design §9.3).",
-        "properties": {
-          "key": {
-            "title": "Key",
-            "type": "string"
-          }
-        },
-        "required": [
-          "key"
-        ],
-        "title": "SmsKeyOut",
-        "type": "object"
-      },
       "Source": {
         "properties": {
           "excerpt": {
@@ -38204,6 +38698,18 @@
             "title": "Id",
             "type": "string"
           },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
           "label": {
             "anyOf": [
               {
@@ -38366,6 +38872,18 @@
             "format": "uuid",
             "title": "Id",
             "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
           },
           "label": {
             "anyOf": [
@@ -41445,6 +41963,7 @@
             "enum": [
               "room_note",
               "team_note",
+              "team_voice",
               "pasted"
             ],
             "title": "Source",
@@ -49526,6 +50045,43 @@
         "title": "InboxItem",
         "type": "object"
       },
+      "app__modules__modelcards__schemas__DecisionIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approved",
+              "withdrawn"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Note",
+            "type": "string"
+          },
+          "reference": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Reference",
+            "type": "string"
+          },
+          "version": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision",
+          "version",
+          "reference"
+        ],
+        "title": "DecisionIn",
+        "type": "object"
+      },
       "app__modules__notify__schemas__Area": {
         "properties": {
           "delegation_ids": {
@@ -50434,6 +50990,20 @@
         "title": "ResourceOut",
         "type": "object"
       },
+      "app__modules__ops__schemas__SmsKeyOut": {
+        "description": "The phone's own key for its signed EH2 text messages (design §9.3).",
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "title": "SmsKeyOut",
+        "type": "object"
+      },
       "app__modules__ops__schemas__TemplateIn": {
         "description": "A draft: a new one for a category (and classification), or the next version of the approved one.",
         "properties": {
@@ -50574,6 +51144,36 @@
           "approved_at"
         ],
         "title": "TemplateOut",
+        "type": "object"
+      },
+      "app__modules__orgs__prealert_router__DecisionIn": {
+        "properties": {
+          "action": {
+            "enum": [
+              "cancel",
+              "confirm"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "DecisionIn",
         "type": "object"
       },
       "app__modules__orgs__schemas__CertificateOut": {
@@ -55190,6 +55790,25 @@
         "title": "LinkIn",
         "type": "object"
       },
+      "app__modules__volunteers__schemas__SmsKeyOut": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "volunteer_id": {
+            "format": "uuid",
+            "title": "Volunteer Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "volunteer_id"
+        ],
+        "title": "SmsKeyOut",
+        "type": "object"
+      },
       "app__modules__weather__schemas__RuleIn": {
         "properties": {
           "enabled": {
@@ -56921,7 +57540,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SmsKeyOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__SmsKeyOut"
                 }
               }
             },
@@ -58519,6 +59138,72 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/stream": {
+      "post": {
+        "description": "Open the live stream of a mission: ``409 mission_closed`` once released, ``409 stream_already_active``.",
+        "operationId": "open_stream_api_v1_crew_missions__assignment_id__stream_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open Stream",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/toll": {
       "post": {
         "operationId": "toll_api_v1_crew_missions__assignment_id__toll_post",
@@ -59441,6 +60126,205 @@
           }
         ],
         "summary": "End Shift",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/streams/{stream_id}": {
+      "get": {
+        "description": "The app polls it to show «stream ended by the room».",
+        "operationId": "get_stream_api_v1_crew_streams__stream_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stream_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stream Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Stream",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/streams/{stream_id}/location": {
+      "post": {
+        "operationId": "stream_location_api_v1_crew_streams__stream_id__location_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stream_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stream Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stream Location",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/streams/{stream_id}/stop": {
+      "post": {
+        "operationId": "stop_stream_api_v1_crew_streams__stream_id__stop_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stream_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stream Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stop Stream",
         "tags": [
           "crew"
         ]
@@ -62411,6 +63295,62 @@
           }
         ],
         "summary": "Readiness",
+        "tags": [
+          "volunteers"
+        ]
+      }
+    },
+    "/api/v1/me/volunteer/sms-key": {
+      "post": {
+        "description": "The key of the signed SMS answers to call-outs (phase D, S2-5, ``EH3``): made once, kept on the phone.",
+        "operationId": "sms_key_api_v1_me_volunteer_sms_key_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__volunteers__schemas__SmsKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Sms Key",
         "tags": [
           "volunteers"
         ]
@@ -65553,6 +66493,200 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/prealerts": {
+      "get": {
+        "operationId": "list_prealerts_api_v1_orgs__org_id__prealerts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "enum": [
+                "pending",
+                "all"
+              ],
+              "title": "State",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PrealertOut"
+                  },
+                  "title": "Response List Prealerts Api V1 Orgs  Org Id  Prealerts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Prealerts",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/prealerts/{prealert_id}/decision": {
+      "post": {
+        "description": "«False alarm» (with a reason) or «confirm» (the report goes to the room at once).",
+        "operationId": "decide_api_v1_orgs__org_id__prealerts__prealert_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prealert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Prealert Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__orgs__prealert_router__DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrealertOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/prealerts/{prealert_id}/frame": {
+      "get": {
+        "description": "The camera picture that raised the pre-alert (a short-lived link).",
+        "operationId": "frame_api_v1_orgs__org_id__prealerts__prealert_id__frame_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prealert_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Prealert Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Frame",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/prevention/reservations/{reservation_id}/response": {
       "post": {
         "description": "The institution says how it met a reservation; the auditor then lifts it.",
@@ -68669,7 +69803,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecisionIn"
+                "$ref": "#/components/schemas/app__modules__modelcards__schemas__DecisionIn"
               }
             }
           },
@@ -74037,6 +75171,241 @@
         ]
       }
     },
+    "/api/v1/staff/dictation": {
+      "get": {
+        "description": "The corrections log: the error rate per field, and the latest pairs (of one field when asked). Audited.",
+        "operationId": "corrections_log_api_v1_staff_dictation_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "field",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[a-z0-9_.]{2,60}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Field"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictationLog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Corrections Log",
+        "tags": [
+          "dictation"
+        ]
+      },
+      "post": {
+        "description": "A recording of at most 60 s as the raw request body: the text for the field, the audio deleted.",
+        "operationId": "dictate_api_v1_staff_dictation_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "field",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z0-9_.]{2,60}$",
+              "title": "Field",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "audio/aac": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/webm": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/x-wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dictate",
+        "tags": [
+          "dictation"
+        ]
+      }
+    },
+    "/api/v1/staff/dictation/{dictation_id}/kept": {
+      "post": {
+        "description": "The text the user kept once the form is saved: the word errors against the model's text. Once.",
+        "operationId": "kept_api_v1_staff_dictation__dictation_id__kept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dictation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dictation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KeptIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Kept",
+        "tags": [
+          "dictation"
+        ]
+      }
+    },
     "/api/v1/staff/directives": {
       "get": {
         "operationId": "list_directives_api_v1_staff_directives_get",
@@ -78639,6 +80008,54 @@
           }
         ],
         "summary": "Transfer Lead",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/incidents/{incident_id}/media": {
+      "get": {
+        "operationId": "incident_media_api_v1_staff_incidents__incident_id__media_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Incident Media",
         "tags": [
           "incidents"
         ]
@@ -86208,6 +87625,79 @@
         "summary": "Update Place",
         "tags": [
           "places"
+        ]
+      }
+    },
+    "/api/v1/staff/prealerts": {
+      "get": {
+        "description": "The pre-alerts of the institutions in scope, the false alarms included (newest first).",
+        "operationId": "staff_prealerts_api_v1_staff_prealerts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PrealertOut"
+                  },
+                  "title": "Response Staff Prealerts Api V1 Staff Prealerts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Staff Prealerts",
+        "tags": [
+          "staff-institutions"
         ]
       }
     },

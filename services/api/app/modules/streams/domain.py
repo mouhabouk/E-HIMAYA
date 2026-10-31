@@ -21,6 +21,8 @@ class Source(StrEnum):
     DRONE = "drone"
     CAMERA = "camera"
     SIM = "sim"
+    # Phase D, review point 18→17: a team on a mission streams from the staff app.
+    CREW = "crew"
 
 
 class StreamStatus(StrEnum):

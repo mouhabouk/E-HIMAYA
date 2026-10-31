@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
+import '../../core/http/models.dart';
 import '../../core/routing/app_router.dart';
 import '../../core/ui/emergency_action.dart';
 import '../../core/ui/theme.dart';
@@ -210,10 +212,37 @@ class _AlertBody extends ConsumerWidget {
                 ),
               if (phone != null && normalizeContactPhone(phone) != null)
                 OutlinedButton.icon(
-                  onPressed: () =>
-                      open(whatsAppUri(normalizeContactPhone(phone)!, '')),
+                  key: const Key('alert-whatsapp'),
+                  onPressed: () => open(
+                    whatsAppUri(
+                      normalizeContactPhone(phone)!,
+                      l10n.safetyAlertWhatsAppReply,
+                    ),
+                  ),
                   icon: const Icon(Icons.chat),
                   label: const Text('WhatsApp'),
+                ),
+              if (latest != null)
+                OutlinedButton.icon(
+                  key: const Key('alert-share-whatsapp'),
+                  onPressed: () => open(
+                    whatsAppShareUri(
+                      l10n.safetyAlertShareText(
+                        who,
+                        mapLink(latest.point).toString(),
+                        coordinatesText(latest.point),
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.share_location),
+                  label: Text(l10n.safetyAlertShareWhatsApp),
+                ),
+              if (latest != null)
+                OutlinedButton.icon(
+                  key: const Key('alert-copy-coords'),
+                  onPressed: () => copyCoordinates(context, latest.point),
+                  icon: const Icon(Icons.content_copy),
+                  label: Text(l10n.safetyAlertCopyCoords),
                 ),
               if (latest != null)
                 OutlinedButton.icon(
@@ -254,4 +283,19 @@ class _AlertBody extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Review point 7: the position as plain decimal degrees («36.80650, 10.18150»), the form every map
+/// app, a message and the operator of 198 understand.
+String coordinatesText(GeoPoint p) =>
+    '${p.lat.toStringAsFixed(5)}, ${p.lon.toStringAsFixed(5)}';
+
+Future<void> copyCoordinates(BuildContext context, GeoPoint p) async {
+  final text = coordinatesText(p);
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  await Clipboard.setData(ClipboardData(text: text));
+  messenger?.showSnackBar(
+    SnackBar(content: Text(l10n.safetyAlertCoordsCopied(text))),
+  );
 }

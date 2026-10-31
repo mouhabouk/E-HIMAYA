@@ -402,3 +402,9 @@ final orgAnnualReportProvider = FutureProvider.autoDispose
       (ref, ids) => ref.watch(apiProvider).annualReport(ids.$1, ids.$2),
       retry: (_, _) => null,
     );
+
+/// Review point 25: the pre-alerts of an institution's cameras, newest first.
+final orgPrealertsProvider = FutureProvider.autoDispose
+    .family<List<OrgPrealert>, String>(
+      (ref, orgId) => ref.watch(apiProvider).orgPrealerts(orgId),
+    );

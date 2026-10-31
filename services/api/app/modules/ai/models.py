@@ -6,7 +6,7 @@ from sqlalchemy import Date, DateTime, Float, ForeignKey, Integer, SmallInteger,
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.core.crypto import EncryptedJSON
+from app.core.crypto import EncryptedJSON, EncryptedText
 from app.core.db import Base
 
 
@@ -86,3 +86,24 @@ class Anomaly(Base):
     points: Mapped[int] = mapped_column(SmallInteger)
     n: Mapped[int] = mapped_column(Integer)
     raised_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Dictation(Base):
+    """One dictated text (review point 19, phase D): the model's text and the text the user kept, never the audio.
+
+    The pair feeds the word error rate per field, the same measure as the commander's voice notes (AI5)."""
+
+    __tablename__ = "dictation"
+    __table_args__ = {"schema": "ai"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    actor: Mapped[str] = mapped_column(Text)
+    field: Mapped[str] = mapped_column(Text)
+    language: Mapped[str | None] = mapped_column(Text)
+    model: Mapped[str | None] = mapped_column(Text)
+    duration_s: Mapped[float | None] = mapped_column(Float(precision=24))
+    text: Mapped[str | None] = mapped_column("text_enc", EncryptedText("ai.dictation.text"))
+    kept: Mapped[str | None] = mapped_column("kept_enc", EncryptedText("ai.dictation.kept"))
+    wer: Mapped[float | None] = mapped_column(Float(precision=24))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    corrected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

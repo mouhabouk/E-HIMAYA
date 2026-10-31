@@ -60,4 +60,8 @@ CIT --> M11
 VOL --> M12
 DV --> M12
 DPC --> M12
+usecase "Répondre à un appel\npar SMS signé hors ligne (D)" as M13
+VOL --> M13
+DV --> M13
+M13 ..> V4 : <<extend>>
 @enduml

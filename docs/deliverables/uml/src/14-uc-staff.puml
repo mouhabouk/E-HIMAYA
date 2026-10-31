@@ -362,4 +362,20 @@ TL --> F7
 FA --> F8
 S93 ..> F1 : code
 S95 ..> F8 : point
+rectangle "Démonstration et applications (D)" {
+  usecase "Diffuser en direct\nla mission (D)" as D1
+  usecase "Dicter un texte libre ;\naudio effacé (D)" as D2
+  usecase "Voir les médias de\nl'intervention en un lieu (D)" as D3
+  usecase "Ordonner le menu\npar glisser-déposer (D)" as D4
+  usecase "Consulter le journal\ndes corrections (D)" as D5
+  usecase "Heures suggérées des\nmessages vocaux (D)" as D6
+}
+TL --> D1
+OP --> D2
+OP --> D3
+FC --> D3
+SA --> D4
+SA --> D5
+OP --> D6
+D2 ..> D5 : mesure
 @enduml

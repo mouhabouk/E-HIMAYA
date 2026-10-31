@@ -188,7 +188,7 @@ export function indicators(times: RecordTimes, calledAt: Date | null): Partial<R
 export interface TimeSuggestion {
   step: EditableStep;
   at: string;
-  source: "room_note" | "team_note" | "pasted";
+  source: "room_note" | "team_note" | "team_voice" | "pasted";
   words: string;
   written_at: string;
   conflict: string | null;

@@ -38,6 +38,7 @@ import { NearHospitals } from "../components/NearHospitals";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
+import { IncidentGallerySection } from "../components/IncidentGallery";
 
 const VIA = ["suggestion", "manual", "new", "auto"] as const;
 
@@ -383,6 +384,8 @@ export function IncidentDetailPage() {
             )}
           </dl>
         </section>
+
+        <IncidentGallerySection incidentId={incident.id} />
 
         <section className="card" aria-labelledby="sec-incident-map">
           <h2 id="sec-incident-map">{t("detail.location")}</h2>

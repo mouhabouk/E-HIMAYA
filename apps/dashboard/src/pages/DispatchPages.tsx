@@ -27,6 +27,7 @@ import {
   type DispatchQuery,
   type Urgency,
 } from "../lib/register";
+import { DictatedTextarea } from "../components/Dictation";
 
 function UrgencyPill({ u }: { u: Urgency }) {
   const { t } = useTranslation();
@@ -226,7 +227,7 @@ function Compose({ mode, onClose }: { mode: "directive" | "notice"; onClose: () 
       </div>
       <div className="field">
         <label htmlFor={`${id}-b`}>{t("dispatch.body")}</label>
-        <textarea id={`${id}-b`} rows={5} dir="auto" value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} />
+        <DictatedTextarea field="dispatch.body" id={`${id}-b`} rows={5} value={f.body} onText={(body) => setF({ ...f, body })} />
       </div>
       <FilePicker files={files} onChange={setFiles} />
       {mode === "directive" && (
@@ -430,7 +431,7 @@ function ReplyBox({ d, gouvernorat, label }: { d: DispatchDetail; gouvernorat: n
       }}
     >
       <label htmlFor={`${id}-b`}>{label}</label>
-      <textarea id={`${id}-b`} rows={3} dir="auto" value={body} onChange={(e) => setBody(e.target.value)} />
+      <DictatedTextarea field="dispatch.reply" id={`${id}-b`} rows={3} value={body} onText={setBody} />
       <FilePicker files={files} onChange={setFiles} />
       <button type="submit" className="btn btn--primary btn--small" disabled={!ok || send.isPending}>
         {t("dispatch.sendReply")}

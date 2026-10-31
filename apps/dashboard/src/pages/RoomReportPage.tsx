@@ -15,6 +15,7 @@ import { useLanguage } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { INTAKE_CHANNELS, type IntakeChannel } from "../lib/staffApi";
 import { CATEGORIES, type Category } from "../lib/types";
+import { DictatedTextarea } from "../components/Dictation";
 
 /** A latitude and a longitude typed by hand, or null while either is not a number inside Tunisia's box. */
 export function parsePoint(lat: string, lon: string): { lat: number; lon: number } | null {
@@ -102,7 +103,7 @@ export function RoomReportPage() {
         </div>
         <div className="field">
           <label htmlFor={`${id}-x`}>{t("intake.text")}</label>
-          <textarea id={`${id}-x`} rows={3} maxLength={4000} value={text} onChange={(e) => setText(e.target.value)} />
+          <DictatedTextarea field="intake.text" id={`${id}-x`} rows={3} maxLength={4000} value={text} onText={setText} />
         </div>
         <p id={`${id}-hint`} className="muted">
           {t("intake.where")}

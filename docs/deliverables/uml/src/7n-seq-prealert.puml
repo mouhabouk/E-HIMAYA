@@ -1,0 +1,34 @@
+@startuml
+!include style.iuml
+title Séquence : pré-alerte de la caméra d'un établissement (D)
+autonumber
+participant "Caméra\n(RTSP, Tapo)" as CAM
+participant "MediaMTX" as MTX
+participant "Vision" as VIS
+participant "API" as API
+actor "Responsable\nd'établissement" as ADM
+participant "Application\ncitoyenne" as APP
+participant "Worker" as W
+actor "Opérateur\n(salle)" as OP
+database "PostgreSQL" as DB
+CAM -> MTX : flux RTSP (relais)
+MTX -> VIS : images
+VIS -> API : fumée ou feu confirmé (stream avec org_id)
+API -> DB : org.prealert (échéance = maintenant + orgs.prealert_seconds)
+API -> APP : push critique (clés autorisées seulement)
+alt fausse alerte
+  ADM -> APP : « Fausse alerte » + motif
+  APP -> API : POST /orgs/{id}/prealerts/{p}/decision (false_alarm)
+  API -> DB : fermée, motif audité
+  note right of OP : rien n'arrive à la salle
+else confirmation
+  ADM -> APP : « Confirmer »
+  APP -> API : POST …/decision (confirm)
+  API -> DB : signalement iot au nom de l'établissement, flux lié
+  API --> OP : nouvel incident, image en direct
+else pas de réponse en 90 s
+  W -> DB : pré-alertes échues
+  W -> API : élever à la salle
+  API --> OP : nouvel incident, image en direct
+end
+@enduml

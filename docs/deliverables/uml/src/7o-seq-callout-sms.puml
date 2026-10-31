@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Séquence : répondre à une mobilisation par SMS signé (D)
+autonumber
+actor "Bénévole\nou médecin" as VOL
+participant "Application\ncitoyenne" as APP
+participant "Application SMS\ndu téléphone" as SMS
+participant "Passerelle SMS" as GW
+participant "API" as API
+database "PostgreSQL" as DB
+== En ligne, une fois ==
+APP -> API : POST /me/volunteer/sms-key
+API -> DB : clé chiffrée (identity.volunteer)
+API --> APP : clé + identifiant (trousseau du téléphone)
+== Sans Internet ==
+VOL -> APP : « Accepter » (ETA 20 min)
+APP -> API : POST /me/callouts/{id}/respond
+API -[#red]x APP : pas de réseau
+APP -> APP : EH3 <bénévole> <appel> accept 20 <heure> <HMAC-16>
+APP -> SMS : message prêt, numéro de la plateforme
+VOL -> SMS : « Envoyer »
+SMS -> GW : SMS
+GW -> API : POST /internal/sms/inbound
+API -> DB : clé du bénévole ; signature, âge < 12 h, plus récent que sms_last_at
+alt valide
+  API -> DB : réponse appliquée comme dans l'application ; audit volunteer.sms_accept
+else signature fausse, trop ancien ou rejoué
+  API -> API : ignoré (jamais réessayé par la passerelle)
+end
+@enduml

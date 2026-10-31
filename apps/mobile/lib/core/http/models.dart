@@ -1267,3 +1267,29 @@ class AnnualReport {
     );
   }
 }
+
+/// Review point 25: what an institution's camera saw, before the room is told.
+class OrgPrealert {
+  const OrgPrealert(this.json);
+
+  final Map<String, Object?> json;
+
+  String get id => json['id']! as String;
+  String get orgId => json['org_id']! as String;
+  String? get orgName => json['org_name'] as String?;
+
+  /// `fire` | `smoke`.
+  String get label => json['label'] as String? ?? 'fire';
+  double get confidence => (json['confidence'] as num?)?.toDouble() ?? 0;
+  bool get simulated => json['simulated'] == true;
+
+  /// `pending` | `cancelled` | `confirmed` | `escalated`.
+  String get state => json['state'] as String? ?? 'pending';
+  bool get pending => state == 'pending';
+  int get secondsLeft => (json['seconds_left'] as num?)?.toInt() ?? 0;
+  DateTime get raisedAt => DateTime.parse(json['raised_at']! as String);
+  DateTime get deadlineAt => DateTime.parse(json['deadline_at']! as String);
+  String? get reason => json['reason'] as String?;
+  String? get reportId => json['report_id'] as String?;
+  bool get hasFrame => json['has_frame'] == true;
+}

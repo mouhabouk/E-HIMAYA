@@ -17,7 +17,15 @@ Staff = Callable[..., dict[str, str]]
 URL = "/api/v1/staff/features"
 GABES = 61
 # Shared by every page: the alert level in the header, the caller's own permissions, the account lookup.
-SHARED = {("GET", "/levels"), ("GET", "/features/mine"), ("POST", "/users/lookup")}
+# Tools of every page, guarded by their roles: the levels, one's own features, the user lookup and the dictation of a
+# free-text field (phase D, review point 19).
+SHARED = {
+    ("GET", "/levels"),
+    ("GET", "/features/mine"),
+    ("POST", "/users/lookup"),
+    ("POST", "/dictation"),
+    ("POST", "/dictation/{dictation_id}/kept"),
+}
 
 
 def admin(staff: Staff) -> dict[str, str]:

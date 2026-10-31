@@ -24,6 +24,7 @@ SosLabels sosLabels(AppLocalizations l10n) => SosLabels(
   time: l10n.sosLabelTime,
   battery: l10n.sosLabelBattery,
   noPosition: l10n.sosLabelNoPosition,
+  subject: l10n.sosEmailSubject,
 );
 
 /// The user's text, or the default one of the language.
@@ -46,6 +47,8 @@ class SosMessageSettingsScreen extends ConsumerStatefulWidget {
 class _SosMessageSettingsState extends ConsumerState<SosMessageSettingsScreen> {
   late final TextEditingController _text;
   late bool _cancelWindow;
+  late List<String> _channels;
+  late Set<String> _off;
 
   @override
   void initState() {
@@ -53,6 +56,8 @@ class _SosMessageSettingsState extends ConsumerState<SosMessageSettingsScreen> {
     final prefs = ref.read(appPrefsProvider);
     _text = TextEditingController(text: prefs.sosTemplate);
     _cancelWindow = prefs.sosCancelWindow;
+    _channels = prefs.sosChannels;
+    _off = prefs.sosChannelsOff;
   }
 
   @override
@@ -66,6 +71,8 @@ class _SosMessageSettingsState extends ConsumerState<SosMessageSettingsScreen> {
     final t = _text.text.trim();
     await prefs.setSosTemplate(t.isEmpty ? null : t);
     await prefs.setSosCancelWindow(_cancelWindow);
+    await prefs.setSosChannels(_channels);
+    await prefs.setSosChannelsOff(_off);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context).safetySaved)),
@@ -115,6 +122,18 @@ class _SosMessageSettingsState extends ConsumerState<SosMessageSettingsScreen> {
               onChanged: (v) => setState(() => _cancelWindow = v),
               title: Text(l10n.safetyCancelWindow),
               subtitle: Text(l10n.safetyCancelWindowHint),
+            ),
+            const SizedBox(height: 8),
+            Text(l10n.safetyChannelsTitle, style: theme.textTheme.titleSmall),
+            Text(l10n.safetyChannelsHint, style: theme.textTheme.bodySmall),
+            const SizedBox(height: 4),
+            SosChannelOrder(
+              channels: _channels,
+              off: _off,
+              onChanged: (channels, off) => setState(() {
+                _channels = channels;
+                _off = off;
+              }),
             ),
             const SizedBox(height: 8),
             Text(l10n.safetyPreview, style: theme.textTheme.titleSmall),
@@ -368,25 +387,54 @@ class _SosSendScreenState extends ConsumerState<SosSendScreen> {
           key: const Key('sos-sent-sms'),
           textAlign: TextAlign.center,
         ),
-      const SizedBox(height: 16),
-      Text(l10n.safetyWhatsApp, style: theme.textTheme.titleSmall),
-      const SizedBox(height: 4),
-      OutlinedButton.icon(
-        key: const Key('sos-whatsapp-share'),
-        onPressed: () => open(whatsAppShareUri(r.text)),
-        icon: const Icon(Icons.forum),
-        label: Text(l10n.safetyWhatsAppChoose),
-      ),
-      for (final c in contacts)
-        if (normalizeContactPhone(c.phone) case final phone?
-            when r.phones.contains(phone))
-          ListTile(
-            key: Key('sos-whatsapp-${c.id}'),
-            leading: const Icon(Icons.chat),
-            title: Text(c.name),
-            trailing: const Icon(Icons.open_in_new),
-            onTap: () => open(whatsAppUri(phone, r.text)),
+      if (r.opened == 'email')
+        Text(
+          l10n.safetySentEmail(r.emails.length),
+          key: const Key('sos-sent-email'),
+          textAlign: TextAlign.center,
+        ),
+      // Review point 6: the other channels, in the user's order.
+      for (final channel in r.channels)
+        if (channel == 'sms' && !r.smsOpened && r.phones.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const Key('sos-again-sms'),
+            onPressed: () => open(smsGroupUri(r.phones, r.text)),
+            icon: const Icon(Icons.sms),
+            label: Text(l10n.safetySendBySms(r.phones.length)),
           ),
+        ] else if (channel == 'email' &&
+            r.opened != 'email' &&
+            r.emails.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const Key('sos-email'),
+            onPressed: () =>
+                open(emailGroupUri(r.emails, l10n.sosEmailSubject, r.text)),
+            icon: const Icon(Icons.mail),
+            label: Text(l10n.safetySendByEmail(r.emails.length)),
+          ),
+        ] else if (channel == 'whatsapp') ...[
+          const SizedBox(height: 16),
+          Text(l10n.safetyWhatsApp, style: theme.textTheme.titleSmall),
+          const SizedBox(height: 4),
+          OutlinedButton.icon(
+            key: const Key('sos-whatsapp-share'),
+            onPressed: () => open(whatsAppShareUri(r.text)),
+            icon: const Icon(Icons.forum),
+            label: Text(l10n.safetyWhatsAppChoose),
+          ),
+          for (final c in contacts)
+            if (normalizeContactPhone(c.phone) case final phone?
+                when r.phones.contains(phone))
+              ListTile(
+                key: Key('sos-whatsapp-${c.id}'),
+                leading: const Icon(Icons.chat),
+                title: Text(c.name),
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => open(whatsAppUri(phone, r.text)),
+              ),
+        ],
       const SizedBox(height: 8),
       TextButton.icon(
         key: const Key('sos-to-live'),
@@ -397,3 +445,97 @@ class _SosSendScreenState extends ConsumerState<SosSendScreen> {
     ];
   }
 }
+
+/// Review point 6: the order of the SOS message channels after the in-app alert, each with a
+/// switch. Moved with the handle (drag) or the up and down buttons (screen readers, keyboard);
+/// the last channel on cannot be switched off.
+class SosChannelOrder extends StatelessWidget {
+  const SosChannelOrder({
+    super.key,
+    required this.channels,
+    required this.off,
+    required this.onChanged,
+  });
+
+  final List<String> channels;
+  final Set<String> off;
+  final void Function(List<String> channels, Set<String> off) onChanged;
+
+  void _move(int from, int to) {
+    final next = [...channels];
+    final item = next.removeAt(from);
+    next.insert(to, item);
+    onChanged(next, off);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final on = channels.where((c) => !off.contains(c)).length;
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            key: const Key('sos-channel-app'),
+            leading: const Icon(Icons.notifications_active),
+            title: Text(l10n.safetyChannelApp),
+            subtitle: Text(l10n.safetyChannelAppHint),
+          ),
+          ReorderableListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            buildDefaultDragHandles: false,
+            onReorderItem: _move,
+            children: [
+              for (final (i, c) in channels.indexed)
+                ListTile(
+                  key: Key('sos-channel-$c'),
+                  leading: ReorderableDragStartListener(
+                    index: i,
+                    child: const Icon(Icons.drag_handle),
+                  ),
+                  title: Text(sosChannelLabel(l10n, c)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        key: Key('sos-channel-$c-up'),
+                        tooltip: l10n.actionMoveUp,
+                        onPressed: i == 0 ? null : () => _move(i, i - 1),
+                        icon: const Icon(Icons.arrow_upward),
+                      ),
+                      IconButton(
+                        key: Key('sos-channel-$c-down'),
+                        tooltip: l10n.actionMoveDown,
+                        onPressed: i == channels.length - 1
+                            ? null
+                            : () => _move(i, i + 1),
+                        icon: const Icon(Icons.arrow_downward),
+                      ),
+                      Switch(
+                        key: Key('sos-channel-$c-on'),
+                        value: !off.contains(c),
+                        onChanged: !off.contains(c) && on <= 1
+                            ? null
+                            : (v) => onChanged(
+                                channels,
+                                v ? ({...off}..remove(c)) : {...off, c},
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String sosChannelLabel(AppLocalizations l10n, String channel) =>
+    switch (channel) {
+      'sms' => l10n.safetyChannelSms,
+      'email' => l10n.safetyChannelEmail,
+      _ => 'WhatsApp',
+    };

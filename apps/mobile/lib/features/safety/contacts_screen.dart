@@ -206,6 +206,7 @@ class EmergencyContactsScreen extends ConsumerWidget {
       EmergencyContactsCompanion.insert(
         name: entered.name,
         phone: entered.phone,
+        email: Value(entered.email),
         position: Value(all.length),
         createdAt: DateTime.now(),
       ),
@@ -217,7 +218,12 @@ class EmergencyContactsScreen extends ConsumerWidget {
     WidgetRef ref,
     EmergencyContact c,
   ) async {
-    final entered = await _contactDialog(context, name: c.name, phone: c.phone);
+    final entered = await _contactDialog(
+      context,
+      name: c.name,
+      phone: c.phone,
+      email: c.email,
+    );
     if (entered == null) return;
     await ref
         .read(databaseProvider)
@@ -226,6 +232,7 @@ class EmergencyContactsScreen extends ConsumerWidget {
           EmergencyContactsCompanion(
             name: Value(entered.name),
             phone: Value(entered.phone),
+            email: Value(entered.email),
           ),
         );
   }
@@ -368,16 +375,18 @@ class EmergencyContactsScreen extends ConsumerWidget {
 }
 
 /// Name and number of a contact; the number must be one the SMS and WhatsApp apps accept.
-Future<({String name, String phone})?> _contactDialog(
+Future<({String name, String phone, String? email})?> _contactDialog(
   BuildContext context, {
   String? name,
   String? phone,
+  String? email,
 }) async {
   final l10n = AppLocalizations.of(context);
   final nameField = TextEditingController(text: name);
   final phoneField = TextEditingController(text: phone);
+  final emailField = TextEditingController(text: email);
   final form = GlobalKey<FormState>();
-  final result = await showDialog<({String name, String phone})>(
+  final result = await showDialog<({String name, String phone, String? email})>(
     context: context,
     builder: (context) => AlertDialog(
       title: Text(l10n.safetyContactTitle),
@@ -408,6 +417,18 @@ Future<({String name, String phone})?> _contactDialog(
                   ? l10n.validationPhone
                   : null,
             ),
+            // Review point 6: the e-mail channel of the SOS message.
+            TextFormField(
+              key: const Key('contact-email'),
+              controller: emailField,
+              keyboardType: TextInputType.emailAddress,
+              textDirection: TextDirection.ltr,
+              decoration: InputDecoration(labelText: l10n.safetyContactEmail),
+              validator: (v) =>
+                  (v ?? '').trim().isEmpty || normalizeContactEmail(v) != null
+                  ? null
+                  : l10n.safetyContactEmailInvalid,
+            ),
           ],
         ),
       ),
@@ -423,6 +444,7 @@ Future<({String name, String phone})?> _contactDialog(
             Navigator.of(context).pop((
               name: nameField.text.trim(),
               phone: normalizeContactPhone(phoneField.text)!,
+              email: normalizeContactEmail(emailField.text),
             ));
           },
           child: Text(l10n.actionSave),

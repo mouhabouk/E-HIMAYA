@@ -218,7 +218,7 @@ async def sweep(sessionmaker: async_sessionmaker[AsyncSession], now: datetime | 
                 select(LiveStream)
                 .where(
                     LiveStream.status == StreamStatus.LIVE,
-                    LiveStream.source == Source.APP,
+                    LiveStream.source.in_((Source.APP, Source.CREW)),
                     LiveStream.started_at <= now - timedelta(seconds=settings.stream_max_duration_s),
                 )
                 .limit(200)

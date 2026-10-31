@@ -69,6 +69,44 @@ def word_errors(reference: list[str], hypothesis: list[str]) -> int:
     return previous[-1]
 
 
+async def run_transcription(
+    client: AiClient | None,
+    store: ObjectStore,
+    data: bytes,
+    content_type: str,
+    lang: str,
+    prompt: str | None,
+    prefix: str,
+) -> dict[str, Any]:
+    """Transcribe a recording on the local service; the audio is deleted whatever happens. Shared by the commander's
+    voice messages and the dictation of free-text fields (phase D, review point 19)."""
+    if content_type not in VOICE_TYPES:
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "unsupported_media_type")
+    if not data:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "audio_undecodable")
+    if client is None:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "transcription_unavailable")
+    key = f"{prefix}/{uuid.uuid4().hex}"
+    await store.put(key, data, content_type)
+    try:
+        result: dict[str, Any] = await client.transcribe(
+            store.presign_get(key, expires_s=600, internal=True), language=lang, prompt=prompt
+        )
+    except AiUnavailable as exc:
+        log.warning("voice.transcription_unavailable", error=str(exc), prefix=prefix)
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "transcription_unavailable") from exc
+    except AiRejected as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "audio_undecodable") from exc
+    finally:
+        # The audio is never kept.
+        await store.delete(key)
+    if float(result.get("duration_s") or 0.0) > MAX_SECONDS:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "audio_too_long")
+    if not str(result.get("text") or "").strip():
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "nothing_heard")
+    return result
+
+
 async def transcribe(
     session: AsyncSession,
     principal: Principal,
@@ -80,32 +118,11 @@ async def transcribe(
     lang: str,
     prompts: dict[str, str] | None = None,
 ) -> s.VoiceOut:
-    if content_type not in VOICE_TYPES:
-        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "unsupported_media_type")
-    if not data:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "audio_undecodable")
-    if client is None:
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "transcription_unavailable")
-    key = f"command-voice/{uuid.uuid4().hex}"
-    await store.put(key, data, content_type)
-    try:
-        result: dict[str, Any] = await client.transcribe(
-            store.presign_get(key, expires_s=600, internal=True), language=lang, prompt=(prompts or PROMPTS).get(lang)
-        )
-    except AiUnavailable as exc:
-        log.warning("command.voice_unavailable", error=str(exc))
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "transcription_unavailable") from exc
-    except AiRejected as exc:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "audio_undecodable") from exc
-    finally:
-        # The audio is never kept.
-        await store.delete(key)
+    result = await run_transcription(
+        client, store, data, content_type, lang, (prompts or PROMPTS).get(lang), "command-voice"
+    )
     duration = float(result.get("duration_s") or 0.0)
-    if duration > MAX_SECONDS:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "audio_too_long")
     text = str(result.get("text") or "").strip()[:1000]
-    if not text:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "nothing_heard")
     language = result.get("language")
     row = CommandVoice(
         id=uuid.uuid4(),

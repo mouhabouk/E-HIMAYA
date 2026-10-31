@@ -100,6 +100,8 @@ async function mockApi(page: Page) {
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/command") {
       return json(route, { incident_id: "i-1", generated_at: new Date().toISOString(), proposals: [], decided: [], simulated: false });
     }
+    // The incident's media gallery (phase D, review point 21): empty.
+    if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/media") return json(route, { counts: {}, live_streams: 0, items: [] });
     if (verb === "GET" && pathname.startsWith("/api/v1/staff/incidents/i-1/")) return json(route, []);
     if (verb === "GET" && pathname === "/api/v1/staff/resources") return json(route, { items: [], next_cursor: null });
     if (verb === "GET" && pathname === "/api/v1/staff/incidents") return json(route, { items: [], next_cursor: null });

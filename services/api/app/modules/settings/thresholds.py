@@ -76,6 +76,9 @@ SPECS: dict[str, Spec] = {
     "field.code_attempts": Spec("field", "count", 5, 3, 10),
     "field.hold_ms": Spec("field", "milliseconds", 1_500, 600, 4_000),
     "field.undo_seconds": Spec("field", "seconds", 10, 0, 60),
+    # An institution's camera saw a fire or smoke: how long the owner has to call it a false alarm before the room is
+    # told (review point 25, docs/phase-d/design-d.md §2).
+    "orgs.prealert_seconds": Spec("partners", "seconds", 90, 30, 600),
 }
 
 DEFAULTS: dict[str, int] = {name: spec.default for name, spec in SPECS.items()}

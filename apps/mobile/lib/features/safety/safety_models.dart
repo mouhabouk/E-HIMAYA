@@ -272,8 +272,11 @@ class SosLabels {
     required this.time,
     required this.battery,
     required this.noPosition,
+    this.subject = 'e-Himaya SOS',
   });
 
+  /// Subject of the e-mail channel (review point 6).
+  final String subject;
   final String position;
   final String accuracy;
   final String time;
@@ -317,6 +320,23 @@ String sosMessageText({
 /// `sms:` URI for several recipients at once (RFC 5724: comma-separated); the user presses Send.
 Uri smsGroupUri(List<String> phones, String body) =>
     Uri.parse('sms:${phones.join(',')}?body=${Uri.encodeComponent(body)}');
+
+/// Review point 6: the mail app with every address in blind copy and the text ready (the user
+/// presses Send there, as for the SMS).
+Uri emailGroupUri(List<String> emails, String subject, String body) => Uri(
+  scheme: 'mailto',
+  query: [
+    'bcc=${emails.map(Uri.encodeComponent).join(',')}',
+    'subject=${Uri.encodeComponent(subject)}',
+    'body=${Uri.encodeComponent(body)}',
+  ].join('&'),
+);
+
+/// A plausible e-mail address (the mail app checks the rest), lower-cased; null otherwise.
+String? normalizeContactEmail(String? value) {
+  final v = value?.trim().toLowerCase() ?? '';
+  return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v) ? v : null;
+}
 
 /// WhatsApp chat with one contact and the text ready; WhatsApp never sends on its own.
 Uri whatsAppUri(String phone, String text) => Uri.parse(

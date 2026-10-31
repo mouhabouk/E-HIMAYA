@@ -3384,7 +3384,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get safetyChannelApp => 'app';
+  String get safetyChannelApp => 'In-app alert';
 
   @override
   String get safetyRecentPrivacy => 'This list stays on this phone.';
@@ -6675,4 +6675,174 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffOpenMissionNoFix =>
       'No position. Move into the open and try again.';
+
+  @override
+  String get safetyAlertWhatsAppReply =>
+      'I got your e-Himaya alert. I am following your position and will call you.';
+
+  @override
+  String get safetyAlertShareWhatsApp => 'Send the position on WhatsApp';
+
+  @override
+  String safetyAlertShareText(String name, String link, String coords) {
+    return 'Distress alert from $name through e-Himaya.\nPosition: $link\nCoordinates: $coords';
+  }
+
+  @override
+  String get safetyAlertCopyCoords => 'Copy the coordinates';
+
+  @override
+  String safetyAlertCoordsCopied(String coords) {
+    return 'Coordinates $coords copied: paste them in a message or read them to 198.';
+  }
+
+  @override
+  String get prealertPushTitle => 'Pre-alert from a camera of your institution';
+
+  @override
+  String get prealertPushBody =>
+      'Confirm or cancel before it goes to the Civil Protection.';
+
+  @override
+  String get prealertTitle => 'Pre-alert';
+
+  @override
+  String get prealertFire => 'Fire';
+
+  @override
+  String get prealertSmoke => 'Smoke';
+
+  @override
+  String prealertCountdown(int seconds) {
+    return 'Sent to the Civil Protection room in $seconds s';
+  }
+
+  @override
+  String get prealertConfirm => 'Confirm and report now';
+
+  @override
+  String get prealertFalseAlarm => 'False alarm';
+
+  @override
+  String get prealertHint =>
+      'With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.';
+
+  @override
+  String get prealertWhyFalse => 'Why is it a false alarm?';
+
+  @override
+  String get prealertReasonTest => 'Test or maintenance';
+
+  @override
+  String get prealertReasonCooking => 'Cooking or barbecue';
+
+  @override
+  String get prealertReasonDrill => 'Evacuation drill';
+
+  @override
+  String get prealertReasonCamera => 'Camera error';
+
+  @override
+  String get prealertReasonOther => 'Another reason checked on site';
+
+  @override
+  String get prealertCancelled => 'Cancelled: false alarm';
+
+  @override
+  String get prealertConfirmed => 'Confirmed, the room was told';
+
+  @override
+  String get prealertEscalated => 'Sent to the room when the delay ran out';
+
+  @override
+  String get prealertPending => 'Waiting for your answer';
+
+  @override
+  String get prealertGone => 'This pre-alert is no longer available.';
+
+  @override
+  String get prealertRecent => 'Camera pre-alerts';
+
+  @override
+  String get prealertSimulated =>
+      '[SIM] Test pre-alert from a simulated camera';
+
+  @override
+  String get sosEmailSubject => 'e-Himaya: distress message';
+
+  @override
+  String safetySentEmail(int count) {
+    return 'E-mail ready for $count address(es): press Send in the mail app.';
+  }
+
+  @override
+  String safetySendBySms(int count) {
+    return 'Send by SMS to $count number(s)';
+  }
+
+  @override
+  String safetySendByEmail(int count) {
+    return 'Send by e-mail to $count address(es)';
+  }
+
+  @override
+  String get safetyChannelsTitle => 'Message channels and their order';
+
+  @override
+  String get safetyChannelsHint =>
+      'The in-app alert goes first. Then the first channel that is on and has recipients opens, the others appear as buttons in the same order.';
+
+  @override
+  String get safetyChannelAppHint =>
+      'To linked contacts, rings through silent mode. Always first.';
+
+  @override
+  String get safetyChannelSms => 'SMS';
+
+  @override
+  String get safetyChannelEmail => 'E-mail';
+
+  @override
+  String get actionMoveUp => 'Move up';
+
+  @override
+  String get actionMoveDown => 'Move down';
+
+  @override
+  String get safetyContactEmail => 'E-mail (optional)';
+
+  @override
+  String get safetyContactEmailInvalid => 'Not a valid e-mail address';
+
+  @override
+  String get nearestMapTitle => 'On the map';
+
+  @override
+  String nearestMapHint(int count) {
+    return '$count places from the copy kept on the phone, works offline';
+  }
+
+  @override
+  String get staffLive => 'Live to the room';
+
+  @override
+  String get staffLiveSub => 'The room sees the scene as you do';
+
+  @override
+  String get staffLiveHint =>
+      'The room sees it on the video wall and the incident page';
+
+  @override
+  String get staffLiveEnded =>
+      'Stream over. The recording is kept with the incident.';
+
+  @override
+  String get staffLiveAgain => 'Stream again';
+
+  @override
+  String get staffLiveBack => 'Back to the mission';
+
+  @override
+  String get calloutBySms =>
+      'No internet: your answer is ready in a signed SMS. Press Send in the messaging app.';
 }

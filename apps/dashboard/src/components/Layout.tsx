@@ -21,6 +21,8 @@ import { EnvironmentStrip } from "./EnvironmentStrip";
 import { LevelBanner } from "./LevelBanner";
 import { SoftphoneDock } from "./Softphone";
 import { StreamAlertToasts } from "./StreamAlertToasts";
+import { applyMenuOrder, MENU_ORDER_KEY, menuOrderOf } from "../lib/menuOrder";
+import { settingOf, usePlatformSettings } from "../lib/phase9";
 
 /** Native names of the interface languages, shown in their own script whatever the current language. */
 export const LANGUAGE_NAMES: Record<Language, string> = {
@@ -267,6 +269,7 @@ export function Layout() {
   const windowOpen = useWindowOpen(user?.identity ?? null);
   const lang = useLanguage();
   const strategyItems = useStrategyItems(user !== null);
+  const platformSettings = usePlatformSettings(user !== null);
   if (!user) return null;
   const { identity } = user;
   const scope = identity.national
@@ -284,7 +287,11 @@ export function Layout() {
     tone: toneOr(i.tone, "purple"),
     label: localized(i.name, lang),
   }));
-  const groups = navGroups(identity, t, access, windowOpen, strategies);
+  // Phase D (review point 9): the order the system administrator saved.
+  const groups = applyMenuOrder(
+    navGroups(identity, t, access, windowOpen, strategies),
+    menuOrderOf(settingOf(platformSettings.data, MENU_ORDER_KEY)?.value),
+  );
 
   return (
     <div className="shell" data-menu-shape={menu.shape} data-menu-position={menu.position}>

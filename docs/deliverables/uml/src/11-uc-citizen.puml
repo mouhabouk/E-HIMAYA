@@ -54,4 +54,13 @@ A19 <.. A20 : <<extend>>
 A19 <.. A21 : <<extend>>
 A3 --> OPS
 A12 --> REL
+usecase "Ordonner les canaux SOS :\nSMS, WhatsApp, e-mail (D)" as D1
+usecase "Les plus proches sur une\ncarte hors ligne (D)" as D2
+usecase "Partager l'alerte par WhatsApp,\ncopier les coordonnées (D)" as D3
+CIT --> D1
+D1 ..> A11 : <<extend>>
+ANO --> D2
+D2 ..> A9 : <<extend>>
+ANO --> D3
+D3 ..> A10 : <<extend>>
 @enduml

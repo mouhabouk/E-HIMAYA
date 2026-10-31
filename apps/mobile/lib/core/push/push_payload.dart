@@ -20,7 +20,10 @@ enum PushKind {
   medicalOpinion('medical_opinion'),
   // Phase P4d (F-APP-38): the reporter's team is on its way, then there (`team`: en_route |
   // on_scene).
-  teamStatus('team_status');
+  teamStatus('team_status'),
+  // Review point 25 (phase D): a camera of the user's institution saw a fire or smoke; the room
+  // is told when the owner confirms or when the delay runs out.
+  prealert;
 
   const PushKind([this._wire]);
   final String? _wire;
@@ -38,6 +41,7 @@ enum PushKind {
       this == alert ||
       this == callout ||
       this == safetyAlert ||
+      this == prealert ||
       this == safetyCheckFired ||
       this == safetyCheckReminder;
 }
@@ -111,5 +115,10 @@ class PushPayload {
     PushKind.safetyCheckReminder => Routes.safetyCheck,
     PushKind.safetyHistoryViewed => Routes.safetyLocationHistory,
     PushKind.medicalReferral || PushKind.medicalOpinion => Routes.doctorFiles,
+    PushKind.prealert
+        when (data['org_id'] ?? '').isNotEmpty &&
+            (data['prealert_id'] ?? '').isNotEmpty =>
+      Routes.prealert(data['org_id']!, data['prealert_id']!),
+    PushKind.prealert => Routes.institutions,
   };
 }

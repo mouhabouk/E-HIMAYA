@@ -34,6 +34,9 @@ class Volunteer(Base):
     # Readiness end (FR-A-022); the live position is in Valkey only (volunteers.presence).
     ready_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     version: Mapped[int] = mapped_column(Integer, server_default="1")
+    # Phase D (S2-5): the key of the volunteer's signed SMS answers (EH3), and the time of the last one applied.
+    sms_key: Mapped[str | None] = mapped_column("sms_key_enc", EncryptedText("identity.volunteer.sms_key"))
+    sms_last_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

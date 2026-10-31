@@ -196,6 +196,8 @@ async function mock(page: Page, streams: StaffStream[]): Promise<Mock> {
     }
     // What the system administrator grants and hides (phase L4 §8): nothing here.
     if (method === "GET" && pathname === "/api/v1/staff/features/mine") return json(route, { granted: [], hidden: [], lent: {} });
+    // The menu order (phase D, review point 9): the built-in order.
+    if (method === "GET" && pathname === "/api/v1/staff/settings") return json(route, { items: [] });
     m.unexpected.push(`${method} ${pathname}`);
     return json(route, { detail: "not_found" }, 404);
   });

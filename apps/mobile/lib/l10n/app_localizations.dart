@@ -5863,7 +5863,7 @@ abstract class AppLocalizations {
   /// No description provided for @safetyChannelApp.
   ///
   /// In en, this message translates to:
-  /// **'app'**
+  /// **'In-app alert'**
   String get safetyChannelApp;
 
   /// No description provided for @safetyRecentPrivacy.
@@ -11781,6 +11781,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No position. Move into the open and try again.'**
   String get staffOpenMissionNoFix;
+
+  /// No description provided for @safetyAlertWhatsAppReply.
+  ///
+  /// In en, this message translates to:
+  /// **'I got your e-Himaya alert. I am following your position and will call you.'**
+  String get safetyAlertWhatsAppReply;
+
+  /// No description provided for @safetyAlertShareWhatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the position on WhatsApp'**
+  String get safetyAlertShareWhatsApp;
+
+  /// No description provided for @safetyAlertShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Distress alert from {name} through e-Himaya.\nPosition: {link}\nCoordinates: {coords}'**
+  String safetyAlertShareText(String name, String link, String coords);
+
+  /// No description provided for @safetyAlertCopyCoords.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the coordinates'**
+  String get safetyAlertCopyCoords;
+
+  /// No description provided for @safetyAlertCoordsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates {coords} copied: paste them in a message or read them to 198.'**
+  String safetyAlertCoordsCopied(String coords);
+
+  /// No description provided for @prealertPushTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-alert from a camera of your institution'**
+  String get prealertPushTitle;
+
+  /// No description provided for @prealertPushBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm or cancel before it goes to the Civil Protection.'**
+  String get prealertPushBody;
+
+  /// No description provided for @prealertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-alert'**
+  String get prealertTitle;
+
+  /// No description provided for @prealertFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire'**
+  String get prealertFire;
+
+  /// No description provided for @prealertSmoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoke'**
+  String get prealertSmoke;
+
+  /// No description provided for @prealertCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the Civil Protection room in {seconds} s'**
+  String prealertCountdown(int seconds);
+
+  /// No description provided for @prealertConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and report now'**
+  String get prealertConfirm;
+
+  /// No description provided for @prealertFalseAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'False alarm'**
+  String get prealertFalseAlarm;
+
+  /// No description provided for @prealertHint.
+  ///
+  /// In en, this message translates to:
+  /// **'With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.'**
+  String get prealertHint;
+
+  /// No description provided for @prealertWhyFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'Why is it a false alarm?'**
+  String get prealertWhyFalse;
+
+  /// No description provided for @prealertReasonTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test or maintenance'**
+  String get prealertReasonTest;
+
+  /// No description provided for @prealertReasonCooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking or barbecue'**
+  String get prealertReasonCooking;
+
+  /// No description provided for @prealertReasonDrill.
+  ///
+  /// In en, this message translates to:
+  /// **'Evacuation drill'**
+  String get prealertReasonDrill;
+
+  /// No description provided for @prealertReasonCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera error'**
+  String get prealertReasonCamera;
+
+  /// No description provided for @prealertReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another reason checked on site'**
+  String get prealertReasonOther;
+
+  /// No description provided for @prealertCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled: false alarm'**
+  String get prealertCancelled;
+
+  /// No description provided for @prealertConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed, the room was told'**
+  String get prealertConfirmed;
+
+  /// No description provided for @prealertEscalated.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to the room when the delay ran out'**
+  String get prealertEscalated;
+
+  /// No description provided for @prealertPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your answer'**
+  String get prealertPending;
+
+  /// No description provided for @prealertGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This pre-alert is no longer available.'**
+  String get prealertGone;
+
+  /// No description provided for @prealertRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera pre-alerts'**
+  String get prealertRecent;
+
+  /// No description provided for @prealertSimulated.
+  ///
+  /// In en, this message translates to:
+  /// **'[SIM] Test pre-alert from a simulated camera'**
+  String get prealertSimulated;
+
+  /// No description provided for @sosEmailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'e-Himaya: distress message'**
+  String get sosEmailSubject;
+
+  /// No description provided for @safetySentEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail ready for {count} address(es): press Send in the mail app.'**
+  String safetySentEmail(int count);
+
+  /// No description provided for @safetySendBySms.
+  ///
+  /// In en, this message translates to:
+  /// **'Send by SMS to {count} number(s)'**
+  String safetySendBySms(int count);
+
+  /// No description provided for @safetySendByEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send by e-mail to {count} address(es)'**
+  String safetySendByEmail(int count);
+
+  /// No description provided for @safetyChannelsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Message channels and their order'**
+  String get safetyChannelsTitle;
+
+  /// No description provided for @safetyChannelsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The in-app alert goes first. Then the first channel that is on and has recipients opens, the others appear as buttons in the same order.'**
+  String get safetyChannelsHint;
+
+  /// No description provided for @safetyChannelAppHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To linked contacts, rings through silent mode. Always first.'**
+  String get safetyChannelAppHint;
+
+  /// No description provided for @safetyChannelSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get safetyChannelSms;
+
+  /// No description provided for @safetyChannelEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail'**
+  String get safetyChannelEmail;
+
+  /// No description provided for @actionMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get actionMoveUp;
+
+  /// No description provided for @actionMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get actionMoveDown;
+
+  /// No description provided for @safetyContactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail (optional)'**
+  String get safetyContactEmail;
+
+  /// No description provided for @safetyContactEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a valid e-mail address'**
+  String get safetyContactEmailInvalid;
+
+  /// No description provided for @nearestMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On the map'**
+  String get nearestMapTitle;
+
+  /// No description provided for @nearestMapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} places from the copy kept on the phone, works offline'**
+  String nearestMapHint(int count);
+
+  /// No description provided for @staffLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live to the room'**
+  String get staffLive;
+
+  /// No description provided for @staffLiveSub.
+  ///
+  /// In en, this message translates to:
+  /// **'The room sees the scene as you do'**
+  String get staffLiveSub;
+
+  /// No description provided for @staffLiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The room sees it on the video wall and the incident page'**
+  String get staffLiveHint;
+
+  /// No description provided for @staffLiveEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream over. The recording is kept with the incident.'**
+  String get staffLiveEnded;
+
+  /// No description provided for @staffLiveAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream again'**
+  String get staffLiveAgain;
+
+  /// No description provided for @staffLiveBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the mission'**
+  String get staffLiveBack;
+
+  /// No description provided for @calloutBySms.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet: your answer is ready in a signed SMS. Press Send in the messaging app.'**
+  String get calloutBySms;
 }
 
 class _AppLocalizationsDelegate

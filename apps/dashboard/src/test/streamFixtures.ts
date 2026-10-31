@@ -13,6 +13,9 @@ export function fakeStreamsApi(): StreamsApi {
     streamViewer: vi.fn(() => Promise.resolve(makeGrant())),
     stopStream: vi.fn(() => Promise.resolve({})),
     recordingDownload: vi.fn(() => Promise.resolve({ kind: "link" as const, url: "https://s3.example/rec.mp4?sig=x" })),
+    // Phase D: an institution's camera and its pre-alerts (review point 25).
+    registerCamera: vi.fn(),
+    prealerts: vi.fn(() => Promise.resolve([])),
   };
 }
 

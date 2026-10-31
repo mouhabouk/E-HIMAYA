@@ -122,6 +122,9 @@ class SosSendResult {
     required this.appRecipients,
     required this.appFailed,
     required this.smsOpened,
+    this.emails = const [],
+    this.channels = sosChannelDefaults,
+    this.opened,
   });
 
   /// The message with the position link, accuracy, time and battery.
@@ -136,6 +139,15 @@ class SosSendResult {
   /// The in-app alert could not be sent (offline, limit): the SMS still opened.
   final bool appFailed;
   final bool smsOpened;
+
+  /// The contacts' e-mail addresses (review point 6).
+  final List<String> emails;
+
+  /// The external channels the user keeps on, in their order.
+  final List<String> channels;
+
+  /// The channel opened by itself (the first of [channels] with recipients), null when none.
+  final String? opened;
 }
 
 /// Addition 5: the SOS message to the user's own contacts, in order: the in-app alert to linked
@@ -203,18 +215,40 @@ class SosMessageSender {
 
     final phones = {for (final c in chosen) ?normalizeContactPhone(c.phone)}
         .toList();
-    var smsOpened = false;
-    if (phones.isNotEmpty) {
-      smsOpened = await _ref.read(urlOpenerProvider)(smsGroupUri(phones, text));
+    final emails = {for (final c in chosen) ?normalizeContactEmail(c.email)}
+        .toList();
+    // Review point 6: the user's order; the first channel that has recipients opens by itself,
+    // the others are offered as buttons on the result screen in the same order.
+    final prefs = _ref.read(appPrefsProvider);
+    final off = prefs.sosChannelsOff;
+    final channels = [
+      for (final c in prefs.sosChannels)
+        if (!off.contains(c)) c,
+    ];
+    String? opened;
+    final open = _ref.read(urlOpenerProvider);
+    for (final c in channels) {
+      final uri = switch (c) {
+        'sms' when phones.isNotEmpty => smsGroupUri(phones, text),
+        'email' when emails.isNotEmpty => emailGroupUri(
+          emails,
+          labels.subject,
+          text,
+        ),
+        'whatsapp' when phones.isNotEmpty => whatsAppShareUri(text),
+        _ => null,
+      };
+      if (uri == null) continue;
+      if (await open(uri)) opened = c;
+      break;
     }
+    final smsOpened = opened == 'sms';
     await db.addAlertHistory(
       SafetyAlertHistoryCompanion.insert(
         kind: 'sos_message',
         at: at,
-        status: smsOpened || appRecipients > 0 ? 'sent' : 'failed',
-        channels: Value(
-          [if (appRecipients > 0) 'app', if (smsOpened) 'sms'].join(','),
-        ),
+        status: opened != null || appRecipients > 0 ? 'sent' : 'failed',
+        channels: Value([if (appRecipients > 0) 'app', ?opened].join(',')),
         recipients: Value(
           phones.length > appRecipients ? phones.length : appRecipients,
         ),
@@ -227,6 +261,9 @@ class SosMessageSender {
       appRecipients: appRecipients,
       appFailed: appFailed,
       smsOpened: smsOpened,
+      emails: emails,
+      channels: channels,
+      opened: opened,
     );
   }
 

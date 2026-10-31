@@ -55,6 +55,9 @@ class AppPrefs {
   static const _sosTemplate = 'safety.sos_template';
   static const _sosCancelWindow = 'safety.sos_cancel_window';
   static const _liveShare = 'safety.live_share';
+  // Phase D (review point 6): order of the SOS message channels after the in-app alert, and those switched off.
+  static const _sosChannels = 'safety.sos_channels';
+  static const _sosChannelsOff = 'safety.sos_channels_off';
   static const _locationHistoryOn = 'safety.location_history_on';
   static const _a11yScreenFlash = 'a11y.screen_flash';
   static const _a11yTorchFlash = 'a11y.torch_flash';
@@ -295,6 +298,20 @@ class AppPrefs {
   Future<void> setSosCancelWindow(bool value) =>
       _prefs.setBool(_sosCancelWindow, value);
 
+  /// Review point 6: the external channels of the SOS message in the user's order (the in-app
+  /// alert to linked contacts always goes first). Unknown or missing names fall back to the
+  /// default order.
+  List<String> get sosChannels =>
+      normaliseSosChannels(_prefs.getStringList(_sosChannels));
+  Future<void> setSosChannels(List<String> value) =>
+      _prefs.setStringList(_sosChannels, normaliseSosChannels(value));
+
+  /// The channels the user switched off (never all of them: the screen keeps one on).
+  Set<String> get sosChannelsOff =>
+      (_prefs.getStringList(_sosChannelsOff) ?? const []).toSet();
+  Future<void> setSosChannelsOff(Set<String> value) =>
+      _prefs.setStringList(_sosChannelsOff, value.toList()..sort());
+
   /// Phase P5a (accessibility): flash the screen when an urgent alert arrives (off by default).
   bool get a11yScreenFlash => _prefs.getBool(_a11yScreenFlash) ?? false;
   Future<void> setA11yScreenFlash(bool value) =>
@@ -343,3 +360,19 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
 final appPrefsProvider = Provider<AppPrefs>(
   (ref) => AppPrefs(ref.watch(sharedPreferencesProvider)),
 );
+
+/// Review point 6: the external channels of the SOS message, in the default order.
+const sosChannelDefaults = ['sms', 'whatsapp', 'email'];
+
+/// Every known channel once, in the given order, the missing ones at the end.
+List<String> normaliseSosChannels(List<String>? value) {
+  final out = <String>[
+    for (final c in value ?? const <String>[])
+      if (sosChannelDefaults.contains(c)) c,
+  ];
+  return [
+    ...{...out},
+    for (final c in sosChannelDefaults)
+      if (!out.contains(c)) c,
+  ];
+}

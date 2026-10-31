@@ -3,7 +3,8 @@
  * sources (§6). Coordinates of detection boxes are normalised to 0..1 of the analysed frame.
  */
 
-export const STREAM_SOURCES = ["app", "drone", "camera", "sim"] as const;
+/** `crew`: a team streams from the staff app (phase D, review point 17). */
+export const STREAM_SOURCES = ["app", "drone", "camera", "sim", "crew"] as const;
 export type StreamSource = (typeof STREAM_SOURCES)[number];
 
 export const STREAM_STATUSES = ["pending", "live", "ended", "expired", "rejected"] as const;
@@ -50,6 +51,8 @@ export interface StaffStream {
   recordings_count: number;
   /** `source = sim` (§6): never a real emergency. */
   simulated: boolean;
+  /** A team's stream (phase D): its incident. */
+  incident_id?: string | null;
   /** Not in the §4 list row, but kept when the API sends it (stream detail of §1). */
   end_reason?: StreamEndReason | null;
 }

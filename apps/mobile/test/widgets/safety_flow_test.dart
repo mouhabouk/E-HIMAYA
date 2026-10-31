@@ -9,6 +9,7 @@ import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:ehimaya/features/safety/safety_models.dart';
 import 'package:ehimaya/features/safety/safety_reminders.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -264,6 +265,54 @@ void main() {
   );
 
   testWidgets(
+    'SOS message: e-mail first in the settings opens the mail app, SMS stays a button',
+    (tester) async {
+      final opened = <Uri>[];
+      final h = await pumpApp(
+        tester,
+        prefs: {
+          ...registeredPrefs(locale: 'en'),
+          'safety.sos_cancel_window': false,
+          'safety.sos_template': 'Help me',
+          'safety.sos_channels': ['email', 'sms', 'whatsapp'],
+          'safety.sos_channels_off': ['whatsapp'],
+        },
+        session: testSession,
+        api: _safetyApi,
+        opened: opened,
+        overrides: [
+          deviceServicesProvider.overrideWithValue(FakeDeviceServices()),
+        ],
+      );
+      await h.db.addContact(
+        EmergencyContactsCompanion.insert(
+          name: 'Hela',
+          phone: '20 123 456',
+          email: const Value('hela@example.tn'),
+          createdAt: DateTime(2026),
+        ),
+      );
+      await tester.tap(find.byKey(const Key('home-sos-message')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('sos-send')));
+      await tester.pumpAndSettle();
+      final mail = opened.singleWhere((u) => u.scheme == 'mailto');
+      expect(mail.query, contains('bcc=hela%40example.tn'));
+      expect(Uri.decodeComponent(mail.query), contains('Help me'));
+      expect(opened.where((u) => u.scheme == 'sms'), isEmpty);
+      expect(find.byKey(const Key('sos-sent-email')), findsOneWidget);
+      expect(find.byKey(const Key('sos-whatsapp-share')), findsNothing);
+      await tester.ensureVisible(find.byKey(const Key('sos-again-sms')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('sos-again-sms')));
+      expect(opened.last.scheme, 'sms');
+      final history = await h.db.select(h.db.safetyAlertHistory).get();
+      expect(history.single.channels, 'app,email');
+      await unmountApp(tester);
+    },
+  );
+
+  testWidgets(
     'SOS message: the 5-second window cancels before anything is sent',
     (tester) async {
       final opened = <Uri>[];
@@ -375,6 +424,52 @@ void main() {
       Uri(scheme: 'tel', path: '+21620123456'),
       Uri(scheme: 'tel', path: '198'),
     ]);
+    await unmountApp(tester);
+  });
+
+  testWidgets('received alert: WhatsApp with text and copied coordinates', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 3200);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final opened = <Uri>[];
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String?;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'en'),
+      session: testSession,
+      api: _safetyApi,
+      opened: opened,
+    );
+    await go(tester, Routes.safetyAlert('alert-1'));
+    await tester.tap(find.byKey(const Key('alert-whatsapp')));
+    await tester.pumpAndSettle();
+    expect(opened.last.host, 'wa.me');
+    expect(opened.last.queryParameters['text'], contains('e-Himaya alert'));
+    await tester.tap(find.byKey(const Key('alert-share-whatsapp')));
+    await tester.pumpAndSettle();
+    expect(opened.last.path, '/');
+    expect(opened.last.queryParameters['text'], contains('openstreetmap.org'));
+    await tester.tap(find.byKey(const Key('alert-copy-coords')));
+    await tester.pumpAndSettle();
+    expect(copied, matches(RegExp(r'^-?\d+\.\d{5}, -?\d+\.\d{5}$')));
+    expect(find.textContaining('copied'), findsOneWidget);
     await unmountApp(tester);
   });
 

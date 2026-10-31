@@ -2323,7 +2323,8 @@
       "label": "Live stream sections",
       "live": "Live",
       "wall": "Video wall",
-      "archive": "Archive"
+      "archive": "Archive",
+      "cameras": "Institution cameras"
     },
     "filters": {
       "gouvernorat": "Gouvernorat",
@@ -2345,7 +2346,8 @@
       "app": "Citizen app",
       "drone": "Drone",
       "camera": "Fixed camera",
-      "sim": "Simulated source"
+      "sim": "Simulated source",
+      "crew": "Team in the field"
     },
     "status": {
       "pending": "Pending",
@@ -3860,7 +3862,8 @@
         },
         "orgs": {
           "invitation_days": "Validity of an institution invitation",
-          "reservation_due_soon_days": "Warning before reservations fall due"
+          "reservation_due_soon_days": "Warning before reservations fall due",
+          "prealert_seconds": "Owner's delay before a pre-alert is raised to the room"
         },
         "snacr": {
           "target": {
@@ -8167,7 +8170,8 @@
       "source": {
         "room_note": "Room note",
         "team_note": "Team note",
-        "pasted": "Pasted text"
+        "pasted": "Pasted text",
+        "team_voice": "Team voice message"
       }
     }
   },
@@ -8213,5 +8217,86 @@
     "codeOnce": "Hand it to the agent directly: it will not show again and works once.",
     "codeUntil": "Valid until {{time}}.",
     "codeHanded": "Handed over"
+  },
+  "cameras": {
+    "pageTitle": "Institution cameras and pre-alerts",
+    "intro": "When an institution's camera confirms a fire or smoke, the owner is told first; the report reaches the room if they confirm or do not answer in time (settings: «owner's delay»). False alarms stay visible here with their reason.",
+    "prealerts": "Pre-alerts",
+    "none": "No pre-alerts yet.",
+    "when": "Time",
+    "org": "Institution",
+    "seen": "Seen",
+    "state": "State",
+    "report": "Report",
+    "openReport": "Open",
+    "labels": {
+      "fire": "Fire",
+      "smoke": "Smoke"
+    },
+    "states": {
+      "pending": "Waiting for the owner ({{seconds}} s)",
+      "cancelled": "False alarm",
+      "confirmed": "Confirmed by the owner",
+      "escalated": "Raised when the delay ran out"
+    },
+    "add": "Register a camera",
+    "addHelp": "A camera of an institution (such as a Tapo C200) or a fixed camera of the Civil Protection. A camera that only offers RTSP goes through the relay on the same computer.",
+    "noOrg": "Civil Protection camera (no institution)",
+    "label": "Camera name",
+    "register": "Register",
+    "registered": "Camera registered. Start the relay with this line on the demonstration computer:",
+    "tokenOnce": "The publish token is shown once; only its fingerprint is kept.",
+    "copied": "Copied"
+  },
+  "dictation": {
+    "record": "Dictate",
+    "stop": "Stop ({{seconds}} s)",
+    "transcribing": "Transcribing…",
+    "refused": "The browser did not allow the microphone."
+  },
+  "gallery": {
+    "title": "Incident media",
+    "none": "No media yet.",
+    "count": {
+      "photo": "Photos: {{count}}",
+      "video": "Videos: {{count}}",
+      "voice": "Voice notes: {{count}}",
+      "frame": "Vision frames: {{count}}",
+      "recording": "Recordings: {{count}}",
+      "stream": "Streams: {{count}}"
+    },
+    "origin": {
+      "citizen": "Citizen",
+      "team": "Team",
+      "camera": "Camera",
+      "vision": "Vision"
+    },
+    "live": "Live",
+    "ended": "Ended",
+    "openStream": "Open the stream",
+    "unavailable": "File not available.",
+    "alt": {
+      "photo": "Photo of the scene",
+      "frame": "Frame where the vision service saw fire or smoke",
+      "voice": "Voice note",
+      "video": "Video of the scene",
+      "recording": "Stream recording"
+    },
+    "liveNow": "Live now: {{count}}"
+  },
+  "menuOrder": {
+    "title": "Menu order",
+    "back": "Back to the settings",
+    "intro": "Drag the groups and links into the order you want, or use the arrows. The order applies to everyone; each user only sees what their roles allow.",
+    "readOnly": "Only the system administrator changes the menu order.",
+    "groups": "Groups",
+    "up": "Move {{name}} up",
+    "down": "Move {{name}} down",
+    "reason": "Reason for the change",
+    "save": "Save the order",
+    "undo": "Undo the changes",
+    "builtIn": "Built-in order",
+    "builtInHint": "Puts the built-in order in the draft; nothing is saved before «Save the order».",
+    "saved": "Order saved. Everyone now sees the new menu."
   }
 }

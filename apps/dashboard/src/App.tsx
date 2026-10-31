@@ -93,12 +93,14 @@ import { ReportsPage } from "./pages/ReportsPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
 import { SafetyTipsPage } from "./pages/SafetyTipsPage";
 import { StreamArchivePage } from "./pages/StreamArchivePage";
+import { CamerasPage } from "./pages/CamerasPage";
 import { StreamDetailPage } from "./pages/StreamDetailPage";
 import { StreamsPage } from "./pages/StreamsPage";
 import { StreamWallPage } from "./pages/StreamWallPage";
 import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
 import { VolunteersPage } from "./pages/VolunteersPage";
 import { WeatherSuggestionsPage } from "./pages/WeatherSuggestionsPage";
+import { MenuOrderPage } from "./pages/MenuOrderPage";
 
 // Phase 8 screens are loaded on demand: they bring the chart (uPlot) and Markdown (markdown-it, DOMPurify) code.
 const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) =>
@@ -245,12 +247,14 @@ export function AppRoutes() {
         <Route path="streams" element={reports(<StreamsPage />)} />
         <Route path="streams/wall" element={reports(<StreamWallPage />)} />
         <Route path="streams/archive" element={reports(<StreamArchivePage />)} />
+        <Route path="streams/cameras" element={reports(<CamerasPage />)} />
         <Route path="streams/:id" element={reports(<StreamDetailPage />)} />
         <Route path="settings" element={<Gate allow={canReadPlatformSettings}><SettingsPage /></Gate>} />
         <Route
           path="settings/ai"
           element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
         />
+        <Route path="settings/menu" element={<Gate allow={canReadPlatformSettings}><MenuOrderPage /></Gate>} />
         <Route path="settings/ai/models" element={scoped(canReadModelCards, <ModelCardsPage />)} />
         <Route path="settings/ai/learning" element={scoped(canOpenLearning, <LearningPage />)} />
         <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />

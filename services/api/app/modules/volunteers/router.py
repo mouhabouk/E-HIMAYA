@@ -3,7 +3,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
@@ -12,7 +12,7 @@ from app.modules.audit import service as audit
 from app.modules.identity.service import CurrentReporter
 from app.modules.ops import interventions
 from app.modules.ops.models import Callout, Incident
-from app.modules.volunteers import schemas, service
+from app.modules.volunteers import callout_sms, schemas, service
 
 router = APIRouter(prefix="/api/v1/me", tags=["volunteers"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -81,6 +81,22 @@ async def withdraw_consent(reporter: CurrentReporter, session: Session) -> Respo
 async def readiness(reporter: CurrentReporter, session: Session, body: schemas.ReadinessIn) -> schemas.VolunteerOut:
     volunteer = await service.set_readiness(session, reporter, body)
     out = await service.mine_out(session, volunteer)
+    await session.commit()
+    return out
+
+
+@router.post("/volunteer/sms-key", response_model=schemas.SmsKeyOut)
+async def sms_key(reporter: CurrentReporter, session: Session) -> schemas.SmsKeyOut:
+    """The key of the signed SMS answers to call-outs (phase D, S2-5, ``EH3``): made once, kept on the phone."""
+    volunteer = await service.get_mine(session, reporter, lock=True)
+    if volunteer.status != "approved":
+        raise HTTPException(status.HTTP_409_CONFLICT, "volunteer_not_approved")
+    if volunteer.sms_key is None:
+        volunteer.sms_key = callout_sms.new_key()
+        await audit.record(
+            session, actor=reporter.actor, action="volunteer.sms_key", target=f"volunteer:{volunteer.user_id}"
+        )
+    out = schemas.SmsKeyOut(key=volunteer.sms_key, volunteer_id=volunteer.user_id)
     await session.commit()
     return out
 

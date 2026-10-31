@@ -32,6 +32,7 @@ import type { Media, ReportStatus, StaffReportDetail } from "../lib/types";
 import { useDraft } from "../lib/drafts";
 import { PageTitle } from "../components/PageTitle";
 import { MaskedText } from "../components/MaskedText";
+import { DictatedTextarea } from "../components/Dictation";
 
 function MediaItem({ media, onBroken }: { media: Media; onBroken: () => void }) {
   const { t } = useTranslation();
@@ -197,14 +198,14 @@ function StatusChangeForm({ report }: { report: StaffReportDetail }) {
       </fieldset>
       <div className="field">
         <label htmlFor={noteId}>{t("detail.note")}</label>
-        <textarea
+        <DictatedTextarea
+          field="report.note"
           id={noteId}
           value={note}
           maxLength={1000}
           rows={3}
-          onChange={(e) => setNote(e.target.value)}
+          onText={setNote}
           disabled={mutation.isPending}
-          dir="auto"
         />
       </div>
       <button type="submit" className="btn btn--primary" disabled={!next || mutation.isPending}>

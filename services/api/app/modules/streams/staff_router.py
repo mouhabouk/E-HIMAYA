@@ -65,14 +65,27 @@ async def register_source(
     if not principal.is_national and body.gouvernorat_code != principal.gouvernorat_code:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
     actor = actor_of(principal)
-    spec = service.FixedSource(Source(body.source), body.label, body.gouvernorat_code, body.lat, body.lon)
+    if body.org_id is not None:
+        from app.modules.orgs.models import Organization
+
+        org = await session.get(Organization, body.org_id)
+        if body.source != "camera" or org is None or org.gouvernorat_code != body.gouvernorat_code:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_org")
+    spec = service.FixedSource(
+        Source(body.source), body.label, body.gouvernorat_code, body.lat, body.lon, org_id=body.org_id
+    )
     stream, token = await service.register_fixed(session, spec, actor)
     await audit.record(
         session,
         actor=actor,
         action="stream.register",
         target=f"stream:{stream.id}",
-        details={"source": body.source, "label": body.label, "gouvernorat_code": body.gouvernorat_code},
+        details={
+            "source": body.source,
+            "label": body.label,
+            "gouvernorat_code": body.gouvernorat_code,
+            "org": str(body.org_id) if body.org_id else None,
+        },
     )
     await session.commit()
     return schemas.FixedSourceOut(

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:latlong2/latlong.dart';
 
+import '../../core/config/app_config.dart';
+import '../../core/config/providers.dart';
 import '../../core/http/api_error.dart';
 import '../../core/http/ehimaya_api.dart';
 import '../../core/http/models.dart';
@@ -11,6 +15,7 @@ import '../../core/settings/settings_controller.dart';
 import '../../core/storage/app_prefs.dart';
 import '../../core/ui/language_bar.dart';
 import '../../core/ui/sim_banner.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../emergency/dialer.dart';
 import '../guide/guide_models.dart' show guideColour;
@@ -71,7 +76,17 @@ class NearestScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.nearestTitle),
-        actions: const [LanguageMenuAction()],
+        actions: [
+          IconButton(
+            key: const Key('nearest-map-action'),
+            tooltip: l10n.nearestMapTitle,
+            icon: const Icon(Icons.map_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const NearestMapScreen()),
+            ),
+          ),
+          const LanguageMenuAction(),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -419,6 +434,186 @@ class _PlaceTile extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Phase D, review point 18: the places of the layers shown, on a map, drawn from the copy kept on
+/// the phone. The markers need no connection; the background map comes from `MAP_TILE_URL` (the
+/// offline map server of docs/offline-maps.md on the demonstration network) and stays plain when it
+/// cannot be reached. Opened from the list's app bar, so the list stays the quick way.
+class NearestMapScreen extends ConsumerStatefulWidget {
+  const NearestMapScreen({super.key});
+
+  @override
+  ConsumerState<NearestMapScreen> createState() => _NearestMapScreenState();
+}
+
+class _NearestMapScreenState extends ConsumerState<NearestMapScreen> {
+  String get _lang => ref.read(localeCodeProvider);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final places = ref.watch(placesProvider).value;
+    final here = ref.watch(myPositionProvider).value;
+    final off = ref.watch(placesOffProvider);
+    final layers = (places?.layers ?? const <PlaceLayer>[])
+        .where((l) => !off.contains(l.key))
+        .toList();
+    final shown = [
+      for (final layer in layers)
+        for (final p in mapPlaces(
+          places?.packages[layer.key]?.places ?? const [],
+          here,
+        ))
+          (layer, p),
+    ];
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.nearestMapTitle),
+        actions: const [LanguageMenuAction()],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // ┏━━ SIMULATION ━━ same mark as the list: approximate, invented places
+          // ┗━━━━━━━━━━━━━━━━
+          if (layers.any((l) => l.simulated))
+            SimBanner(text: l10n.nearestSimBanner),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Text(
+              l10n.nearestMapHint(shown.length),
+              key: const Key('nearest-map-hint'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+          Expanded(child: _map(context, l10n, shown, here)),
+        ],
+      ),
+    );
+  }
+
+  Widget _map(
+    BuildContext context,
+    AppLocalizations l10n,
+    List<(PlaceLayer, Place)> shown,
+    GeoPoint? here,
+  ) {
+    final config = ref.watch(appConfigProvider);
+    final centre = here != null
+        ? LatLng(here.lat, here.lon)
+        : shown.isNotEmpty
+        ? LatLng(shown.first.$2.lat, shown.first.$2.lon)
+        : const LatLng(35.9, 10.2);
+    return Semantics(
+      label: l10n.nearestMapTitle,
+      child: SizedBox(
+        key: const Key('nearest-map'),
+        child: ColoredBox(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          child: FlutterMap(
+            options: MapOptions(
+              initialCenter: centre,
+              initialZoom: here == null ? 7 : 12,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              ),
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: config.mapTileUrl,
+                userAgentPackageName: AppConfig.applicationId,
+              ),
+              MarkerLayer(
+                markers: [
+                  for (final (layer, p) in shown)
+                    Marker(
+                      point: LatLng(p.lat, p.lon),
+                      width: 32,
+                      height: 32,
+                      child: Semantics(
+                        button: true,
+                        label: '${layer.nameFor(_lang)}: ${p.name}',
+                        child: GestureDetector(
+                          key: Key('marker-${p.id}'),
+                          onTap: () => _details(context, layer, p),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: guideColour(layer.colour),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: Icon(
+                              layerIcon(layer.icon),
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (here != null)
+                    Marker(
+                      point: LatLng(here.lat, here.lon),
+                      width: 22,
+                      height: 22,
+                      child: const Icon(
+                        Icons.my_location,
+                        key: Key('marker-me'),
+                        size: 22,
+                        color: Hue.navy,
+                      ),
+                    ),
+                ],
+              ),
+              RichAttributionWidget(
+                attributions: [TextSourceAttribution(config.mapAttribution)],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _details(BuildContext context, PlaceLayer layer, Place p) {
+    final here = ref.read(myPositionProvider).value;
+    final near = NearPlace(
+      p,
+      here == null ? 0 : distanceM(here.lat, here.lon, p.lat, p.lon),
+    );
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                layer.nameFor(_lang),
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              _PlaceTile(near: near),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The places drawn on the map: with a position, the [mapMarkersPerLayer] nearest of the layer;
+/// without, the first ones of the copy. A few hundred markers stay smooth on a modest phone.
+const mapMarkersPerLayer = 60;
+
+List<Place> mapPlaces(List<Place> places, GeoPoint? here) {
+  if (here == null) return places.take(mapMarkersPerLayer).toList();
+  return [
+    for (final n in nearest(places, here, limit: mapMarkersPerLayer)) n.place,
+  ];
 }
 
 int _minutes(int seconds) => seconds < 60 ? 1 : (seconds / 60).round();

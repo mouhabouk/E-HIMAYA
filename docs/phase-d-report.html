@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة D</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة D (المرحلة 3 من خطة المراحل الخمس): العرض أمام اللجنة على حاسوب واحد دون إنترنت، تنبيه صاحب الكاميرا، قنوات الاستغاثة، الخريطة دون اتصال، بث الفريق، الإملاء، معرض الوسائط، ترتيب القائمة، الإجابة على الاستنفار برسالة موقّعة، وتفريغ الرسائل الصوتية للفريق.</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-10-31</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-y6xwa2</span></div>
+    <div><b>الحالة</b>منجزة، بانتظار الدمج</div>
+    <div><b>المراجع</b><a href="phase-d/design-d.md">التصميم</a> · <a href="demo.md">دليل العرض</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">المؤجَّل</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. أين تقع هذه المرحلة من مسار المشروع</h2>
+<div class="pipeline">
+  <div class="now">التبليغ</div><i>←</i>
+  <div class="now">المعالجة</div><i>←</i>
+  <div>التحليل</div><i>←</i>
+  <div>مؤشرات الأداء KPI</div><i>←</i>
+  <div>التنبؤ بالذكاء الاصطناعي</div><i>←</i>
+  <div>اتخاذ القرار</div>
+</div>
+<ul>
+  <li><b>التبليغ</b>: الكاميرا تبلّغ بعد أن يتحقق صاحبها، والمتطوع يجيب دون إنترنت، والمواطن يختار قنوات استغاثته.</li>
+  <li><b>المعالجة</b>: القاعة ترى البث من الميدان وكل وسائط التدخل في مكان واحد، وتملي النصوص، وتقرأ أوقات المهمة من رسائل الفريق الصوتية.</li>
+</ul>
+</section>
+
+<section>
+<h2>2. مراجعة ← تصميم ← تطوير</h2>
+<div class="note"><b>الطلب:</b> حوصلة مراجعة يامن (النقاط 1 إلى 28) وخطة المراحل الخمس (2026-10-30)، ثم «نعم واصل دون توقف بنفس الاحترافية» (2026-10-31). التفاصيل في <a href="phase-d/design-d.md">design-d.md</a>.</div>
+<div class="note warn"><b>الأمن والخصوصية:</b> الإنذار الكاذب لا يصل القاعة وسببه في سجل التدقيق؛ حمولة الإشعار بمفاتيح مسموحة فقط؛ صوت الإملاء يُمحى في كل الأحوال والنص مشفّر؛ رسالة EH3 موقّعة بمفتاح المتطوع، مرفوضة إن كانت أقدم من 12 ساعة أو معادة؛ تفريغ الرسائل الصوتية مشفّر، والكتابة في تدخلات الولاية فقط بأمن مستوى الصفوف؛ فتح المعرض في سجل التدقيق.</div>
+<h3>تطبيق المواطن</h3>
+<ol>
+  <li><b>قنوات الاستغاثة</b>: SMS وواتساب والبريد بالترتيب الذي يختاره المستعمل.</li>
+  <li><b>التنبيه المستلَم</b>: واتساب ونسخ الإحداثيات؛ و<b>الأقرب إليّ</b> على خريطة دون اتصال.</li>
+  <li><b>صاحب المؤسسة</b>: «إنذار كاذب» أو «تأكيد» في 90 ثانية.</li>
+  <li><b>المتطوع</b>: رسالة EH3 جاهزة حين لا يوجد إنترنت.</li>
+</ol>
+<h3>تطبيق الأعوان</h3>
+<ol><li><b>بث مباشر</b> للمهمة من بطاقتها، يظهر في الجدار والمعرض.</li></ol>
+<h3>اللوحة</h3>
+<ol>
+  <li><b>الإملاء</b> في حقول النص الحرّ، و<b>سجل التصحيحات</b> لمسؤول الذكاء الاصطناعي.</li>
+  <li><b>معرض وسائط التدخل</b> مع سطر الخلاصة.</li>
+  <li><b>ترتيب القائمة</b> (<code>/settings/menu</code>) لمدير النظام.</li>
+  <li><b>الأوقات المقترحة</b> من الرسائل الصوتية للفريق.</li>
+</ol>
+</section>
+
+<section>
+<h2>3. لقطات <span class="sim">[SIM]</span></h2>
+<p>رزنامة التوفر في تطبيق الهاتف (N-2)، من الشاشة الحقيقية بخطّ التطبيق:</p>
+<figure style="display:inline-block;margin:6px;vertical-align:top;width:260px;max-width:100%"><img src="phase-d/n2-calendar-light.png" alt="رزنامة التوفر، الوضع الفاتح" style="width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="font-size:13px;color:var(--muted);text-align:center">رزنامة التوفر، الوضع الفاتح</figcaption></figure><figure style="display:inline-block;margin:6px;vertical-align:top;width:260px;max-width:100%"><img src="phase-d/n2-calendar-dark.png" alt="رزنامة التوفر، الوضع الداكن" style="width:100%;border:1px solid var(--line);border-radius:10px"><figcaption style="font-size:13px;color:var(--muted);text-align:center">رزنامة التوفر، الوضع الداكن</figcaption></figure>
+<p>مخططات التسلسل الجديدة:</p>
+
+<ul>
+  <li><code>7n-seq-prealert</code>: التنبيه المسبق لصاحب الكاميرا.</li>
+  <li><code>7o-seq-callout-sms</code>: الإجابة على الاستنفار برسالة موقّعة.</li>
+  <li><code>7p-seq-crew-media</code>: بث الفريق ورسائله الصوتية ومعرض التدخل.</li>
+</ul>
+<p>وهي في ملف المخططات <code>diagrams/e-Himaya_Diagrammes_UML.pdf</code> بملفات المشروع.</p>
+</section>
+
+<section>
+<h2>4. التقدم لكل جزء</h2>
+<div class="tbl"><table>
+<tr><th>البند</th><th>الحالة</th><th>التقدم</th></tr>
+<tr><td>16 العرض على حاسوب واحد دون إنترنت (FR-D-01)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>25 تنبيه صاحب الكاميرا والتصعيد بعد 90 ثانية (FR-D-02)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>7 واتساب ونسخ الإحداثيات (FR-D-03)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>6 ترتيب قنوات الاستغاثة والبريد (FR-D-04)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>3 حمولة الإشعار دون معطى شخصي (FR-D-05)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>18 الأماكن الأقرب على خريطة دون اتصال (FR-D-06)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>17 البث من تطبيق الأعوان (FR-D-07)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>19 الإملاء وسجل التصحيحات (FR-D-08)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>21 معرض وسائط التدخل (FR-D-09)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>9 ترتيب القائمة بالسحب (FR-D-10)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>S2-5 الإجابة على الاستنفار برسالة موقّعة (FR-D-11)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>S2-1 الرسائل الصوتية للفريق وأوقات المهمة (FR-D-12)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+<tr><td>N-2 لقطة رزنامة التوفر (—)</td><td>منجز</td><td><div class="bar"><span style="width:100%"></span></div></td></tr>
+</table></div>
+<p><b>تقدم المرحلة D: 100%.</b></p>
+</section>
+
+<section>
+<h2>5. المحاكاة <span class="sim">[SIM]</span></h2>
+<div class="simbox"><ul>
+  <li><span class="sim">[SIM]</span> معطيات العرض (الحسابات والمؤسسات والتدخلات والكاميرا) مصطنعة، وكل شاشة تحمل شريط «تدريب».</li>
+  <li><span class="sim">[SIM]</span> الإشعارات والرسائل القصيرة والبريد في العرض تمرّ بالمحاكيات المحلية، ولا يخرج شيء من الحاسوب.</li>
+  <li><span class="sim">[SIM]</span> كاميرا المستودع تعوّض كاميرا Tapo حين لا تكون حاضرة.</li>
+  <li><span class="sim">[SIM]</span> الفترات في لقطات الرزنامة مختلَقة.</li>
+</ul></div>
+</section>
+
+<section>
+<h2>6. الاختبارات المطبقة</h2>
+<div class="tbl"><table>
+<tr><th>المكوّن</th><th>العدد</th><th>النتيجة</th></tr>
+<tr><td>الخلفية (pytest)</td><td>1166 (وتخطّي 2)، منها 15 في <code>test_phase_d.py</code></td><td>1155 ناجحة على القاعدة المحلية. 11 اختبارا من وحدات أخرى (الشذوذ، المستشفيات، اللجنة الطبية، البرامج، النافذة، التعلم، التحليل، العتبات) تفشل بسبب معطيات تراكمت في هذه القاعدة من جلسات سابقة، وتفشل بالشكل نفسه على الفرع الرئيسي قبل هذه المرحلة؛ CI على قاعدة جديدة هو الحَكَم</td></tr>
+<tr><td>الترحيلات</td><td>نزولا إلى 0087 ثم صعودا حتى 0088</td><td>ناجحة</td></tr>
+<tr><td>لوحة القيادة (vitest)</td><td>645</td><td>كلها ناجحة، و<code>tsc</code> و <code>eslint</code> دون ملاحظة</td></tr>
+<tr><td>تطبيق الهاتف (flutter test)</td><td>600</td><td>كلها ناجحة، و<code>dart analyze</code> دون ملاحظة</td></tr>
+<tr><td><code>ruff</code> و <code>mypy</code>، و OpenAPI و ERD</td><td>—</td><td>لا ملاحظة، والملفان مُعاد توليدهما</td></tr>
+</table></div>
+<ul>
+  <li>التنبيه المسبق: الإنذار الكاذب لا يصل القاعة، والتأكيد فوري، وانتهاء المهلة يرفعه، والمهلة إعداد.</li>
+  <li>رسالة EH3: التوقيع الخاطئ والرسالة المعادة والقديمة تُتجاهل؛ ومتّجه التوقيع نفسه في الخادم والتطبيق (<code>5ecd7484666c7b9a</code>).</li>
+  <li>الرسائل الصوتية: تُفرَّغ مرة واحدة، والصوت يبقى في المعرض بتفريغه.</li>
+  <li>الإملاء: الصوت ممحوّ بعد التفريغ، ونسبة الخطأ محسوبة مرة واحدة لكل إملاء.</li>
+</ul>
+</section>
+
+<section id="tools">
+<h2>7. التقنيات والأدوات والمصادر والإصدارات</h2>
+<p>لا حزمة جديدة. القائمة الكاملة في <a href="versions.md">versions.md</a>.</p>
+<div class="cards">
+<div class="card"><h3>ترحيل قاعدة البيانات</h3><p class="v">0088 · <span class="prio p1">1</span></p>
+<dl><dt>الاستعمال</dt><dd><code>org.prealert</code> و <code>ai.dictation</code> وبث الفرق ومفتاح EH3 وتفريغ الرسائل الصوتية</dd><dt>الأمر</dt><dd><code>alembic upgrade head</code></dd></dl></div>
+<div class="card"><h3>الواجهة البرمجية</h3><p class="v">619 مسارا · 745 عملية · <span class="prio p2">2</span></p>
+<dl><dt>الجديد</dt><dd><code>/orgs/{id}/prealerts</code> و <code>/crew/missions/{id}/stream</code> و <code>/staff/dictation</code> و <code>/staff/incidents/{id}/media</code> و <code>/me/volunteer/sms-key</code></dd></dl></div>
+<div class="card"><h3>الإعدادات</h3><p class="v">إعدادان · <span class="prio p2">2</span></p>
+<dl><dt>المفاتيح</dt><dd><code>orgs.prealert_seconds</code> (90) و <code>menu.order</code></dd></dl></div>
+<div class="card"><h3>العرض دون إنترنت</h3><p class="v">dnsmasq اختياري · <span class="prio p3">3</span></p>
+<dl><dt>الأمر</dt><dd><code>scripts/demo.sh up|users|seed|ca</code></dd><dt>الدليل</dt><dd><a href="demo.md">demo.md</a></dd></dl></div>
+</div>
+</section>
+
+<section>
+<h2>8. المخرجات المحيَّنة</h2>
+<ul>
+  <li>الملف الوصفي V32 (docx و pdf) في <code>spec/</code>: F-APP-148 إلى 151 و F-STF-14 و F-DSH-119 إلى 122 و F-SRV-62 و 63، 619 مسارا و745 عملية، 88 ترحيلا، الاختبارات، وخارطة الطريق.</li>
+  <li>مخططات UML في <code>diagrams/</code>: ثلاثة مخططات تسلسل (7n و 7o و 7p)، وحالات استعمال جديدة للمواطن والمتطوعين والمؤسسات والقاعة.</li>
+  <li>العرض للمسؤولين في <code>presentation/</code>: 54 مرحلة والاختبارات وخارطة الطريق.</li>
+  <li>مرجع التصميم مُعاد توليده: <a href="design-reference.html">design-reference.html</a>.</li>
+  <li>وثيقة التصميم <a href="phase-d/design-d.md">design-d.md</a> واللقطات في <code>phase-d/</code>، وأدلة التنصيب، والمؤجَّل (D-1 و D-2).</li>
+</ul>
+</section>
+
+<section>
+<h2>9. ملاحظات وانحرافات</h2>
+<ul>
+  <li>الرسائل الصوتية للفريق تُفرَّغ عند أول طلب للأوقات المقترحة، لا عند وصولها: لا عامل جديد، والقاعة تطلبها حين تحتاجها.</li>
+  <li>الإملاء في اللوحة وحدها؛ في تطبيق الأعوان يبقى محضر التدخل بالصوت من المرحلة F (D-1 في المؤجَّل).</li>
+  <li>كاميرا Tapo الحقيقية تُجرَّب يوم التحضير على الحاسوب المختار (D-2).</li>
+</ul>
+</section>
+
+<section>
+<h2>10. ما يلي</h2>
+<p>الدمج، ثم المرحلة 4 (الوثائق والأمن: 11 و 14 و 20 القاموس و 12 و 15 و 13)، ثم المرحلة 5 (الإنتاج بعد المصادقة).</p>
+</section>
+</div>
+</body>
+</html>

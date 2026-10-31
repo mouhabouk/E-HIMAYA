@@ -23,6 +23,7 @@ from app.modules import models as _models  # noqa: F401  (registers every table 
 from app.modules.access import accounts
 from app.modules.access.router import router as access_router
 from app.modules.access.worker import breakglass_forever
+from app.modules.ai.dictation import router as dictation_router
 from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
 from app.modules.analytics.library import router as analytics_library_router
@@ -81,11 +82,16 @@ from app.modules.notify.staff_router import router as notify_staff_router
 from app.modules.ops.command_router import router as command_router
 from app.modules.ops.crew_router import router as crew_router
 from app.modules.ops.crew_router import staff_router as crew_staff_router
+from app.modules.ops.crew_stream import router as crew_stream_router
 from app.modules.ops.field_router import crew_router as field_crew_router
 from app.modules.ops.field_router import router as field_router
 from app.modules.ops.field_router import staff_router as field_staff_router
+from app.modules.ops.gallery import router as gallery_router
 from app.modules.ops.router import router as ops_router
 from app.modules.orgs.field_router import router as orgs_field_router
+from app.modules.orgs.prealert import prealerts_forever
+from app.modules.orgs.prealert_router import router as orgs_prealert_router
+from app.modules.orgs.prealert_router import staff_router as orgs_prealert_staff_router
 from app.modules.orgs.prevention_router import router as orgs_prevention_router
 from app.modules.orgs.prevention_router import staff_router as orgs_prevention_staff_router
 from app.modules.orgs.router import router as orgs_router
@@ -177,6 +183,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("evidence", evidence_forever),
     ("plan-checklist", checklist_forever),
     ("learning", learning_forever),
+    ("org-prealerts", prealerts_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
@@ -302,8 +309,11 @@ def create_app() -> FastAPI:
         orgs_staff_router,
         orgs_prevention_router,
         orgs_prevention_staff_router,
+        orgs_prealert_router,
+        orgs_prealert_staff_router,
         orgs_field_router,
         ai_router,
+        dictation_router,
         live_router,
         uploads_router,
         streams_router,
@@ -328,6 +338,8 @@ def create_app() -> FastAPI:
         appinfo_router,
         appinfo_feedback_router,
         crew_router,
+        crew_stream_router,
+        gallery_router,
         crew_staff_router,
         field_router,
         field_staff_router,

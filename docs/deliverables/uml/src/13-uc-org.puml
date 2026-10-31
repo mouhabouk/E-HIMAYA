@@ -89,4 +89,8 @@ MEM --> O32
 AUD --> O33
 O33 ..> O32 : <<extend>>
 MEM --> O34
+usecase "Pré-alerte de la caméra :\nfausse alerte ou confirmer\n(90 s, D)" as O35
+ADM --> O35
+MEM --> O35
+OPE --> O35 : sans réponse
 @enduml

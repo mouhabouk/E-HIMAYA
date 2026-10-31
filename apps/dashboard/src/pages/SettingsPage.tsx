@@ -260,7 +260,8 @@ export function SettingsPage() {
     <div className="page">
       <div className="page__head">
         <PageTitle icon="settings" tone="slate">{t("settings.title")}</PageTitle>
-        <Link to="/settings/ai">{t("nav.aiSettings")}</Link>
+        <Link to="/settings/ai">{t("nav.aiSettings")}</Link>{" · "}
+        <Link to="/settings/menu">{t("menuOrder.title")}</Link>
       </div>
       <p className="muted">{t("settings.intro")}</p>
       {!anyEditable && <p className="alert alert--info">{t("settings.readOnly")}</p>}

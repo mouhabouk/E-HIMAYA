@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/alerts/alerts_providers.dart';
 import '../../features/doctor/doctor_providers.dart';
+import '../../features/institution/institution_providers.dart';
 import '../../features/reports/reports_providers.dart';
 import '../../features/safety/safety_providers.dart';
 import '../../features/volunteer/volunteer_providers.dart';
@@ -183,6 +184,9 @@ class PushController {
         break;
       case PushKind.medicalReferral || PushKind.medicalOpinion:
         _ref.invalidate(medicalFilesProvider);
+      case PushKind.prealert:
+        final org = p.data['org_id'];
+        if (org != null) _ref.invalidate(orgPrealertsProvider(org));
     }
   }
 
