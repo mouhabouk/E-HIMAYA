@@ -435,6 +435,16 @@ pres.addSection({ title: 'الخطوات القادمة' });
 
 (async () => {
   const out = process.argv[2] || 'deck.pptx';
+  // Content objects (not the placeholders, not full-width bands) fade in one after the other, timed in the Animations tab.
+  pres._slides.forEach((sl, k) => {
+    if (!k || k === pres._slides.length - 1) return;
+    let a = 0;
+    sl._slideObjects.forEach(o => {
+      const op = o.options || {};
+      if (op.placeholder || o._type === 'placeholder' || typeof op.w !== 'number' || op.w > W * 0.9) return;
+      op.objectName = `anim ${++a} ${op.objectName || ''}`.trim();
+    });
+  });
   await pres.writeFile({ fileName: out });
   await applyTheme(out, THEME);
   const r = await applyTransitions(out, MIN.map((sec, k) => ({ effect: 'fade', durMs: k ? 700 : 1000, afterSec: sec })));

@@ -3,7 +3,7 @@
 //   cd docs/deliverables/presentation && node prep.js && node build-committee.js e-Himaya_Presentation_Comite.pptx
 // PowerPoint 2019/365 plays the Morph transition (objects named "!!…" are matched across slides); older viewers and
 // LibreOffice fall back to a fade. Transitions and the timing of every slide (MIN, about 21 minutes) are written as
-// PowerPoint writes them, so both can be changed in its Transitions tab; the show waits for clicks until "Use Timings". The map's stations link to their first slide, and every slide links back to the map
+// PowerPoint writes them, so both can be changed in its Transitions tab; "Use Timings" is on. Each station's content fades in after the Morph. The map's stations link to their first slide, and every slide links back to the map
 // (PowerPoint's Summary Zoom cannot be written by a generator; the links give the same navigation).
 const pptxgen = require('pptxgenjs');
 const { applyTransitions, mmss } = require('../lib/transitions');
@@ -129,7 +129,10 @@ function section(i, heading, speech, body) {
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: H - 0.62, w: 1.75, h: 0.38, rectRadius: 0.19, fill: { color: 'FFFFFF' }, line: { color: T.line, width: 1 } });
   text(s, '◀ الخريطة', { x: 0.6, y: H - 0.62, w: 1.75, h: 0.38, fontSize: 12, bold: true, color: T.navy, align: 'center', valign: 'middle', hyperlink: { slide: 2, tooltip: 'العودة إلى الخريطة' } });
   text(s, 'ء-حماية · الديوان الوطني للحماية المدنية', { x: W - 6.6, y: H - 0.6, w: 6, h: 0.34, fontSize: 10, color: T.muted, valign: 'middle' });
+  // The station's content enters with a fade after the Morph (objects named "anim …", timed in the Animations tab).
+  const from = s._slideObjects.length;
   body(s);
+  s._slideObjects.slice(from).forEach((o, k) => { o.options.objectName = `anim ${k + 1} ${o.options.objectName}`; });
   notes(s, speech);
   return s;
 }
