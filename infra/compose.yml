@@ -577,6 +577,23 @@ services:
       mediamtx:
         condition: service_healthy
 
+  # Review point 25 (phase D): relays an institution's RTSP-only camera (Tapo C200 and the like) on the local network
+  # to the path the API gave it. Not a simulation: the real camera's picture. docs/demo.md §4.
+  camera-relay:
+    <<: *restart
+    profiles: ["camera"]
+    image: bluenviron/mediamtx:1.21.2-ffmpeg@sha256:c0feb4acc548d5f410d57d9046f62dfa355e2abc4098f5243de9e86430c77a95
+    entrypoint: ["/bin/sh", "/relay/camera-relay.sh"]
+    init: true
+    environment:
+      CAMERA_RTSP_URL: ${CAMERA_RTSP_URL:-}
+      CAMERA_PUBLISH_URL: ${CAMERA_PUBLISH_URL:-}
+    volumes:
+      - ./camera-relay/camera-relay.sh:/relay/camera-relay.sh:ro
+    depends_on:
+      mediamtx:
+        condition: service_healthy
+
   # ---------------- Telephony (phase 7, docs/telephony.md) ----------------
 
   # One-shot: the call recordings volume belongs to uid 10001 (Asterisk writes, the API worker reads and deletes).

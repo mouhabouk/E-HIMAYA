@@ -208,3 +208,29 @@ def test_every_push_in_the_code_uses_allowed_keys_only() -> None:
                 if isinstance(arg, ast.Dict):
                     seen |= {k.value for k in arg.keys if isinstance(k, ast.Constant) and isinstance(k.value, str)}
     assert seen and seen <= outbox.PUSH_DATA_KEYS, seen - outbox.PUSH_DATA_KEYS
+
+
+# ---------------------------------------------------------------- review point 16: the demonstration seed
+
+
+async def test_demo_seed_is_idempotent_and_raises_a_simulated_prealert(session: AsyncSession) -> None:
+    from app import demo
+
+    sub = str(uuid.uuid4())
+    first = await demo.seed(sub, 21)
+    assert first["leader_code"] and first["org_id"]
+    again = await demo.seed(sub, 21)
+    assert again["org_id"] == first["org_id"]
+    raised = await demo.raise_prealert("smoke")
+    row = (
+        await session.execute(
+            text("SELECT state, simulated, label FROM org.prealert WHERE id = :id"), {"id": raised["prealert_id"]}
+        )
+    ).one()
+    assert (row.state, row.simulated, row.label) == ("pending", True, "smoke")
+    member = (
+        (await session.execute(text("SELECT role FROM org.member WHERE org_id = :o"), {"o": first["org_id"]}))
+        .scalars()
+        .all()
+    )
+    assert member == ["admin"]

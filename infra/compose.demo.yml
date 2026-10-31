@@ -1,0 +1,81 @@
+# ء-حماية / e-Himaya — the demonstration before the committee (review point 16, docs/demo.md).
+#
+# One computer, a closed Wi-Fi network, no Internet, two phones. On top of compose.yml and compose.prod.yml:
+#   scripts/demo.sh up          (= docker compose --env-file .env.demo -f infra/compose.yml -f infra/compose.prod.yml
+#                                  -f infra/compose.demo.yml --profile sim --profile camera up -d --wait)
+#
+# What it changes from production:
+#   - the host publishes 443 only (HTTPS, and HTTP/3), plus 8189/udp for the live video of the phones (WebRTC media
+#     cannot go through 443); 80, RTSP 8554, RTMP 1935 and SIP are closed: the cameras and the relay are on the same
+#     computer and reach MediaMTX on the internal network;
+#   - certificates from Caddy's own CA (CADDY_TLS=internal): no public DNS name, no Let's Encrypt;
+#   - APP_ENV=development, so the [SIM] camera (stream-sim) and the simulated channels run, with the amber «تدريب»
+#     strip on every screen (ENVIRONMENT_BANNER=training);
+#   - push, SMS and e-mail stay inside the computer (notify-sim, Mailpit), nothing leaves it.
+# The names *.ehimaya.demo point at the computer's Wi-Fi address (DEMO_LAN_IP) through the Wi-Fi router's local
+# DNS or the dnsmasq file infra/demo/dnsmasq.conf (docs/demo.md §2).
+
+x-demo-env: &demo-env
+  APP_ENV: development
+  ENVIRONMENT_BANNER: training
+  STREAM_SIM_TOKEN: ${STREAM_SIM_TOKEN:?set STREAM_SIM_TOKEN (any random value, the same for stream-sim)}
+  # The simulated channels: nothing leaves the computer (the phones poll notify-sim through Caddy on NOTIFY_HOST).
+  FCM_SERVICE_ACCOUNT_FILE: /run/notify-sim/fcm-service-account.json
+  FCM_API_URL: http://notify-sim:8090
+  SMS_HTTP_URL: http://notify-sim:8090/sms/send
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+  SMTP_STARTTLS: "false"
+  # Weather and sea from the simulator (no Internet).
+  WEATHER_PROVIDER: sim
+
+services:
+  caddy:
+    environment:
+      CADDY_TLS: internal
+      NOTIFY_HOST: ${NOTIFY_HOST:-push.ehimaya.demo}
+    volumes: !override
+      - ./demo/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile.main:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    ports: !override
+      - "${DEMO_LAN_IP:?set DEMO_LAN_IP, the computer's address on the demonstration Wi-Fi}:443:443"
+      - "${DEMO_LAN_IP}:443:443/udp"
+
+  api:
+    environment: *demo-env
+    volumes:
+      - notifysim:/run/notify-sim:ro
+
+  worker:
+    environment: *demo-env
+    volumes:
+      - notifysim:/run/notify-sim:ro
+
+  mediamtx:
+    environment:
+      MTX_WEBRTCADDITIONALHOSTS: ${DEMO_LAN_IP}
+    ports: !override
+      - "${DEMO_LAN_IP}:8189:8189/udp"
+
+  telephony:
+    ports: !reset []
+
+  # The development helpers production leaves out: the push/SMS simulator and the mail catcher, internal only.
+  notify-sim:
+    profiles: !reset []
+    ports: !reset []
+
+  mailpit:
+    profiles: !reset []
+    ports: !reset []
+
+  stream-sim:
+    profiles: !override ["sim"]
+    environment:
+      SIM_LABEL: كاميرا المستودع
+      SIM_GOUVERNORAT_CODE: ${DEMO_GOUVERNORAT:-21}
+      SIM_LAT: "36.4561"
+      SIM_LON: "10.7376"
+      # No Internet: the ffmpeg test pattern, unless the clip was cached before (docs/demo.md §3).

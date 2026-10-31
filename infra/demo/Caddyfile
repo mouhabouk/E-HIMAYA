@@ -1,0 +1,9 @@
+# ء-حماية / e-Himaya — the edge of the demonstration stack (infra/compose.demo.yml, docs/demo.md).
+# The production file, unchanged, plus one site: the push simulator the demonstration phones poll, since Firebase
+# cannot reach them without Internet. Demonstration only: notify-sim has no authentication, the Wi-Fi is closed.
+import /etc/caddy/Caddyfile.main
+
+{$NOTIFY_HOST} {
+	tls internal
+	reverse_proxy notify-sim:8090
+}

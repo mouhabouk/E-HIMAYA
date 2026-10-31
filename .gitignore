@@ -19,3 +19,8 @@ ci-local-logs/
 
 # The Office map server data (phase M, docs/offline-maps.md): extracts, MBTiles, fonts. Never committed.
 infra/maps/data/
+
+# Demonstration stack (docs/demo.md): its environment, the owner id and the phones certificate.
+.env.demo
+.demo-owner-id
+demo-ca.crt
