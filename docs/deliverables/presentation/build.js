@@ -437,7 +437,6 @@ pres.addSection({ title: 'الخطوات القادمة' });
   const out = process.argv[2] || 'deck.pptx';
   // Content objects (not the placeholders, not full-width bands) fade in one after the other, timed in the Animations tab.
   pres._slides.forEach((sl, k) => {
-    if (!k || k === pres._slides.length - 1) return;
     let a = 0;
     sl._slideObjects.forEach(o => {
       const op = o.options || {};

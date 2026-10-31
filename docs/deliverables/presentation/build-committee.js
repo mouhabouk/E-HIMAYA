@@ -80,6 +80,9 @@ function notes(s, t) {
   s.addNotes(`⏱ ${mmss(MIN[s.n])} لهذه الشريحة · ${mmss(done)} من ${mmss(MIN.reduce((a, b) => a + b, 0))} عند نهايتها\n\n${t}`);
 }
 
+// Objects added from index `from` on get an entrance fade (named "anim …", timed in the Animations tab).
+function animate(s, from) { s._slideObjects.slice(from).forEach((o, k) => { o.options.objectName = `anim ${k + 1} ${o.options.objectName || ''}`.trim(); }); }
+
 function text(s, t, o) { s.addText(t, { isTextBox: true, margin: 0, align: 'right', valign: 'top', color: T.ink, fontSize: 16, ...AR, ...o }); }
 
 // The map drawn at a zoom: k and the point (fx, fy) of the map that lands at the slide centre.
@@ -132,7 +135,7 @@ function section(i, heading, speech, body) {
   // The station's content enters with a fade after the Morph (objects named "anim …", timed in the Animations tab).
   const from = s._slideObjects.length;
   body(s);
-  s._slideObjects.slice(from).forEach((o, k) => { o.options.objectName = `anim ${k + 1} ${o.options.objectName}`; });
+  animate(s, from);
   notes(s, speech);
   return s;
 }
@@ -169,17 +172,21 @@ function build() {
   {
     const s = newSlide(); s.background = { color: T.deep };
     drawMap(s, { k: 0.35, fx: CX, fy: CY - 4.5 });
+    const from = s._slideObjects.length;
     text(s, 'ء-حماية', { x: 0.8, y: 1.0, w: W - 1.6, h: 1.2, fontSize: 64, bold: true, color: 'FFFFFF', align: 'center' });
     text(s, 'منظومة ذكية للتبليغ والمشاركة المجتمعية والمؤسساتية في الوقاية والسلامة وإدارة المخاطر', { x: 1.5, y: 2.25, w: W - 3, h: 0.9, fontSize: 21, color: 'E8ECF5', align: 'center' });
     text(s, 'من التبليغ إلى أخذ القرار', { x: 1.5, y: 3.2, w: W - 3, h: 0.6, fontSize: 26, bold: true, color: 'FFA733', align: 'center' });
     text(s, 'العرض أمام اللجنة · الديوان الوطني للحماية المدنية · 2026', { x: 1.5, y: 6.6, w: W - 3, h: 0.4, fontSize: 14, color: 'A6AFC4', align: 'center' });
+    animate(s, from);
     notes(s, 'أصحاب المعالي والسعادة، نقدّم ء-حماية في سبع محطات على خريطة واحدة. كل محطة تُفتح بالتكبير ثم نعود إلى الخريطة. يمكن الضغط على أي محطة للانتقال إليها مباشرة حسب أسئلة اللجنة.');
   }
   const mapSlide = visited => {
     const s = newSlide(); s.background = { color: 'FFFFFF' };
     drawMap(s, { visited, links: true });
+    const from = s._slideObjects.length;
     text(s, 'سبع محطات: من التبليغ إلى أخذ القرار', { x: 0.6, y: 0.3, w: W - 1.2, h: 0.5, fontSize: 22, bold: true, color: T.navy });
     text(s, 'اضغط على محطة للانتقال إليها', { x: 0.6, y: H - 0.55, w: W - 1.2, h: 0.35, fontSize: 11, color: T.muted });
+    animate(s, from);
     notes(s, visited.length ? `عدنا إلى الخريطة: ${visited.length} من ${ST.length} محطات. المحطة التالية: ${ST[visited.length] ? ST[visited.length].title : ''}.`
       : 'هذه خريطة العرض: المواطن والمؤسسة يبلّغان، القاعة والفريق يتدخلان، القائد واللجان يقررون، التحليل يبني المخطط، والأمن يحمي الكل. نبدأ بالوضع الحالي.');
   };
@@ -300,8 +307,10 @@ function build() {
   {
     const s = newSlide(); s.background = { color: 'FFFFFF' };
     drawMap(s, { visited: [0, 1, 2, 3, 4, 5, 6], links: true });
+    const from = s._slideObjects.length;
     text(s, 'شكرا. أسئلتكم؟', { x: 0.6, y: 0.3, w: W - 1.2, h: 0.6, fontSize: 26, bold: true, color: T.navy });
     text(s, 'الوثائق: كراس الشروط، البطاقات و BPMN، الملف التقني والأمني، قاموس البيانات، تقرير التحصين', { x: 0.6, y: H - 0.6, w: W - 1.2, h: 0.4, fontSize: 12, color: T.muted });
+    animate(s, from);
     notes(s, 'نعود إلى الخريطة كاملة. أي محطة تحتاج تفصيلا يمكن فتحها بالضغط عليها.');
   }
 }

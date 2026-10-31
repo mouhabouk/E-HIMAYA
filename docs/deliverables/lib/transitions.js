@@ -62,7 +62,10 @@ async function applyTransitions(file, plan, { useTimings = true } = {}) {
 // Entrance fades for the objects named "anim …", in document order: the first starts after the transition, the others
 // with it, staggered by stepMs.
 function timingXml(x, { durMs = 500, stepMs = 120 } = {}) {
-  const shapes = [...x.matchAll(/<p:(sp|pic)>\s*<p:nv(?:Sp|Pic)Pr>\s*<p:cNvPr id="(\d+)" name="anim [^"]*"/g)].map(m => ({ kind: m[1], id: m[2] }));
+  let shapes = [...x.matchAll(/<p:(sp|pic)>\s*<p:nv(?:Sp|Pic)Pr>\s*<p:cNvPr id="(\d+)" name="anim [^"]*"/g)].map(m => ({ kind: m[1], id: m[2] }));
+  // A slide with no "anim" object (a section divider made of placeholders) animates its text placeholders instead,
+  // so that every slide has animation timings to edit.
+  if (!shapes.length) shapes = [...x.matchAll(/<p:sp>\s*<p:nvSpPr>\s*<p:cNvPr id="(\d+)"(?:(?!<\/p:nvSpPr>)[\s\S])*?<p:ph\b(?:(?!<\/p:sp>)[\s\S])*?<a:t>/g)].map(m => ({ kind: 'sp', id: m[1] }));
   if (!shapes.length) return '';
   let n = 4;
   const effects = shapes.map(({ id }, k) => {

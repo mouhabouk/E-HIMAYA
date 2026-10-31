@@ -116,9 +116,9 @@ function content(sec, title, source) {
 }
 function divider(sec, sub) {
   const s = newSlide('فاصل قسم', SECTIONS[sec]);
-  s.addText(`القسم ${sec + 1} من ${SECTIONS.length}`, { placeholder: 'num', ...AR });
-  s.addText(SECTIONS[sec], { placeholder: 'title', ...AR });
-  s.addText(sub, { placeholder: 'body', ...AR });
+  s.addText(`القسم ${sec + 1} من ${SECTIONS.length}`, { placeholder: 'num', objectName: 'anim 1 num', ...AR });
+  s.addText(SECTIONS[sec], { placeholder: 'title', objectName: 'anim 2 title', ...AR });
+  s.addText(sub, { placeholder: 'body', objectName: 'anim 3 body', ...AR });
   return s;
 }
 function card(s, x, y, w, h, o = {}) {
@@ -658,9 +658,8 @@ notes(divider(3, 'ما يضمن الثقة: القانون، الأمن المق
   notes(s, 'أختم بالجملة التي تلخص المشروع. شكرا، وأنا على ذمة اللجنة للأسئلة.');
 }
 
-// ---------- Animation names: content fades in (not placeholders, trackers, or the cover and closing). ----------
+// ---------- Animation names: content fades in on every slide (not placeholders or trackers). ----------
 slides.forEach((s, k) => {
-  if (!k || k === slides.length - 1) return;
   let a = 0;
   s._slideObjects.forEach(o => {
     const op = o.options || {};
