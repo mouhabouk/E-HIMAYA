@@ -106,6 +106,18 @@ async function mockApi(page: Page) {
     if (pathname === "/api/v1/staff/analytics/overview") return json(route, OVERVIEW);
     if (pathname === "/api/v1/staff/analytics/trends") return json(route, TRENDS);
     if (pathname === "/api/v1/staff/analytics/hotspots") return json(route, HOTSPOTS);
+    if (pathname === "/api/v1/staff/analytics/crosstab")
+      return json(route, {
+        rows: "classification", cols: "month", from: "2026-06-01", to: "2026-08-31",
+        previous_from: "2025-06-01", previous_to: "2025-08-31", row_keys: ["crop_fire"], col_keys: ["6", "7"],
+        cells: [[{ count: 12, previous: 10, change_pct: 20 }, { count: 11, previous: 10, change_pct: 10 }]],
+        row_totals: [{ count: 23, previous: 20, change_pct: 15 }],
+      });
+    if (pathname === "/api/v1/staff/analytics/findings")
+      return json(route, [{
+        dimension: "classification", key: "crop_fire", gouvernorat_code: null, count: 23, previous: 20, change_pct: 15,
+        text_ar: "ارتفاع في عدد حرائق المحاصيل الزراعية بنسبة 15% مقارنة بالسنة الفارطة (23 مقابل 20)",
+      }]);
     if (pathname === "/api/v1/staff/analytics/notifications") return json(route, { items: [], next_cursor: null, unread: 0 });
     if (pathname === "/api/v1/staff/reports-library") return json(route, { items: [], next_cursor: null });
     if (pathname === "/api/v1/staff/memory/mem-1") return json(route, MEMORY);
