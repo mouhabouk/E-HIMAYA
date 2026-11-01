@@ -40500,6 +40500,11 @@
             ],
             "title": "Created By Name"
           },
+          "findings": {
+            "additionalProperties": true,
+            "title": "Findings",
+            "type": "object"
+          },
           "gouvernorat_code": {
             "anyOf": [
               {
@@ -40571,7 +40576,8 @@
           "created_by_name",
           "created_at",
           "archived_at",
-          "tables"
+          "tables",
+          "findings"
         ],
         "title": "StudyOut",
         "type": "object"

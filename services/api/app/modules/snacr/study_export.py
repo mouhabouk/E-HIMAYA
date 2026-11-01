@@ -7,6 +7,7 @@ import io
 from typing import Any
 
 from app.core import print_footer
+from app.modules.snacr import study_findings
 from app.modules.snacr.models import Study
 
 PERIOD_AR = {"J": "نهار", "S": "ليل", "T": "اليوم كاملا"}
@@ -15,11 +16,11 @@ SOURCE_AR = {"office": "ملف الديوان", "simulated": "محاكاة [SIM]
 
 
 def minutes(value: float | None) -> str:
-    """6.91 → "6:55" (minutes and seconds)."""
+    """6.91 → "06:55" (minutes and seconds)."""
     if value is None:
         return "—"
     total = round(value * 60)
-    return f"{total // 60}:{total % 60:02d}"
+    return f"{total // 60:02d}:{total % 60:02d}"
 
 
 def _count(value: Any) -> str:
@@ -67,6 +68,12 @@ td.num { text-align: center; direction: ltr; unicode-bidi: isolate; }
 tr.sub td { background: #f6f6f6; font-weight: bold; }
 tr.tot td { background: #ececec; font-weight: bold; }
 .small { font-size: 7.5pt; color: #555; }
+h2.board { color: #1e3a8a; }
+ul.notes { margin: 3px 0; padding-inline-start: 16px; }
+ul.notes li { margin: 2px 0; }
+li.up { color: #9a3412; } li.down { color: #166534; } li.warn { color: #92400e; font-weight: bold; }
+.bar { display: inline-block; height: 8px; background: #1e3a8a; vertical-align: middle; }
+td.bar-cell { text-align: right; width: 45%; }
 """
 
 
@@ -127,6 +134,55 @@ def _table_html(table: dict[str, Any], years: list[int], periods: list[str]) -> 
     return "".join(parts)
 
 
+def _signed(value: float | None) -> str:
+    return "—" if value is None else f"{value:+g}%"
+
+
+def board_html(study: Study) -> str:
+    """The statistical board and the technical notes, on their own page."""
+    e = html.escape
+    t = study.tables
+    years, periods = t["years"], t["periods"]
+    f = study_findings.read(t, study.quality, study.travel_max)
+    if not f["classes"]:
+        return ""
+    notes = "".join(f"<li class='{e(n['tone'])}'>{e(n['text_ar'])}</li>" for n in f["notes"])
+    night = "S" in periods
+    head = "".join(f"<th>{y}</th>" for y in years)
+    head += "<th>المجموع</th><th>الحصة</th><th>التطور</th>" + ("<th>ليلا</th>" if night else "")
+    rows = "".join(
+        f"<tr><th>{e(c['key'])} · {e(c['label_ar'])}</th>"
+        + "".join(f"<td class='num'>{_count(c['per_year'][str(y)])}</td>" for y in years)
+        + f"<td class='num'>{c['total']}</td><td class='num'>{c['share_pct']:g}%</td>"
+        + f"<td class='num'>{_signed(c['change_pct'])}</td>"
+        + (f"<td class='num'>{c['night_pct']:g}%</td>" if night else "")
+        + "</tr>"
+        for c in f["classes"]
+    )
+    glob = next(c for c in f["classes"] if c["key"] == "SEC_GLOB")
+    top = max([glob["per_year"][str(y)] or 0 for y in years] + [1])
+    bars = "".join(
+        f"<tr><th>{y}</th><td class='bar-cell'><span class='bar' "
+        f"style='width:{(glob['per_year'][str(y)] or 0) / top * 100:.0f}%'>"
+        f"</span></td><td class='num'>{_count(glob['per_year'][str(y)])}</td></tr>"
+        for y in years
+    )
+    dl = "".join(
+        f"<tr><th>{e(d['delegation'])}</th><td>{e('، '.join(dict.fromkeys(d['units'])))}</td>"
+        f"<td class='num'>{_mean(d['mean'])}</td><td class='num'>{_mean(d['rate_per_1000'])}</td>"
+        f"<td class='num'>{_signed(d['change_pct'])}</td><td class='num'>{minutes(d['travel'])}</td></tr>"
+        for d in f["delegations"][:15]
+    )
+    return f"""<h2 class="board">لوحة إحصائية وملاحظات تقنية</h2>
+<h3>ملاحظات تقنية</h3><ul class="notes">{notes}</ul>
+<h3>تطور الخرجات حسب السنة</h3><table>{bars}</table>
+<h3>الأصناف: العدد والحصة والتطور</h3><table><tr><th>الصنف</th>{head}</tr>{rows}</table>
+<p class="small">التطور: من السنة الأولى إلى الأخيرة. الحصة: من مجموع الخرجات (SEC_GLOB)، والخرجات البيضاء منها.</p>
+<h3>المعتمديات الأكثر خرجات</h3>
+<table><tr><th>المعتمدية</th><th>الوحدة</th><th>المعدل السنوي</th><th>لكل ألف ساكن</th><th>التطور</th>
+<th>زمن الانطلاق</th></tr>{dl}</table>"""
+
+
 def render_html(study: Study, gouvernorat_name: str | None) -> str:
     e = html.escape
     t = study.tables
@@ -166,6 +222,7 @@ def render_html(study: Study, gouvernorat_name: str | None) -> str:
 LCI مكافحة الحرائق؛ SB الخرجات البيضاء (INTERV_OUI_NON = لا)؛ DIV تدخلات مختلفة. المعتمدية مكان الحادث،
 والوحدة هي التي غطت المعتمدية تلك السنة (أكثر الوحدات خروجا إليها). «*»: سنة لم تكن فيها المعتمدية تحت
 هذه الوحدة. المعدل السنوي على السنوات الظاهرة.</p>
+{board_html(study)}
 {tables}
 </body></html>"""
 
@@ -206,6 +263,7 @@ def render_xlsx(study: Study, gouvernorat_name: str | None) -> bytes:
     for k, v in sorted(study.quality.items()):
         if k != "datasets":
             info.append([k, v])
+    _analysis_sheet(wb, study, bold, grey)
     for tb in t["tables"]:
         glob = tb["key"] == "SEC_GLOB"
         ws = wb.create_sheet(tb["key"])
@@ -260,3 +318,39 @@ def render_xlsx(study: Study, gouvernorat_name: str | None) -> bytes:
     buf = io.BytesIO()
     wb.save(buf)
     return buf.getvalue()
+
+
+def _analysis_sheet(wb: Any, study: Study, bold: Any, grey: Any) -> None:
+    """The sheet ANALYSE: the technical notes, the classes by year with their share and change, the délégations."""
+    t = study.tables
+    years = t["years"]
+    f = study_findings.read(t, study.quality, study.travel_max)
+    ws = wb.create_sheet("ANALYSE")
+    ws.sheet_view.rightToLeft = True
+    ws.append(["لوحة إحصائية وملاحظات تقنية"])
+    ws["A1"].font = bold
+    for n in f["notes"]:
+        ws.append([n["text_ar"]])
+    ws.append([])
+    head = ["Classe", *years, "Total", "Part %", "Évolution %", "Nuit %"]
+    ws.append(head)
+    for c in range(1, len(head) + 1):
+        ws.cell(ws.max_row, c).font, ws.cell(ws.max_row, c).fill = bold, grey
+    for c in f["classes"]:
+        ws.append(
+            [c["key"], *[c["per_year"][str(y)] for y in years], c["total"], c["share_pct"], c["change_pct"],
+             c["night_pct"]]
+        )  # fmt: skip
+    ws.append([])
+    head = ["Délégation", "Unité", *years, "Moyenne", "Pour 1000 hab.", "Évolution %", "Temps mis en route moyen"]
+    ws.append(head)
+    for c in range(1, len(head) + 1):
+        ws.cell(ws.max_row, c).font, ws.cell(ws.max_row, c).fill = bold, grey
+    for d in f["delegations"]:
+        ws.append(
+            [d["delegation"], "، ".join(dict.fromkeys(d["units"])), *[d["per_year"][str(y)] for y in years], d["mean"],
+             d["rate_per_1000"], d["change_pct"], round(d["travel"] / 1440, 6) if d["travel"] is not None else None]
+        )  # fmt: skip
+        ws.cell(ws.max_row, len(head)).number_format = "[mm]:ss"
+    ws.column_dimensions["A"].width = 26
+    ws.column_dimensions["B"].width = 22

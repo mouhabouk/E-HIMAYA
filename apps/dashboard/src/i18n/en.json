@@ -8157,6 +8157,32 @@
       "title": "Study no. {{number}} · {{scope}}",
       "table": "Table",
       "legend": "\"*\": a year when the délégation was under another unit. The mean covers the years shown. Travel time runs from departure to arrival, from 0 to the maximum kept."
+    },
+    "board": {
+      "title": "Statistical board and technical notes",
+      "total": "Outings {{from}}–{{to}}",
+      "yearly": "Yearly mean",
+      "change": "Change {{from}} → {{to}}",
+      "night": "Night share",
+      "travel": "Mean travel time (mm:ss)",
+      "byYear": "Outings by year",
+      "byClass": "Outings by class",
+      "notes": "Technical notes",
+      "tone": {
+        "up": "Rise",
+        "down": "Fall",
+        "warn": "Warning",
+        "info": "Information"
+      },
+      "classes": "Classes: count, share and change",
+      "class": "Class",
+      "share": "Share",
+      "evolution": "Change",
+      "delegations": "Délégations by outings",
+      "rate": "Per 1,000 inhabitants",
+      "all": "All délégations ({{count}})",
+      "fewer": "Fewer",
+      "tables": "Study tables"
     }
   },
   "record": {

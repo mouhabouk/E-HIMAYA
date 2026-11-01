@@ -8157,6 +8157,32 @@
       "title": "Étude n° {{number}} · {{scope}}",
       "table": "Tableau",
       "legend": "« * » : année où la délégation relevait d’une autre unité. La moyenne porte sur les années affichées. Le temps mis en route va du départ à l’arrivée, de 0 au maximum retenu."
+    },
+    "board": {
+      "title": "Tableau statistique et notes techniques",
+      "total": "Sorties {{from}}–{{to}}",
+      "yearly": "Moyenne annuelle",
+      "change": "Évolution {{from}} → {{to}}",
+      "night": "Part de nuit",
+      "travel": "Temps mis en route moyen (mm:ss)",
+      "byYear": "Sorties par année",
+      "byClass": "Sorties par classe",
+      "notes": "Notes techniques",
+      "tone": {
+        "up": "Hausse",
+        "down": "Baisse",
+        "warn": "Alerte",
+        "info": "Information"
+      },
+      "classes": "Classes : nombre, part et évolution",
+      "class": "Classe",
+      "share": "Part",
+      "evolution": "Évolution",
+      "delegations": "Délégations par nombre de sorties",
+      "rate": "Pour 1 000 hab.",
+      "all": "Toutes les délégations ({{count}})",
+      "fewer": "Moins",
+      "tables": "Tableaux de l’étude"
     }
   },
   "record": {

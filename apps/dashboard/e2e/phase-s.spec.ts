@@ -130,6 +130,34 @@ const SIM_STUDY = {
   id: "sim-study", number: 3, gouvernorat_code: 21, years: [2023, 2024, 2025], split: true, travel_max: 60,
   status: "current", simulated: true, created_by_name: "[SIM] لجنة نابل", created_at: "2026-11-01T08:00:00Z", archived_at: null,
   quality: { rows: 5120, white: 212, travel_kept: 4630, travel_missing: 301, travel_negative: 12, travel_over: 177 },
+  findings: {
+    classes: [
+      ["SEC_GLOB", { "2023": 1300, "2024": 1312, "2025": 1430 }, 4042, 100, 10, 31.4],
+      ["SAP", { "2023": 690, "2024": 702, "2025": 760 }, 2152, 53.2, 10.1, 33.1],
+      ["SR", { "2023": 260, "2024": 248, "2025": 310 }, 818, 20.2, 19.2, 41.6],
+      ["LCI", { "2023": 150, "2024": 170, "2025": 120 }, 440, 10.9, -20, 22.5],
+      ["SB", { "2023": 120, "2024": 116, "2025": 142 }, 378, 9.4, 18.3, 35.2],
+      ["DIV", { "2023": 80, "2024": 76, "2025": 98 }, 254, 6.3, 22.5, 18.1],
+    ].map(([key, per_year, total, share_pct, change_pct, night_pct]) => ({
+      key, label_ar: key, per_year, total, share_pct, change_pct, steps: [], night_pct, travel: { J: 7.25, S: 9.5 },
+    })),
+    delegations: [
+      ["نابل", "نابل", 82000, { "2023": 600, "2024": 610, "2025": 650 }, 620, 8.3],
+      ["قرمبالية", "قرمبالية", 61000, { "2023": 340, "2024": 343, "2025": 380 }, 354.3, 11.8],
+      ["دار شعبان الفهري", "نابل", 51000, { "2023": 230, "2024": 233, "2025": 250 }, 237.7, 8.7],
+      ["بوعرقوب", "قرمبالية", 28000, { "2023": 130, "2024": null, "2025": 150 }, 140, 15.4],
+    ].map(([delegation, unit, population, per_year, mean, change_pct]) => ({
+      gouvernorat: "نابل", delegation, units: [unit], population, per_year, mean,
+      rate_per_1000: Math.round(((mean as number) / (population as number)) * 100000) / 100, change_pct, travel: 8.4,
+    })),
+    notes: [
+      { tone: "info", text_ar: "[SIM] بلغ مجموع الخرجات 4042 خلال الفترة 2023–2025، أي بمعدل سنوي قدره 1347 خرجة." },
+      { tone: "up", text_ar: "[SIM] ارتفع عدد الخرجات من 1300 سنة 2023 إلى 1430 سنة 2025 (+10%)." },
+      { tone: "info", text_ar: "[SIM] يتصدر التدخلات إسعاف الأشخاص (SAP) بنسبة 53.2%، ثم النجدة على الطرقات (SR) بنسبة 20.2%، ثم مكافحة الحرائق (LCI) بنسبة 10.9% من مجموع الخرجات." },
+      { tone: "down", text_ar: "[SIM] انخفاض في مكافحة الحرائق (LCI) بنسبة 20% بين 2023 و2025 (150 مقابل 120)." },
+      { tone: "warn", text_ar: "[SIM] زمن الانطلاق ليلا أطول بـ02:15 من النهار." },
+    ],
+  },
   tables: {
     years: [2023, 2024, 2025],
     periods: ["J", "S"],

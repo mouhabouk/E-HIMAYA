@@ -256,8 +256,42 @@ export interface SnacrStudySummary {
   archived_at: string | null;
 }
 
+/** One table of the study read as a class: by year, its share of all outings, its change, its night share. */
+export interface StudyClassFinding {
+  key: StudyTableKey;
+  label_ar: string;
+  per_year: Record<string, number | null>;
+  total: number;
+  share_pct: number;
+  change_pct: number | null;
+  steps: { from: number; to: number; change_pct: number | null }[];
+  night_pct: number | null;
+  travel: Partial<Record<StudyPeriod, number | null>>;
+}
+
+export interface StudyDelegationFinding {
+  gouvernorat: string;
+  delegation: string;
+  units: string[];
+  per_year: Record<string, number | null>;
+  mean: number;
+  population: number | null;
+  rate_per_1000: number | null;
+  change_pct: number | null;
+  travel: number | null;
+}
+
+export type StudyNoteTone = "up" | "down" | "warn" | "info";
+
+export interface StudyFindings {
+  classes: StudyClassFinding[];
+  delegations: StudyDelegationFinding[];
+  notes: { tone: StudyNoteTone; text_ar: string }[];
+}
+
 export interface SnacrStudy extends SnacrStudySummary {
   tables: { years: number[]; periods: StudyPeriod[]; tables: StudyTable[] };
+  findings: StudyFindings;
 }
 
 export interface StudyIn {

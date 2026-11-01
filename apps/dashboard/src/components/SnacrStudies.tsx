@@ -16,10 +16,12 @@ import {
   type SnacrStudy,
   type SnacrStudySummary,
   type StudyFigures,
+  type StudyFindings,
   type StudyPeriod,
   type StudyTable,
   type StudyTableKey,
 } from "../lib/snacr";
+import { BarChart } from "./BarChart";
 import { SimBadge } from "./crisis/CrisisBits";
 import { ErrorBox, Loading } from "./Feedback";
 
@@ -182,6 +184,172 @@ function Quality({ study }: { study: SnacrStudy }) {
   );
 }
 
+function Pct({ v, signed = false }: { v: number | null | undefined; signed?: boolean }) {
+  const fmt = useFormat();
+  if (v === null || v === undefined) return <>—</>;
+  return <bdi dir="ltr">{signed ? `${fmt.signed(v)}%` : `${fmt.decimal(v)}%`}</bdi>;
+}
+
+/** The statistical board and the technical notes of a study (read by the API from the study's own tables). */
+export function StudyBoard({ findings, years }: { findings: StudyFindings; years: number[] }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const [all, setAll] = useState(false);
+  const glob = findings.classes.find((c) => c.key === "SEC_GLOB");
+  if (!glob) return null;
+  const night = glob.night_pct !== null;
+  const travelValues = Object.values(glob.travel).filter((v): v is number => typeof v === "number");
+  const travel = travelValues.length ? travelValues.reduce((a, b) => a + b, 0) / travelValues.length : null;
+  const shown = all ? findings.delegations : findings.delegations.slice(0, 10);
+  return (
+    <section className="snacr-board" aria-label={t("snacr.board.title")}>
+      <h3>{t("snacr.board.title")}</h3>
+      <dl className="kpis">
+        <div className="kpi kpi--analysis">
+          <dt className="kpi__label">{t("snacr.board.total", { from: years[0], to: years[years.length - 1] })}</dt>
+          <dd className="kpi__value">{fmt.number(glob.total)}</dd>
+        </div>
+        <div className="kpi">
+          <dt className="kpi__label">{t("snacr.board.yearly")}</dt>
+          <dd className="kpi__value">{fmt.number(Math.round(glob.total / Math.max(years.length, 1)))}</dd>
+        </div>
+        {glob.change_pct !== null && (
+          <div className={`kpi ${glob.change_pct > 0 ? "kpi--up" : "kpi--down"}`}>
+            <dt className="kpi__label">{t("snacr.board.change", { from: years[0], to: years[years.length - 1] })}</dt>
+            <dd className="kpi__value">
+              <Pct v={glob.change_pct} signed />
+            </dd>
+          </div>
+        )}
+        {night && (
+          <div className="kpi">
+            <dt className="kpi__label">{t("snacr.board.night")}</dt>
+            <dd className="kpi__value">
+              <Pct v={glob.night_pct} />
+            </dd>
+          </div>
+        )}
+        <div className="kpi">
+          <dt className="kpi__label">{t("snacr.board.travel")}</dt>
+          <dd className="kpi__value">
+            <bdi dir="ltr">{minutesSeconds(travel)}</bdi>
+          </dd>
+        </div>
+      </dl>
+      <div className="charts">
+        <BarChart
+          caption={t("snacr.board.byYear")}
+          emptyText={t("snacr.noData")}
+          bars={years.map((y) => ({ key: String(y), label: String(y), value: glob.per_year[String(y)] ?? 0 }))}
+        />
+        <BarChart
+          caption={t("snacr.board.byClass")}
+          emptyText={t("snacr.noData")}
+          bars={findings.classes
+            .filter((c) => c.key !== "SEC_GLOB")
+            .map((c) => ({ key: c.key, label: `${c.key} · ${t(`snacr.study.tables.${c.key}`)}`, value: c.total }))}
+        />
+      </div>
+      <h4>{t("snacr.board.notes")}</h4>
+      <ul className="snacr-notes" lang="ar" dir="rtl">
+        {findings.notes.map((n, i) => (
+          <li key={i} className={`snacr-notes__item snacr-notes__item--${n.tone}`}>
+            <span className="visually-hidden">{t(`snacr.board.tone.${n.tone}`)}: </span>
+            {n.text_ar}
+          </li>
+        ))}
+      </ul>
+      <div className="table-wrap">
+        <table className="table table--compact snacr-study">
+          <caption>{t("snacr.board.classes")}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t("snacr.board.class")}</th>
+              {years.map((y) => (
+                <th key={y} scope="col">{y}</th>
+              ))}
+              <th scope="col">{t("snacr.study.total")}</th>
+              <th scope="col">{t("snacr.board.share")}</th>
+              <th scope="col">{t("snacr.board.evolution")}</th>
+              {night && <th scope="col">{t("snacr.board.night")}</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {findings.classes.map((c) => (
+              <tr key={c.key} className={c.key === "SEC_GLOB" ? "snacr-study__total" : undefined}>
+                <th scope="row">
+                  {c.key} · {t(`snacr.study.tables.${c.key}`)}
+                </th>
+                {years.map((y) => (
+                  <td key={y} className="num">
+                    {fmt.number(c.per_year[String(y)] ?? 0)}
+                  </td>
+                ))}
+                <td className="num">{fmt.number(c.total)}</td>
+                <td className="num">
+                  <Pct v={c.share_pct} />
+                </td>
+                <td className={`num ${c.change_pct === null ? "" : c.change_pct > 0 ? "trend--up" : "trend--down"}`}>
+                  <Pct v={c.change_pct} signed />
+                </td>
+                {night && (
+                  <td className="num">
+                    <Pct v={c.night_pct} />
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="table-wrap">
+        <table className="table table--compact snacr-study">
+          <caption>{t("snacr.board.delegations")}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{t("snacr.study.delegation")}</th>
+              <th scope="col">{t("snacr.study.unit")}</th>
+              {years.map((y) => (
+                <th key={y} scope="col">{y}</th>
+              ))}
+              <th scope="col">{t("snacr.study.mean")}</th>
+              <th scope="col">{t("snacr.board.rate")}</th>
+              <th scope="col">{t("snacr.board.evolution")}</th>
+              <th scope="col">{t("snacr.board.travel")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((d) => (
+              <tr key={`${d.gouvernorat}-${d.delegation}`}>
+                <th scope="row">{d.delegation}</th>
+                <td>{[...new Set(d.units)].join("، ")}</td>
+                {years.map((y) => (
+                  <td key={y} className="num">
+                    {d.per_year[String(y)] === null ? "*" : fmt.number(d.per_year[String(y)] ?? 0)}
+                  </td>
+                ))}
+                <td className="num">{fmt.decimal(d.mean)}</td>
+                <td className="num">{d.rate_per_1000 === null ? "—" : fmt.decimal(d.rate_per_1000)}</td>
+                <td className={`num ${d.change_pct === null ? "" : d.change_pct > 0 ? "trend--up" : "trend--down"}`}>
+                  <Pct v={d.change_pct} signed />
+                </td>
+                <td className="num">
+                  <bdi dir="ltr">{minutesSeconds(d.travel)}</bdi>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {findings.delegations.length > 10 && (
+        <button type="button" className="btn btn--small" onClick={() => setAll((v) => !v)}>
+          {all ? t("snacr.board.fewer") : t("snacr.board.all", { count: findings.delegations.length })}
+        </button>
+      )}
+    </section>
+  );
+}
+
 export function StudiesTab({ gouvernorat, years }: { gouvernorat: number | null; years: readonly number[] }) {
   const { t } = useTranslation();
   const { api } = useServices();
@@ -331,6 +499,8 @@ export function StudiesTab({ gouvernorat, years }: { gouvernorat: number | null;
             {t("snacr.study.title", { number: shown.number, scope: scopeName })} {shown.simulated && <SimBadge />}
           </h2>
           <Quality study={shown} />
+          <StudyBoard findings={shown.findings} years={shown.tables.years} />
+          <h3>{t("snacr.board.tables")}</h3>
           <fieldset className="segmented">
             <legend>{t("snacr.study.table")}</legend>
             {STUDY_TABLES.map((k) => (

@@ -249,6 +249,7 @@ describe("SnacrPage", () => {
       id: "s2", number: 2, gouvernorat_code: 21, years: [2024, 2025], split: true, travel_max: 60,
       status: "current", simulated: false, created_by_name: "Test", created_at: "2026-11-01T08:00:00Z", archived_at: null,
       quality: { rows: 120, white: 4, travel_kept: 100, travel_missing: 10, travel_negative: 1, travel_over: 5 },
+      findings: { classes: [], delegations: [], notes: [] },
       tables: {
         years: [2024, 2025],
         periods: ["J", "S"],
@@ -266,6 +267,20 @@ describe("SnacrPage", () => {
           total: fig(3, 2),
         })),
       },
+    };
+    study.findings = {
+      classes: study.tables.tables.map((tb) => ({
+        key: tb.key, label_ar: tb.key, per_year: { "2024": 5, "2025": 8 }, total: 13, share_pct: 100,
+        change_pct: tb.key === "SEC_GLOB" ? 60 : null, steps: [], night_pct: 40, travel: { J: 6.5, S: 8 },
+      })),
+      delegations: [{
+        gouvernorat: "نابل", delegation: "الحمامات", units: ["الحمامات"], per_year: { "2024": 5, "2025": 8 },
+        mean: 6.5, population: 100000, rate_per_1000: 0.07, change_pct: 60, travel: 7.25,
+      }],
+      notes: [
+        { tone: "up", text_ar: "ارتفع عدد الخرجات من 5 سنة 2024 إلى 8 سنة 2025 (+60%)." },
+        { tone: "warn", text_ar: "زمن الانطلاق ليلا أطول بـ01:30 من النهار." },
+      ],
     };
     const archived = { ...study, id: "s1", number: 1, status: "archived" as const, archived_at: "2026-11-01T08:00:00Z" };
     const api = fakeApi({
@@ -286,6 +301,12 @@ describe("SnacrPage", () => {
     expect(within(table).getAllByText("*").length).toBeGreaterThan(0);
     expect(within(table).getAllByText("06:30").length).toBeGreaterThan(0);
     expect(screen.getByText("مؤرشفة")).toBeInTheDocument();
+    // The statistical board and the technical notes.
+    expect(screen.getByRole("heading", { name: "لوحة إحصائية وملاحظات تقنية" })).toBeInTheDocument();
+    expect(screen.getByText("ارتفع عدد الخرجات من 5 سنة 2024 إلى 8 سنة 2025 (+60%).")).toBeInTheDocument();
+    const classes = screen.getByRole("table", { name: "الأصناف: العدد والحصة والتطور" });
+    expect(within(classes).getByRole("rowheader", { name: "SR · النجدة على الطرقات" })).toBeInTheDocument();
+    expect(screen.getByRole("table", { name: "المعتمديات حسب عدد الخرجات" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("radio", { name: "يوم كامل (حصة واحدة)" }));
     fireEvent.click(screen.getByRole("button", { name: /إطلاق دراسة/ }));

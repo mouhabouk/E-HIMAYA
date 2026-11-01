@@ -17,7 +17,7 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.analytics.service import resolve_scope
 from app.modules.audit import service as audit
-from app.modules.snacr import documents, domain, schemas, service, simulate, study_export
+from app.modules.snacr import documents, domain, schemas, service, simulate, study_export, study_findings
 from app.modules.snacr import study as studies
 from app.modules.snacr.models import Dataset, Plan, SpecialRisk, Study
 
@@ -498,6 +498,11 @@ def _study_summary(s: Study) -> dict[str, Any]:
     }
 
 
+def _study_out(s: Study) -> dict[str, Any]:
+    """The study with its statistical board and technical notes, read from its own tables."""
+    return {**_study_summary(s), "tables": s.tables, "findings": study_findings.read(s.tables, s.quality, s.travel_max)}
+
+
 async def _study(session: AsyncSession, principal: Principal, study_id: uuid.UUID) -> Study:
     found = await session.get(Study, study_id)
     if found is None or (
@@ -552,13 +557,13 @@ async def launch_study(principal: Launcher, session: Session, body: schemas.Stud
     )
     await session.commit()
     await session.refresh(study)
-    return {**_study_summary(study), "tables": study.tables}
+    return _study_out(study)
 
 
 @router.get("/studies/{study_id}", response_model=schemas.StudyOut)
 async def get_study(principal: Reader, session: Session, study_id: uuid.UUID) -> dict[str, Any]:
     found = await _study(session, principal, study_id)
-    return {**_study_summary(found), "tables": found.tables}
+    return _study_out(found)
 
 
 @router.get(

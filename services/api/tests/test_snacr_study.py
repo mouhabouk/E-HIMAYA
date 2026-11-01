@@ -136,6 +136,20 @@ async def test_study_tables_archive_and_exports(client: httpx.AsyncClient, staff
     units = [u["unit"] for b in t["SEC_GLOB"]["gouvernorats"] for u in b["units"]]
     assert sum(1 for u in units if domain.unit_key(u) == domain.unit_key("أريانة المدينة")) == 1
     assert t["SEC_GLOB"]["total"]["total"] == 10
+    # The statistical board and the technical notes, read from the study's own tables.
+    f = first["findings"]
+    classes = {c["key"]: c for c in f["classes"]}
+    assert classes["SEC_GLOB"]["per_year"] == {"2041": 6, "2042": 4} and classes["SEC_GLOB"]["change_pct"] == -33.3
+    assert classes["SB"]["share_pct"] == 10.0 and classes["SEC_GLOB"]["night_pct"] == 30.0
+    kalaat = next(d for d in f["delegations"] if d["delegation"] == "قلعة الأندلس")
+    assert kalaat["per_year"] == {"2041": 1, "2042": 2} and len(kalaat["units"]) == 2
+    soukra_d = next(d for d in f["delegations"] if d["delegation"] == "سكرة")
+    assert soukra_d["rate_per_1000"] == round(2.5 / 159862 * 1000, 2)
+    texts = [n["text_ar"] for n in f["notes"]]
+    assert texts[0].startswith("بلغ مجموع الخرجات 10 خلال الفترة 2041–2042")
+    assert any("انخفض عدد الخرجات من 6 سنة 2041 إلى 4 سنة 2042" in x for x in texts)
+    assert any(n["tone"] == "warn" and "الخرجات البيضاء" in n["text_ar"] for n in f["notes"])
+    assert any("تغيرت الوحدة المغطية" in x and "قلعة الأندلس" in x for x in texts)
 
     # A second study, whole day: the first is archived as it was.
     r = await client.post(f"{URL}/studies", json={"gouvernorat_code": ARIANA, "years": [2042], "split": False},
@@ -154,10 +168,12 @@ async def test_study_tables_archive_and_exports(client: httpx.AsyncClient, staff
     xlsx = await client.get(f"{URL}/studies/{first['id']}/export", params={"format": "xlsx"}, headers=central)
     assert xlsx.status_code == 200
     wb = load_workbook(io.BytesIO(xlsx.content))
-    assert wb.sheetnames == ["ETUDE", "SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"]
+    assert wb.sheetnames == ["ETUDE", "ANALYSE", "SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"]
     assert wb["SEC_GLOB"]["A1"].value == "Unité d’intervention" and wb["SEC_GLOB"]["F2"].value == 2041
     page = (await client.get(f"{URL}/studies/{first['id']}/export", params={"format": "html"}, headers=central)).text
     assert "مؤرشفة" in page and "سري" not in page and "اسم خاص" not in page
+    assert "لوحة إحصائية وملاحظات تقنية" in page and "انخفض عدد الخرجات" in page
+    assert wb["ANALYSE"]["A1"].value == "لوحة إحصائية وملاحظات تقنية"
 
     # Scope: another gouvernorat's committee sees nothing; Ariana's launches its own, never the national one.
     nabeul = staff(["local_committee"], gouvernorat=NABEUL)

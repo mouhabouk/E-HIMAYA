@@ -265,3 +265,4 @@ class StudySummary(BaseModel):
 
 class StudyOut(StudySummary):
     tables: dict[str, Any]
+    findings: dict[str, Any]

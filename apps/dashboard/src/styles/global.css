@@ -9765,3 +9765,49 @@ button.nav-card:hover {
   color: var(--tone-navy-ink);
   border-block-start: 2px solid var(--tone-navy-ink);
 }
+
+/* SNACR study board: the change tiles, the trend cells and the technical notes. */
+.snacr-board {
+  margin-block: 1rem;
+}
+.kpi--up {
+  border-inline-start-color: var(--tone-red);
+}
+.kpi--down {
+  border-inline-start-color: var(--ok-text);
+}
+.trend--up {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.trend--down {
+  color: var(--ok-text);
+  font-weight: 600;
+}
+.snacr-notes {
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+.snacr-notes__item {
+  padding: 0.45rem 0.75rem;
+  border-inline-start: 4px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+.snacr-notes__item--up {
+  border-inline-start-color: var(--tone-red);
+}
+.snacr-notes__item--down {
+  border-inline-start-color: var(--ok-text);
+}
+.snacr-notes__item--warn {
+  border-inline-start-color: var(--tone-amber);
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.snacr-notes__item--info {
+  border-inline-start-color: var(--tone-navy-ink);
+}
