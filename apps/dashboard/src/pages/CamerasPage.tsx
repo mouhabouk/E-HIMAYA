@@ -25,6 +25,25 @@ const STATE_TONE: Record<Prealert["state"], Tone> = {
   escalated: "red",
 };
 
+/** The bridge's entry for this camera (docs/guides/camera-bridge.md): its id and key, shown once. */
+export function BridgeLines({
+  camera,
+  keyHex,
+}: {
+  camera: string;
+  keyHex: string;
+}) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <p>{t("cameras.bridgeKey")}</p>
+      <pre className="code" dir="ltr" data-testid="bridge-key">
+        {`"camera": "${camera}",\n"key": "${keyHex}",`}
+      </pre>
+    </>
+  );
+}
+
 /** The publish URL and the token, shown once, with the relay line for a camera that only offers RTSP (Tapo). */
 function Registered({
   source,
@@ -45,6 +64,9 @@ function Registered({
       <pre className="code" dir="ltr">
         {relay}
       </pre>
+      {source.event_key && (
+        <BridgeLines camera={source.id} keyHex={source.event_key} />
+      )}
       <button type="button" className="btn btn--small" onClick={onClose}>
         {t("cameras.copied")}
       </button>

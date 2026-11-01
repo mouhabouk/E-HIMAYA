@@ -10,6 +10,7 @@ updates:
       - /services/vision
       - /services/notify-sim
       - /services/sensor-gateway
+      - /services/camera-bridge
     schedule:
       interval: weekly
       day: monday
@@ -51,6 +52,7 @@ updates:
       - /services/vision
       - /services/notify-sim
       - /services/sensor-gateway
+      - /services/camera-bridge
       # Telephony base image (Ubuntu); Asterisk itself is a pinned tarball (version + SHA-256 in the Dockerfile),
       # updated by hand from the Asterisk 22 LTS releases (docs/telephony.md).
       - /services/telephony

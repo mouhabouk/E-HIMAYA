@@ -37,6 +37,13 @@ export interface RegisteredSource {
   publish_url_rtsp: string;
   publish_url_rtmp: string;
   publish_token: string;
+  /** A camera: the key its bridge signs the camera's own alarms with (docs/guides/camera-bridge.md), shown once. */
+  event_key?: string | null;
+}
+
+export interface EventKey {
+  camera: string;
+  key: string;
 }
 
 /** Review point 25: what an institution's camera saw, and what became of it. */
@@ -100,6 +107,10 @@ export function streamsApi(api: ApiClient) {
         query: { gouvernorat: gouvernorat ?? undefined },
         signal,
       }),
+
+    /** A new signing key for the camera's bridge, shown once; the old one stops working (audited). */
+    renewEventKey: (id: string) =>
+      api.request<EventKey>(`${streamPath(id)}/event-key`, { method: "POST" }),
 
     stopStream: (id: string) =>
       api.request<unknown>(`${streamPath(id)}/stop`, { method: "POST" }),

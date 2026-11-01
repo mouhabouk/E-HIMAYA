@@ -8439,7 +8439,9 @@
     "copied": "Copié",
     "monitoredBy": "Qui suit l'appareil",
     "monitoredOwner": "L'établissement (responsable sécurité, propriétaire, puis la salle)",
-    "monitoredRoom": "La Protection civile (directement à la salle)"
+    "monitoredRoom": "La Protection civile (directement à la salle)",
+    "bridgeKey": "Ajoutez ces deux lignes au fichier du pont de l'établissement (bridge.json) si la caméra détecte le feu elle-même (caméra thermique). La clé n'est affichée qu'une fois :",
+    "renewKey": "Renouveler la clé du pont d'alarme"
   },
   "dictation": {
     "record": "Dicter",

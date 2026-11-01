@@ -8439,7 +8439,9 @@
     "copied": "Copied",
     "monitoredBy": "Who follows the device",
     "monitoredOwner": "The institution (safety officer, owner, then the room)",
-    "monitoredRoom": "The Civil Protection (straight to the room)"
+    "monitoredRoom": "The Civil Protection (straight to the room)",
+    "bridgeKey": "Add these two lines to the institution's bridge file (bridge.json) if the camera detects fire by itself (thermal camera). The key is shown once:",
+    "renewKey": "Renew the alarm bridge key"
   },
   "dictation": {
     "record": "Dictate",

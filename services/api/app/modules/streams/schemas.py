@@ -126,6 +126,8 @@ class FixedSourceOut(BaseModel):
     publish_url_rtsp: str
     publish_url_rtmp: str
     publish_token: str
+    # A camera: the key its bridge signs the camera's own alarms with (docs/guides/camera-bridge.md), shown once.
+    event_key: str | None = None
 
 
 # ---------------------------------------------------------------- internal (§3)

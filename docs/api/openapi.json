@@ -12561,6 +12561,97 @@
         "title": "EvaluationOut",
         "type": "object"
       },
+      "EventIn": {
+        "properties": {
+          "at": {
+            "maxLength": 40,
+            "title": "At",
+            "type": "string"
+          },
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "confidence": {
+            "maxLength": 8,
+            "title": "Confidence",
+            "type": "string"
+          },
+          "frame_jpeg_b64": {
+            "anyOf": [
+              {
+                "maxLength": 3000000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Jpeg B64"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "sig": {
+            "maxLength": 64,
+            "title": "Sig",
+            "type": "string"
+          },
+          "temperature": {
+            "default": "",
+            "maxLength": 10,
+            "title": "Temperature",
+            "type": "string"
+          },
+          "vendor_event": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "pattern": "^[A-Za-z0-9_.:-]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Event"
+          }
+        },
+        "required": [
+          "camera",
+          "at",
+          "label",
+          "confidence",
+          "sig"
+        ],
+        "title": "EventIn",
+        "type": "object"
+      },
+      "EventKeyOut": {
+        "properties": {
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "camera",
+          "key"
+        ],
+        "title": "EventKeyOut",
+        "type": "object"
+      },
       "EventRef": {
         "properties": {
           "id": {
@@ -16930,6 +17021,17 @@
       },
       "FixedSourceOut": {
         "properties": {
+          "event_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Key"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -18545,6 +18647,32 @@
           "id"
         ],
         "title": "HazmatOut",
+        "type": "object"
+      },
+      "HeartbeatIn": {
+        "properties": {
+          "at": {
+            "maxLength": 40,
+            "title": "At",
+            "type": "string"
+          },
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "sig": {
+            "maxLength": 64,
+            "title": "Sig",
+            "type": "string"
+          }
+        },
+        "required": [
+          "camera",
+          "at",
+          "sig"
+        ],
+        "title": "HeartbeatIn",
         "type": "object"
       },
       "HeavyRainOut": {
@@ -56704,6 +56832,24 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "app__modules__streams__camera_events__EventOut": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "alerted": {
+            "title": "Alerted",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accepted",
+          "alerted"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
       "app__modules__streams__schemas__Point": {
         "properties": {
           "lat": {
@@ -58105,6 +58251,83 @@
         "summary": "Tile",
         "tags": [
           "basemap"
+        ]
+      }
+    },
+    "/api/v1/camera-events": {
+      "post": {
+        "description": "An alarm of the camera itself, relayed by its bridge.",
+        "operationId": "receive_event_api_v1_camera_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__streams__camera_events__EventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Receive Event",
+        "tags": [
+          "camera-bridge"
+        ]
+      }
+    },
+    "/api/v1/camera-events/heartbeat": {
+      "post": {
+        "description": "The bridge is alive (every 5 minutes by default).",
+        "operationId": "heartbeat_api_v1_camera_events_heartbeat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeartbeatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Heartbeat",
+        "tags": [
+          "camera-bridge"
         ]
       }
     },
@@ -100573,6 +100796,55 @@
         "tags": [
           "staff",
           "streams"
+        ]
+      }
+    },
+    "/api/v1/staff/streams/{stream_id}/event-key": {
+      "post": {
+        "description": "A new signing key for the camera's bridge, shown once (the old one stops working at once).",
+        "operationId": "renew_event_key_api_v1_staff_streams__stream_id__event_key_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stream_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stream Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Renew Event Key",
+        "tags": [
+          "staff-streams"
         ]
       }
     },

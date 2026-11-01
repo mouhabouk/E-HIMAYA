@@ -1,0 +1,27 @@
+# systemd unit of the camera bridge (docs/guides/camera-bridge.md §6). Copy to /etc/systemd/system/, then
+#   sudo systemctl daemon-reload && sudo systemctl enable --now ehimaya-bridge
+[Unit]
+Description=e-Himaya camera bridge (fire alarms of the institution's cameras)
+After=network-online.target time-sync.target
+Wants=network-online.target
+
+[Service]
+User=ehimaya-bridge
+Group=ehimaya-bridge
+WorkingDirectory=/opt/ehimaya-bridge
+Environment=BRIDGE_CONFIG=/etc/ehimaya-bridge/bridge.json
+ExecStart=/usr/bin/python3 -m bridge serve
+Restart=always
+RestartSec=5
+StateDirectory=ehimaya-bridge
+# Hardening: the bridge reads its file, writes its queue, talks to the network; nothing else.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/ehimaya-bridge
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

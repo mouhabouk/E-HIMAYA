@@ -10,7 +10,7 @@
 - **المستودع:** `github.com/mouhabouk/E-HIMAYA` (كان سابقا عند `YaamenMegdiche/E-HIMAYA`). الفرع الرئيسي `main`.
 - **فرع العمل:** `claude/project-thread-xq2ez8`. بعد كل دمج يُعاد الفرع من `main` ويُفتح طلب دمج جديد.
 - **المكونات:**
-  - `services/api`: الخلفية FastAPI، PostgreSQL 17 + PostGIS + pgvector، Alembic (آخر ترحيل `0093_prealert_stages`).
+  - `services/api`: الخلفية FastAPI، PostgreSQL 17 + PostGIS + pgvector، Alembic (آخر ترحيل `0094_camera_bridge`).
   - `apps/dashboard`: اللوحة المركزية React + Vite (العربية والفرنسية والإنجليزية).
   - `apps/portal`: بوابة المؤسسات React.
   - `apps/mobile`: تطبيق Flutter واحد فيه تطبيق المواطن وتطبيق الأعوان (الحزمة `ehimaya`).

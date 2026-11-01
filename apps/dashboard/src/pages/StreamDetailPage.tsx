@@ -6,7 +6,14 @@ import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
 import type { MapPoi } from "../components/MapView";
 import { pointsBounds } from "../components/OrgBits";
-import { ConfidenceBadges, DetectionBadge, SimTag, SimulationBand, StreamStatusChip, streamTitle } from "../components/StreamBits";
+import {
+  ConfidenceBadges,
+  DetectionBadge,
+  SimTag,
+  SimulationBand,
+  StreamStatusChip,
+  streamTitle,
+} from "../components/StreamBits";
 import { StreamPlayer } from "../components/StreamPlayer";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
@@ -14,9 +21,14 @@ import { directionOf } from "../i18n";
 import { errorMessageKey, isApiError } from "../lib/api";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
-import { canStopStreams } from "../lib/roles";
+import { canRegisterCameras, canStopStreams } from "../lib/roles";
+import { BridgeLines } from "./CamerasPage";
 import { streamKeys } from "../lib/streamsApi";
-import { STREAM_END_REASONS, type StaffStreamDetail, type StreamRecording } from "../lib/streamTypes";
+import {
+  STREAM_END_REASONS,
+  type StaffStreamDetail,
+  type StreamRecording,
+} from "../lib/streamTypes";
 import { PageTitle } from "../components/PageTitle";
 
 /** Save a file or open a pre-signed link through a temporary <a download>. */
@@ -30,7 +42,13 @@ function saveAs(url: string, filename: string): void {
   a.remove();
 }
 
-function RecordingRow({ streamId, recording }: { streamId: string; recording: StreamRecording }) {
+function RecordingRow({
+  streamId,
+  recording,
+}: {
+  streamId: string;
+  recording: StreamRecording;
+}) {
   const { t } = useTranslation();
   const { api } = useServices();
   const fmt = useFormat();
@@ -53,8 +71,14 @@ function RecordingRow({ streamId, recording }: { streamId: string; recording: St
       <td>
         <time dateTime={recording.created_at}>{when}</time>
       </td>
-      <td className="num">{recording.duration_s === null ? "—" : fmt.duration(recording.duration_s)}</td>
-      <td className="num">{recording.bytes === null ? "—" : fmt.bytes(recording.bytes)}</td>
+      <td className="num">
+        {recording.duration_s === null
+          ? "—"
+          : fmt.duration(recording.duration_s)}
+      </td>
+      <td className="num">
+        {recording.bytes === null ? "—" : fmt.bytes(recording.bytes)}
+      </td>
       <td>
         <span className="hash" dir="ltr">
           {recording.sha256}
@@ -69,7 +93,9 @@ function RecordingRow({ streamId, recording }: { streamId: string; recording: St
           aria-busy={download.isPending}
           aria-label={t("streams.detail.downloadLabel", { date: when })}
         >
-          {download.isPending ? t("common.loading") : t("streams.detail.download")}
+          {download.isPending
+            ? t("common.loading")
+            : t("streams.detail.download")}
         </button>
         {download.isError && (
           <p className="alert alert--error" role="alert">
@@ -78,6 +104,37 @@ function RecordingRow({ streamId, recording }: { streamId: string; recording: St
         )}
       </td>
     </tr>
+  );
+}
+
+/** A new key for the camera's bridge (the old one stops at once), shown once. */
+function RenewBridgeKey({ stream }: { stream: StaffStreamDetail }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const mutation = useMutation({
+    mutationFn: () => api.renewEventKey(stream.id),
+  });
+  return (
+    <div className="actions">
+      {mutation.data ? (
+        <div className="alert alert--success" role="status">
+          <BridgeLines
+            camera={mutation.data.camera}
+            keyHex={mutation.data.key}
+          />
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="btn"
+          disabled={mutation.isPending}
+          onClick={() => mutation.mutate()}
+        >
+          {t("cameras.renewKey")}
+        </button>
+      )}
+      {mutation.isError && <ErrorBox error={mutation.error} />}
+    </div>
   );
 }
 
@@ -113,10 +170,18 @@ function StopStream({ stream }: { stream: StaffStreamDetail }) {
           disabled={mutation.isPending}
           onClick={() => (confirming ? mutation.mutate() : setConfirming(true))}
         >
-          {mutation.isPending ? t("streams.detail.stopping") : confirming ? t("streams.detail.stopConfirm") : t("streams.detail.stop")}
+          {mutation.isPending
+            ? t("streams.detail.stopping")
+            : confirming
+              ? t("streams.detail.stopConfirm")
+              : t("streams.detail.stop")}
         </button>
         {confirming && (
-          <button type="button" className="btn" onClick={() => setConfirming(false)}>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => setConfirming(false)}
+          >
             {t("common.cancel")}
           </button>
         )}
@@ -145,16 +210,25 @@ export function StreamDetailPage() {
     // Reading the detail is audited (`stream.detail`, the track is personal data): no polling; the live events
     // patch the track and the confidences, and reload it after an alert or a new recording.
     staleTime: 60_000,
-    retry: (count, error) => !(isApiError(error) && [403, 404].includes(error.status)) && count < 2,
+    retry: (count, error) =>
+      !(isApiError(error) && [403, 404].includes(error.status)) && count < 2,
   });
   const s = query.data;
   const track = useMemo(() => s?.track ?? [], [s?.track]);
   const lines = useMemo(
-    () => [{ id: "track", coordinates: track.map((p) => [p.lon, p.lat] as [number, number]) }],
+    () => [
+      {
+        id: "track",
+        coordinates: track.map((p) => [p.lon, p.lat] as [number, number]),
+      },
+    ],
     [track],
   );
   const detections = useMemo(
-    () => [...(s?.detections ?? [])].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)),
+    () =>
+      [...(s?.detections ?? [])].sort(
+        (a, b) => Date.parse(b.at) - Date.parse(a.at),
+      ),
     [s?.detections],
   );
 
@@ -168,14 +242,30 @@ export function StreamDetailPage() {
     );
 
   const name = streamTitle(t, s);
-  const position = s.last_location ?? (track.length > 0 ? track[track.length - 1] : null) ?? null;
+  const position =
+    s.last_location ??
+    (track.length > 0 ? track[track.length - 1] : null) ??
+    null;
   const pois: MapPoi[] = position
-    ? [{ id: s.id, lon: position.lon, lat: position.lat, kind: "stream", title: t("streams.detail.lastPosition", { name }) }]
+    ? [
+        {
+          id: s.id,
+          lon: position.lon,
+          lat: position.lat,
+          kind: "stream",
+          title: t("streams.detail.lastPosition", { name }),
+        },
+      ]
     : [];
   const bounds =
-    pointsBounds([...track, ...(position ? [position] : [])], 0.004) ?? initialBoundsFor(s.gouvernorat_code);
+    pointsBounds([...track, ...(position ? [position] : [])], 0.004) ??
+    initialBoundsFor(s.gouvernorat_code);
   const live = s.status === "live";
-  const endReason = s.end_reason && (STREAM_END_REASONS as readonly string[]).includes(s.end_reason) ? s.end_reason : null;
+  const endReason =
+    s.end_reason &&
+    (STREAM_END_REASONS as readonly string[]).includes(s.end_reason)
+      ? s.end_reason
+      : null;
 
   return (
     <article className="page detail" aria-labelledby="stream-title">
@@ -196,10 +286,24 @@ export function StreamDetailPage() {
       {s.simulated && <SimulationBand />}
 
       <div className="detail__grid">
-        <section className="card stream-detail__player" aria-labelledby="sec-player">
+        <section
+          className="card stream-detail__player"
+          aria-labelledby="sec-player"
+        >
           <h2 id="sec-player">{t("streams.detail.player")}</h2>
-          <StreamPlayer stream={s} title={t("streams.player.label", { name })} detections={s.detections} />
-          {live && user && canStopStreams(user.identity.roles) && <StopStream stream={s} />}
+          <StreamPlayer
+            stream={s}
+            title={t("streams.player.label", { name })}
+            detections={s.detections}
+          />
+          {live && user && canStopStreams(user.identity.roles) && (
+            <StopStream stream={s} />
+          )}
+          {s.source === "camera" &&
+            user &&
+            canRegisterCameras(user.identity.roles) && (
+              <RenewBridgeKey stream={s} />
+            )}
         </section>
 
         <section className="card" aria-labelledby="sec-stream-info">
@@ -210,7 +314,10 @@ export function StreamDetailPage() {
             <dt>{t("streams.detail.report")}</dt>
             <dd>
               {s.report_id ? (
-                <Link to={`/reports/${encodeURIComponent(s.report_id)}`} dir="ltr">
+                <Link
+                  to={`/reports/${encodeURIComponent(s.report_id)}`}
+                  dir="ltr"
+                >
                   {s.tracking_code ?? t("streams.detail.openReport")}
                 </Link>
               ) : (
@@ -218,9 +325,16 @@ export function StreamDetailPage() {
               )}
             </dd>
             <dt>{t("streams.columns.gouvernorat")}</dt>
-            <dd>{gouvernorats.nameOf(s.gouvernorat_code) ?? t("common.notAvailable")}</dd>
+            <dd>
+              {gouvernorats.nameOf(s.gouvernorat_code) ??
+                t("common.notAvailable")}
+            </dd>
             <dt>{t("streams.columns.started")}</dt>
-            <dd>{s.started_at ? fmt.dateTime(s.started_at) : t("common.notAvailable")}</dd>
+            <dd>
+              {s.started_at
+                ? fmt.dateTime(s.started_at)
+                : t("common.notAvailable")}
+            </dd>
             <dt>{t("streams.detail.ended")}</dt>
             <dd>{s.ended_at ? fmt.dateTime(s.ended_at) : "—"}</dd>
             <dt>{t("streams.columns.duration")}</dt>
@@ -259,7 +373,9 @@ export function StreamDetailPage() {
               dir={directionOf(lang)}
             />
           </Suspense>
-          <p className="muted">{t("streams.detail.trackSummary", { count: track.length })}</p>
+          <p className="muted">
+            {t("streams.detail.trackSummary", { count: track.length })}
+          </p>
           {track.length > 0 && (
             <details>
               <summary>{t("streams.detail.trackList")}</summary>
@@ -290,7 +406,9 @@ export function StreamDetailPage() {
                 <li key={`${d.at}-${d.label}-${i}`}>
                   <time dateTime={d.at}>{fmt.time(d.at)}</time>
                   <DetectionBadge label={d.label} confidence={d.confidence} />
-                  <span className="muted">{t("streams.detail.boxes", { count: d.boxes.length })}</span>
+                  <span className="muted">
+                    {t("streams.detail.boxes", { count: d.boxes.length })}
+                  </span>
                 </li>
               ))}
             </ol>
@@ -307,7 +425,9 @@ export function StreamDetailPage() {
         ) : (
           <div className="table-wrap">
             <table className="table">
-              <caption className="visually-hidden">{t("streams.detail.recordingsCaption")}</caption>
+              <caption className="visually-hidden">
+                {t("streams.detail.recordingsCaption")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("streams.detail.recordedAt")}</th>
@@ -323,7 +443,11 @@ export function StreamDetailPage() {
               </thead>
               <tbody>
                 {s.recordings.map((r) => (
-                  <RecordingRow key={r.media_id} streamId={s.id} recording={r} />
+                  <RecordingRow
+                    key={r.media_id}
+                    streamId={s.id}
+                    recording={r}
+                  />
                 ))}
               </tbody>
             </table>
