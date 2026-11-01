@@ -292,7 +292,7 @@ describe("SnacrPage", () => {
     await waitFor(() =>
       expect(api.launchSnacrStudy).toHaveBeenCalledWith({ gouvernorat_code: 21, years: [2023, 2024, 2025], split: false, travel_max: 60 }),
     );
-    fireEvent.click(screen.getAllByRole("button", { name: "PDF" })[1]);
+    fireEvent.click(screen.getAllByRole("button", { name: "PDF" })[1] as HTMLElement);
     await waitFor(() => expect(api.snacrStudyExport).toHaveBeenCalledWith(archived, "pdf"));
   });
 
