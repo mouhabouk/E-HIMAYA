@@ -58,6 +58,7 @@ CATEGORY = {
 }
 CLASSIFICATION = {
     "forest_fire": "حريق غابات",
+    "crop_fire": "حريق محاصيل زراعية",
     "residential_fire": "حريق مسكن",
     "industrial_fire": "حريق صناعي",
     "vehicle_fire": "حريق عربة",

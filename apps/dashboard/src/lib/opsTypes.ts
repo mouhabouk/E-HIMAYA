@@ -124,14 +124,30 @@ export const RESOURCE_KINDS = [
 ] as const;
 export type ResourceKind = (typeof RESOURCE_KINDS)[number];
 
-export const RESOURCE_STATUSES = ["available", "assigned", "out_of_service"] as const;
+export const RESOURCE_STATUSES = [
+  "available",
+  "assigned",
+  "out_of_service",
+] as const;
 export type ResourceStatus = (typeof RESOURCE_STATUSES)[number];
 
-export const ASSIGNMENT_STATUSES = ["ordered", "en_route", "on_scene", "released", "cancelled"] as const;
+export const ASSIGNMENT_STATUSES = [
+  "ordered",
+  "en_route",
+  "on_scene",
+  "released",
+  "cancelled",
+] as const;
 export type AssignmentStatus = (typeof ASSIGNMENT_STATUSES)[number];
-export const ACTIVE_ASSIGNMENT_STATUSES: readonly AssignmentStatus[] = ["ordered", "en_route", "on_scene"];
+export const ACTIVE_ASSIGNMENT_STATUSES: readonly AssignmentStatus[] = [
+  "ordered",
+  "en_route",
+  "on_scene",
+];
 /** Status flow of an assignment (§4): the server refuses anything else with `409 invalid_transition`. */
-export const ASSIGNMENT_TRANSITIONS: Readonly<Record<AssignmentStatus, readonly AssignmentStatus[]>> = {
+export const ASSIGNMENT_TRANSITIONS: Readonly<
+  Record<AssignmentStatus, readonly AssignmentStatus[]>
+> = {
   ordered: ["en_route", "cancelled"],
   en_route: ["on_scene", "cancelled"],
   on_scene: ["released"],
@@ -149,7 +165,11 @@ export interface Resource {
   notes: string | null;
   location: LatLon | null;
   gouvernorat_code: number;
-  assignment: { id: string; incident_id: string; status: AssignmentStatus } | null;
+  assignment: {
+    id: string;
+    incident_id: string;
+    status: AssignmentStatus;
+  } | null;
   version: number;
   updated_at: string;
 }
@@ -172,7 +192,9 @@ export interface ResourceFilters {
 }
 
 export interface ResourceSummary {
-  by_kind: Partial<Record<ResourceKind, Partial<Record<ResourceStatus, number>>>>;
+  by_kind: Partial<
+    Record<ResourceKind, Partial<Record<ResourceStatus, number>>>
+  >;
 }
 
 export interface PointFeature<P> {
@@ -187,7 +209,14 @@ export interface FeatureCollection<P> {
 }
 
 export type ResourceMapProperties =
-  | { layer: "unit"; id: string; name: string; name_fr: string; kind: UnitKind; phone: string | null }
+  | {
+      layer: "unit";
+      id: string;
+      name: string;
+      name_fr: string;
+      kind: UnitKind;
+      phone: string | null;
+    }
   | {
       layer: "resource";
       id: string;
@@ -202,9 +231,19 @@ export type ResourceMapProperties =
 
 /** Classification vocabulary per category; `other` is accepted for every category. */
 export const CLASSIFICATIONS: Readonly<Record<string, readonly string[]>> = {
-  fire: ["forest_fire", "residential_fire", "industrial_fire", "vehicle_fire"],
+  fire: [
+    "forest_fire",
+    "crop_fire",
+    "residential_fire",
+    "industrial_fire",
+    "vehicle_fire",
+  ],
   flood: ["river_flood", "urban_flood", "flash_flood"],
-  traffic_accident: ["road_accident", "chemical_road_accident", "rail_accident"],
+  traffic_accident: [
+    "road_accident",
+    "chemical_road_accident",
+    "rail_accident",
+  ],
   drowning: ["beach", "dam_or_lake", "well"],
   landslide: ["landslide", "rockfall", "building_collapse"],
   chemical_leak: ["industrial_leak", "transport_leak", "gas_leak"],
@@ -219,8 +258,18 @@ export interface Assignment {
   id: string;
   incident_id: string;
   kind: "resource" | "volunteer";
-  resource: { id: string; label: string; kind: ResourceKind; unit_name: string } | null;
-  volunteer: { id: string; full_name: string | null; phone: string | null; skills: Skill[] } | null;
+  resource: {
+    id: string;
+    label: string;
+    kind: ResourceKind;
+    unit_name: string;
+  } | null;
+  volunteer: {
+    id: string;
+    full_name: string | null;
+    phone: string | null;
+    skills: Skill[];
+  } | null;
   order: string | null;
   status: AssignmentStatus;
   created_by: string;
@@ -262,9 +311,20 @@ export interface VehiclePosition {
   distance_m: number | null;
 }
 
-export const CALLOUT_STATUSES = ["open", "filled", "cancelled", "closed"] as const;
+export const CALLOUT_STATUSES = [
+  "open",
+  "filled",
+  "cancelled",
+  "closed",
+] as const;
 export type CalloutStatus = (typeof CALLOUT_STATUSES)[number];
-export const TARGET_STATUSES = ["sent", "accepted", "declined", "expired", "arrived"] as const;
+export const TARGET_STATUSES = [
+  "sent",
+  "accepted",
+  "declined",
+  "expired",
+  "arrived",
+] as const;
 export type TargetStatus = (typeof TARGET_STATUSES)[number];
 
 export interface CalloutTarget {
@@ -312,7 +372,12 @@ export interface VolunteerSuggestion {
 
 export const OUTCOMES = ["resolved", "false_alarm", "transferred"] as const;
 export type Outcome = (typeof OUTCOMES)[number];
-export const CASUALTY_KINDS = ["rescued", "injured", "deceased", "evacuated"] as const;
+export const CASUALTY_KINDS = [
+  "rescued",
+  "injured",
+  "deceased",
+  "evacuated",
+] as const;
 export type CasualtyKind = (typeof CASUALTY_KINDS)[number];
 
 export interface CloseBody {
@@ -341,15 +406,28 @@ export const SKILLS = [
 ] as const;
 export type Skill = (typeof SKILLS)[number];
 
-export const VOLUNTEER_STATUSES = ["pending", "approved", "rejected", "suspended", "withdrawn"] as const;
+export const VOLUNTEER_STATUSES = [
+  "pending",
+  "approved",
+  "rejected",
+  "suspended",
+  "withdrawn",
+] as const;
 export type VolunteerStatus = (typeof VOLUNTEER_STATUSES)[number];
 export const AVAILABILITIES = ["continuous", "intermittent"] as const;
 export type Availability = (typeof AVAILABILITIES)[number];
-export const VOLUNTEER_DECISIONS = ["approve", "reject", "suspend", "reinstate"] as const;
+export const VOLUNTEER_DECISIONS = [
+  "approve",
+  "reject",
+  "suspend",
+  "reinstate",
+] as const;
 export type VolunteerDecision = (typeof VOLUNTEER_DECISIONS)[number];
 
 /** Decisions offered for each status (§5: pending → approved | rejected; approved ↔ suspended). */
-export const VOLUNTEER_DECISIONS_BY_STATUS: Readonly<Record<VolunteerStatus, readonly VolunteerDecision[]>> = {
+export const VOLUNTEER_DECISIONS_BY_STATUS: Readonly<
+  Record<VolunteerStatus, readonly VolunteerDecision[]>
+> = {
   pending: ["approve", "reject"],
   approved: ["suspend"],
   suspended: ["reinstate"],
@@ -426,13 +504,29 @@ export interface VolunteerMapProperties {
 
 export const MESSAGE_KINDS = ["info", "alert"] as const;
 export type MessageKind = (typeof MESSAGE_KINDS)[number];
-export const MESSAGE_STATUSES = ["draft", "published", "cancelled", "expired"] as const;
+export const MESSAGE_STATUSES = [
+  "draft",
+  "published",
+  "cancelled",
+  "expired",
+] as const;
 export type MessageStatus = (typeof MESSAGE_STATUSES)[number];
 export const CHANNELS = ["push", "sms", "email"] as const;
 export type Channel = (typeof CHANNELS)[number];
-export const TOPICS = ["activity", "awareness", "training", "world_day", "other"] as const;
+export const TOPICS = [
+  "activity",
+  "awareness",
+  "training",
+  "world_day",
+  "other",
+] as const;
 export type Topic = (typeof TOPICS)[number];
-export const AUDIENCES = ["all", "volunteers", "organizations", "user"] as const;
+export const AUDIENCES = [
+  "all",
+  "volunteers",
+  "organizations",
+  "user",
+] as const;
 export type Audience = (typeof AUDIENCES)[number];
 export const SEVERITIES = ["high", "medium", "low"] as const;
 export type Severity = (typeof SEVERITIES)[number];
@@ -451,7 +545,13 @@ export const HAZARDS = [
   "other",
 ] as const;
 export type Hazard = (typeof HAZARDS)[number];
-export const DISPATCH_STATUSES = ["pending", "running", "done", "skipped", "failed"] as const;
+export const DISPATCH_STATUSES = [
+  "pending",
+  "running",
+  "done",
+  "skipped",
+  "failed",
+] as const;
 
 export interface Localized {
   ar: string;
@@ -479,9 +579,13 @@ export interface Area {
 }
 
 /** The outer rings of an area, one per part. */
-export function areaRings(polygon: Polygon | MultiPolygon | null | undefined): [number, number][][][] {
+export function areaRings(
+  polygon: Polygon | MultiPolygon | null | undefined,
+): [number, number][][][] {
   if (!polygon) return [];
-  return polygon.type === "Polygon" ? [polygon.coordinates] : polygon.coordinates;
+  return polygon.type === "Polygon"
+    ? [polygon.coordinates]
+    : polygon.coordinates;
 }
 
 export interface Message {
@@ -505,7 +609,9 @@ export interface Message {
   published_at: string | null;
   cancelled_at: string | null;
   version: number;
-  stats: Partial<Record<Channel, { status: string; sent: number; failed: number }>>;
+  stats: Partial<
+    Record<Channel, { status: string; sent: number; failed: number }>
+  >;
   /** Four eyes (phase 10 §5.1): last editor, emergency override and the second look afterwards. */
   updated_by?: string | null;
   single_reviewer?: boolean;
@@ -545,7 +651,11 @@ export interface MessageBody {
   category?: AlertCategory | null;
   hazard?: Hazard | null;
   expires_at?: string | null;
-  area: { gouvernorat_codes: number[]; polygon?: Polygon | null; delegation_ids?: number[] };
+  area: {
+    gouvernorat_codes: number[];
+    polygon?: Polygon | null;
+    delegation_ids?: number[];
+  };
   org_kinds?: OrgKind[];
   ack_required?: boolean;
   version?: number;
@@ -613,7 +723,9 @@ export interface SafetyTipBody {
 
 /** A language is complete when it has a title and at least one item (the publish rule, `translation_missing`). */
 export function tipLanguageComplete(text: TipText | undefined): boolean {
-  return Boolean(text && text.title.trim() && (text.do.length > 0 || text.dont.length > 0));
+  return Boolean(
+    text && text.title.trim() && (text.do.length > 0 || text.dont.length > 0),
+  );
 }
 
 /** A hospital or clinic near an incident, timed on the road (phase L1b); `engine` "fallback" is an estimate. */
