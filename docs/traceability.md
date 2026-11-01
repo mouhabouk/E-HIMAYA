@@ -32,7 +32,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | FR-B-009 | S | دعوة أعضاء فريق السلامة وتحديد صلاحياتهم داخل حساب المؤسسة. | `services/api/tests/test_orgs.py` |
 | FR-A-011 | M | صفحة الحساب: عرض وتعديل المعطيات القابلة للتحيين، وعرض حالة التطوع، وتنزيل نسخة من معطياتي، وطلب حذف الحساب. | `services/api/tests/test_data_protection.py` |
 | FR-B-011 | M | متابعة بلاغات المؤسسة برقم التتبع وإشعارات حالة التدخل. | `apps/portal/src/pages/org/workspace.test.tsx` |
-| FR-A-020 | M | يصرّح المواطن بأنه متطوع ويكمل: فترة التطوع (من، إلى)، مباشر أو منقطع، الاختصاصات (إسعاف، غوص، قيادة آليات ثق… | `services/api/tests/test_operations.py` |
+| FR-A-020 | M | يصرّح المواطن بأنه متطوع ويكمل: فترة التطوع (من، إلى)، مباشر أو منقطع، الاختصاصات (إسعاف، غوص، قيادة آليات ثق… | `services/api/tests/test_operations.py`<br>`services/api/tests/test_scenarios_e2e.py` |
 | FR-A-021 | M | يتلقى المتطوع تأكيدا بالبريد عند قبوله أو رفضه ضمن سجلات الحماية المدنية، بعد مراجعة بشرية في اللوحة. | `services/api/tests/test_operations.py` |
 | FR-A-022 | S | زر «جاهز / غير جاهز» يفعّل مشاركة الموقع مع اللوحة خلال فترة الجاهزية فقط. | `services/api/tests/test_location_consent.py`<br>`services/api/tests/test_operations.py` |
 | FR-A-023 | S | استقبال إشعارات الاستدعاء والرد عليها (أقبل، أرفض، الوقت المقدّر للوصول). | `services/api/tests/test_operations.py` |
@@ -40,7 +40,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | FR-A-033 | M | أرقام الطوارئ الوطنية: 198 الحماية المدنية، 190 الإسعاف الطبي الاستعجالي، 197 شرطة النجدة، 193 الحرس الوطني.… | `apps/mobile/test/features/emergency_numbers_test.dart`<br>`apps/mobile/test/widgets/app_flow_test.dart` |
 | FR-A-034 | S | الطقس الحالي وتوقعات الساعات القادمة حسب موقع المستعمل، مع إبراز التنبيهات الجوية النشطة. | `apps/mobile/test/widgets/weather_flow_test.dart` |
 | FR-A-040 | M | اختيار طبيعة الحادثة ونوعها من قائمة مصنفة بأيقونات (حريق، فيضان، حادث مرور، غرق، انزلاق تربة، تسرب كيميائي،… | `services/api/tests/test_reports.py` |
-| FR-A-041 | M | إرفاق نص وصور وفيديو وصوت في نفس البلاغ. | `services/api/tests/test_uploads.py` |
+| FR-A-041 | M | إرفاق نص وصور وفيديو وصوت في نفس البلاغ. | `services/api/tests/test_scenarios_e2e.py`<br>`services/api/tests/test_uploads.py` |
 | FR-A-042 | M | تحديد الموقع الجغرافي آليا بدقة (GPS) مع إمكانية تعديل الدبوس على الخريطة، وتسجيل دقة الموقع. | `services/api/tests/test_reports.py` |
 | FR-A-044 | M | تحويل الصوت إلى نص آليا (نموذج Whisper) بما في ذلك اللهجة التونسية بأفضل دقة ممكنة، مع الاحتفاظ بالتسجيل الأص… | `services/api/tests/test_ai.py` |
 | FR-A-045 | M | البلاغ المرسل بالفرنسية أو الإنجليزية يُترجم آليا ويُعرض بالعربية في اللوحة، مع الاحتفاظ بالنص الأصلي ولغته. | `services/api/tests/test_ai.py` |
@@ -53,7 +53,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | FR-A-060 | M | نوعان منفصلان بصريا: إشعارات إعلامية (أنشطة الديوان، اليوم العالمي للحماية المدنية، حملات التوعية والتكوين) و… | `services/api/tests/test_notifications.py` |
 | FR-A-061 | M | تنبيهات الخطر تُوجَّه حسب الولاية أو المنطقة أو الموقع الحالي، وتظهر حتى لو كان التطبيق مغلقا، بصوت مميز. | `services/api/tests/test_notifications.py` |
 | FR-A-062 | M | دليل نصائح السلامة مصنف حسب الحالة (حريق، فيضان، حادث مرور، حالات صحية)، يعرض لكل حالة ما يجب فعله وما يجب تج… | `services/api/tests/test_notifications.py` |
-| FR-A-070 | S | إسناد النقاط: بلاغ موثّق +50، بلاغ ساهم في إنقاذ +500، تصنيف دقيق للبلاغ ×1.5. القيم قابلة للضبط من اللوحة. | `services/api/tests/test_rewards.py` |
+| FR-A-070 | S | إسناد النقاط: بلاغ موثّق +50، بلاغ ساهم في إنقاذ +500، تصنيف دقيق للبلاغ ×1.5. القيم قابلة للضبط من اللوحة. | `services/api/tests/test_rewards.py`<br>`services/api/tests/test_scenarios_e2e.py` |
 | FR-A-071 | S | الشارات: مواطن يقظ برونزي 100 نقطة، فضي 500، ذهبي 2000، سفير الحماية المدنية 10000. | `services/api/tests/test_rewards.py` |
 | FR-A-072 | S | عرض الرصيد والشارات والجوائز (شهادات رسمية، جوائز مالية سنوية، أولوية في خدمات معينة). لا تُمنح نقاط للمبلّغ… | `services/api/tests/test_rewards.py` |
 | FR-A-080 | M | المؤسسة تبلّغ كما يبلّغ المواطن، مع إرفاق البلاغ آليا ببطاقة المؤسسة (الموقع، الطاقة الاستيعابية، المواد الخط… | `services/api/tests/test_orgs.py` |
@@ -67,10 +67,10 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | NFR-09 | سهولة الاستخدام والنفاذ | بلوغ إرسال بلاغ SOS في 3 لمسات على الأكثر. احترام WCAG 2.2 المستوى AA. أحجام لمس 48 نقطة على الأقل. وضع داكن. | `apps/mobile/test/widgets/accessibility_test.dart`<br>`apps/mobile/test/widgets/app_flow_test.dart`<br>`apps/mobile/test/widgets/read_aloud_flow_test.dart`<br>`apps/mobile/test/widgets/simple_mode_flow_test.dart` |
 | NFR-12 | الاستعادة | RPO أقل من 5 دقائق و RTO أقل من ساعة لمسار البلاغات. اختبار استعادة فصلي. | `infra/backup/drill.sh`<br>`infra/monitoring/alerts.test.yml`<br>`services/api/tests/test_resilience.py` |
 | NFR-13 | المراقبة | مقاييس وسجلات وتتبع موزع لكل الخدمات، مع تنبيهات تشغيلية للفريق التقني. | `infra/monitoring/alerts.test.yml` |
-| UC-01 | use case | بلاغ مواطن مسجّل عن حريق | `services/api/tests/test_reports.py` |
+| UC-01 | use case | بلاغ مواطن مسجّل عن حريق | `services/api/tests/test_reports.py`<br>`services/api/tests/test_scenarios_e2e.py` |
 | UC-02 | use case | بلاغ مجهول | `services/api/tests/test_reports.py` |
 | UC-04 | use case | تنبيه جغرافي عن أمطار غزيرة | `services/api/tests/test_weather.py` |
-| UC-05 | use case | استدعاء متطوعين | `services/api/tests/test_operations.py` |
+| UC-05 | use case | استدعاء متطوعين | `services/api/tests/test_operations.py`<br>`services/api/tests/test_scenarios_e2e.py` |
 | UC-06 | use case | بث مباشر مع تحليل | `services/api/tests/test_streams.py` |
 
 ## Not cited by any test

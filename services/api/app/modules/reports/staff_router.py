@@ -212,9 +212,11 @@ async def _detail(
     # Reporter identity and residence only for the handling operations room or under break-glass (§1.3).
     sensitive = await authorize(session, principal, Action.REPORT_READ_SENSITIVE, ctx)
     profile = await session.get(Profile, report.user_id) if summary.reporter_kind != "anonymous" else None
+    roles = await service.reporter_roles(session, report.user_id) if summary.reporter_kind != "anonymous" else []
     if sensitive.allowed:
         reporter = schemas.Reporter(
             kind=summary.reporter_kind,
+            roles=roles,
             first_name=profile.first_name if profile else None,
             last_name=profile.last_name if profile else None,
             phone=profile.phone if profile else None,
@@ -240,7 +242,10 @@ async def _detail(
             await session.commit()
     else:
         reporter = schemas.Reporter(
-            kind=summary.reporter_kind, masked=True, phone=masked_phone(profile.phone if profile else None)
+            kind=summary.reporter_kind,
+            roles=roles,
+            masked=True,
+            phone=masked_phone(profile.phone if profile else None),
         )
         reporter_context = None
     analysis = await session.get(Analysis, report.id)
