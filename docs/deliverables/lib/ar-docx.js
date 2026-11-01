@@ -97,10 +97,24 @@ function cover({ title, subtitle, lines = [], meta = [], logo }) {
 // sections: [{ landscape, children }]; children alone makes one portrait (or landscape) section.
 function document({ title, children, landscape = false, sections }) {
   const header = () => ({ default: new Header({ children: [para(`ء-حماية e-Himaya · ${title}`, { size: 16, color: C.muted, align: AlignmentType.CENTER, after: 0 })] }) });
-  const footer = () => ({ default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [
-    new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 16, color: C.muted }),
-    new TextRun({ text: ' / ', font: FONT, size: 16, color: C.muted }),
-    new TextRun({ children: [PageNumber.TOTAL_PAGES], font: FONT, size: 16, color: C.muted })] })] }) });
+  // Footer: the page number, and a medium QR code (2 cm) that opens the app download (lib/app-qr.png, made from the
+  // API's stable address /api/v1/app/download), so a committee member can scan it from any printed page.
+  const qr = fs.readFileSync(require('path').join(__dirname, 'app-qr.png'));
+  const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+  const noBorders = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none };
+  const footer = () => ({ default: new Footer({ children: [new Table({
+    width: { size: W, type: WidthType.DXA }, columnWidths: [W - 1300, 1300], borders: noBorders, visuallyRightToLeft: true,
+    rows: [new TableRow({ children: [
+      new TableCell({ width: { size: W - 1300, type: WidthType.DXA }, borders: noBorders, verticalAlign: VerticalAlign.CENTER, children: [
+        new Paragraph({ alignment: AlignmentType.START, bidirectional: true, children: [
+          new TextRun({ text: 'امسح الرمز لتنزيل تطبيق ء-حماية · ', font: FONT, size: 15, color: C.muted, rightToLeft: true }),
+          new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 16, color: C.muted }),
+          new TextRun({ text: ' / ', font: FONT, size: 16, color: C.muted }),
+          new TextRun({ children: [PageNumber.TOTAL_PAGES], font: FONT, size: 16, color: C.muted })] })] }),
+      new TableCell({ width: { size: 1300, type: WidthType.DXA }, borders: noBorders, children: [
+        new Paragraph({ alignment: AlignmentType.END, children: [
+          new ImageRun({ type: 'png', data: qr, transformation: { width: 72, height: 72 } })] })] }),
+    ] })] })] }) });
   const secs = (sections || [{ landscape, children }]).map(s => ({
     properties: { page: { size: s.landscape ? { orientation: PageOrientation.LANDSCAPE, width: 11906, height: 16838 } : { width: 11906, height: 16838 },
       margin: { top: 1134, bottom: 1134, left: 1134, right: 1134 } }, bidi: true },

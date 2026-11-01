@@ -32078,6 +32078,17 @@
               }
             ],
             "title": "Phone"
+          },
+          "roles": {
+            "items": {
+              "enum": [
+                "volunteer",
+                "doctor"
+              ],
+              "type": "string"
+            },
+            "title": "Roles",
+            "type": "array"
           }
         },
         "required": [
@@ -56790,6 +56801,20 @@
         ]
       }
     },
+    "/api/v1/app/download": {
+      "get": {
+        "operationId": "download_api_v1_app_download_get",
+        "responses": {
+          "307": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Download",
+        "tags": [
+          "app"
+        ]
+      }
+    },
     "/api/v1/app/environment": {
       "get": {
         "operationId": "app_environment_api_v1_app_environment_get",
@@ -56871,6 +56896,61 @@
           }
         ],
         "summary": "Rate App",
+        "tags": [
+          "app"
+        ]
+      }
+    },
+    "/api/v1/app/qr.{fmt}": {
+      "get": {
+        "operationId": "qr_api_v1_app_qr__fmt__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fmt",
+            "required": true,
+            "schema": {
+              "enum": [
+                "svg",
+                "png"
+              ],
+              "title": "Fmt",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "scale",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 40,
+              "minimum": 2,
+              "title": "Scale",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/png": {},
+              "image/svg+xml": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Qr",
         "tags": [
           "app"
         ]
@@ -58907,6 +58987,68 @@
           }
         ],
         "summary": "Intervention Report",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/sheet": {
+      "get": {
+        "description": "The mission sheet on the leader's phone, the same paper the room prints (the reporter's identity masked).",
+        "operationId": "mission_sheet_api_v1_crew_missions__assignment_id__sheet_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mission Sheet",
         "tags": [
           "crew"
         ]
@@ -69970,6 +70112,239 @@
         ]
       }
     },
+    "/api/v1/staff/analytics/crosstab": {
+      "get": {
+        "description": "Interventions counted across two dimensions, each cell beside the same period one year earlier.",
+        "operationId": "cross_tabulation_api_v1_staff_analytics_crosstab_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "rows",
+            "required": false,
+            "schema": {
+              "default": "category",
+              "enum": [
+                "category",
+                "classification",
+                "gouvernorat",
+                "resource",
+                "level",
+                "month",
+                "quarter",
+                "weekday",
+                "hour"
+              ],
+              "title": "Rows",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cols",
+            "required": false,
+            "schema": {
+              "default": "month",
+              "enum": [
+                "category",
+                "classification",
+                "gouvernorat",
+                "resource",
+                "level",
+                "month",
+                "quarter",
+                "weekday",
+                "hour"
+              ],
+              "title": "Cols",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Cross Tabulation Api V1 Staff Analytics Crosstab Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cross Tabulation",
+        "tags": [
+          "staff",
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/staff/analytics/findings": {
+      "get": {
+        "description": "The year-on-year changes worth a sentence (\"ارتفاع في عدد حرائق المحاصيل الزراعية بنسبة 15%…\").",
+        "operationId": "findings_api_v1_staff_analytics_findings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response Findings Api V1 Staff Analytics Findings Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Findings",
+        "tags": [
+          "staff",
+          "analytics"
+        ]
+      }
+    },
     "/api/v1/staff/analytics/hotspots": {
       "get": {
         "description": "GeoJSON hexagon grid with report counts (never single points).",
@@ -70828,6 +71203,63 @@
           }
         ],
         "summary": "Suggest Record Times",
+        "tags": [
+          "incidents"
+        ]
+      }
+    },
+    "/api/v1/staff/assignments/{assignment_id}/sheet": {
+      "get": {
+        "description": "The mission sheet (أمر مهمة) to print for the team: the order, the incident and its reporter, the place with\nthe map and the route, the institution's card, the team and the vehicle, the signatures (audited).",
+        "operationId": "assignment_sheet_api_v1_staff_assignments__assignment_id__sheet_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "pdf",
+              "pattern": "^(pdf|html)$",
+              "title": "Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {},
+              "text/html": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Assignment Sheet",
         "tags": [
           "incidents"
         ]

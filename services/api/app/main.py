@@ -30,6 +30,7 @@ from app.modules.analytics.library import router as analytics_library_router
 from app.modules.analytics.router import router as analytics_router
 from app.modules.analytics.worker import analytics_forever
 from app.modules.anomaly.router import router as anomaly_router
+from app.modules.appdownload.router import router as appdownload_router
 from app.modules.appinfo.feedback import router as appinfo_feedback_router
 from app.modules.appinfo.router import router as appinfo_router
 from app.modules.audit.router import router as audit_router
@@ -355,6 +356,7 @@ def create_app() -> FastAPI:
         inventory_router,
         basemap_router,
         basemap_tiles_router,
+        appdownload_router,
         identity_internal_router,
         sensors_router,
         sensors_internal_router,

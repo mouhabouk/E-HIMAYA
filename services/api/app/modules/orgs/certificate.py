@@ -30,6 +30,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, delete, func, or_, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import print_footer
 from app.core.config import get_settings
 from app.core.events import emit
 from app.core.storage import get_store
@@ -437,7 +438,9 @@ SEAL_NOTE = "نموذج ختم في انتظار الختم الرسمي للد�
 def _render_pdf_sync(document: str) -> bytes:
     from weasyprint import HTML
 
-    pdf: bytes = HTML(string=document).write_pdf()
+    pdf: bytes = HTML(
+        string=print_footer.apply(document, ["منصة ء-حماية · الديوان الوطني للحماية المدنية", "وثيقة المؤسسة"])
+    ).write_pdf()
     return pdf
 
 

@@ -40,7 +40,11 @@ export interface DurationStat {
   n?: number;
 }
 
-export const RESPONSE_STAGES = ["to_assignment", "to_on_scene", "to_closed"] as const;
+export const RESPONSE_STAGES = [
+  "to_assignment",
+  "to_on_scene",
+  "to_closed",
+] as const;
 export type ResponseStage = (typeof RESPONSE_STAGES)[number];
 
 export interface AnalyticsOverview {
@@ -49,7 +53,13 @@ export interface AnalyticsOverview {
   /** Scope applied ([] = national). */
   gouvernorats?: number[];
   category?: Category | null;
-  totals: { received: number; verified: number; in_progress: number; closed: number; rejected: number };
+  totals: {
+    received: number;
+    verified: number;
+    in_progress: number;
+    closed: number;
+    rejected: number;
+  };
   response_time: Partial<Record<ResponseStage, DurationStat>>;
   by_category: Bucket[];
   by_gouvernorat: Bucket<number>[];
@@ -63,7 +73,11 @@ export interface AnalyticsOverview {
   min_cell?: number;
 }
 
-export const TREND_METRICS = ["reports", "response_time", "interventions"] as const;
+export const TREND_METRICS = [
+  "reports",
+  "response_time",
+  "interventions",
+] as const;
 export type TrendMetric = (typeof TREND_METRICS)[number];
 export const TREND_INTERVALS = ["day", "week", "month"] as const;
 export type TrendInterval = (typeof TREND_INTERVALS)[number];
@@ -95,9 +109,17 @@ export interface HexProperties {
   id?: string;
 }
 
-export type Hotspots = FeatureCollection<Polygon, HexProperties> & { cell_size_m?: number; from?: string; to?: string };
+export type Hotspots = FeatureCollection<Polygon, HexProperties> & {
+  cell_size_m?: number;
+  from?: string;
+  to?: string;
+};
 
-export const SCENARIO_WEATHERS = ["as_forecast", "fire_danger_extreme", "heavy_rain"] as const;
+export const SCENARIO_WEATHERS = [
+  "as_forecast",
+  "fire_danger_extreme",
+  "heavy_rain",
+] as const;
 export type ScenarioWeather = (typeof SCENARIO_WEATHERS)[number];
 
 export interface ScenarioBody {
@@ -191,7 +213,12 @@ export const LIBRARY_REPORT_KINDS = [
 export type LibraryReportKind = (typeof LIBRARY_REPORT_KINDS)[number];
 export const REPORT_FORMATS = ["pdf", "xlsx"] as const;
 export type ReportFormat = (typeof REPORT_FORMATS)[number];
-export const LIBRARY_REPORT_STATUSES = ["queued", "running", "ready", "failed"] as const;
+export const LIBRARY_REPORT_STATUSES = [
+  "queued",
+  "running",
+  "ready",
+  "failed",
+] as const;
 export type LibraryReportStatus = (typeof LIBRARY_REPORT_STATUSES)[number];
 
 export interface ReportFiltersUsed {
@@ -244,7 +271,10 @@ export interface LibraryReportQuery {
 }
 
 /** Only these two kinds can be scheduled. */
-export const SCHEDULE_KINDS = ["period_summary", "gouvernorat_summary"] as const;
+export const SCHEDULE_KINDS = [
+  "period_summary",
+  "gouvernorat_summary",
+] as const;
 export type ScheduleKind = (typeof SCHEDULE_KINDS)[number];
 
 export const SCHEDULE_FREQUENCIES = ["daily", "weekly", "monthly"] as const;
@@ -282,7 +312,15 @@ export interface ReportSchedule {
 
 export type ScheduleBody = Pick<
   ReportSchedule,
-  "title" | "kind" | "filters" | "gouvernorats" | "format" | "lang" | "cron" | "recipients" | "enabled"
+  | "title"
+  | "kind"
+  | "filters"
+  | "gouvernorats"
+  | "format"
+  | "lang"
+  | "cron"
+  | "recipients"
+  | "enabled"
 >;
 
 /** In-app notice that a (scheduled) report is ready. */
@@ -304,12 +342,23 @@ export interface ReportNotifications {
 
 // ---------- §2 national memory ----------
 
-export const MEMORY_STATUSES = ["draft", "in_review", "published", "archived"] as const;
+export const MEMORY_STATUSES = [
+  "draft",
+  "in_review",
+  "published",
+  "archived",
+] as const;
 export type MemoryStatus = (typeof MEMORY_STATUSES)[number];
 export const MEMORY_ACCESS = ["national", "gouvernorat", "committee"] as const;
 export type MemoryAccess = (typeof MEMORY_ACCESS)[number];
 /** The five Markdown sections of an entry, each in ar and fr. */
-export const MEMORY_SECTIONS = ["summary", "strengths", "weaknesses", "lessons", "recommendations"] as const;
+export const MEMORY_SECTIONS = [
+  "summary",
+  "strengths",
+  "weaknesses",
+  "lessons",
+  "recommendations",
+] as const;
 export type MemorySection = (typeof MEMORY_SECTIONS)[number];
 
 /** A staff member as the API shows them (`id` is an opaque actor string, `name` may be null). */
@@ -427,7 +476,15 @@ export interface MemoryTransition {
 
 // ---------- §2 events library ----------
 
-export const LIBRARY_KINDS = ["memory", "report_doc", "incident", "report", "transcript", "procedure", "register"] as const;
+export const LIBRARY_KINDS = [
+  "memory",
+  "report_doc",
+  "incident",
+  "report",
+  "transcript",
+  "procedure",
+  "register",
+] as const;
 export type LibraryKind = (typeof LIBRARY_KINDS)[number];
 
 export interface LibraryHit {
@@ -480,7 +537,14 @@ export interface LibraryCalendar {
 }
 
 /** The six levels of the library calendar (L4a) and the cells each is cut into. */
-export const CALENDAR_LEVELS = ["day", "week", "month", "quarter", "half", "year"] as const;
+export const CALENDAR_LEVELS = [
+  "day",
+  "week",
+  "month",
+  "quarter",
+  "half",
+  "year",
+] as const;
 export type CalendarLevel = (typeof CALENDAR_LEVELS)[number];
 export type CalendarStep = "hour" | "day" | "week" | "month";
 
@@ -560,7 +624,12 @@ export const REWARD_REASONS = [
   "revocation",
 ] as const;
 export type RewardReason = (typeof REWARD_REASONS)[number];
-export const RULE_REASONS = ["report_verified", "report_helped_rescue", "accurate_category", "volunteer_mission"] as const;
+export const RULE_REASONS = [
+  "report_verified",
+  "report_helped_rescue",
+  "accurate_category",
+  "volunteer_mission",
+] as const;
 export type RuleReason = (typeof RULE_REASONS)[number];
 /** `accurate_category` is a multiplier (1.0–3.0); the others are points (0–5000). */
 export const MULTIPLIER_RANGE = [1, 3] as const;
@@ -579,13 +648,23 @@ export interface RewardRule {
   updated_by?: string | null;
 }
 
-export type RewardRuleBody = Pick<RewardRule, "reason" | "category" | "enabled"> &
+export type RewardRuleBody = Pick<
+  RewardRule,
+  "reason" | "category" | "enabled"
+> &
   Partial<Pick<RewardRule, "points" | "multiplier">>;
-export type RewardRulePatch = Partial<Pick<RewardRule, "points" | "multiplier" | "enabled">>;
+export type RewardRulePatch = Partial<
+  Pick<RewardRule, "points" | "multiplier" | "enabled">
+>;
 
 export const BADGES = ["bronze", "silver", "gold", "ambassador"] as const;
 export type Badge = (typeof BADGES)[number];
-export const BADGE_STATUSES = ["pending", "confirmed", "rejected", "revoked"] as const;
+export const BADGE_STATUSES = [
+  "pending",
+  "confirmed",
+  "rejected",
+  "revoked",
+] as const;
 export type BadgeStatus = (typeof BADGE_STATUSES)[number];
 
 export interface BadgeAward {
@@ -601,7 +680,11 @@ export interface BadgeAward {
   reason: string | null;
 }
 
-export const NOMINATION_KINDS = ["vigilant_citizen", "brave_volunteer", "leading_institution"] as const;
+export const NOMINATION_KINDS = [
+  "vigilant_citizen",
+  "brave_volunteer",
+  "leading_institution",
+] as const;
 export type NominationKind = (typeof NOMINATION_KINDS)[number];
 export const SUBJECT_KINDS = ["citizen", "volunteer", "org"] as const;
 export type SubjectKind = (typeof SUBJECT_KINDS)[number];
@@ -611,7 +694,11 @@ export const NOMINATION_SUBJECT: Record<NominationKind, SubjectKind> = {
   brave_volunteer: "volunteer",
   leading_institution: "org",
 };
-export const NOMINATION_STATUSES = ["proposed", "approved", "rejected"] as const;
+export const NOMINATION_STATUSES = [
+  "proposed",
+  "approved",
+  "rejected",
+] as const;
 export type NominationStatus = (typeof NOMINATION_STATUSES)[number];
 
 export interface Nomination {
@@ -634,7 +721,10 @@ export interface Nomination {
   created_at: string;
 }
 
-export type NominationBody = Pick<Nomination, "kind" | "subject_kind" | "year" | "reason" | "evidence"> & {
+export type NominationBody = Pick<
+  Nomination,
+  "kind" | "subject_kind" | "year" | "reason" | "evidence"
+> & {
   subject_id: string;
 };
 
@@ -674,4 +764,48 @@ export interface RewardSettings {
   thresholds: Record<Badge, number>;
   /** Gouvernorats at operational level `disaster` (points queued). */
   paused_gouvernorats: number[];
+}
+
+/** Cross-tabulations (2026-11-01): dimensions an intervention is counted across. */
+export const CROSS_DIMENSIONS = [
+  "category",
+  "classification",
+  "gouvernorat",
+  "resource",
+  "level",
+  "month",
+  "quarter",
+  "weekday",
+  "hour",
+] as const;
+export type CrossDimension = (typeof CROSS_DIMENSIONS)[number];
+
+export interface CrossCell {
+  count: number;
+  previous: number;
+  /** Change against the same period one year earlier; null when there was none then. */
+  change_pct: number | null;
+}
+
+export interface CrossTab {
+  rows: CrossDimension;
+  cols: CrossDimension;
+  from: string;
+  to: string;
+  previous_from: string;
+  previous_to: string;
+  row_keys: string[];
+  col_keys: string[];
+  cells: CrossCell[][];
+  row_totals: CrossCell[];
+}
+
+export interface CrossFinding {
+  dimension: "category" | "classification";
+  key: string;
+  gouvernorat_code: number | null;
+  count: number;
+  previous: number;
+  change_pct: number;
+  text_ar: string;
 }

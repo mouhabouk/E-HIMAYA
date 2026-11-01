@@ -366,6 +366,9 @@ class Settings(BaseSettings):
     # Public base of the API (QR of reward certificates → <base>/api/v1/rewards/certificates/<code>).
     # Production (compose.prod.yml): https://API_HOST.
     api_public_url: str = "http://localhost:8000"
+    # Where /api/v1/app/download sends a phone that scanned the app's QR code (a store page or the Office's hosting
+    # of the APK files). The QR codes print the stable API address, never this one.
+    app_download_url: str = "https://github.com/mouhabouk/E-HIMAYA/releases/latest"
 
     # Knowledge (phase 8, docs/api/phase-8-contract.md §2): events library search. OpenSearch 2 (security plugin on,
     # HTTPS with the installation's own CA, infra/opensearch) when SEARCH_BACKEND=opensearch and OPENSEARCH_URL is set;

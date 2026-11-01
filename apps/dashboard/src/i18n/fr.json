@@ -1613,7 +1613,8 @@
       "cardiac": "Urgence cardiaque",
       "trauma": "Traumatisme",
       "mass_casualty": "Nombreuses victimes",
-      "other": "Autre"
+      "other": "Autre",
+      "crop_fire": "Feu de cultures agricoles"
     },
     "assignment": {
       "title": "Ordres d’engagement",
@@ -2944,6 +2945,45 @@
       "cell": "Cellule",
       "centre": "Centre (lat, lon)",
       "count": "Signalements"
+    },
+    "cross": {
+      "title": "Croisements statistiques",
+      "intro": "Interventions comptées selon deux dimensions, chaque case comparée à la même période de l'année précédente.",
+      "findings": "Principales évolutions",
+      "rows": "Lignes",
+      "cols": "Colonnes",
+      "total": "Total",
+      "new": "nouveau",
+      "noResource": "Sans moyen",
+      "quarter": "T{{n}}",
+      "previous": "Année précédente : {{n}}",
+      "sameDimension": "Choisissez deux dimensions différentes.",
+      "caption": "Du {{from}} au {{to}}, comparé au {{pfrom}} – {{pto}}",
+      "dim": {
+        "category": "Nature",
+        "classification": "Classification",
+        "gouvernorat": "Gouvernorat",
+        "resource": "Moyen engagé",
+        "level": "Niveau opérationnel",
+        "month": "Mois",
+        "quarter": "Trimestre",
+        "weekday": "Jour",
+        "hour": "Heure"
+      },
+      "month": {
+        "1": "Janvier",
+        "2": "Février",
+        "3": "Mars",
+        "4": "Avril",
+        "5": "Mai",
+        "6": "Juin",
+        "7": "Juillet",
+        "8": "Août",
+        "9": "Septembre",
+        "10": "Octobre",
+        "11": "Novembre",
+        "12": "Décembre"
+      }
     }
   },
   "scenarios": {

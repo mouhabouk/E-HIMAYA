@@ -1613,7 +1613,8 @@
       "cardiac": "Cardiac emergency",
       "trauma": "Trauma",
       "mass_casualty": "Mass casualty",
-      "other": "Other"
+      "other": "Other",
+      "crop_fire": "Crop fire"
     },
     "assignment": {
       "title": "Assignment orders",
@@ -2944,6 +2945,45 @@
       "cell": "Cell",
       "centre": "Centre (lat, lon)",
       "count": "Reports"
+    },
+    "cross": {
+      "title": "Cross-tabulations",
+      "intro": "Interventions counted across two dimensions, each cell set against the same period one year earlier.",
+      "findings": "Main changes",
+      "rows": "Rows",
+      "cols": "Columns",
+      "total": "Total",
+      "new": "new",
+      "noResource": "No resource",
+      "quarter": "Q{{n}}",
+      "previous": "Previous year: {{n}}",
+      "sameDimension": "Pick two different dimensions.",
+      "caption": "{{from}} to {{to}}, against {{pfrom}} – {{pto}}",
+      "dim": {
+        "category": "Nature",
+        "classification": "Classification",
+        "gouvernorat": "Gouvernorat",
+        "resource": "Resource used",
+        "level": "Operational level",
+        "month": "Month",
+        "quarter": "Quarter",
+        "weekday": "Weekday",
+        "hour": "Hour"
+      },
+      "month": {
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December"
+      }
     }
   },
   "scenarios": {

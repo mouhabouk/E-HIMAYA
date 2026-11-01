@@ -9731,3 +9731,10 @@ button.nav-card:hover {
 .menu-order__group {
   margin-block: 0.5rem;
 }
+
+/* Cross-tabulations (analytics): a rise is the error tone, a fall the ok tone (fewer interventions is better). */
+.cross td { white-space: nowrap; }
+.cross__up { color: var(--error-text); font-weight: 600; }
+.cross__down { color: var(--ok-text); font-weight: 600; }
+.cross__findings { margin: 0 0 12px; padding-inline-start: 1.2em; }
+.cross__findings li { margin-bottom: 4px; }

@@ -19,13 +19,21 @@ import type {
   Trends,
 } from "../lib/phase8Types";
 
-export function makeOverview(overrides: Partial<AnalyticsOverview> = {}): AnalyticsOverview {
+export function makeOverview(
+  overrides: Partial<AnalyticsOverview> = {},
+): AnalyticsOverview {
   return {
     from: "2026-07-23",
     to: "2026-10-20",
     gouvernorats: [],
     category: null,
-    totals: { received: 1240, verified: 980, in_progress: 42, closed: 900, rejected: 61 },
+    totals: {
+      received: 1240,
+      verified: 980,
+      in_progress: 42,
+      closed: 900,
+      rejected: 61,
+    },
     response_time: {
       to_assignment: { mean_s: 312, p90_s: 840, n: 950 },
       to_on_scene: { mean_s: 1260, p90_s: 2400, n: 870 },
@@ -56,9 +64,30 @@ export function makeTrends(overrides: Partial<Trends> = {}): Trends {
     metric: "reports",
     interval: "week",
     points: [
-      { period_start: "2026-09-28", value: 80, last_year: 70, expected: 75, low: 60, high: 90 },
-      { period_start: "2026-10-05", value: 130, last_year: 72, expected: 78, low: 62, high: 94 },
-      { period_start: "2026-10-12", value: 85, last_year: null, expected: 76, low: 61, high: 92 },
+      {
+        period_start: "2026-09-28",
+        value: 80,
+        last_year: 70,
+        expected: 75,
+        low: 60,
+        high: 90,
+      },
+      {
+        period_start: "2026-10-05",
+        value: 130,
+        last_year: 72,
+        expected: 78,
+        low: 62,
+        high: 94,
+      },
+      {
+        period_start: "2026-10-12",
+        value: 85,
+        last_year: null,
+        expected: 76,
+        low: 61,
+        high: 92,
+      },
     ],
     baseline_available: true,
     unit: "count",
@@ -81,19 +110,33 @@ export function makeHotspots(): Hotspots {
     type: "FeatureCollection",
     cell_size_m: 5000,
     features: [
-      { type: "Feature", properties: { id: "12:40", count: 42 }, geometry: { type: "Polygon", coordinates: [hexRing(10.76, 34.74)] } },
-      { type: "Feature", properties: { id: "13:40", count: 7 }, geometry: { type: "Polygon", coordinates: [hexRing(10.18, 36.8)] } },
+      {
+        type: "Feature",
+        properties: { id: "12:40", count: 42 },
+        geometry: { type: "Polygon", coordinates: [hexRing(10.76, 34.74)] },
+      },
+      {
+        type: "Feature",
+        properties: { id: "13:40", count: 7 },
+        geometry: { type: "Polygon", coordinates: [hexRing(10.18, 36.8)] },
+      },
     ],
   };
 }
 
-export function makeScenario(overrides: Partial<ScenarioRun> = {}): ScenarioRun {
+export function makeScenario(
+  overrides: Partial<ScenarioRun> = {},
+): ScenarioRun {
   const hours = Array.from({ length: 6 }, (_, h) => ({
     hour: h,
     at: new Date(Date.UTC(2026, 9, 20, 8 + h)).toISOString(),
     demand: { p10: 2 + h, p50: 3 + h, p90: 5 + h },
     wait_minutes: { p10: 2, p50: 5 + h * 3, p90: 12 + h * 4 },
-    utilisation: { p10: 0.4, p50: Math.min(1, 0.5 + h * 0.1), p90: Math.min(1, 0.7 + h * 0.08) },
+    utilisation: {
+      p10: 0.4,
+      p50: Math.min(1, 0.5 + h * 0.1),
+      p90: Math.min(1, 0.7 + h * 0.08),
+    },
     overloaded: h >= 4,
   }));
   return {
@@ -121,12 +164,25 @@ export function makeScenario(overrides: Partial<ScenarioRun> = {}): ScenarioRun 
         capacity: 7,
         total_reports: { p10: 20, p50: 33, p90: 51 },
       },
-      assumptions: [{ ar: "يعاد تشغيل نسق الوصول التاريخي.", fr: "Le rythme d’arrivée historique est rejoué." }],
-      disclaimer: { ar: "أداة تخطيط مبنية على السجل.", fr: "Outil de planification fondé sur l’historique." },
+      assumptions: [
+        {
+          ar: "يعاد تشغيل نسق الوصول التاريخي.",
+          fr: "Le rythme d’arrivée historique est rejoué.",
+        },
+      ],
+      disclaimer: {
+        ar: "أداة تخطيط مبنية على السجل.",
+        fr: "Outil de planification fondé sur l’historique.",
+      },
       calibration: "uncalibrated",
-      calibration_note: { ar: "غير معاير.", fr: "Modèle non calibré sur des crises réelles." },
+      calibration_note: {
+        ar: "غير معاير.",
+        fr: "Modèle non calibré sur des crises réelles.",
+      },
       confidence: "low",
-      confidence_reasons: [{ ar: "سجل قصير.", fr: "Historique court (40 jours)." }],
+      confidence_reasons: [
+        { ar: "سجل قصير.", fr: "Historique court (40 jours)." },
+      ],
     },
     created_at: "2026-10-20T08:00:00Z",
     created_by: "u-1",
@@ -134,7 +190,9 @@ export function makeScenario(overrides: Partial<ScenarioRun> = {}): ScenarioRun 
   };
 }
 
-export function makeLibraryReport(overrides: Partial<LibraryReport> = {}): LibraryReport {
+export function makeLibraryReport(
+  overrides: Partial<LibraryReport> = {},
+): LibraryReport {
   return {
     id: "rep-1",
     kind: "period_summary",
@@ -155,7 +213,9 @@ export function makeLibraryReport(overrides: Partial<LibraryReport> = {}): Libra
   };
 }
 
-export function makeSchedule(overrides: Partial<ReportSchedule> = {}): ReportSchedule {
+export function makeSchedule(
+  overrides: Partial<ReportSchedule> = {},
+): ReportSchedule {
   return {
     id: "sch-1",
     title: "Hebdo Sfax",
@@ -174,7 +234,9 @@ export function makeSchedule(overrides: Partial<ReportSchedule> = {}): ReportSch
 
 const text = (ar: string, fr: string) => ({ ar, fr });
 
-export function makeMemoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+export function makeMemoryEntry(
+  overrides: Partial<MemoryEntry> = {},
+): MemoryEntry {
   return {
     id: "mem-1",
     title: text("حرائق غابات الكاف 2026", "Feux de forêt du Kef 2026"),
@@ -184,12 +246,21 @@ export function makeMemoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEnt
     gouvernorats: [61],
     geometry: null,
     incident_ids: ["0b6c2a3e-6a52-4b8a-9d1e-1f2e3d4c5b6a"],
-    summary: text("ملخص **الحدث**", "Résumé de l’**événement**\n\n<script>alert(1)</script>\n\n[lien](javascript:alert(1))"),
+    summary: text(
+      "ملخص **الحدث**",
+      "Résumé de l’**événement**\n\n<script>alert(1)</script>\n\n[lien](javascript:alert(1))",
+    ),
     strengths: text("", "- Mobilisation rapide"),
     weaknesses: text("", ""),
     lessons: text("", ""),
     recommendations: text("", ""),
-    sources: [{ title: "Rapport ONPC", url: "https://example.tn/rapport", media_id: null }],
+    sources: [
+      {
+        title: "Rapport ONPC",
+        url: "https://example.tn/rapport",
+        media_id: null,
+      },
+    ],
     access: "national",
     status: "draft",
     version: 3,
@@ -204,7 +275,9 @@ export function makeMemoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEnt
   };
 }
 
-export function makeSearch(overrides: Partial<LibrarySearch> = {}): LibrarySearch {
+export function makeSearch(
+  overrides: Partial<LibrarySearch> = {},
+): LibrarySearch {
   return {
     items: [
       {
@@ -234,7 +307,9 @@ export function makeSearch(overrides: Partial<LibrarySearch> = {}): LibrarySearc
   };
 }
 
-export function makeLibraryItem(overrides: Partial<LibraryItem> = {}): LibraryItem {
+export function makeLibraryItem(
+  overrides: Partial<LibraryItem> = {},
+): LibraryItem {
   return {
     kind: "transcript",
     id: "tr-1",
@@ -245,7 +320,15 @@ export function makeLibraryItem(overrides: Partial<LibraryItem> = {}): LibraryIt
     incident_id: "0b6c2a3e-6a52-4b8a-9d1e-1f2e3d4c5b6a",
     body: "Bonjour, il y a un feu près de la route.",
     fields: { duration_s: 74 },
-    media: [{ id: "m-9", kind: "audio", content_type: "audio/ogg", url: "https://s3.example/m-9?sig=x", duration_s: 74 }],
+    media: [
+      {
+        id: "m-9",
+        kind: "audio",
+        content_type: "audio/ogg",
+        url: "https://s3.example/m-9?sig=x",
+        duration_s: 74,
+      },
+    ],
     ...overrides,
   };
 }
@@ -285,7 +368,9 @@ export function makeBadge(overrides: Partial<BadgeAward> = {}): BadgeAward {
   };
 }
 
-export function makeNomination(overrides: Partial<Nomination> = {}): Nomination {
+export function makeNomination(
+  overrides: Partial<Nomination> = {},
+): Nomination {
   return {
     id: "n-1",
     kind: "vigilant_citizen",
@@ -306,7 +391,9 @@ export function makeNomination(overrides: Partial<Nomination> = {}): Nomination 
   };
 }
 
-export function makeRewardCertificate(overrides: Partial<RewardCertificate> = {}): RewardCertificate {
+export function makeRewardCertificate(
+  overrides: Partial<RewardCertificate> = {},
+): RewardCertificate {
   return {
     id: "rc-1",
     code: "RW-2026-0001",
@@ -319,7 +406,8 @@ export function makeRewardCertificate(overrides: Partial<RewardCertificate> = {}
     issued_by: "u-9",
     revoked_at: null,
     revoked_reason: null,
-    verify_url: "https://api.ehimaya.test/api/v1/rewards/certificates/RW-2026-0001",
+    verify_url:
+      "https://api.ehimaya.test/api/v1/rewards/certificates/RW-2026-0001",
     ...overrides,
   };
 }
@@ -329,58 +417,145 @@ export function fakePhase8Api(): Phase8Api {
     analyticsOverview: vi.fn(() => Promise.resolve(makeOverview())),
     analyticsTrends: vi.fn(() => Promise.resolve(makeTrends())),
     analyticsHotspots: vi.fn(() => Promise.resolve(makeHotspots())),
+    analyticsCrosstab: vi.fn(() =>
+      Promise.resolve({
+        rows: "classification" as const,
+        cols: "month" as const,
+        from: "2026-01-01",
+        to: "2026-12-31",
+        previous_from: "2025-01-01",
+        previous_to: "2025-12-31",
+        row_keys: ["crop_fire"],
+        col_keys: ["7"],
+        cells: [[{ count: 23, previous: 20, change_pct: 15 }]],
+        row_totals: [{ count: 23, previous: 20, change_pct: 15 }],
+      }),
+    ),
+    analyticsFindings: vi.fn(() =>
+      Promise.resolve([
+        {
+          dimension: "classification" as const,
+          key: "crop_fire",
+          gouvernorat_code: null,
+          count: 23,
+          previous: 20,
+          change_pct: 15,
+          text_ar:
+            "ارتفاع في عدد حرائق المحاصيل الزراعية بنسبة 15% مقارنة بالسنة الفارطة (23 مقابل 20)",
+        },
+      ]),
+    ),
     runScenario: vi.fn(() => Promise.resolve(makeScenario())),
-    scenarios: vi.fn(() => Promise.resolve({ items: [makeScenario()], next_cursor: null })),
+    scenarios: vi.fn(() =>
+      Promise.resolve({ items: [makeScenario()], next_cursor: null }),
+    ),
     scenario: vi.fn(() => Promise.resolve(makeScenario())),
-    reportNotifications: vi.fn(() => Promise.resolve({ items: [], next_cursor: null, unread: 0 })),
+    reportNotifications: vi.fn(() =>
+      Promise.resolve({ items: [], next_cursor: null, unread: 0 }),
+    ),
     markReportNotificationRead: vi.fn(() => Promise.resolve({})),
-    libraryReports: vi.fn(() => Promise.resolve({ items: [makeLibraryReport()], next_cursor: null })),
+    libraryReports: vi.fn(() =>
+      Promise.resolve({ items: [makeLibraryReport()], next_cursor: null }),
+    ),
     libraryReport: vi.fn(() => Promise.resolve(makeLibraryReport())),
-    createLibraryReport: vi.fn(() => Promise.resolve(makeLibraryReport({ status: "queued" }))),
-    libraryReportLink: vi.fn(() => Promise.resolve({ url: "https://s3.example/rep-1.pdf?sig=x" })),
+    createLibraryReport: vi.fn(() =>
+      Promise.resolve(makeLibraryReport({ status: "queued" })),
+    ),
+    libraryReportLink: vi.fn(() =>
+      Promise.resolve({ url: "https://s3.example/rep-1.pdf?sig=x" }),
+    ),
     schedules: vi.fn(() => Promise.resolve([makeSchedule()])),
     createSchedule: vi.fn(() => Promise.resolve(makeSchedule())),
     updateSchedule: vi.fn(() => Promise.resolve(makeSchedule())),
     deleteSchedule: vi.fn(() => Promise.resolve(undefined)),
-    memoryEntries: vi.fn(() => Promise.resolve({ items: [makeMemoryEntry()], next_cursor: null })),
+    memoryEntries: vi.fn(() =>
+      Promise.resolve({ items: [makeMemoryEntry()], next_cursor: null }),
+    ),
     memoryEntry: vi.fn(() => Promise.resolve(makeMemoryEntry())),
     createMemoryEntry: vi.fn(() => Promise.resolve(makeMemoryEntry())),
-    updateMemoryEntry: vi.fn(() => Promise.resolve(makeMemoryEntry({ version: 4 }))),
+    updateMemoryEntry: vi.fn(() =>
+      Promise.resolve(makeMemoryEntry({ version: 4 })),
+    ),
     deleteMemoryEntry: vi.fn(() => Promise.resolve(undefined)),
-    transitionMemoryEntry: vi.fn(() => Promise.resolve(makeMemoryEntry({ status: "in_review", version: 4 }))),
+    transitionMemoryEntry: vi.fn(() =>
+      Promise.resolve(makeMemoryEntry({ status: "in_review", version: 4 })),
+    ),
     memoryVersions: vi.fn(() => Promise.resolve([])),
     memoryVersion: vi.fn(),
-    memoryFromIncident: vi.fn(() => Promise.resolve(makeMemoryEntry({ id: "mem-new" }))),
+    memoryFromIncident: vi.fn(() =>
+      Promise.resolve(makeMemoryEntry({ id: "mem-new" })),
+    ),
     librarySearch: vi.fn(() => Promise.resolve(makeSearch())),
-    libraryGrid: vi.fn((level: CalendarLevel, on: string) => Promise.resolve(fakeGrid(level, on))),
-    libraryFigures: vi.fn((from: string, to: string) => Promise.resolve(fakeFigures(from, to))),
-    libraryTree: vi.fn(() => Promise.resolve({ by: "period" as const, nodes: [] })),
+    libraryGrid: vi.fn((level: CalendarLevel, on: string) =>
+      Promise.resolve(fakeGrid(level, on)),
+    ),
+    libraryFigures: vi.fn((from: string, to: string) =>
+      Promise.resolve(fakeFigures(from, to)),
+    ),
+    libraryTree: vi.fn(() =>
+      Promise.resolve({ by: "period" as const, nodes: [] }),
+    ),
     libraryItem: vi.fn(() => Promise.resolve(makeLibraryItem())),
     rewardSettings: vi.fn(() => Promise.resolve(REWARD_SETTINGS)),
     rewardRules: vi.fn(() =>
       Promise.resolve([
         makeRule(),
-        makeRule({ id: "rule-2", reason: "accurate_category", points: null, multiplier: 1.5 }),
+        makeRule({
+          id: "rule-2",
+          reason: "accurate_category",
+          points: null,
+          multiplier: 1.5,
+        }),
       ]),
     ),
-    createRewardRule: vi.fn(() => Promise.resolve(makeRule({ id: "rule-9", is_default: false, category: "fire" }))),
+    createRewardRule: vi.fn(() =>
+      Promise.resolve(
+        makeRule({ id: "rule-9", is_default: false, category: "fire" }),
+      ),
+    ),
     updateRewardRule: vi.fn(() => Promise.resolve(makeRule())),
     deleteRewardRule: vi.fn(() => Promise.resolve(undefined)),
-    badgeAwards: vi.fn(() => Promise.resolve({ items: [makeBadge()], next_cursor: null })),
-    decideBadge: vi.fn(() => Promise.resolve(makeBadge({ status: "confirmed" }))),
-    nominations: vi.fn(() => Promise.resolve({ items: [makeNomination()], next_cursor: null })),
+    badgeAwards: vi.fn(() =>
+      Promise.resolve({ items: [makeBadge()], next_cursor: null }),
+    ),
+    decideBadge: vi.fn(() =>
+      Promise.resolve(makeBadge({ status: "confirmed" })),
+    ),
+    nominations: vi.fn(() =>
+      Promise.resolve({ items: [makeNomination()], next_cursor: null }),
+    ),
     createNomination: vi.fn(() => Promise.resolve(makeNomination())),
-    decideNomination: vi.fn(() => Promise.resolve(makeNomination({ status: "approved" }))),
-    rewardCertificates: vi.fn(() => Promise.resolve({ items: [makeRewardCertificate()], next_cursor: null })),
-    issueRewardCertificate: vi.fn(() => Promise.resolve(makeRewardCertificate())),
-    revokeRewardCertificate: vi.fn(() => Promise.resolve(makeRewardCertificate())),
-    rewardCertificatePdf: vi.fn(() => Promise.resolve({ kind: "link" as const, url: "https://s3.example/rc-1.pdf?sig=x" })),
+    decideNomination: vi.fn(() =>
+      Promise.resolve(makeNomination({ status: "approved" })),
+    ),
+    rewardCertificates: vi.fn(() =>
+      Promise.resolve({ items: [makeRewardCertificate()], next_cursor: null }),
+    ),
+    issueRewardCertificate: vi.fn(() =>
+      Promise.resolve(makeRewardCertificate()),
+    ),
+    revokeRewardCertificate: vi.fn(() =>
+      Promise.resolve(makeRewardCertificate()),
+    ),
+    rewardCertificatePdf: vi.fn(() =>
+      Promise.resolve({
+        kind: "link" as const,
+        url: "https://s3.example/rc-1.pdf?sig=x",
+      }),
+    ),
     leaderboard: vi.fn(() =>
       Promise.resolve({
         scope: "national" as const,
         gouvernorat_code: null,
         year: 2026,
-        items: [{ rank: 1, pseudonym: "Faucon-482", points: 2150, gouvernorat_code: 61 }],
+        items: [
+          {
+            rank: 1,
+            pseudonym: "Faucon-482",
+            points: 2150,
+            gouvernorat_code: 61,
+          },
+        ],
       }),
     ),
   };

@@ -34,7 +34,7 @@ ASSIGNMENT_TRANSITIONS: dict[str, frozenset[str]] = {
 
 # Incident classification (تصنيف الحادث) per category; "other" is always allowed.
 CLASSIFICATIONS: dict[Category, tuple[str, ...]] = {
-    Category.FIRE: ("forest_fire", "residential_fire", "industrial_fire", "vehicle_fire"),
+    Category.FIRE: ("forest_fire", "crop_fire", "residential_fire", "industrial_fire", "vehicle_fire"),
     Category.FLOOD: ("river_flood", "urban_flood", "flash_flood"),
     Category.TRAFFIC_ACCIDENT: ("road_accident", "chemical_road_accident", "rail_accident"),
     Category.DROWNING: ("beach", "dam_or_lake", "well"),

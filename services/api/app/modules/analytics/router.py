@@ -16,7 +16,7 @@ from app.core import ratelimit
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.security import Principal, require_roles
-from app.modules.analytics import domain, scenario, schemas, service
+from app.modules.analytics import crosstab, domain, scenario, schemas, service
 from app.modules.analytics.models import Notification, Scenario
 from app.modules.audit import service as audit
 from app.modules.reports.domain import Category
@@ -60,6 +60,41 @@ async def trends(
     codes = service.resolve_scope(principal, _codes(gouvernorat))
     start, end = service.period(from_, to, service.DEFAULT_SPAN[interval])
     return await service.trends(session, codes, category.value if category else None, metric, interval, start, end)
+
+
+@router.get("/crosstab")
+async def cross_tabulation(
+    principal: Reader,
+    session: Session,
+    rows: crosstab.Dimension = "category",
+    cols: crosstab.Dimension = "month",
+    from_: Annotated[date | None, Query(alias="from")] = None,
+    to: date | None = None,
+    gouvernorat: Annotated[int | None, Query(ge=1, le=99)] = None,
+) -> dict[str, Any]:
+    """Interventions counted across two dimensions, each cell beside the same period one year earlier."""
+    if rows == cols:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "same_dimension")
+    codes = service.resolve_scope(principal, _codes(gouvernorat))
+    start, end = service.period(from_, to, service.DEFAULT_SPAN["month"])
+    return await crosstab.crosstab(session, rows, cols, codes, start, end)
+
+
+@router.get("/findings")
+async def findings(
+    principal: Reader,
+    session: Session,
+    from_: Annotated[date | None, Query(alias="from")] = None,
+    to: date | None = None,
+    gouvernorat: Annotated[int | None, Query(ge=1, le=99)] = None,
+) -> list[dict[str, Any]]:
+    """The year-on-year changes worth a sentence ("ارتفاع في عدد حرائق المحاصيل الزراعية بنسبة 15%…")."""
+    from app.modules.geo.models import Gouvernorat
+
+    codes = service.resolve_scope(principal, _codes(gouvernorat))
+    start, end = service.period(from_, to, service.DEFAULT_SPAN["month"])
+    names = dict((await session.execute(select(Gouvernorat.code, Gouvernorat.name_ar))).all())
+    return await crosstab.findings(session, codes, start, end, names)
 
 
 @router.get("/hotspots")

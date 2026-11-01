@@ -8,6 +8,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import print_footer
 from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.snacr.models import Plan
 
@@ -327,5 +328,9 @@ def render_html(plan: Plan, summary: dict[str, Any], names: dict[str, dict[int, 
 def render_pdf(page: str) -> bytes:
     from weasyprint import HTML
 
-    pdf: bytes = HTML(string=page).write_pdf()
+    pdf: bytes = HTML(
+        string=print_footer.apply(
+            page, ["منصة ء-حماية · الديوان الوطني للحماية المدنية", "المخطط الوطني لتحليل المخاطر وتغطيتها (SNACR)"]
+        )
+    ).write_pdf()
     return pdf

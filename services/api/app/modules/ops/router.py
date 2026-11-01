@@ -7,9 +7,10 @@ the loaded object before any change: 404 out of scope, 403 for an action the cal
 """
 
 import uuid
+from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import ACTION_NOT_ALLOWED, Action, active_grants, grant_covering
@@ -17,8 +18,19 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
-from app.modules.ops import crew, hospitals, interventions, record, record_suggest, requests, schemas, scope, service
-from app.modules.ops.models import Incident
+from app.modules.ops import (
+    crew,
+    hospitals,
+    interventions,
+    mission_sheet,
+    record,
+    record_suggest,
+    requests,
+    schemas,
+    scope,
+    service,
+)
+from app.modules.ops.models import Assignment, Incident
 from app.modules.reports import service as reports
 from app.modules.reports.models import Report
 from app.modules.reports.schemas import StaffReportDetail
@@ -382,6 +394,42 @@ async def save_record(
     )
     await session.commit()
     return await interventions.assignment_out(session, assignment_id)
+
+
+@router.get(
+    "/assignments/{assignment_id}/sheet",
+    response_class=Response,
+    responses={200: {"content": {"application/pdf": {}, "text/html": {}}}},
+)
+async def assignment_sheet(
+    principal: StaffReader,
+    session: Session,
+    assignment_id: uuid.UUID,
+    format: Annotated[str, Query(pattern="^(pdf|html)$")] = "pdf",
+) -> Response:
+    """The mission sheet (أمر مهمة) to print for the team: the order, the incident and its reporter, the place with
+    the map and the route, the institution's card, the team and the vehicle, the signatures (audited)."""
+    assignment = await session.get(Assignment, assignment_id)
+    if assignment is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    await service.get_in_scope(session, principal, assignment.incident_id)
+    return await _sheet(session, principal, assignment, format)
+
+
+async def _sheet(session: AsyncSession, principal: Principal, assignment: Assignment, format: str) -> Response:
+    sheet = await mission_sheet.gather(session, principal, assignment, datetime.now(UTC))
+    await _incident_audit(
+        session, principal, "assignment.sheet", assignment.incident_id, None, {"assignment_id": str(assignment.id)}
+    )
+    await session.commit()
+    page = mission_sheet.render_html(sheet)
+    if format == "html":
+        return Response(page, media_type="text/html; charset=utf-8")
+    return Response(
+        mission_sheet.render_pdf(page),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="mission-{sheet.number}.pdf"'},
+    )
 
 
 @router.post("/assignments/{assignment_id}/record/suggestions", response_model=list[schemas.TimeSuggestion])

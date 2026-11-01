@@ -8,6 +8,7 @@ import anyio
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import print_footer
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
@@ -136,7 +137,11 @@ def _pdf(card: s.CardOut, lang: Lang) -> bytes:
     )
     from weasyprint import HTML
 
-    pdf: bytes = HTML(string=page).write_pdf()
+    pdf: bytes = HTML(
+        string=print_footer.apply(
+            page, ["منصة ء-حماية · الديوان الوطني للحماية المدنية", "بطاقة نموذج الذكاء الاصطناعي"]
+        )
+    ).write_pdf()
     return pdf
 
 
