@@ -319,6 +319,10 @@ async def feature_guard(connection: HTTPConnection) -> None:
     path = registry.relative(getattr(route, "path", "") or "")
     if path is None or registry.is_staff_path(path) or path.startswith(registry.CREW + "/"):
         return
+    method = connection.scope.get("method", "GET")
+    # A route outside the catalogue (the person's own rights, the app's plumbing) is never closed: no token read.
+    if registry.get().owner(method, path) is None:
+        return
     if not await rules_in_force():
         return
     principal: Principal | None = None
@@ -328,7 +332,7 @@ async def feature_guard(connection: HTTPConnection) -> None:
             principal = await authenticate(header[7:].strip())
         except HTTPException:
             principal = None
-    await guard(principal, connection.scope.get("method", "GET"), getattr(route, "path", None))
+    await guard(principal, method, getattr(route, "path", None))
 
 
 def require_roles(*roles: Role) -> Callable[..., Awaitable[Principal]]:

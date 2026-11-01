@@ -144,8 +144,9 @@ def _check(principal: Principal, body: schemas.RuleIn, feature: Feature, now: da
     if body.ends_at is not None and (body.ends_at <= now or (body.starts_at and body.ends_at <= body.starts_at)):
         raise _refuse("invalid_period")
     if body.effect == "hide":
-        if "safety" in feature.flags:
-            # The emergency report, the SOS, the crew's alerts: never hidden.
+        if "safety" in feature.flags and feature.group in (*PUBLIC_GROUPS, "field_app"):
+            # The emergency report, the SOS, the crew's alerts: never hidden. (A dashboard safety feature such as the
+            # drill's stop may carry a rule; the drill itself keeps it for the rooms taking part.)
             raise _refuse("ceiling", reason="safety")
         if feature.page == service.PERMISSIONS and (
             body.target_kind == "everyone"
