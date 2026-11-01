@@ -1844,6 +1844,8 @@ erDiagram
         datetime created_at
         blob transcript_enc
         datetime transcribed_at
+        text stage
+        boolean spoken
     }
     ops__field_report {
         uuid id PK

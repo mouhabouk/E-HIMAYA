@@ -28,6 +28,8 @@ class AiClient(Protocol):
 
     async def extract(self, text: str, reported_category: str) -> dict[str, Any]: ...
 
+    async def tidy(self, text: str, lang: str | None = None) -> dict[str, Any]: ...
+
     async def health(self) -> dict[str, Any]: ...
 
 
@@ -67,6 +69,9 @@ class HttpAiClient:
 
     async def extract(self, text: str, reported_category: str) -> dict[str, Any]:
         return await self._post("/v1/extract", {"text": text, "reported_category": reported_category})
+
+    async def tidy(self, text: str, lang: str | None = None) -> dict[str, Any]:
+        return await self._post("/v1/tidy", {"text": text, "lang": lang})
 
     async def health(self) -> dict[str, Any]:
         try:

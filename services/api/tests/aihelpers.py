@@ -52,6 +52,7 @@ class FakeAi:
         self.transcript = {"text": "Il y a le feu au deuxième étage.", "language": "fr"}
         self.on_extract: Callable[[], Any] | None = None
         self.transcribe_options: dict[str, str | None] = {}
+        self.tidied: str | None = None
 
     def _check(self, name: str, arg: Any) -> None:
         self.calls.append((name, arg))
@@ -82,6 +83,10 @@ class FakeAi:
         if self.on_extract is not None:
             await self.on_extract()
         return {**self.extraction, "model": "qwen3-test"}
+
+    async def tidy(self, text: str, lang: str | None = None) -> dict[str, Any]:
+        self._check("tidy", text)
+        return {"text": self.tidied if self.tidied is not None else text, "model": "qwen3-test", "tidied": True}
 
     async def health(self) -> dict[str, Any]:
         return {"extract": {"ready": True, "model": "qwen3-test"}}

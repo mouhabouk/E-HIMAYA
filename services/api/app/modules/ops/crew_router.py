@@ -22,7 +22,7 @@ from app.modules.audit import service as audit
 from app.modules.decision import voice
 from app.modules.decision.schemas import VoiceOut
 from app.modules.features import service as features_service
-from app.modules.ops import crew, crew_flow, field_agents, interventions, record, schemas, templates
+from app.modules.ops import crew, crew_flow, field_agents, interventions, record, schemas, stage_voice, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.models import Assignment, CrewAlert, Shift, StaffDevice
 from app.modules.reports.staff_router import READ_ROLES, WRITE_ROLES
@@ -405,6 +405,44 @@ async def mission_voice(
     )
     await session.commit()
     return out
+
+
+@router.post(
+    "/missions/{assignment_id}/stage-voice",
+    response_model=schemas.StageVoiceOut,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {t: {"schema": {"type": "string", "format": "binary"}} for t in sorted(voice.VOICE_TYPES)},
+        }
+    },
+)
+async def stage_voice_in(
+    principal: Leader,
+    session: Session,
+    _device: Device,
+    request: Request,
+    assignment_id: uuid.UUID,
+    lang: Annotated[Literal["ar", "fr"], Query()] = "ar",
+) -> schemas.StageVoiceOut:
+    """A spoken word of the scene, from «غادرت الوحدة» on: transcribed, the audio deleted, the text tidied and sent
+    back for the leader to correct. Nothing reaches the room until ``/stage-message``."""
+    content_type = (request.headers.get("content-type") or "").split(";", 1)[0].strip().lower()
+    data = await _body(request, voice.MAX_BYTES)
+    out = await stage_voice.transcribe(
+        session, principal, assignment_id, get_ai_client(), get_store(), data, content_type, lang
+    )
+    await session.commit()
+    return out
+
+
+@router.post("/missions/{assignment_id}/stage-message", response_model=schemas.MissionOut)
+async def stage_message(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.StageMessageIn
+) -> schemas.MissionOut:
+    """The corrected message, on the incident's timeline under the mission's current step."""
+    assignment = await stage_voice.send(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.stage_message", assignment)
 
 
 @router.post("/missions/{assignment_id}/positions", response_model=schemas.PositionsOut)

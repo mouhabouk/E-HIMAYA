@@ -80,6 +80,18 @@ class ExtractOut(Extraction):
     model: str
 
 
+class TidyIn(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
+    lang: str | None = Field(default=None, max_length=8)
+
+
+class TidyOut(BaseModel):
+    text: str
+    model: str
+    #: False when the model's answer was refused (a number lost, too short or too long): the transcript as it was.
+    tidied: bool
+
+
 class CapabilityHealth(BaseModel):
     ready: bool
     model: str | None

@@ -193,3 +193,44 @@ def test_a_caller_vocabulary_replaces_the_default_hint(monkeypatch: pytest.Monke
     models.whisper.transcribe("x.webm", "ar")
     models.whisper.transcribe("x.webm", "fr")
     assert prompts[1:] == ["camion-citerne", get_settings().whisper_prompt_ar, None]
+
+
+def _tidy_answer(text: str) -> Any:
+    return lambda request: httpx.Response(200, json={"message": {"content": json.dumps({"text": text})}})
+
+
+def test_tidy_cleans_a_field_message(client: TestClient) -> None:
+    seen: list[dict[str, Any]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(json.loads(request.content))
+        return httpx.Response(200, json={"message": {"content": json.dumps({"text": "وصلنا. الحريق في الطابق 2."})}})
+
+    ollama(handler)
+    r = client.post("/v1/tidy", json={"text": "امم وصلنا وصلنا الحريق في الطابق 2", "lang": "ar"}, headers=AUTH)
+    assert r.status_code == 200, r.text
+    assert r.json() == {"text": "وصلنا. الحريق في الطابق 2.", "model": "qwen3:8b", "tidied": True}
+    assert "<transcript>" in seen[0]["messages"][1]["content"]
+    assert seen[0]["options"]["temperature"] == 0
+
+
+@pytest.mark.parametrize(
+    "answer",
+    [
+        "وصلنا. الحريق في الطابق.",  # a number lost
+        "وصلنا. الحريق في الطابق 2. هناك 5 جرحى ونطلب تعزيزات عاجلة من الوحدة المجاورة فورا.",  # a fact added
+    ],
+)
+def test_tidy_keeps_the_transcript_when_the_model_is_not_faithful(client: TestClient, answer: str) -> None:
+    ollama(_tidy_answer(answer))
+    source = "امم وصلنا وصلنا الحريق في الطابق ٢"
+    r = client.post("/v1/tidy", json={"text": source}, headers=AUTH)
+    assert r.status_code == 200 and r.json()["text"] == source and r.json()["tidied"] is False
+
+
+def test_tidy_when_ollama_is_down(client: TestClient) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("refused")
+
+    ollama(handler)
+    assert client.post("/v1/tidy", json={"text": "x"}, headers=AUTH).status_code == 503

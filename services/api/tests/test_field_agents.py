@@ -12,6 +12,7 @@ import httpx
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.ai.client import AiUnavailable
 from tests.test_crew import Staff, new_incident, write
 from tests.test_operations import make_resource, random_place
 
@@ -272,3 +273,54 @@ async def test_spoken_report(client: httpx.AsyncClient, staff: Staff, fake_ai: A
     again = write(text="نص آخر", voice_id=voice["voice_id"])
     assert (await leader.post(f"/missions/{assignment['id']}/report", again)).json()["detail"] == "voice_already_sent"
     assert uuid.UUID(voice["voice_id"])
+
+
+async def test_a_spoken_word_at_every_step(
+    client: httpx.AsyncClient, staff: Staff, fake_ai: Any, fake_store: Any
+) -> None:
+    """Yamen, 2026-11-01: from «غادرت الوحدة» on, the leader speaks, the platform transcribes and tidies, the leader
+    corrects and sends; the room reads it under the mission's step."""
+    leader, _crew, assignment, _ = await _mission(client, staff)
+    mission = f"/missions/{assignment['id']}"
+    url = f"/api/v1/crew{mission}/stage-voice"
+    audio = {**leader.h, "Content-Type": "audio/webm"}
+    # Before leaving the unit there is no step to speak about.
+    r = await client.post(url, content=b"audio", headers=audio)
+    assert (r.status_code, r.json()["detail"]) == (409, "not_left_yet")
+
+    assert (await leader.post(f"{mission}/status", write(status="en_route"))).status_code == 200
+    fake_ai.transcript = {"text": "امم الدخان كثيف كثيف والطريق مغلقة", "language": "ar"}
+    fake_ai.tidied = "الدخان كثيف، والطريق مغلقة."
+    r = await client.post(url, content=b"audio", headers=audio)
+    assert r.status_code == 200, r.text
+    heard = r.json()
+    assert heard["transcript"] == "امم الدخان كثيف كثيف والطريق مغلقة"
+    assert (heard["text"], heard["tidied_by"], heard["stage"]) == ("الدخان كثيف، والطريق مغلقة.", "model", "en_route")
+    assert not fake_store.objects  # the audio is never kept
+
+    sent = write(text="الدخان كثيف، والطريق مغلقة. نسلك الطريق الثانوية.", voice_id=heard["voice_id"])
+    r = await leader.post(f"{mission}/stage-message", sent)
+    assert r.status_code == 200, r.text
+    assert (await leader.post(f"{mission}/stage-message", sent)).status_code == 200  # sent twice, kept once
+    again = write(text="نص آخر", voice_id=heard["voice_id"])
+    assert (await leader.post(f"{mission}/stage-message", again)).json()["detail"] == "voice_already_sent"
+
+    # Without the language model, the rules tidy it; a typed message needs no voice.
+    fake_ai.fail["tidy"] = AiUnavailable("down")
+    assert (await leader.post(f"{mission}/status", write(status="on_scene"))).status_code == 200
+    r = await client.post(url, content=b"audio", headers=audio)
+    assert (r.json()["text"], r.json()["tidied_by"], r.json()["stage"]) == (
+        "الدخان كثيف والطريق مغلقة.",
+        "rules",
+        "on_scene",
+    )
+    assert (await leader.post(f"{mission}/stage-message", write(text="وصلنا، حريق في مستودع"))).status_code == 200
+
+    r = await client.get(f"/api/v1/staff/incidents/{assignment['incident_id']}", headers=staff(["operator"]))
+    stages = [(a["stage"], a["spoken"]) for a in r.json()["attachments"] if a["stage"]]
+    assert stages == [("en_route", True), ("on_scene", False)]
+    r = await client.get(f"/api/v1/staff/incidents/{assignment['incident_id']}/timeline", headers=staff(["operator"]))
+    if r.status_code == 200:
+        items = r.json() if isinstance(r.json(), list) else r.json().get("items", [])
+        marks = [i["payload"].get("stage") for i in items if i["kind"] == "field_attachment"]
+        assert {"en_route", "on_scene"} <= set(marks)

@@ -19,6 +19,7 @@ from fastapi.responses import JSONResponse
 
 from app import extract as llm
 from app import models
+from app import tidy as tidier
 from app.config import get_settings
 from app.media import MediaError, downloaded
 from app.models import ModelUnavailable
@@ -30,6 +31,8 @@ from app.schemas import (
     ExtractOut,
     HealthOut,
     Segment,
+    TidyIn,
+    TidyOut,
     TranscribeIn,
     TranscribeOut,
     TranslateIn,
@@ -151,3 +154,11 @@ async def extract(request: Request, body: ExtractIn, _: Authorized) -> ExtractOu
         except ValueError as exc:
             raise HTTPException(502, str(exc)) from exc
     return ExtractOut(**extraction.model_dump(), model=model)
+
+
+@app.post("/v1/tidy", response_model=TidyOut)
+async def tidy(request: Request, body: TidyIn, _: Authorized) -> TidyOut:
+    """A field team's transcript made readable (spelling, punctuation, hesitations), facts untouched."""
+    async with request.app.state.limits["llm"]:
+        text, model, tidied = await tidier.tidy(body.text, body.lang, request.app.state.http)
+    return TidyOut(text=text, model=model, tidied=tidied)
