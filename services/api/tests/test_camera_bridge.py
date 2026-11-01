@@ -140,7 +140,8 @@ async def test_heartbeat_and_key_renewal(
     assert seen is not None
     # Another gouvernorat's manager cannot renew it; the renewed key replaces the old one at once.
     url = f"/api/v1/staff/streams/{cam}/event-key"
-    assert (await client.post(url, headers=staff(["ops_manager"], gouvernorat=21))).status_code == 403
+    # Row-level security hides the camera from another gouvernorat (404); without it, the scope check refuses (403).
+    assert (await client.post(url, headers=staff(["ops_manager"], gouvernorat=21))).status_code in (403, 404)
     r = await client.post(url, headers=staff(["ops_manager"], gouvernorat=11))
     assert r.status_code == 200 and r.json()["key"] != key
     at = datetime.now(UTC).isoformat()

@@ -22,7 +22,15 @@ CREW_PREFIX = "/api/v1/crew"
 CREW = "/@crew"
 PUBLIC = "/@public"
 # Public routes that stay out of the catalogue: the app's own plumbing, and what the platform never hides.
-_PUBLIC_SKIP = ("/api/v1/app/", "/api/v1/geo/", "/api/v1/basemap/", "/api/v1/field/", "/api/v1/admin/")
+_PUBLIC_SKIP = (
+    "/api/v1/app/",
+    "/api/v1/geo/",
+    "/api/v1/basemap/",
+    "/api/v1/field/",
+    "/api/v1/admin/",
+    # The camera bridges: machines signing with their camera's key, no person to grant or deny a button.
+    "/api/v1/camera-events",
+)
 WRITE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 TECHNICAL = frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN})
 # Least privileged first: the role a grantee acts as when the catalogue does not name one.
