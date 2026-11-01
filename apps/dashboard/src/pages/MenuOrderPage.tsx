@@ -14,6 +14,7 @@ import {
   MENU_ORDER_KEY,
   menuOrderOf,
   moved,
+  movedTo,
   type MenuOrder,
 } from "../lib/menuOrder";
 import { settingOf, usePlatformSettings } from "../lib/phase9";
@@ -26,12 +27,15 @@ function Sortable<T>({
   labelOf,
   onChange,
   name,
+  move,
 }: {
   items: readonly T[];
   keyOf: (x: T) => string;
   labelOf: (x: T) => string;
   onChange: (next: T[]) => void;
   name: string;
+  /** The groups a link can move to (phase 5), with the one it is in. */
+  move?: { current: string; groups: { key: string; label: string }[]; onMove: (x: T, to: string) => void };
 }) {
   const { t } = useTranslation();
   const [dragging, setDragging] = useState<number | null>(null);
@@ -76,6 +80,20 @@ function Sortable<T>({
           >
             ↓
           </button>
+          {move && (
+            <select
+              className="sortable__move"
+              aria-label={t("menuOrder.moveTo", { name: labelOf(x) })}
+              value={move.current}
+              onChange={(e) => move.onMove(x, e.target.value)}
+            >
+              {move.groups.map((g) => (
+                <option key={g.key} value={g.key}>
+                  {g.label}
+                </option>
+              ))}
+            </select>
+          )}
         </li>
       ))}
     </ol>
@@ -130,6 +148,12 @@ export function MenuOrderPage() {
     menuOrderOf(setting?.value),
   );
   const groups = draft ?? saved;
+  // Every axis of the menu, even one the moves left empty, so a link can go back to it.
+  const builtIn = navGroups(user.identity, t);
+  const allGroups = [
+    ...groups,
+    ...builtIn.filter((b) => !groups.some((g) => g.key === b.key)).map((b) => ({ ...b, items: [] })),
+  ];
   const editable = setting?.editable ?? false;
   const setGroup = (key: string, items: NavGroup["items"]) =>
     setDraft(groups.map((g) => (g.key === key ? { ...g, items } : g)));
@@ -156,7 +180,7 @@ export function MenuOrderPage() {
           onChange={setDraft}
           name={t("menuOrder.groups")}
         />
-        {groups.map((g) => (
+        {allGroups.map((g) => (
           <details key={g.key} className="menu-order__group">
             <summary>
               <Icon name={g.icon} size={18} /> {g.label}
@@ -167,6 +191,11 @@ export function MenuOrderPage() {
               labelOf={(i) => i.label}
               onChange={(items) => setGroup(g.key, items)}
               name={g.label}
+              move={{
+                current: g.key,
+                groups: allGroups.map((x) => ({ key: x.key, label: x.label })),
+                onMove: (item, to) => setDraft(movedTo(allGroups, item.to, to)),
+              }}
             />
           </details>
         ))}

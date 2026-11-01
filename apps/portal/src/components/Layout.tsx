@@ -6,6 +6,7 @@ import { IconTile } from "./Icon";
 import { LANGUAGES } from "../i18n";
 import { useLanguage } from "../lib/hooks";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
+import { AnnouncementBanner } from "./AnnouncementBanner";
 import { EnvironmentStrip } from "./EnvironmentStrip";
 
 /** One button per language, each labelled in its own language (and `lang`), the current one pressed. */
@@ -158,6 +159,7 @@ export function Layout() {
           )}
         </div>
       </header>
+      <AnnouncementBanner />
       <main id="main" tabIndex={-1} className="main">
         <Outlet />
       </main>

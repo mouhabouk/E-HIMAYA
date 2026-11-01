@@ -42,14 +42,47 @@ function byOrder<T>(
     .map((e) => e.x);
 }
 
+/**
+ * The menu in the administrator's order. A link named under another group than its own moves there (phase 5: the
+ * administrator moves an element from one axis to another); a link named nowhere stays in its built-in group. A group
+ * left empty by the moves is dropped.
+ */
 export function applyMenuOrder(
   groups: readonly NavGroup[],
   order: MenuOrder,
 ): NavGroup[] {
-  return byOrder(groups, (g) => g.key, order.groups).map((g) => ({
+  const home = new Map<string, string>();
+  for (const [key, paths] of Object.entries(order.items)) {
+    if (!groups.some((g) => g.key === key)) continue;
+    for (const p of paths) if (!home.has(p)) home.set(p, key);
+  }
+  const all = groups.flatMap((g) => g.items.map((i) => ({ i, from: g.key })));
+  const placed = groups.map((g) => ({
     ...g,
-    items: byOrder(g.items, (i) => i.to, order.items[g.key] ?? []),
+    items: all
+      .filter(({ i, from }) => (home.get(i.to) ?? from) === g.key)
+      .map(({ i }) => i),
   }));
+  return byOrder(placed, (g) => g.key, order.groups)
+    .map((g) => ({
+      ...g,
+      items: byOrder(g.items, (i) => i.to, order.items[g.key] ?? []),
+    }))
+    .filter((g) => g.items.length > 0);
+}
+
+/** Moves the link at `path` to the end of group `to` (phase 5: from one axis to another). */
+export function movedTo(
+  groups: readonly NavGroup[],
+  path: string,
+  to: string,
+): NavGroup[] {
+  const item = groups.flatMap((g) => g.items).find((i) => i.to === path);
+  if (!item) return [...groups];
+  return groups.map((g) => {
+    const rest = g.items.filter((i) => i.to !== path);
+    return g.key === to ? { ...g, items: [...rest, item] } : { ...g, items: rest };
+  });
 }
 
 /** Moves the element at `from` to `to` (drag and drop, or the up and down buttons). */

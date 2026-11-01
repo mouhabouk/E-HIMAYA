@@ -18,7 +18,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
-from app.core.security import Principal, Role
+from app.core.security import Principal, Realm, Role
 from app.modules.features import registry
 from app.modules.features.models import FeatureRule
 from app.modules.features.registry import TECHNICAL, WRITE_METHODS, Feature
@@ -38,7 +38,7 @@ class Rule:
     id: uuid.UUID
     feature_key: str
     effect: Literal["grant", "hide"]
-    target_kind: Literal["user", "role"]
+    target_kind: Literal["user", "role", "everyone"]
     target: str
     gouvernorat_code: int | None
     starts_at: datetime | None
@@ -111,7 +111,8 @@ def state(principal: Principal, feature: Feature, rules: Iterable[Rule], now: da
             r.target_kind == "role"
             and r.target in principal.roles
             and (r.gouvernorat_code is None or r.gouvernorat_code == principal.gouvernorat_code)
-        ):
+        ) or r.target_kind == "everyone":
+            # A rule for everyone (phase 5: a window closed for all the users of a surface) counts as a role rule.
             of_roles.append(r.effect)
     level = mine or of_roles
     if "hide" in level:
@@ -185,9 +186,10 @@ def elevate(principal: Principal, feature: Feature) -> Principal:
 
 async def apply(principal: Principal, method: str, route_path: str | None) -> Principal:
     """Refuse a hidden route (403 feature_hidden) and lend the granted role on a granted one."""
-    if not principal.is_staff or route_path is None or not route_path.startswith(registry.STAFF_PREFIX + "/"):
+    path = registry.relative(route_path) if route_path is not None else None
+    if not principal.is_staff or path is None:
         return principal
-    chain = registry.get().match(method, route_path[len(registry.STAFF_PREFIX) :])
+    chain = registry.get().match(method, path)
     if not chain:
         return principal
     rules = await rules_in_force()
@@ -202,6 +204,55 @@ async def apply(principal: Principal, method: str, route_path: str | None) -> Pr
     if outcome.granted is not None:
         return elevate(principal, outcome.granted)
     return principal
+
+
+def _hidden_for(principal: Principal | None, chain: Sequence[Feature], method: str, rules: Iterable[Rule]) -> bool:
+    if principal is None:
+        rules = [r for r in rules if r.target_kind == "everyone"]
+        return decide(Principal("", Realm.PUBLIC, frozenset()), chain, method, rules, datetime.now(UTC)).hidden
+    return decide(principal, chain, method, rules, datetime.now(UTC)).hidden
+
+
+async def guard(principal: Principal | None, method: str, route_path: str | None) -> None:
+    """The citizen app and the portal (phase 5): a window the administrator closed answers 403 feature_hidden, to an
+    anonymous caller too. Staff callers are decided by ``apply`` (their roles, the grants)."""
+    if principal is not None and principal.is_staff:
+        return
+    path = registry.relative(route_path) if route_path is not None else None
+    if path is None or registry.is_staff_path(path):
+        return
+    chain = registry.get().match(method, path)
+    if not chain:
+        return
+    rules = await rules_in_force()
+    if not rules:
+        return
+    if _hidden_for(principal, chain, method, rules):
+        from fastapi import HTTPException, status
+
+        log.info("feature_hidden", feature=chain[0].key)
+        raise HTTPException(status.HTTP_403_FORBIDDEN, FEATURE_HIDDEN)
+
+
+async def hidden_keys(principal: Principal | None, surfaces: Iterable[str]) -> list[str]:
+    """The features of the given groups hidden from the caller (the apps and the portal hide their windows)."""
+    reg = registry.get()
+    rules = await rules_in_force()
+    groups = set(surfaces)
+    out: list[str] = []
+    for key in reg.order:
+        f = reg.features[key]
+        if f.group not in groups:
+            continue
+        chain = [f] if f.parent is None else [f, reg.features[f.parent]]
+        method = "POST" if f.kind == "button" else "GET"
+        if principal is not None and principal.is_staff:
+            hidden = decide(principal, chain, method, rules, datetime.now(UTC)).hidden
+        else:
+            hidden = _hidden_for(principal, chain, method, rules)
+        if hidden:
+            out.append(key)
+    return out
 
 
 @dataclass(frozen=True, slots=True)

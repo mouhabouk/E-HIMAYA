@@ -114,3 +114,8 @@ async def update(
     )
     await emit(session, "settings.changed", {"key": key})
     return row
+
+
+async def announcement(session: AsyncSession, surface: str) -> dict[str, str] | None:
+    """Phase 5: the administrator's message as ``surface`` shows it now, or None."""
+    return domain.shown(await get(session, domain.ANNOUNCEMENT), surface)

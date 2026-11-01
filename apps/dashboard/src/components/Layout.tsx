@@ -17,6 +17,7 @@ import { applyTheme, nextTheme, storedTheme, THEMES, type Theme } from "../lib/t
 import { NoAccessPage } from "../pages/NoAccessPage";
 import { AlertFollowUpToasts } from "./AlertFollowUpToasts";
 import { ActiveGrantBanner } from "./BreakGlass";
+import { AnnouncementBanner } from "./Announcement";
 import { EnvironmentStrip } from "./EnvironmentStrip";
 import { LevelBanner } from "./LevelBanner";
 import { SoftphoneDock } from "./Softphone";
@@ -329,6 +330,7 @@ export function Layout() {
       </header>
       <div className="shell__body">
         <LevelBanner />
+        <AnnouncementBanner />
         {canRequestBreakGlass(identity.roles) && (
           <div className="shell__banner">
             <ActiveGrantBanner />

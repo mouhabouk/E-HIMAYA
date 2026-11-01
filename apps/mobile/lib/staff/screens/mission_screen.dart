@@ -53,6 +53,8 @@ class MissionScreen extends ConsumerWidget {
         m.status == MissionStatus.onScene || m.status == MissionStatus.released;
     // Phase F: only the leader's phone records the mission; the crew reads it.
     final readOnly = s.me?.readOnly ?? false;
+    // Phase 5: what the system administrator hid from this account (the server refuses it anyway).
+    bool shows(String key) => s.me?.shows(key) ?? true;
     return Scaffold(
       appBar: StaffAppBar(
         title: l10n.staffMission,
@@ -84,7 +86,9 @@ class MissionScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 MissionPointCard(mission: m),
                 const SizedBox(height: 12),
-                if (!readOnly && (m.over || m.leftSceneAt != null))
+                if (!readOnly &&
+                    shows('field_missions.reports') &&
+                    (m.over || m.leftSceneAt != null))
                   NavCard(
                     key: const Key('open-toll'),
                     icon: Icons.summarize,
@@ -97,7 +101,7 @@ class MissionScreen extends ConsumerWidget {
                           ),
                     onTap: () => push(context, TollScreen(missionId: m.id)),
                   ),
-                if (!readOnly)
+                if (!readOnly && shows('field_missions.reports'))
                   NavCard(
                     key: const Key('open-report'),
                     icon: Icons.record_voice_over,
@@ -116,7 +120,7 @@ class MissionScreen extends ConsumerWidget {
                     ),
                   ),
                 // Phase D, review point 17: the room sees the scene live.
-                if (!readOnly && !m.over)
+                if (!readOnly && !m.over && shows('field_missions.stream'))
                   NavCard(
                     key: const Key('open-live'),
                     icon: Icons.videocam,
@@ -128,41 +132,44 @@ class MissionScreen extends ConsumerWidget {
                   ),
                 if (onScene && !readOnly) ...[
                   const SizedBox(height: 12),
-                  NavCard(
-                    key: const Key('open-situation'),
-                    icon: Icons.assignment,
-                    tone: m.fieldReport == null ? Tone.orange : Tone.navy,
-                    title: l10n.staffSituation,
-                    subtitle: m.fieldReport == null
-                        ? l10n.staffSituationDue
-                        : l10n.staffSituationLast(
-                            hhmm(m.fieldReport!.createdAt ?? m.createdAt),
-                            severityLabel(l10n, m.fieldReport!.severity ?? 1),
-                          ),
-                    onTap: () =>
-                        push(context, SituationScreen(missionId: m.id)),
-                  ),
-                  NavCard(
-                    key: const Key('open-record'),
-                    icon: Icons.groups,
-                    tone: Tone.navy,
-                    title: l10n.staffRecordTitle,
-                    subtitle: l10n.staffRecordAgents(
-                      m.crewCount ?? s.me?.shift?.crewSize ?? 0,
+                  if (shows('field_missions.reports'))
+                    NavCard(
+                      key: const Key('open-situation'),
+                      icon: Icons.assignment,
+                      tone: m.fieldReport == null ? Tone.orange : Tone.navy,
+                      title: l10n.staffSituation,
+                      subtitle: m.fieldReport == null
+                          ? l10n.staffSituationDue
+                          : l10n.staffSituationLast(
+                              hhmm(m.fieldReport!.createdAt ?? m.createdAt),
+                              severityLabel(l10n, m.fieldReport!.severity ?? 1),
+                            ),
+                      onTap: () =>
+                          push(context, SituationScreen(missionId: m.id)),
                     ),
-                    onTap: () =>
-                        push(context, MissionRecordScreen(missionId: m.id)),
-                  ),
-                  NavCard(
-                    key: const Key('open-transports'),
-                    icon: Icons.local_hospital,
-                    tone: Tone.green,
-                    title: l10n.staffTransportTitle,
-                    subtitle: l10n.staffTransportsCount(m.transports.length),
-                    onTap: () =>
-                        push(context, TransportScreen(missionId: m.id)),
-                  ),
-                  if (m.template != null)
+                  if (shows('field_missions.record'))
+                    NavCard(
+                      key: const Key('open-record'),
+                      icon: Icons.groups,
+                      tone: Tone.navy,
+                      title: l10n.staffRecordTitle,
+                      subtitle: l10n.staffRecordAgents(
+                        m.crewCount ?? s.me?.shift?.crewSize ?? 0,
+                      ),
+                      onTap: () =>
+                          push(context, MissionRecordScreen(missionId: m.id)),
+                    ),
+                  if (shows('field_missions.casualties'))
+                    NavCard(
+                      key: const Key('open-transports'),
+                      icon: Icons.local_hospital,
+                      tone: Tone.green,
+                      title: l10n.staffTransportTitle,
+                      subtitle: l10n.staffTransportsCount(m.transports.length),
+                      onTap: () =>
+                          push(context, TransportScreen(missionId: m.id)),
+                    ),
+                  if (m.template != null && shows('field_missions.reports'))
                     NavCard(
                       key: const Key('open-detailed'),
                       icon: Icons.fact_check,

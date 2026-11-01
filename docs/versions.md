@@ -762,3 +762,7 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     `infra/security/harden-host.sh` (`--check` أو `--apply`، الملف الحامل `demo` أو `prod`) وسكربت القياس `audit.sh`
     و `compare.py` (مكتبة Python القياسية فقط). مولّدات الوثائق في `docs/deliverables` تحتاج `npm install` هناك
     (docx 9.5، pptxgenjs 4.0، bpmn-js 18، sharp 0.35) و LibreOffice للتحويل إلى PDF.
+42. المرحلة G (المرحلة 5): لا حزمة جديدة. `alembic upgrade head` (0092) يضيف الهدف «الجميع» لقواعد الخصائص (إخفاء فقط،
+    على كل الولايات). مسارات تطبيق الأعوان والتطبيق والبوابة دخلت فهرس الصلاحيات، والإعداد `app.announcement` (رسالة
+    المدير) بقيمته الافتراضية غير المفعّلة. أداة Graphviz (`apt install graphviz`) لازمة فقط لإعادة توليد النموذج العلائقي
+    (`docs/deliverables/data-model`).

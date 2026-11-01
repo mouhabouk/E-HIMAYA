@@ -438,3 +438,14 @@ describe("certificate (FR-B-008)", () => {
     expect(screen.queryByRole("button", { name: "Submit for review" })).not.toBeInTheDocument();
   });
 });
+
+describe("phase 5: the sections the administrator closed", () => {
+  it("leaves a closed section out of the navigation", async () => {
+    open("/orgs/o-1", {}, {
+      "GET /api/v1/app/features": { body: { hidden: ["portal_hazmat"], announcement: null } },
+    });
+    expect(await screen.findByRole("heading", { name: "Société X" })).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole("link", { name: /Hazardous materials/ })).toBeNull());
+    expect(screen.getByRole("link", { name: /Equipment/ })).toBeInTheDocument();
+  });
+});

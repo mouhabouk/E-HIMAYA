@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 Effect = Literal["grant", "hide"]
-TargetKind = Literal["user", "role"]
+TargetKind = Literal["user", "role", "everyone"]
 
 
 class Names(BaseModel):
@@ -28,6 +28,15 @@ class FeatureOut(BaseModel):
     routes: list[str]
 
 
+class Announcement(BaseModel):
+    """The system administrator's message, shown at once (phase 5)."""
+
+    tone: Literal["info", "warn"]
+    ar: str
+    fr: str
+    en: str
+
+
 class Mine(BaseModel):
     """What the administrator's rules change for the caller: the dashboard opens and hides accordingly."""
 
@@ -35,6 +44,15 @@ class Mine(BaseModel):
     hidden: list[str]
     # The role each granted feature lends on its own routes (the dashboard shows its buttons accordingly).
     lent: dict[str, str]
+    # Phase 5: the administrator's message for the dashboard.
+    announcement: Announcement | None = None
+
+
+class Hidden(BaseModel):
+    """The windows and buttons of the field app, the citizen app or the portal hidden from the caller (phase 5)."""
+
+    hidden: list[str]
+    announcement: Announcement | None = None
 
 
 class RuleIn(BaseModel):

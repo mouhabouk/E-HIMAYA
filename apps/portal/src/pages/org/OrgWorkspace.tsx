@@ -7,6 +7,7 @@ import { ErrorBox, Loading } from "../../components/Feedback";
 import { useServices } from "../../context/services";
 import { isApiError } from "../../lib/api";
 import { queryKeys } from "../../lib/portalApi";
+import { useAdminFeatures } from "../../lib/hooks";
 import { blockedReason, can, type OrgAction } from "../../lib/roles";
 import type { Organization } from "../../lib/types";
 import { PageTitle } from "../../components/PageTitle";
@@ -38,12 +39,19 @@ export const TABS: readonly { path: string; key: string; icon: IconName; tone: T
   { path: "prevention", key: "prevention", icon: "policy", tone: "purple" },
 ];
 
+/** The catalogue key of a section (the administrator's permissions, phase 5); the overview is never closed. */
+export function featureOfTab(key: string): string {
+  return key === "overview" ? "" : key === "card" ? "portal_org" : `portal_${key}`;
+}
+
 /** Workspace of one institution: header, section navigation and the selected section. */
 export function OrgWorkspace() {
   const { t } = useTranslation();
   const { orgId = "" } = useParams();
   const { api } = useServices();
   const query = useQuery({ queryKey: queryKeys.org(orgId), queryFn: ({ signal }) => api.org(orgId, signal) });
+  // Phase 5: the sections the system administrator closed leave the navigation.
+  const closed = new Set(useAdminFeatures().data?.hidden ?? []);
 
   if (query.isPending) return <Loading />;
   if (query.isError) {
@@ -86,7 +94,7 @@ export function OrgWorkspace() {
         </div>
       </div>
       <nav className="tabs" aria-label={t("workspace.sections")}>
-        {TABS.map((tab) => (
+        {TABS.filter((tab) => !closed.has(featureOfTab(tab.key))).map((tab) => (
           <NavLink key={tab.key} to={tab.path ? `${base}/${tab.path}` : base} end={tab.path === ""}>
             <IconTile name={tab.icon} tone={tab.tone} size="sm" />
             {t(`workspace.tabs.${tab.key}`)}

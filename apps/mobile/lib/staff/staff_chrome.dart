@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/settings/settings_controller.dart';
 import '../core/ui/brand.dart';
 import '../core/ui/language_bar.dart';
 import '../core/ui/tokens.dart';
@@ -86,6 +87,45 @@ class StaffAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 /// Under the bar: green "connected · updated N s ago", or amber "no connection · last copy".
+/// Phase 5: the system administrator's message, on top of every screen of the field app.
+class AnnouncementStrip extends ConsumerWidget {
+  const AnnouncementStrip({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final a = ref.watch(
+      staffControllerProvider.select((s) => s.me?.announcement),
+    );
+    if (a == null) return const SizedBox.shrink();
+    final c = (a.warn ? Tone.amber : Tone.sky).colors(context);
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        key: const Key('announcement'),
+        width: double.infinity,
+        color: c.tint,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            Icon(
+              a.warn ? Icons.warning_amber : Icons.campaign,
+              size: 18,
+              color: c.onTint,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                a.textIn(ref.watch(localeCodeProvider)),
+                style: TextStyle(color: c.onTint, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ConnectionStrip extends ConsumerStatefulWidget {
   const ConnectionStrip({super.key});
 
@@ -111,7 +151,12 @@ class _ConnectionStripState extends ConsumerState<ConnectionStrip> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [const AnnouncementStrip(), _strip(context)],
+  );
+
+  Widget _strip(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final (offline, sync, pending) = ref.watch(
       staffControllerProvider.select((s) => (s.offline, s.lastSync, s.pending)),

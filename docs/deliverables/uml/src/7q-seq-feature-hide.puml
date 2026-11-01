@@ -1,0 +1,26 @@
+@startuml
+!include style.iuml
+title Séquence : l'administrateur masque un bouton de l'app des agents (G)
+actor "Administrateur système" as A
+participant "Tableau de bord" as D
+participant "API" as API
+database "PostgreSQL\naccess.feature_rule" as DB
+participant "App des agents" as M
+actor "Chef d'équipe" as C
+A -> D : Permissions > field_missions.record\nmasquer, rôle chef d'équipe, Sfax, raison
+D -> API : POST /staff/features/rules
+API -> API : plafonds (sécurité ? fixe ? national ?)\nauto-verrouillage ?
+alt refus
+  API --> D : 403 + code (ceiling, self_lockout...)
+else accepté
+  API -> DB : insert règle + audit
+  API --> D : 201 règle
+end
+loop toutes les ~60 s ou à la reprise
+  M -> API : GET /crew/me
+  API --> M : hidden_features, announcement
+end
+M -> M : le bouton « Procès-verbal » disparaît
+C -> API : POST /crew/missions/{id}/record (ancienne version)
+API --> C : 403 feature_hidden
+@enduml

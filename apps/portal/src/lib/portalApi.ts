@@ -53,6 +53,9 @@ export function portalApi(api: ApiClient) {
   return {
     /** Backlog G3: which environment strip to show (public endpoint, null in production). */
     environment: (signal?: AbortSignal) => api.request<EnvironmentInfo>("/api/v1/app/environment", { signal }),
+    /** Phase 5: the windows the system administrator closed, and their message. */
+    adminFeatures: (signal?: AbortSignal) =>
+      api.request<AdminFeatures>("/api/v1/app/features", { query: { surface: "portal" }, signal }),
 
     // §1 institutions
     myOrgs: (signal?: AbortSignal) => api.request<MyOrg[]>("/api/v1/orgs/mine", { signal }),
@@ -174,8 +177,15 @@ export interface EnvironmentInfo {
   banner: "development" | "pilot" | "training" | null;
 }
 
+/** Phase 5: the portal's windows the system administrator closed (`portal_team`...), and their message. */
+export interface AdminFeatures {
+  hidden: string[];
+  announcement: { tone: "info" | "warn"; ar: string; fr: string; en: string } | null;
+}
+
 export const queryKeys = {
   environment: ["environment"] as const,
+  adminFeatures: ["admin-features"] as const,
   myOrgs: ["orgs", "mine"] as const,
   org: (id: string) => ["org", id] as const,
   register: (id: string, register: RegisterName) => ["org", id, register] as const,

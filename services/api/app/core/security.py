@@ -307,6 +307,34 @@ async def get_principal(
     return principal
 
 
+async def feature_guard(connection: HTTPConnection) -> None:
+    """Phase 5: the windows of the citizen app and of the portal the administrator closed (every route of the app).
+
+    Runs only on a route of the catalogue's public surface while a rule is in force; the caller's token is read only
+    then (an invalid one counts as no account here: the route's own dependency refuses it)."""
+    from app.modules.features import registry
+    from app.modules.features.service import guard, rules_in_force
+
+    route = connection.scope.get("route")
+    path = registry.relative(getattr(route, "path", "") or "")
+    if path is None or registry.is_staff_path(path) or path.startswith(registry.CREW + "/"):
+        return
+    method = connection.scope.get("method", "GET")
+    # A route outside the catalogue (the person's own rights, the app's plumbing) is never closed: no token read.
+    if registry.get().owner(method, path) is None:
+        return
+    if not await rules_in_force():
+        return
+    principal: Principal | None = None
+    header = connection.headers.get("authorization", "")
+    if header.lower().startswith("bearer "):
+        try:
+            principal = await authenticate(header[7:].strip())
+        except HTTPException:
+            principal = None
+    await guard(principal, method, getattr(route, "path", None))
+
+
 def require_roles(*roles: Role) -> Callable[..., Awaitable[Principal]]:
     """Dependency: the caller must hold at least one of ``roles``."""
     wanted = frozenset(roles)

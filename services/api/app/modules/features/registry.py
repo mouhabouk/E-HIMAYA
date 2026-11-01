@@ -15,6 +15,14 @@ from app.core.security import Role
 from app.modules.features.catalogue import CATALOGUE, Kind, Names, Spec
 
 STAFF_PREFIX = "/api/v1/staff"
+# Phase 5 (Yamen 2026-11-01): the administrator also sets the windows and buttons of the field app (``/api/v1/crew``)
+# and of the citizen app and the portal (the public API). Their routes enter the catalogue under a marker no
+# dashboard path can take: ``/@crew/missions/...``, ``/@public/orgs/...``.
+CREW_PREFIX = "/api/v1/crew"
+CREW = "/@crew"
+PUBLIC = "/@public"
+# Public routes that stay out of the catalogue: the app's own plumbing, and what the platform never hides.
+_PUBLIC_SKIP = ("/api/v1/app/", "/api/v1/geo/", "/api/v1/basemap/", "/api/v1/field/", "/api/v1/admin/")
 WRITE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 TECHNICAL = frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN})
 # Least privileged first: the role a grantee acts as when the catalogue does not name one.
@@ -55,7 +63,7 @@ class Registry:
     exact: dict[tuple[str, str], str]
     # (method rule, prefix, page key), longest prefix first.
     prefixes: tuple[tuple[str, str, str], ...]
-    # Every staff route: (method, path relative to the staff prefix).
+    # Every route of the catalogue's surfaces: (method, path relative to the staff prefix or under a marker).
     routes: tuple[tuple[str, str], ...]
 
     def owner(self, method: str, path: str) -> str | None:
@@ -85,6 +93,21 @@ def _method_ok(rule: str, method: str) -> bool:
 
 def _under(path: str, prefix: str) -> bool:
     return path == prefix or path.startswith(prefix + "/")
+
+
+def relative(path: str) -> str | None:
+    """The catalogue path of an API route: relative to the staff prefix, or under a surface marker; None if none."""
+    if path.startswith(STAFF_PREFIX + "/"):
+        return path[len(STAFF_PREFIX) :]
+    if path.startswith(CREW_PREFIX + "/"):
+        return CREW + path[len(CREW_PREFIX) :]
+    if path.startswith("/api/v1/") and not path.startswith(_PUBLIC_SKIP):
+        return PUBLIC + path[len("/api/v1") :]
+    return None
+
+
+def is_staff_path(path: str) -> bool:
+    return not path.startswith((CREW + "/", PUBLIC + "/"))
 
 
 def _split(route: str) -> tuple[str, str]:
@@ -118,8 +141,10 @@ def build(api_routes: Iterable[Any]) -> Registry:
     route_roles: dict[tuple[str, str], frozenset[Role] | None] = {}
     for context in iter_route_contexts(list(api_routes)):
         route = context.original_route
-        if isinstance(route, APIRoute) and route.path.startswith(STAFF_PREFIX + "/"):
-            path = route.path[len(STAFF_PREFIX) :]
+        if not isinstance(route, APIRoute):
+            continue
+        path = relative(route.path)
+        if path is not None:
             for method in route.methods or ():
                 if method != "HEAD":
                     route_roles[(method, path)] = _required_roles(route.dependant)
