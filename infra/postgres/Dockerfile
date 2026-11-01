@@ -1,7 +1,7 @@
 # gosu (the privilege-drop helper the postgres entrypoint runs) is rebuilt here with a patched Go toolchain: the copy in
 # the official image is built with Go 1.24.6 and carries CVE-2025-68121 (crypto/tls). Pinned to gosu 1.19's commit.
 # Drop this stage once the official postgres image ships a gosu built with Go >= 1.24.13.
-FROM golang:1.27-bookworm@sha256:5cf287a799e6b94384bad13d16b14904c531f51ba65792237e122ce42b392f61 AS gosu
+FROM golang:1.27-bookworm@sha256:d9b6a1beb9474adc2a1ce842573639b44b2a0dd49b6669f51d3821baf9ec37c9 AS gosu
 RUN CGO_ENABLED=0 GOBIN=/out go install -trimpath -ldflags '-d -w' \
       github.com/tianon/gosu@40506998e34a7a679e6dae41374c1b7aa37eb73f \
  && /out/gosu --version
