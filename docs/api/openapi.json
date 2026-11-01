@@ -12561,6 +12561,97 @@
         "title": "EvaluationOut",
         "type": "object"
       },
+      "EventIn": {
+        "properties": {
+          "at": {
+            "maxLength": 40,
+            "title": "At",
+            "type": "string"
+          },
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "confidence": {
+            "maxLength": 8,
+            "title": "Confidence",
+            "type": "string"
+          },
+          "frame_jpeg_b64": {
+            "anyOf": [
+              {
+                "maxLength": 3000000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Jpeg B64"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "sig": {
+            "maxLength": 64,
+            "title": "Sig",
+            "type": "string"
+          },
+          "temperature": {
+            "default": "",
+            "maxLength": 10,
+            "title": "Temperature",
+            "type": "string"
+          },
+          "vendor_event": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "pattern": "^[A-Za-z0-9_.:-]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Event"
+          }
+        },
+        "required": [
+          "camera",
+          "at",
+          "label",
+          "confidence",
+          "sig"
+        ],
+        "title": "EventIn",
+        "type": "object"
+      },
+      "EventKeyOut": {
+        "properties": {
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "camera",
+          "key"
+        ],
+        "title": "EventKeyOut",
+        "type": "object"
+      },
       "EventRef": {
         "properties": {
           "id": {
@@ -16890,6 +16981,15 @@
             ],
             "title": "Lon"
           },
+          "monitored_by": {
+            "default": "owner",
+            "enum": [
+              "owner",
+              "room"
+            ],
+            "title": "Monitored By",
+            "type": "string"
+          },
           "org_id": {
             "anyOf": [
               {
@@ -16921,6 +17021,17 @@
       },
       "FixedSourceOut": {
         "properties": {
+          "event_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Key"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -18536,6 +18647,32 @@
           "id"
         ],
         "title": "HazmatOut",
+        "type": "object"
+      },
+      "HeartbeatIn": {
+        "properties": {
+          "at": {
+            "maxLength": 40,
+            "title": "At",
+            "type": "string"
+          },
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "sig": {
+            "maxLength": 64,
+            "title": "Sig",
+            "type": "string"
+          }
+        },
+        "required": [
+          "camera",
+          "at",
+          "sig"
+        ],
+        "title": "HeartbeatIn",
         "type": "object"
       },
       "HeavyRainOut": {
@@ -23505,6 +23642,11 @@
           },
           "role": {
             "$ref": "#/components/schemas/OrgRole"
+          },
+          "safety_officer": {
+            "default": false,
+            "title": "Safety Officer",
+            "type": "boolean"
           },
           "user_id": {
             "format": "uuid",
@@ -29596,6 +29738,15 @@
             "title": "Source",
             "type": "string"
           },
+          "stage": {
+            "enum": [
+              "officer",
+              "owner",
+              "room"
+            ],
+            "title": "Stage",
+            "type": "string"
+          },
           "state": {
             "enum": [
               "pending",
@@ -29628,6 +29779,7 @@
           "confidence",
           "simulated",
           "state",
+          "stage",
           "raised_at",
           "deadline_at",
           "seconds_left",
@@ -34278,6 +34430,19 @@
           "rules"
         ],
         "title": "RulesIn",
+        "type": "object"
+      },
+      "SafetyOfficerIn": {
+        "properties": {
+          "safety_officer": {
+            "title": "Safety Officer",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "safety_officer"
+        ],
+        "title": "SafetyOfficerIn",
         "type": "object"
       },
       "SavedIn": {
@@ -40109,6 +40274,108 @@
           "n"
         ],
         "title": "Stage",
+        "type": "object"
+      },
+      "StageMessageIn": {
+        "description": "A message of the scene at the mission's current step: typed, or spoken, tidied and corrected.",
+        "properties": {
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          },
+          "text": {
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Text",
+            "type": "string"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
+          }
+        },
+        "required": [
+          "client_id",
+          "text"
+        ],
+        "title": "StageMessageIn",
+        "type": "object"
+      },
+      "StageVoiceOut": {
+        "description": "What the platform heard, and the same text tidied, for the leader to correct before sending.",
+        "properties": {
+          "duration_s": {
+            "title": "Duration S",
+            "type": "number"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "tidied_by": {
+            "enum": [
+              "model",
+              "rules"
+            ],
+            "title": "Tidied By",
+            "type": "string"
+          },
+          "transcript": {
+            "title": "Transcript",
+            "type": "string"
+          },
+          "voice_id": {
+            "format": "uuid",
+            "title": "Voice Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "voice_id",
+          "transcript",
+          "text",
+          "tidied_by",
+          "stage",
+          "language",
+          "duration_s"
+        ],
+        "title": "StageVoiceOut",
         "type": "object"
       },
       "StampIn": {
@@ -51256,6 +51523,22 @@
             "title": "Kind",
             "type": "string"
           },
+          "spoken": {
+            "default": false,
+            "title": "Spoken",
+            "type": "boolean"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          },
           "url": {
             "anyOf": [
               {
@@ -56667,6 +56950,24 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "app__modules__streams__camera_events__EventOut": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "alerted": {
+            "title": "Alerted",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accepted",
+          "alerted"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
       "app__modules__streams__schemas__Point": {
         "properties": {
           "lat": {
@@ -58068,6 +58369,83 @@
         "summary": "Tile",
         "tags": [
           "basemap"
+        ]
+      }
+    },
+    "/api/v1/camera-events": {
+      "post": {
+        "description": "An alarm of the camera itself, relayed by its bridge.",
+        "operationId": "receive_event_api_v1_camera_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__streams__camera_events__EventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Receive Event",
+        "tags": [
+          "camera-bridge"
+        ]
+      }
+    },
+    "/api/v1/camera-events/heartbeat": {
+      "post": {
+        "description": "The bridge is alive (every 5 minutes by default).",
+        "operationId": "heartbeat_api_v1_camera_events_heartbeat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeartbeatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Heartbeat",
+        "tags": [
+          "camera-bridge"
         ]
       }
     },
@@ -60180,6 +60558,209 @@
           }
         ],
         "summary": "Skip",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/stage-message": {
+      "post": {
+        "description": "The corrected message, on the incident's timeline under the mission's current step.",
+        "operationId": "stage_message_api_v1_crew_missions__assignment_id__stage_message_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StageMessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stage Message",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/stage-voice": {
+      "post": {
+        "description": "A spoken word of the scene, from «غادرت الوحدة» on: transcribed, the audio deleted, the text tidied and sent\nback for the leader to correct. Nothing reaches the room until ``/stage-message``.",
+        "operationId": "stage_voice_in_api_v1_crew_missions__assignment_id__stage_voice_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lang",
+            "required": false,
+            "schema": {
+              "default": "ar",
+              "enum": [
+                "ar",
+                "fr"
+              ],
+              "title": "Lang",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "audio/aac": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/mpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/webm": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "audio/x-wav": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StageVoiceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stage Voice In",
         "tags": [
           "crew"
         ]
@@ -67504,6 +68085,75 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/members/{user_id}/safety-officer": {
+      "put": {
+        "description": "The administrator names (or un-names) the safety officer: the first one alerted when a camera of the\ninstitution sees a fire (60 s before the owner is).",
+        "operationId": "set_safety_officer_api_v1_orgs__org_id__members__user_id__safety_officer_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyOfficerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Safety Officer",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/messages": {
       "get": {
         "operationId": "list_messages_api_v1_orgs__org_id__messages_get",
@@ -67683,7 +68333,7 @@
     },
     "/api/v1/orgs/{org_id}/prealerts/{prealert_id}/decision": {
       "post": {
-        "description": "«False alarm» (with a reason) or «confirm» (the report goes to the room at once).",
+        "description": "«False alarm or unconfirmed» (with a reason) or «confirm» (the report goes to the room at once). The safety\nofficer answers as well as the administrators and editors.",
         "operationId": "decide_api_v1_orgs__org_id__prealerts__prealert_id__decision_post",
         "parameters": [
           {
@@ -100467,6 +101117,55 @@
         "tags": [
           "staff",
           "streams"
+        ]
+      }
+    },
+    "/api/v1/staff/streams/{stream_id}/event-key": {
+      "post": {
+        "description": "A new signing key for the camera's bridge, shown once (the old one stops working at once).",
+        "operationId": "renew_event_key_api_v1_staff_streams__stream_id__event_key_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stream_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Stream Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventKeyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Renew Event Key",
+        "tags": [
+          "staff-streams"
         ]
       }
     },

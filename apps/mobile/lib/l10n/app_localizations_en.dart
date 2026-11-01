@@ -6758,17 +6758,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get prealertConfirm => 'Confirm and report now';
+  String get prealertConfirm => 'Confirm the report (SOS)';
 
   @override
-  String get prealertFalseAlarm => 'False alarm';
+  String get prealertFalseAlarm => 'False alarm or unconfirmed';
 
   @override
   String get prealertHint =>
-      'With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.';
+      'The alarm rings until you answer. Without an answer from the safety officer then the owner, the room is told automatically. A cancellation is recorded with its reason.';
 
   @override
-  String get prealertWhyFalse => 'Why is it a false alarm?';
+  String get prealertWhyFalse => 'Why is it a false alarm or unconfirmed?';
 
   @override
   String get prealertReasonTest => 'Test or maintenance';
@@ -6786,13 +6786,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prealertReasonOther => 'Another reason checked on site';
 
   @override
-  String get prealertCancelled => 'Cancelled: false alarm';
+  String get prealertCancelled => 'Cancelled: false alarm or unconfirmed';
 
   @override
   String get prealertConfirmed => 'Confirmed, the room was told';
 
   @override
-  String get prealertEscalated => 'Sent to the room when the delay ran out';
+  String get prealertEscalated =>
+      'Nobody answered in both delays: the room was told';
 
   @override
   String get prealertPending => 'Waiting for your answer';
@@ -6885,4 +6886,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calloutBySms =>
       'No internet: your answer is ready in a signed SMS. Press Send in the messaging app.';
+
+  @override
+  String get channelPrealert => 'Fire alerts from your institution\'s cameras';
+
+  @override
+  String get channelPrealertDesc =>
+      'Ring like an alarm even on silent or Do Not Disturb, full screen.';
+
+  @override
+  String get prealertReasonUnconfirmed =>
+      'Unconfirmed: no fire or smoke on site';
+
+  @override
+  String get prealertRoom =>
+      'Device followed by the Civil Protection: the room was told directly';
+
+  @override
+  String get prealertMedia => 'Captured picture';
+
+  @override
+  String get prealertNoMedia => 'No picture for this alert';
+
+  @override
+  String prealertStageOfficer(int seconds) {
+    return 'Safety officer\'s turn: $seconds s, then the owner is alerted';
+  }
+
+  @override
+  String prealertStageOwner(int seconds) {
+    return 'Owner\'s turn: $seconds s, then the room is told automatically';
+  }
+
+  @override
+  String get prealertMute => 'Silence the alarm';
 }

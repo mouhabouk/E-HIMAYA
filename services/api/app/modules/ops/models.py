@@ -526,6 +526,9 @@ class FieldAttachment(Base):
     # The text of a voice message, read once by the local transcription for the mission times (phase D, S2-1).
     transcript: Mapped[str | None] = mapped_column("transcript_enc", EncryptedText("ops.field_attachment.transcript"))
     transcribed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # A message of the scene: the step the mission had reached, and whether it was spoken then corrected (2026-11-01).
+    stage: Mapped[str | None] = mapped_column(Text)
+    spoken: Mapped[bool] = mapped_column(Boolean, server_default="false", default=False)
 
 
 class ReportTemplate(Base):

@@ -766,3 +766,13 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     على كل الولايات). مسارات تطبيق الأعوان والتطبيق والبوابة دخلت فهرس الصلاحيات، والإعداد `app.announcement` (رسالة
     المدير) بقيمته الافتراضية غير المفعّلة. أداة Graphviz (`apt install graphviz`) لازمة فقط لإعادة توليد النموذج العلائقي
     (`docs/deliverables/data-model`).
+43. كشف النار على مرحلتين (طلب يامن 2026-11-01): لا حزمة جديدة. `alembic upgrade head` (0093) يضيف من يتابع كاميرا
+    المؤسسة (`reports.live_stream.monitored_by`: المؤسسة أو الحماية المدنية)، ومسؤول السلامة (`org.member.safety_officer`)
+    ومرحلة التنبيه (`org.prealert.stage`). مهلة مسؤول السلامة `orgs.prealert_seconds` صارت 60 ثانية (القيمة 90 المحفوظة
+    تتحول إلى 60)، ومهلة صاحب المؤسسة `orgs.prealert_owner_seconds` جديدة (60). تطبيق الهاتف: قناة إشعار جديدة
+    `ehimaya_prealert_v1` (صوت المنبه، تتجاوز «عدم الإزعاج» إن سمح الهاتف) تُنشأ عند التحديث، والتنبيه المسبق يصل بيانات
+    فقط ليفتحه التطبيق على كامل الشاشة. الدليلان `docs/guides/location-history.md` و `docs/guides/call-recording.md`.
+44. جسر الكاميرات الحرارية (طلب يامن 2026-11-01): `alembic upgrade head` (0094) يضيف مفتاح الإنذار لكل كاميرا (مشفّرا)
+    ووقت آخر نبض، والجدول `reports.camera_event`. مسار عام جديد `POST /api/v1/camera-events` (و `/heartbeat`) يمر عبر Caddy
+    كباقي `/api/v1`، محمي بتوقيع كل كاميرا. برنامج جديد على حاسوب المؤسسة: `services/camera-bridge` (Python وحده، و ffmpeg
+    للفيديو بعد الإنذار)، بالدليل `docs/guides/camera-bridge.md`. لا متغير ولا خدمة جديدة في الخادم.

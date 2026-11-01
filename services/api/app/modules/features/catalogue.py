@@ -279,7 +279,18 @@ CATALOGUE: tuple[Spec, ...] = (
         button(
             "streams.watch", ("مشاهدة البث", "Regarder", "Watch"), "POST /streams/{stream_id}/viewer", act_as=R.OPERATOR
         ),
-        button("streams.share", ("بدء بث", "Lancer un direct", "Start a stream"), "POST /streams", act_as=R.OPERATOR),
+        button(
+            "streams.share",
+            (
+                "بدء بث وتسجيل الكاميرات",
+                "Lancer un direct, enregistrer les caméras",
+                "Start a stream, register cameras",
+            ),
+            "POST /streams",
+            # The signing key of a camera's bridge, renewed by whoever registers cameras.
+            "POST /streams/{stream_id}/event-key",
+            act_as=R.OPERATOR,
+        ),
         button(
             "streams.stop",
             ("إيقاف البث", "Arrêter le direct", "Stop the stream"),
@@ -1525,6 +1536,8 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /@crew/missions/{assignment_id}/attachments",
             "POST /@crew/missions/{assignment_id}/voice",
             "POST /@crew/missions/{assignment_id}/notes",
+            "POST /@crew/missions/{assignment_id}/stage-voice",
+            "POST /@crew/missions/{assignment_id}/stage-message",
             act_as=R.TEAM_LEADER,
         ),
         button(

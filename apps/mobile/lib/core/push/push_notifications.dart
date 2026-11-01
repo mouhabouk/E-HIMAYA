@@ -19,6 +19,12 @@ const alertLightColor = Color(0xFFD32F2F);
 const alertSoundAndroid = 'ehimaya_alert';
 const alertSoundIos = 'alert.caf';
 
+/// Android's FLAG_INSISTENT: the sound repeats until the notification is opened or cleared.
+const insistentFlag = 4;
+
+/// How long the pre-alert rings at most: the officer's 60 s and the owner's 60 s, plus a margin.
+const prealertRingMs = 125000;
+
 /// Our notifications form their own group: never bundled with another app's (Android groups
 /// per app; the key also keeps alerts apart from ordinary messages of ours).
 const alertGroupKey = 'tn.ehimaya.app.alerts';
@@ -107,6 +113,20 @@ class LocalPushNotifications implements PushNotifications {
         audioAttributesUsage: AudioAttributesUsage.alarm,
       );
 
+  static AndroidNotificationChannel _prealertChannel(PushChannelNames names) =>
+      AndroidNotificationChannel(
+        prealertChannelId,
+        names.prealert,
+        description: names.prealertDescription,
+        importance: Importance.max,
+        bypassDnd: true,
+        sound: const RawResourceAndroidNotificationSound(alertSoundAndroid),
+        vibrationPattern: alertVibrationPattern,
+        enableLights: true,
+        ledColor: alertLightColor,
+        audioAttributesUsage: AudioAttributesUsage.alarm,
+      );
+
   /// Initialises the plugin only (background isolate): no channel work, no tap handler.
   /// [criticalOptIn] is the stored opt-in (the channel itself was created by the app).
   Future<void> initBackground({bool? criticalOptIn}) async {
@@ -158,6 +178,7 @@ class LocalPushNotifications implements PushNotifications {
         await android.deleteNotificationChannel(channelId: id);
       }
       await android.createNotificationChannel(_alertChannel(names));
+      await android.createNotificationChannel(_prealertChannel(names));
       await android.createNotificationChannel(
         AndroidNotificationChannel(
           defaultChannelId,
@@ -228,8 +249,11 @@ class LocalPushNotifications implements PushNotifications {
     final channelName = switch (channel) {
       alertChannelId => names?.alerts,
       criticalChannelId => names?.critical,
+      prealertChannelId => names?.prealert,
       _ => names?.general,
     };
+    // The fire pre-alert rings until it is opened (insistent), full screen over the lock screen.
+    final prealert = channel == prealertChannelId;
     await _local.show(
       id: id,
       title: payload.title,
@@ -254,7 +278,14 @@ class LocalPushNotifications implements PushNotifications {
           visibility: public
               ? NotificationVisibility.public
               : NotificationVisibility.private,
-          fullScreenIntent: payload.severe,
+          fullScreenIntent: payload.severe || prealert,
+          audioAttributesUsage: prealert
+              ? AudioAttributesUsage.alarm
+              : AudioAttributesUsage.notification,
+          additionalFlags: prealert
+              ? Int32List.fromList([insistentFlag])
+              : null,
+          timeoutAfter: prealert ? prealertRingMs : null,
           groupKey: urgent ? alertGroupKey : null,
           tag: tag,
           onlyAlertOnce: true,
@@ -312,10 +343,10 @@ String pushChannelFor(
   String? requested,
   bool criticalAvailable = false,
 ]) {
+  if (payload.kind == PushKind.prealert) return prealertChannelId;
   if (payload.severe && criticalAvailable) return criticalChannelId;
   // Phase B2: a linked contact in distress rings through Do Not Disturb when the user opted in.
-  if (payload.kind == PushKind.safetyAlert ||
-      payload.kind == PushKind.prealert) {
+  if (payload.kind == PushKind.safetyAlert) {
     return criticalAvailable ? criticalChannelId : alertChannelId;
   }
   if (requested == criticalChannelId) {

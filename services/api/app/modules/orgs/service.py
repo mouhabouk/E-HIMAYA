@@ -624,6 +624,7 @@ def member_out(member: Member) -> schemas.MemberOut:
         display_name=member.display_name,
         email=member.email,
         role=OrgRole(member.role),
+        safety_officer=member.safety_officer,
         joined_at=member.joined_at,
     )
 

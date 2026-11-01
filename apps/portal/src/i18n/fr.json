@@ -523,7 +523,10 @@
     "leaveBody": "Vous perdrez l’accès à l’établissement. Le dernier administrateur ne peut pas partir.",
     "leaveUnavailable": "Votre adhésion n’a pas pu être identifiée (connectez-vous avec l’e-mail de votre adhésion).",
     "leave": "Quitter l’établissement",
-    "confirmLeave": "Quitter {{name}} ? Il faudra une nouvelle invitation pour revenir."
+    "confirmLeave": "Quitter {{name}} ? Il faudra une nouvelle invitation pour revenir.",
+    "safetyOfficer": "Responsable sécurité",
+    "safetyOfficerOf": "{{name}} est responsable sécurité",
+    "safetyOfficerHelp": "Le responsable sécurité est alerté en premier quand une caméra de l'établissement voit un feu ou une fumée : 60 secondes, puis le propriétaire (administrateur) 60 secondes, puis la salle des opérations automatiquement sans réponse. L'alerte sonne comme un réveil même en mode silencieux."
   },
   "roles": {
     "admin": "Administrateur",

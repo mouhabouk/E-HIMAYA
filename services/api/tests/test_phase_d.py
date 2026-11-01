@@ -92,7 +92,7 @@ async def test_owner_is_told_first_and_a_false_alarm_never_reaches_the_room(
     await confirm_fire(client, sid)
     (alert,) = await pending(client, admin, org_id)
     assert alert["label"] == "fire" and alert["state"] == "pending" and alert["has_frame"]
-    assert 80 <= alert["seconds_left"] <= 90 and alert["report_id"] is None
+    assert alert["stage"] == "owner" and 50 <= alert["seconds_left"] <= 60 and alert["report_id"] is None
     # Another confirming frame does not open a second pre-alert.
     await frame(client, sid, fire=0.95)
     assert len(await pending(client, admin, org_id)) == 1
@@ -104,7 +104,7 @@ async def test_owner_is_told_first_and_a_false_alarm_never_reaches_the_room(
         )
     ).scalars()
     data = [p["data"] for p in pushes if p["data"].get("prealert_id") == alert["id"]]
-    assert data == [{"prealert_id": alert["id"], "org_id": org_id, "redacted": "1"}]
+    assert data == [{"prealert_id": alert["id"], "org_id": org_id, "stage": "owner", "redacted": "1"}]
 
     # A plain member cannot answer; an answer without a reason is refused.
     member = await add_member(client, admin, org_id, user, "member")
@@ -157,7 +157,7 @@ async def test_no_answer_raises_it_to_the_room_after_the_delay(
     async with get_system_sessionmaker()() as s, s.begin():
         assert await prealert.escalate_due(s, datetime.now(UTC)) == 0
     async with get_system_sessionmaker()() as s, s.begin():
-        assert await prealert.escalate_due(s, datetime.now(UTC) + timedelta(seconds=91)) >= 1
+        assert await prealert.escalate_due(s, datetime.now(UTC) + timedelta(seconds=61)) >= 1
     listed = (await client.get(f"/api/v1/orgs/{org_id}/prealerts", headers=admin)).json()
     raised = next(p for p in listed if p["id"] == alert["id"])
     assert raised["state"] == "escalated" and raised["report_id"]
@@ -170,11 +170,125 @@ async def test_no_answer_raises_it_to_the_room_after_the_delay(
     assert text_.source == "iot" and str(text_.organization_id) == org_id
 
 
+async def report_text(report_id: str) -> str:
+    from app.modules.reports.models import Report
+
+    async with get_system_sessionmaker()() as s:
+        report = await s.get(Report, uuid.UUID(report_id))
+        return report.text_original or "" if report else ""
+
+
+async def test_safety_officer_first_then_owner_then_the_room(
+    client: httpx.AsyncClient, staff: Staff, user: User, session: AsyncSession, fake_store: FakeStore
+) -> None:
+    """Yamen 2026-11-01: the safety officer has 60 s, then the owner 60 s, then the room is told automatically."""
+    org_id, admin, sid, _ = await org_camera(client, staff, user)
+    officer = await add_member(client, admin, org_id, user, "member")
+    members = (await client.get(f"/api/v1/orgs/{org_id}/members", headers=admin)).json()
+    officer_id = next(m["user_id"] for m in members if m["role"] == "member")
+    url = f"/api/v1/orgs/{org_id}/members/{officer_id}/safety-officer"
+    assert (await client.put(url, json={"safety_officer": True}, headers=officer)).status_code == 403
+    r = await client.put(url, json={"safety_officer": True}, headers=admin)
+    assert r.status_code == 200 and r.json()["safety_officer"] is True
+
+    await confirm_fire(client, sid)
+    (alert,) = await pending(client, officer, org_id)
+    assert alert["stage"] == "officer" and 50 <= alert["seconds_left"] <= 60
+    pushes = (
+        await session.execute(
+            text(
+                "SELECT user_id, payload FROM notify.outbox WHERE channel = 'push' AND payload->>'type' = 'prealert'"
+                " AND payload->'data'->>'prealert_id' = :id"
+            ),
+            {"id": alert["id"]},
+        )
+    ).all()
+    assert [str(u) for u, _ in pushes] == [officer_id]
+
+    # 60 s without an answer: the owner's turn, 60 s more, and the owner gets the alert too.
+    async with get_system_sessionmaker()() as s, s.begin():
+        assert await prealert.escalate_due(s, datetime.now(UTC) + timedelta(seconds=61)) >= 1
+    (alert,) = await pending(client, admin, org_id)
+    assert alert["stage"] == "owner" and alert["state"] == "pending" and alert["report_id"] is None
+    stages = (
+        await session.execute(
+            text(
+                "SELECT payload->'data'->>'stage' FROM notify.outbox WHERE channel = 'push'"
+                " AND payload->'data'->>'prealert_id' = :id"
+            ),
+            {"id": alert["id"]},
+        )
+    ).scalars()
+    assert sorted(stages) == ["officer", "owner"]
+
+    # 60 s more without an answer: the room is told.
+    async with get_system_sessionmaker()() as s, s.begin():
+        assert await prealert.escalate_due(s, datetime.now(UTC) + timedelta(seconds=125)) >= 1
+    listed = (await client.get(f"/api/v1/orgs/{org_id}/prealerts", headers=admin)).json()
+    raised = next(p for p in listed if p["id"] == alert["id"])
+    assert raised["state"] == "escalated" and raised["report_id"]
+    assert "لم يُجب مسؤول السلامة ولا صاحب المؤسسة" in await report_text(raised["report_id"])
+
+
+async def test_the_safety_officer_answers_even_as_a_plain_member(
+    client: httpx.AsyncClient, staff: Staff, user: User, session: AsyncSession, fake_store: FakeStore
+) -> None:
+    org_id, admin, sid, _ = await org_camera(client, staff, user)
+    officer = await add_member(client, admin, org_id, user, "member")
+    members = (await client.get(f"/api/v1/orgs/{org_id}/members", headers=admin)).json()
+    officer_id = next(m["user_id"] for m in members if m["role"] == "member")
+    url = f"/api/v1/orgs/{org_id}/members/{officer_id}/safety-officer"
+    assert (await client.put(url, json={"safety_officer": True}, headers=admin)).status_code == 200
+    await confirm_fire(client, sid)
+    (alert,) = await pending(client, officer, org_id)
+    r = await client.post(
+        f"/api/v1/orgs/{org_id}/prealerts/{alert['id']}/decision", json={"action": "confirm"}, headers=officer
+    )
+    assert r.status_code == 200 and r.json()["state"] == "confirmed"
+    assert "أكّده مسؤول السلامة" in await report_text(r.json()["report_id"])
+
+
+async def test_a_device_the_civil_protection_follows_goes_to_the_room_at_once(
+    client: httpx.AsyncClient, staff: Staff, user: User, session: AsyncSession, fake_store: FakeStore
+) -> None:
+    admin = user()
+    org_id = await active_org(client, staff, admin, location=TUNIS)
+    r = await client.post(
+        "/api/v1/staff/streams",
+        json={
+            "source": "camera",
+            "label": "كاشف الحماية المدنية",
+            "gouvernorat_code": 11,
+            "org_id": org_id,
+            "monitored_by": "room",
+            **TUNIS,
+        },
+        headers=staff(["ops_manager"], gouvernorat=11),
+    )
+    assert r.status_code == 201, r.text
+    cam = r.json()
+    await go_live(client, cam["path"])
+    await confirm_fire(client, cam["id"])
+    assert await pending(client, admin, org_id) == []
+    listed = (await client.get(f"/api/v1/orgs/{org_id}/prealerts", headers=admin)).json()
+    (row,) = [p for p in listed if p["stream_id"] == cam["id"]]
+    assert row["stage"] == "room" and row["state"] == "escalated" and row["report_id"]
+    assert "أُبلغت القاعة مباشرة" in await report_text(row["report_id"])
+    pushed = await session.scalar(
+        text("SELECT count(*) FROM notify.outbox WHERE payload->'data'->>'prealert_id' = :id"), {"id": row["id"]}
+    )
+    assert pushed == 0
+    stream = await client.get(f"/api/v1/staff/streams/{cam['id']}", headers=staff(["operator"], gouvernorat=11))
+    assert stream.json()["report_id"] == row["report_id"]
+
+
 async def test_the_delay_is_a_setting(client: httpx.AsyncClient, staff: Staff) -> None:
     r = await client.get("/api/v1/staff/settings", headers=staff(["sysadmin"], gouvernorat=None))
     assert r.status_code == 200
     spec = next(t for t in r.json()["thresholds"] if t["name"] == "orgs.prealert_seconds")
-    assert (spec["default"], spec["low"], spec["high"], spec["unit"]) == (90, 30, 600, "seconds")
+    assert (spec["default"], spec["low"], spec["high"], spec["unit"]) == (60, 30, 600, "seconds")
+    owner = next(t for t in r.json()["thresholds"] if t["name"] == "orgs.prealert_owner_seconds")
+    assert (owner["default"], owner["low"], owner["high"]) == (60, 30, 600)
 
 
 # ---------------------------------------------------------------- review point 3: nothing personal through Firebase

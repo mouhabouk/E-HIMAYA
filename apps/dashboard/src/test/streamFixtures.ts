@@ -1,7 +1,11 @@
 import { vi } from "vitest";
 import type { StreamsApi } from "../lib/streamsApi";
 import type { StreamSessionOptions } from "../lib/streamSession";
-import type { StaffStream, StaffStreamDetail, ViewerGrant } from "../lib/streamTypes";
+import type {
+  StaffStream,
+  StaffStreamDetail,
+  ViewerGrant,
+} from "../lib/streamTypes";
 
 const empty = { items: [], next_cursor: null };
 
@@ -12,9 +16,17 @@ export function fakeStreamsApi(): StreamsApi {
     stream: vi.fn(),
     streamViewer: vi.fn(() => Promise.resolve(makeGrant())),
     stopStream: vi.fn(() => Promise.resolve({})),
-    recordingDownload: vi.fn(() => Promise.resolve({ kind: "link" as const, url: "https://s3.example/rec.mp4?sig=x" })),
+    recordingDownload: vi.fn(() =>
+      Promise.resolve({
+        kind: "link" as const,
+        url: "https://s3.example/rec.mp4?sig=x",
+      }),
+    ),
     // Phase D: an institution's camera and its pre-alerts (review point 25).
     registerCamera: vi.fn(),
+    renewEventKey: vi.fn(() =>
+      Promise.resolve({ camera: "s-1", key: "ab".repeat(32) }),
+    ),
     prealerts: vi.fn(() => Promise.resolve([])),
   };
 }
@@ -40,7 +52,9 @@ export function makeStream(overrides: Partial<StaffStream> = {}): StaffStream {
   };
 }
 
-export function makeStreamDetail(overrides: Partial<StaffStreamDetail> = {}): StaffStreamDetail {
+export function makeStreamDetail(
+  overrides: Partial<StaffStreamDetail> = {},
+): StaffStreamDetail {
   return {
     ...makeStream(overrides),
     recordings: [
@@ -53,12 +67,30 @@ export function makeStreamDetail(overrides: Partial<StaffStreamDetail> = {}): St
       },
     ],
     detections: [
-      { at: new Date(Date.now() - 20_000).toISOString(), label: "fire", confidence: 0.82, boxes: [[0.1, 0.2, 0.4, 0.6, 0.82]] },
-      { at: new Date(Date.now() - 40_000).toISOString(), label: "smoke", confidence: 0.4, boxes: [[0.5, 0.1, 0.9, 0.5, 0.4]] },
+      {
+        at: new Date(Date.now() - 20_000).toISOString(),
+        label: "fire",
+        confidence: 0.82,
+        boxes: [[0.1, 0.2, 0.4, 0.6, 0.82]],
+      },
+      {
+        at: new Date(Date.now() - 40_000).toISOString(),
+        label: "smoke",
+        confidence: 0.4,
+        boxes: [[0.5, 0.1, 0.9, 0.5, 0.4]],
+      },
     ],
     track: [
-      { at: new Date(Date.now() - 90_000).toISOString(), lat: 34.739, lon: 10.759 },
-      { at: new Date(Date.now() - 60_000).toISOString(), lat: 34.74, lon: 10.76 },
+      {
+        at: new Date(Date.now() - 90_000).toISOString(),
+        lat: 34.739,
+        lon: 10.759,
+      },
+      {
+        at: new Date(Date.now() - 60_000).toISOString(),
+        lat: 34.74,
+        lon: 10.76,
+      },
     ],
     ...overrides,
   };

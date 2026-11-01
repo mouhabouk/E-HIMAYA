@@ -268,6 +268,7 @@ describe("role-based visibility", () => {
       "GET /api/v1/orgs/o-1/members": { body: MEMBERS },
       "GET /api/v1/orgs/o-1/invitations": { body: [] },
       "PUT /api/v1/orgs/o-1/members/u-2": { body: { ...MEMBERS[1], role: "editor" } },
+      "PUT /api/v1/orgs/o-1/members/u-2/safety-officer": { body: { ...MEMBERS[1], safety_officer: true } },
       "POST /api/v1/orgs/o-1/invitations": {
         status: 201,
         body: { id: "i-1", email: "new@x.tn", role: "member", expires_at: "2026-10-26T10:00:00Z", token: "tok", accept_url: "http://localhost:5174/invite/tok" },
@@ -276,6 +277,11 @@ describe("role-based visibility", () => {
     });
     fireEvent.change(await screen.findByRole("combobox", { name: "Role of Nour" }), { target: { value: "editor" } });
     await waitFor(() => expect(calls("PUT /api/v1/orgs/o-1/members/u-2")[0]?.body).toEqual({ role: "editor" }));
+    // The safety officer, alerted first when a camera of the institution sees a fire.
+    fireEvent.click(screen.getByRole("checkbox", { name: "Nour is the safety officer" }));
+    await waitFor(() =>
+      expect(calls("PUT /api/v1/orgs/o-1/members/u-2/safety-officer")[0]?.body).toEqual({ safety_officer: true }),
+    );
     // Self (matched by e-mail, case-insensitively) cannot be removed from the table.
     expect(screen.queryByRole("button", { name: "Remove Amira Ben Salah" })).not.toBeInTheDocument();
 

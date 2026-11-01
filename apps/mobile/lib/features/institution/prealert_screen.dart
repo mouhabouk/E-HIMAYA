@@ -14,11 +14,13 @@ import '../../core/ui/theme.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'institution_providers.dart';
+import 'prealert_alarm.dart';
 
-/// Review point 25 (phase D, design §2): a camera of the institution saw a fire or smoke. The
-/// owner sees the picture and a countdown; «confirm» sends the report to the room at once,
-/// «false alarm» (with a ready reason) closes it. With no answer the room is told when the
-/// countdown ends (`orgs.prealert_seconds`, 90 s by default).
+/// Review point 25 (phase D), staged by Yamen (2026-11-01): a camera of the institution saw a
+/// fire or smoke. The safety officer is asked first (60 s), then the owner (60 s); without an
+/// answer the room is told automatically. While it waits the alarm rings, and the screen has
+/// three tiles: the captured picture, «confirm the report» (SOS: the room at once) and «false
+/// alarm or unconfirmed» (with a ready reason: nothing reaches the room).
 class PrealertScreen extends ConsumerStatefulWidget {
   const PrealertScreen({
     super.key,
@@ -34,13 +36,23 @@ class PrealertScreen extends ConsumerStatefulWidget {
 }
 
 /// Ready reasons of a false alarm (design §2): no typing in a hurry.
-const prealertReasons = ['test', 'cooking', 'drill', 'camera', 'other'];
+const prealertReasons = [
+  'unconfirmed',
+  'test',
+  'cooking',
+  'drill',
+  'camera',
+  'other',
+];
 
 class _PrealertScreenState extends ConsumerState<PrealertScreen> {
   Timer? _tick;
   bool _busy = false;
   OrgPrealert? _decided;
   Future<String>? _frame;
+  late final PrealertAlarm _alarm = ref.read(prealertAlarmProvider);
+  bool _ringing = false;
+  bool _muted = false;
 
   @override
   void initState() {
@@ -53,10 +65,25 @@ class _PrealertScreenState extends ConsumerState<PrealertScreen> {
   @override
   void dispose() {
     _tick?.cancel();
+    if (_ringing) unawaited(_alarm.stop());
     super.dispose();
   }
 
+  /// Rings while the pre-alert waits for an answer, unless silenced; stops otherwise.
+  void _ring(bool pending) {
+    final want = pending && !_muted;
+    if (want == _ringing) return;
+    _ringing = want;
+    unawaited(want ? _alarm.start() : _alarm.stop());
+  }
+
+  void _mute() {
+    setState(() => _muted = true);
+    _ring(false);
+  }
+
   Future<void> _decide({required bool confirm, String? reason}) async {
+    _mute();
     setState(() => _busy = true);
     final l10n = AppLocalizations.of(context);
     try {
@@ -155,6 +182,8 @@ class _PrealertScreenState extends ConsumerState<PrealertScreen> {
     _frame ??= p.hasFrame
         ? ref.read(apiProvider).prealertFrame(widget.orgId, p.id)
         : null;
+    _ring(p.pending);
+    final text = Theme.of(context).textTheme;
     return ListView(
       padding: EdgeInsets.zero,
       children: [
@@ -170,32 +199,16 @@ class _PrealertScreenState extends ConsumerState<PrealertScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (_frame != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: FutureBuilder<String>(
-                    future: _frame,
-                    builder: (context, snap) => AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: snap.hasData
-                          ? Image.network(
-                              snap.data!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) =>
-                                  const ColoredBox(color: Colors.black12),
-                            )
-                          : const ColoredBox(color: Colors.black12),
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 16),
               if (p.pending) ...[
                 Text(
-                  l10n.prealertCountdown(left),
+                  p.stage == 'officer'
+                      ? l10n.prealertStageOfficer(left)
+                      : l10n.prealertStageOwner(left),
                   key: const Key('prealert-countdown'),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700),
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
@@ -207,32 +220,44 @@ class _PrealertScreenState extends ConsumerState<PrealertScreen> {
                           .clamp(1, 3600),
                   color: sosRed,
                 ),
-                const SizedBox(height: 16),
-                ToneButton(
-                  action: BarAction(
-                    key: const Key('prealert-confirm'),
-                    label: l10n.prealertConfirm,
-                    icon: Icons.campaign,
-                    tone: Tone.red,
-                    onPressed: _busy ? null : () => _decide(confirm: true),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  key: const Key('prealert-false'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(52),
-                  ),
-                  onPressed: _busy ? null : _falseAlarm,
-                  icon: const Icon(Icons.do_not_disturb_on),
-                  label: Text(l10n.prealertFalseAlarm),
+                const SizedBox(height: 12),
+              ],
+              // Tile 1: the picture the camera captured.
+              _MediaTile(frame: _frame, l10n: l10n),
+              if (p.pending) ...[
+                const SizedBox(height: 12),
+                // Tile 2: confirm the report (SOS): the room is told at once.
+                _BigTile(
+                  key: const Key('prealert-confirm'),
+                  icon: Icons.sos,
+                  label: l10n.prealertConfirm,
+                  background: sosRed,
+                  foreground: Colors.white,
+                  onTap: _busy ? null : () => _decide(confirm: true),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  l10n.prealertHint,
-                  style: Theme.of(context).textTheme.bodySmall,
+                // Tile 3: a false alarm or an alert not confirmed on site.
+                _BigTile(
+                  key: const Key('prealert-false'),
+                  icon: Icons.do_not_disturb_on,
+                  label: l10n.prealertFalseAlarm,
+                  background: Theme.of(context)
+                      .colorScheme
+                      .surfaceContainerHighest,
+                  foreground: Theme.of(context).colorScheme.onSurface,
+                  onTap: _busy ? null : _falseAlarm,
                 ),
-              ] else
+                const SizedBox(height: 8),
+                if (!_muted)
+                  TextButton.icon(
+                    key: const Key('prealert-mute'),
+                    onPressed: _mute,
+                    icon: const Icon(Icons.volume_off),
+                    label: Text(l10n.prealertMute),
+                  ),
+                Text(l10n.prealertHint, style: text.bodySmall),
+              ] else ...[
+                const SizedBox(height: 12),
                 Card(
                   child: ListTile(
                     key: const Key('prealert-state'),
@@ -241,10 +266,15 @@ class _PrealertScreenState extends ConsumerState<PrealertScreen> {
                           ? Icons.do_not_disturb_on
                           : Icons.check_circle,
                     ),
-                    title: Text(prealertStateLabel(l10n, p.state)),
+                    title: Text(
+                      p.stage == 'room'
+                          ? l10n.prealertRoom
+                          : prealertStateLabel(l10n, p.state),
+                    ),
                     subtitle: p.reason == null ? null : Text(p.reason!),
                   ),
                 ),
+              ],
             ],
           ),
         ),
@@ -253,8 +283,100 @@ class _PrealertScreenState extends ConsumerState<PrealertScreen> {
   }
 }
 
+/// The first tile: the camera's picture, or a plain tile saying there is none.
+class _MediaTile extends StatelessWidget {
+  const _MediaTile({required this.frame, required this.l10n});
+
+  final Future<String>? frame;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final empty = ColoredBox(
+      color: Colors.black12,
+      child: Center(child: Text(l10n.prealertNoMedia)),
+    );
+    return Semantics(
+      label: l10n.prealertMedia,
+      image: true,
+      child: ClipRRect(
+        key: const Key('prealert-media'),
+        borderRadius: BorderRadius.circular(16),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: frame == null
+              ? empty
+              : FutureBuilder<String>(
+                  future: frame,
+                  builder: (context, snap) => snap.hasData
+                      ? Image.network(
+                          snap.data!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => empty,
+                        )
+                      : const ColoredBox(color: Colors.black12),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A large square-ish tile, easy to hit in a hurry.
+class _BigTile extends StatelessWidget {
+  const _BigTile({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.background,
+    required this.foreground,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color background;
+  final Color foreground;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: onTap != null,
+    child: Material(
+      color: onTap == null ? background.withValues(alpha: 0.5) : background,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: SizedBox(
+          height: 112,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: foreground),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: foreground,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 String prealertReasonLabel(AppLocalizations l10n, String reason) =>
     switch (reason) {
+      'unconfirmed' => l10n.prealertReasonUnconfirmed,
       'test' => l10n.prealertReasonTest,
       'cooking' => l10n.prealertReasonCooking,
       'drill' => l10n.prealertReasonDrill,

@@ -650,6 +650,9 @@ class AttachmentOut(BaseModel):
     created_at: datetime
     #: Short-lived link to the file, for the room only (never sent to the phone).
     url: str | None = None
+    #: A message of the scene: the step the mission had reached, and whether it was spoken (2026-11-01).
+    stage: str | None = None
+    spoken: bool = False
 
 
 Localized = dict[Literal["ar", "fr", "en"], Annotated[Text, StringConstraints(min_length=1, max_length=120)]]
@@ -937,6 +940,27 @@ class SmsKeyOut(BaseModel):
 
 class TextNoteIn(CrewWrite):
     body: Annotated[Text, StringConstraints(min_length=1, max_length=500)]
+
+
+class StageMessageIn(CrewWrite):
+    """A message of the scene at the mission's current step: typed, or spoken, tidied and corrected."""
+
+    text: Annotated[Text, StringConstraints(min_length=2, max_length=1000)]
+    # The transcript the text was corrected from (measure and learning).
+    voice_id: uuid.UUID | None = None
+
+
+class StageVoiceOut(BaseModel):
+    """What the platform heard, and the same text tidied, for the leader to correct before sending."""
+
+    voice_id: uuid.UUID
+    transcript: str
+    text: str
+    #: ``model``: the local language model tidied it; ``rules``: the simple clean-up (model not available).
+    tidied_by: Literal["model", "rules"]
+    stage: str
+    language: str | None
+    duration_s: float
 
 
 class DetailedReportIn(CrewWrite):

@@ -1,3 +1,5 @@
+import 'package:ehimaya/core/push/push_messaging.dart';
+import 'package:ehimaya/core/push/push_notifications.dart';
 import 'package:ehimaya/core/push/push_payload.dart';
 import 'package:ehimaya/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,11 @@ Future<void> go(WidgetTester tester, String location) async {
 Map<String, Object?> _body(SeenRequest r) => r.json! as Map<String, Object?>;
 
 /// Review point 25 (phase D): the owner's pre-alert screen.
-Map<String, Object?> _prealert({String state = 'pending', String? reason}) => {
+Map<String, Object?> _prealert({
+  String state = 'pending',
+  String? reason,
+  String stage = 'officer',
+}) => {
   'id': 'p-1',
   'org_id': 'org-1',
   'org_name': 'Entrepôt Sfax',
@@ -26,16 +32,23 @@ Map<String, Object?> _prealert({String state = 'pending', String? reason}) => {
   'confidence': 0.82,
   'simulated': true,
   'state': state,
+  'stage': stage,
   'raised_at': DateTime.now().toUtc().toIso8601String(),
   'deadline_at': DateTime.now()
       .toUtc()
-      .add(const Duration(seconds: 90))
+      .add(const Duration(seconds: 60))
       .toIso8601String(),
-  'seconds_left': 90,
+  'seconds_left': 60,
   'reason': reason,
   'report_id': state == 'confirmed' ? 'r-1' : null,
   'has_frame': false,
 };
+
+FakeResponse Function(SeenRequest) _apiWith(Map<String, Object?> row) =>
+    (r) => switch ((r.method, r.path)) {
+      ('GET', '/api/v1/orgs/org-1/prealerts') => FakeResponse(200, json: [row]),
+      _ => _api(r),
+    };
 
 FakeResponse _api(SeenRequest r) => switch ((r.method, r.path)) {
   ('GET', '/api/v1/orgs/org-1/prealerts') => FakeResponse(
@@ -81,6 +94,11 @@ void main() {
     expect(find.textContaining('Smoke · 82%'), findsOneWidget);
     expect(find.byKey(const Key('sim-banner')), findsOneWidget);
     expect(find.byKey(const Key('prealert-countdown')), findsOneWidget);
+    expect(find.textContaining("Safety officer's turn"), findsOneWidget);
+    // Three tiles: the picture, confirm (SOS), false alarm or unconfirmed.
+    expect(find.byKey(const Key('prealert-media')), findsOneWidget);
+    expect(find.text('Confirm the report (SOS)'), findsOneWidget);
+    expect(find.text('False alarm or unconfirmed'), findsOneWidget);
     await tester.tap(find.byKey(const Key('prealert-false')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('prealert-reason-cooking')));
@@ -89,7 +107,7 @@ void main() {
       (r) => r.path.endsWith('/decision'),
     );
     expect(sent.json, {'action': 'cancel', 'reason': 'Cooking or barbecue'});
-    expect(find.text('Cancelled: false alarm'), findsOneWidget);
+    expect(find.text('Cancelled: false alarm or unconfirmed'), findsOneWidget);
     await unmountApp(tester);
   });
 
@@ -112,5 +130,59 @@ void main() {
     );
     expect(find.text('أُكّد وأُبلغت القاعة'), findsOneWidget);
     await unmountApp(tester);
+  });
+
+  testWidgets('the alarm rings while it waits and stops when silenced', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 2800);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final alarm = FakePrealertAlarm();
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'ar'),
+      session: testSession,
+      api: _apiWith(_prealert(stage: 'owner')),
+      alarm: alarm,
+    );
+    await go(tester, Routes.prealert('org-1', 'p-1'));
+    expect(alarm.ringing, isTrue);
+    expect(find.textContaining('دور صاحب المؤسسة'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('prealert-mute')));
+    await tester.pumpAndSettle();
+    expect(alarm.ringing, isFalse);
+    expect(find.byKey(const Key('prealert-mute')), findsNothing);
+    await unmountApp(tester);
+  });
+
+  testWidgets('a device the Civil Protection follows says the room was told', (
+    tester,
+  ) async {
+    final alarm = FakePrealertAlarm();
+    await pumpApp(
+      tester,
+      prefs: registeredPrefs(locale: 'ar'),
+      session: testSession,
+      api: _apiWith(_prealert(state: 'escalated', stage: 'room')),
+      alarm: alarm,
+    );
+    await go(tester, Routes.prealert('org-1', 'p-1'));
+    expect(alarm.starts, 0);
+    expect(
+      find.text('جهاز تتابعه الحماية المدنية: أُبلغت القاعة مباشرة'),
+      findsOneWidget,
+    );
+    await unmountApp(tester);
+  });
+
+  test('the pre-alert rings on its own alarm channel', () {
+    final p = PushPayload.parse({
+      'type': 'prealert',
+      'prealert_id': 'p-1',
+      'org_id': 'org-1',
+    })!;
+    expect(pushChannelFor(p), prealertChannelId);
+    expect(pushChannelFor(p, criticalChannelId, true), prealertChannelId);
   });
 }

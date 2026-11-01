@@ -30,6 +30,11 @@ const alertChannelId = 'ehimaya_alerts_v2';
 const criticalChannelId = 'ehimaya_critical_v2';
 const defaultChannelId = 'ehimaya_default';
 
+/// Fire pre-alert of an institution's camera (Yamen, 2026-11-01): always created, rings on the
+/// alarm stream (heard with the ringer on silent) and bypasses Do Not Disturb once the phone
+/// granted the policy access. The safety officer and the owner must hear it.
+const prealertChannelId = 'ehimaya_prealert_v1';
+
 /// Channel ids of earlier versions, deleted at start.
 const legacyChannelIds = ['ehimaya_alerts'];
 
@@ -42,8 +47,13 @@ class PushChannelNames {
     required this.generalDescription,
     String? critical,
     String? criticalDescription,
+    String? prealert,
+    String? prealertDescription,
   }) : critical = critical ?? alerts,
-       criticalDescription = criticalDescription ?? alertsDescription;
+       criticalDescription = criticalDescription ?? alertsDescription,
+       prealert = prealert ?? critical ?? alerts,
+       prealertDescription =
+           prealertDescription ?? criticalDescription ?? alertsDescription;
 
   final String alerts;
   final String alertsDescription;
@@ -51,6 +61,8 @@ class PushChannelNames {
   final String generalDescription;
   final String critical;
   final String criticalDescription;
+  final String prealert;
+  final String prealertDescription;
 }
 
 /// Push delivery as used by the app. [FirebasePushMessaging] in production; the app works the

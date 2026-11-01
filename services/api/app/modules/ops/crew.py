@@ -378,6 +378,8 @@ def attachment_out(a: FieldAttachment, *, with_url: bool = False) -> schemas.Att
         device_at=a.device_at,
         created_at=a.created_at,
         url=url,
+        stage=a.stage,
+        spoken=a.spoken,
     )
 
 

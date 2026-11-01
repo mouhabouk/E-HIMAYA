@@ -523,7 +523,10 @@
     "leaveBody": "You will lose access to the institution. The last administrator cannot leave.",
     "leaveUnavailable": "Your membership could not be identified (sign in with the e-mail of your membership).",
     "leave": "Leave the institution",
-    "confirmLeave": "Leave {{name}}? You will need a new invitation to come back."
+    "confirmLeave": "Leave {{name}}? You will need a new invitation to come back.",
+    "safetyOfficer": "Safety officer",
+    "safetyOfficerOf": "{{name}} is the safety officer",
+    "safetyOfficerHelp": "The safety officer is alerted first when a camera of the institution sees a fire or smoke: 60 seconds, then the owner (administrator) 60 seconds, then the operations room automatically if nobody answers. The alert rings like an alarm even on silent."
   },
   "roles": {
     "admin": "Administrator",

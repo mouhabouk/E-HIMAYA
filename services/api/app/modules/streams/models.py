@@ -54,6 +54,13 @@ class LiveStream(Base):
     org_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("org.organization.id", ondelete="SET NULL")
     )
+    # Who follows the institution's camera (Yamen 2026-11-01): ``owner`` (the staged pre-alert) or ``room`` (a device
+    # the Civil Protection installed or has the right to follow: a confirmed fire goes to the room at once).
+    monitored_by: Mapped[str] = mapped_column(Text, server_default="owner")
+    # The camera bridge (Yamen 2026-11-01): the key the camera's alarms are signed with (encrypted, shown once) and
+    # the bridge's last heartbeat.
+    event_key_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    bridge_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # A team's stream (phase D, review point 17): the mission and its incident.
     assignment_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="SET NULL")
@@ -116,3 +123,26 @@ class StreamSegment(Base):
     last_error: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     done_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CameraEvent(Base):
+    """An alarm the camera raised itself (thermal threshold, built-in fire or smoke detection), relayed by its bridge;
+    (camera, at, label) is unique against replays."""
+
+    __tablename__ = "camera_event"
+    __table_args__ = {"schema": "reports"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    stream_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.live_stream.id", ondelete="CASCADE")
+    )
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    label: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[float] = mapped_column(Float(precision=24))
+    temperature_c: Mapped[float | None] = mapped_column(Float(precision=24))
+    vendor_event: Mapped[str | None] = mapped_column(Text)
+    alerted: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    media_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.media.id", ondelete="SET NULL")
+    )
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -6680,17 +6680,17 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get prealertConfirm => 'أكّد وأبلغ الآن';
+  String get prealertConfirm => 'تأكيد البلاغ (النجدة)';
 
   @override
-  String get prealertFalseAlarm => 'إنذار كاذب';
+  String get prealertFalseAlarm => 'بلاغ كاذب أو تنبيه غير مؤكد';
 
   @override
   String get prealertHint =>
-      'إن لم تُجب، تُبلَّغ القاعة آليا عند انتهاء العدّ. الإلغاء يُسجَّل بسببه.';
+      'المنبه يرنّ حتى تُجيب. إن لم يُجب مسؤول السلامة ثم صاحب المؤسسة، تُبلَّغ القاعة آليا. الإلغاء يُسجَّل بسببه.';
 
   @override
-  String get prealertWhyFalse => 'لماذا هو إنذار كاذب؟';
+  String get prealertWhyFalse => 'لماذا هو بلاغ كاذب أو غير مؤكد؟';
 
   @override
   String get prealertReasonTest => 'تجربة أو صيانة';
@@ -6708,13 +6708,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get prealertReasonOther => 'سبب آخر تحقّقت منه في المكان';
 
   @override
-  String get prealertCancelled => 'أُلغي: إنذار كاذب';
+  String get prealertCancelled => 'أُلغي: بلاغ كاذب أو غير مؤكد';
 
   @override
   String get prealertConfirmed => 'أُكّد وأُبلغت القاعة';
 
   @override
-  String get prealertEscalated => 'رُفع آليا إلى القاعة بعد انتهاء المهلة';
+  String get prealertEscalated => 'لم يُجب أحد في المهلتين: أُبلغت القاعة آليا';
 
   @override
   String get prealertPending => 'في انتظار ردّك';
@@ -6804,4 +6804,38 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get calloutBySms =>
       'لا يوجد اتصال بالإنترنت: جهّزنا ردّك في رسالة قصيرة موقّعة. اضغط «إرسال» في تطبيق الرسائل.';
+
+  @override
+  String get channelPrealert => 'تنبيهات الحريق من كاميرات مؤسستك';
+
+  @override
+  String get channelPrealertDesc =>
+      'ترنّ بصوت المنبه حتى في الوضع الصامت أو «عدم الإزعاج»، وتظهر على كامل الشاشة.';
+
+  @override
+  String get prealertReasonUnconfirmed =>
+      'تنبيه غير مؤكد: لم أجد نارا ولا دخانا';
+
+  @override
+  String get prealertRoom =>
+      'جهاز تتابعه الحماية المدنية: أُبلغت القاعة مباشرة';
+
+  @override
+  String get prealertMedia => 'الصورة الملتقطة';
+
+  @override
+  String get prealertNoMedia => 'لا صورة لهذا التنبيه';
+
+  @override
+  String prealertStageOfficer(int seconds) {
+    return 'دور مسؤول السلامة: $seconds ثانية، ثم يُنبَّه صاحب المؤسسة';
+  }
+
+  @override
+  String prealertStageOwner(int seconds) {
+    return 'دور صاحب المؤسسة: $seconds ثانية، ثم تُبلَّغ القاعة آليا';
+  }
+
+  @override
+  String get prealertMute => 'إسكات المنبه';
 }

@@ -1844,6 +1844,8 @@ erDiagram
         datetime created_at
         blob transcript_enc
         datetime transcribed_at
+        text stage
+        boolean spoken
     }
     ops__field_report {
         uuid id PK
@@ -2233,6 +2235,7 @@ erDiagram
         text role
         text display_name
         text email
+        boolean safety_officer
         datetime joined_at
     }
     org__organization {
@@ -2275,6 +2278,7 @@ erDiagram
         uuid media_id FK
         boolean simulated
         text state
+        text stage
         datetime raised_at
         datetime deadline_at
         uuid decided_by FK
@@ -2672,6 +2676,18 @@ erDiagram
 
 ```mermaid
 erDiagram
+    reports__camera_event {
+        bigint id PK
+        uuid stream_id FK
+        datetime at
+        text label
+        float confidence
+        float temperature_c
+        text vendor_event
+        boolean alerted
+        uuid media_id FK
+        datetime received_at
+    }
     reports__camera_tower {
         uuid stream_id PK,FK
         text code
@@ -2770,6 +2786,9 @@ erDiagram
         jsonb vision_frames
         jsonb vision_alerts
         uuid org_id FK
+        text monitored_by
+        blob event_key_enc
+        datetime bridge_seen_at
         uuid assignment_id FK
         uuid incident_id FK
     }
@@ -2925,6 +2944,7 @@ erDiagram
     org__organization ||--o{ reports__report : "organization_id"
     reports__camera_tower ||--o{ reports__tower_event : "stream_id"
     reports__drone_zone ||--o{ reports__drone_alert : "zone_id"
+    reports__live_stream ||--o{ reports__camera_event : "stream_id"
     reports__live_stream ||--o{ reports__camera_tower : "stream_id"
     reports__live_stream ||--o{ reports__drone_alert : "stream_id"
     reports__live_stream ||--o{ reports__drone_telemetry : "stream_id"
@@ -2932,6 +2952,7 @@ erDiagram
     reports__live_stream ||--o{ reports__stream_detection : "stream_id"
     reports__live_stream ||--o{ reports__stream_location : "stream_id"
     reports__live_stream ||--o{ reports__stream_segment : "stream_id"
+    reports__media ||--o{ reports__camera_event : "media_id"
     reports__media ||--o{ reports__stream_detection : "media_id"
     reports__media ||--o{ reports__stream_segment : "media_id"
     reports__media ||--o{ reports__tower_event : "media_id"

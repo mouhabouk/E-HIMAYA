@@ -17,6 +17,7 @@ import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/core/sync/sync_scheduler.dart';
 import 'package:ehimaya/features/emergency/dialer.dart';
 import 'package:ehimaya/features/institution/institution_providers.dart';
+import 'package:ehimaya/features/institution/prealert_alarm.dart';
 import 'package:ehimaya/features/sos/sos_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -175,6 +176,7 @@ Future<AppHarness> pumpApp(
   Speech? speech,
   Torch? torch,
   List<Override> overrides = const [],
+  PrealertAlarm? alarm,
 }) async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   SharedPreferences.setMockInitialValues(prefs);
@@ -211,6 +213,7 @@ Future<AppHarness> pumpApp(
         requestSyncProvider.overrideWithValue(() async {}),
         speechProvider.overrideWithValue(speech ?? FakeSpeech()),
         torchProvider.overrideWithValue(torch ?? FakeTorch()),
+        prealertAlarmProvider.overrideWithValue(alarm ?? FakePrealertAlarm()),
         ...overrides,
       ],
       child: const EHimayaApp(),
@@ -235,4 +238,19 @@ Future<void> scrollHomeTo(WidgetTester tester, String key) async {
     scrollable: find.byType(Scrollable).first,
   );
   await tester.pumpAndSettle();
+}
+
+/// The fire pre-alert's alarm without audio: records whether it rings.
+class FakePrealertAlarm implements PrealertAlarm {
+  bool ringing = false;
+  int starts = 0;
+
+  @override
+  Future<void> start() async {
+    ringing = true;
+    starts++;
+  }
+
+  @override
+  Future<void> stop() async => ringing = false;
 }

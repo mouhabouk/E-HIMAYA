@@ -3499,18 +3499,18 @@
       }
     }
   },
-  "prealertConfirm": "Confirm and report now",
-  "prealertFalseAlarm": "False alarm",
-  "prealertHint": "With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.",
-  "prealertWhyFalse": "Why is it a false alarm?",
+  "prealertConfirm": "Confirm the report (SOS)",
+  "prealertFalseAlarm": "False alarm or unconfirmed",
+  "prealertHint": "The alarm rings until you answer. Without an answer from the safety officer then the owner, the room is told automatically. A cancellation is recorded with its reason.",
+  "prealertWhyFalse": "Why is it a false alarm or unconfirmed?",
   "prealertReasonTest": "Test or maintenance",
   "prealertReasonCooking": "Cooking or barbecue",
   "prealertReasonDrill": "Evacuation drill",
   "prealertReasonCamera": "Camera error",
   "prealertReasonOther": "Another reason checked on site",
-  "prealertCancelled": "Cancelled: false alarm",
+  "prealertCancelled": "Cancelled: false alarm or unconfirmed",
   "prealertConfirmed": "Confirmed, the room was told",
-  "prealertEscalated": "Sent to the room when the delay ran out",
+  "prealertEscalated": "Nobody answered in both delays: the room was told",
   "prealertPending": "Waiting for your answer",
   "prealertGone": "This pre-alert is no longer available.",
   "prealertRecent": "Camera pre-alerts",
@@ -3564,5 +3564,28 @@
   "staffLiveEnded": "Stream over. The recording is kept with the incident.",
   "staffLiveAgain": "Stream again",
   "staffLiveBack": "Back to the mission",
-  "calloutBySms": "No internet: your answer is ready in a signed SMS. Press Send in the messaging app."
+  "calloutBySms": "No internet: your answer is ready in a signed SMS. Press Send in the messaging app.",
+  "channelPrealert": "Fire alerts from your institution's cameras",
+  "channelPrealertDesc": "Ring like an alarm even on silent or Do Not Disturb, full screen.",
+  "prealertReasonUnconfirmed": "Unconfirmed: no fire or smoke on site",
+  "prealertRoom": "Device followed by the Civil Protection: the room was told directly",
+  "prealertMedia": "Captured picture",
+  "prealertNoMedia": "No picture for this alert",
+  "prealertStageOfficer": "Safety officer's turn: {seconds} s, then the owner is alerted",
+  "@prealertStageOfficer": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "prealertStageOwner": "Owner's turn: {seconds} s, then the room is told automatically",
+  "@prealertStageOwner": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "prealertMute": "Silence the alarm"
 }

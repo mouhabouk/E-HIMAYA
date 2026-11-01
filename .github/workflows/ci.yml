@@ -171,6 +171,7 @@ jobs:
           - { name: api, context: services/api, args: "" }
           - { name: notify-sim, context: services/notify-sim, args: "" }
           - { name: sensor-gateway, context: services/sensor-gateway, args: "" }
+          - { name: camera-bridge, context: services/camera-bridge, args: "" }
           - { name: ai, context: services/ai, args: "--target runtime" }
           - { name: vision, context: services/vision, args: "--target runtime" }
           - { name: postgres, context: infra/postgres, args: "" }
@@ -338,6 +339,28 @@ jobs:
           uv run ruff format --check .
       - name: Type check
         run: uv run mypy gateway
+      - name: Tests
+        run: uv run pytest -q
+
+  # Bridge of the fire-detecting cameras (docs/guides/camera-bridge.md): standard library only at run time.
+  camera-bridge:
+    name: Camera bridge · lint, types, tests
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    defaults:
+      run:
+        working-directory: services/camera-bridge
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Type check
+        run: uv run mypy bridge
       - name: Tests
         run: uv run pytest -q
 

@@ -76,7 +76,7 @@ def confirmed_labels(frames: list[dict[str, Any]], alert: float) -> dict[str, fl
     return out
 
 
-def _cooled_down(stream: LiveStream, label: str, at: datetime, cooldown_s: int) -> bool:
+def cooled_down(stream: LiveStream, label: str, at: datetime, cooldown_s: int) -> bool:
     last = (stream.vision_alerts or {}).get(label)
     if not last:
         return True
@@ -86,7 +86,7 @@ def _cooled_down(stream: LiveStream, label: str, at: datetime, cooldown_s: int) 
         return True
 
 
-def _decode_frame(frame_b64: str | None) -> bytes | None:
+def decode_frame(frame_b64: str | None) -> bytes | None:
     if not frame_b64:
         return None
     try:
@@ -98,7 +98,7 @@ def _decode_frame(frame_b64: str | None) -> bytes | None:
     return data
 
 
-async def _store_frame(
+async def store_frame(
     session: AsyncSession, stream: LiveStream, frame: bytes, label: str, confidence: float, model: str
 ) -> Media:
     key = f"{FRAME_PREFIX}{stream.id}/{uuid.uuid4().hex}.jpg"
@@ -163,37 +163,46 @@ async def record_frame(session: AsyncSession, stream: LiveStream, body: schemas.
     alerting = {
         label: conf
         for label, conf in confirmed.items()
-        if _cooled_down(stream, label, at, settings.vision_alert_cooldown_s)
+        if cooled_down(stream, label, at, settings.vision_alert_cooldown_s)
     }
-    frame = _decode_frame(body.frame_jpeg_b64) if alerting else None
+    frame = decode_frame(body.frame_jpeg_b64) if alerting else None
     for label, confidence in alerting.items():
-        media = await _store_frame(session, stream, frame, label, confidence, body.model) if frame else None
-        stream.vision_alerts = {**(stream.vision_alerts or {}), label: at.isoformat()}
-        await _timeline(session, stream, label, confidence, media)
-        if stream.org_id is not None and stream.report_id is None:
-            # An institution's camera: the owner is told first and the room after the delay (review point 25).
-            from app.modules.orgs import prealert
-
-            await prealert.raise_for_stream(session, stream, label, confidence, media.id if media else None)
-        await emit(
-            session,
-            "stream.alert",
-            {
-                "stream_id": str(stream.id),
-                "label": label,
-                "confidence": round(confidence, 3),
-                "report_id": str(stream.report_id) if stream.report_id else None,
-                "gouvernorat_code": stream.gouvernorat_code,
-                "media_id": str(media.id) if media else None,
-                "simulated": stream.source == Source.SIM,
-                "at": at.isoformat(),
-            },
-        )
-        log.info("vision.confirmed", stream_id=str(stream.id), label=label, confidence=round(confidence, 3))
+        media = await store_frame(session, stream, frame, label, confidence, body.model) if frame else None
+        await raise_alert(session, stream, label, confidence, at, media)
     if stream.report_id is not None:
         # The confirmed detection is an input of the priority score (vision_fire).
         await pipeline.rescore(session, [stream.report_id], wait=False)
     return list(alerting)
+
+
+async def raise_alert(
+    session: AsyncSession, stream: LiveStream, label: str, confidence: float, at: datetime, media: Media | None
+) -> None:
+    """What a confirmed fire or smoke changes, whoever confirmed it (the vision service, or the camera itself through
+    its bridge): the incident timeline, the institution's pre-alert or the room at once, and the live feed."""
+    stream.vision_alerts = {**(stream.vision_alerts or {}), label: at.isoformat()}
+    await _timeline(session, stream, label, confidence, media)
+    if stream.org_id is not None and stream.report_id is None:
+        # An institution's camera: the safety officer, then the owner, then the room; or the room at once for a
+        # device the Civil Protection follows (review point 25, Yamen 2026-11-01).
+        from app.modules.orgs import prealert
+
+        await prealert.raise_for_stream(session, stream, label, confidence, media.id if media else None)
+    await emit(
+        session,
+        "stream.alert",
+        {
+            "stream_id": str(stream.id),
+            "label": label,
+            "confidence": round(confidence, 3),
+            "report_id": str(stream.report_id) if stream.report_id else None,
+            "gouvernorat_code": stream.gouvernorat_code,
+            "media_id": str(media.id) if media else None,
+            "simulated": stream.source == Source.SIM,
+            "at": at.isoformat(),
+        },
+    )
+    log.info("vision.confirmed", stream_id=str(stream.id), label=label, confidence=round(confidence, 3))
 
 
 async def _timeline(

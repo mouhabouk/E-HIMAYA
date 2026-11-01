@@ -1,0 +1,30 @@
+{
+  "api_url": "https://api.ehimaya.tn",
+  "listen": "0.0.0.0",
+  "port": 8099,
+  "queue": "/var/lib/ehimaya-bridge/queue.sqlite3",
+  "heartbeat_s": 300,
+  "stream_after_alarm_s": 600,
+  "cameras": [
+    {
+      "camera": "00000000-0000-0000-0000-000000000000",
+      "key": "replace with the 64-character key shown once in the dashboard",
+      "vendor": "hikvision",
+      "host": "192.168.1.64",
+      "user": "bridge",
+      "password": "the camera user's password",
+      "snapshot_channel": "201",
+      "rtsp_url": "rtsp://bridge:PASSWORD@192.168.1.64:554/Streaming/Channels/202",
+      "publish_url": "rtsp://media.ehimaya.tn:8554/PATH?token=PUBLISH_TOKEN"
+    },
+    {
+      "camera": "00000000-0000-0000-0000-000000000001",
+      "key": "replace with the 64-character key shown once in the dashboard",
+      "vendor": "dahua",
+      "host": "192.168.1.65",
+      "user": "bridge",
+      "password": "the camera user's password",
+      "snapshot_channel": "2"
+    }
+  ]
+}

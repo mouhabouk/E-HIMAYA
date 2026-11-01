@@ -215,6 +215,15 @@ describe("StreamDetailPage", () => {
     expect(await screen.findByText("Terminée", { selector: ".chip" })).toBeInTheDocument();
   });
 
+  it("renews the bridge key of a camera for the operations manager, shown once", async () => {
+    const api = fakeApi({ stream: vi.fn(() => Promise.resolve(makeStreamDetail({ id: "s-1", source: "camera" }))) });
+    const auth = fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["ops_manager"] } });
+    renderApp(<StreamDetailPage />, { api, auth, path: "/streams/s-1", route, lang: "fr" });
+    fireEvent.click(await screen.findByRole("button", { name: "Renouveler la clé du pont d'alarme" }));
+    await waitFor(() => expect(api.renewEventKey).toHaveBeenCalledWith("s-1"));
+    expect(await screen.findByTestId("bridge-key")).toHaveTextContent("ab".repeat(32));
+  });
+
   it("has no stop control for read-only roles nor for an ended stream", async () => {
     const api = fakeApi({ stream: vi.fn(() => Promise.resolve(makeStreamDetail({ id: "s-1" }))) });
     const auth = fakeAuth({ ...OPERATOR_CLAIMS, realm_access: { roles: ["local_committee"] } });

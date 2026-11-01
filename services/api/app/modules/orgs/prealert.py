@@ -1,12 +1,19 @@
 """Pre-alert of an institution (review point 25, docs/phase-d/design-d.md §2).
 
-A camera of an institution (a live stream with ``org_id``) confirms a fire or smoke. Before the room is disturbed,
-the institution's administrators and editors get a critical push and have ``orgs.prealert_seconds`` (90 s by
-default, a setting) to answer:
+A camera of an institution (a live stream with ``org_id``) confirms a fire or smoke. Two kinds of devices
+(Yamen, 2026-11-01):
 
-* «false alarm» with a reason: the pre-alert is closed, nothing reaches the room, the reason is audited;
-* «confirm»: the report is created at once;
-* no answer: the worker raises it to the room when the delay runs out.
+* a device the Civil Protection installed or has the right to follow (``monitored_by = room``): the report goes to
+  the room at once;
+* a device the institution follows (``monitored_by = owner``): a staged pre-alert. The safety officer gets a critical
+  alert (sound and full screen even in silent mode) and has ``orgs.prealert_seconds`` (60 s); without an answer the
+  owner (the institution's administrators) gets it for ``orgs.prealert_owner_seconds`` (60 s more); without an answer
+  the worker tells the room automatically. An institution without a safety officer starts at the owner's stage.
+
+Whoever is asked answers:
+
+* «false alarm or unconfirmed» with a reason: the pre-alert is closed, nothing reaches the room, the reason is audited;
+* «confirm» (the SOS tile): the report is created at once.
 
 The report is a normal ``iot`` report on behalf of the institution, at its address, so the grouping, the priority
 score, the follow-up and the institution's own report list all apply unchanged. The camera stream is linked to it,
@@ -42,6 +49,7 @@ from app.modules.streams.models import LiveStream
 log = structlog.get_logger()
 
 PENDING, CANCELLED, CONFIRMED, ESCALATED = "pending", "cancelled", "confirmed", "escalated"
+OFFICER, OWNER, ROOM = "officer", "owner", "room"
 ACTOR = "system:prealert"
 # The owner's phone shows a fixed text; the camera, the label and the countdown come from the authenticated API.
 PUSH_TITLE = outbox.localized("ء-حماية: تنبيه مسبق", "e-Himaya : pré-alerte", "e-Himaya: pre-alert")
@@ -73,19 +81,74 @@ async def raise_for_stream(
     if pending is not None:
         pending.confidence = max(pending.confidence, confidence)
         return Raised(pending, False)
-    return Raised(
-        await open_prealert(
-            session,
-            stream.org_id,
-            source="camera",
-            label=label,
-            confidence=confidence,
-            stream_id=stream.id,
-            media_id=media_id,
-            simulated=stream.source == "sim",
-        ),
-        True,
+    kwargs: dict[str, Any] = {
+        "source": "camera",
+        "label": label,
+        "confidence": confidence,
+        "stream_id": stream.id,
+        "media_id": media_id,
+        "simulated": stream.source == "sim",
+    }
+    if stream.monitored_by == ROOM:
+        return Raised(await to_room_now(session, stream.org_id, **kwargs), True)
+    return Raised(await open_prealert(session, stream.org_id, **kwargs), True)
+
+
+async def to_room_now(
+    session: AsyncSession,
+    org_id: uuid.UUID,
+    *,
+    source: str,
+    label: str,
+    confidence: float,
+    stream_id: uuid.UUID | None = None,
+    media_id: uuid.UUID | None = None,
+    simulated: bool = False,
+) -> Prealert:
+    """A device the Civil Protection follows: no stage, the report reaches the room at once (kept as a pre-alert
+    row so the institution's history and the room's list of pre-alerts show it too)."""
+    now = datetime.now(UTC)
+    row = Prealert(
+        org_id=org_id,
+        stream_id=stream_id,
+        source=source,
+        label=label,
+        confidence=confidence,
+        media_id=media_id,
+        simulated=simulated,
+        state=ESCALATED,
+        stage=ROOM,
+        raised_at=now,
+        deadline_at=now + timedelta(seconds=1),  # no delay to wait for; the column requires a deadline after it
     )
+    session.add(row)
+    await session.flush()
+    await _report(session, row, now)
+    log.info("prealert.to_room", prealert_id=str(row.id), org_id=str(org_id), label=label)
+    return row
+
+
+async def _officers(session: AsyncSession, org_id: uuid.UUID) -> list[uuid.UUID]:
+    return list(await session.scalars(select(Member.user_id).where(Member.org_id == org_id, Member.safety_officer)))
+
+
+async def _owners(session: AsyncSession, org_id: uuid.UUID) -> list[uuid.UUID]:
+    return list(
+        await session.scalars(select(Member.user_id).where(Member.org_id == org_id, Member.role == OrgRole.ADMIN.value))
+    )
+
+
+def _alert(session: AsyncSession, users: list[uuid.UUID], row: Prealert) -> None:
+    for user_id in users:
+        outbox.push(
+            session,
+            user_id,
+            "prealert",
+            {"prealert_id": str(row.id), "org_id": str(row.org_id), "stage": row.stage},
+            critical=True,
+            title=PUSH_TITLE,
+            body=PUSH_BODY,
+        )
 
 
 async def open_prealert(
@@ -100,7 +163,9 @@ async def open_prealert(
     simulated: bool = False,
 ) -> Prealert:
     now = datetime.now(UTC)
-    delay = await settings_service.threshold(session, "orgs.prealert_seconds")
+    officers = await _officers(session, org_id)
+    stage = OFFICER if officers else OWNER
+    delay = await _delay(session, stage)
     row = Prealert(
         org_id=org_id,
         stream_id=stream_id,
@@ -110,32 +175,25 @@ async def open_prealert(
         media_id=media_id,
         simulated=simulated,
         state=PENDING,
+        stage=stage,
         raised_at=now,
         deadline_at=now + timedelta(seconds=delay),
     )
     session.add(row)
     await session.flush()
-    members = await session.scalars(
-        select(Member.user_id).where(
-            Member.org_id == org_id, Member.role.in_((OrgRole.ADMIN.value, OrgRole.EDITOR.value))
-        )
-    )
-    for user_id in members:
-        outbox.push(
-            session,
-            user_id,
-            "prealert",
-            {"prealert_id": str(row.id), "org_id": str(org_id)},
-            critical=True,
-            title=PUSH_TITLE,
-            body=PUSH_BODY,
-        )
-    log.info("prealert.raised", prealert_id=str(row.id), org_id=str(org_id), label=label, delay_s=delay)
+    _alert(session, officers if stage == OFFICER else await _owners(session, org_id), row)
+    log.info("prealert.raised", prealert_id=str(row.id), org_id=str(org_id), label=label, stage=stage, delay_s=delay)
     return row
 
 
+async def _delay(session: AsyncSession, stage: str) -> int:
+    name = "orgs.prealert_seconds" if stage == OFFICER else "orgs.prealert_owner_seconds"
+    return await settings_service.threshold(session, name)
+
+
 async def decide(session: AsyncSession, row: Prealert, user_id: uuid.UUID, action: str, reason: str | None) -> Prealert:
-    """The owner's answer: ``cancel`` (false alarm, with a reason) or ``confirm`` (report now)."""
+    """The answer of the officer or the owner: ``cancel`` (false alarm or unconfirmed, with a reason) or ``confirm``
+    (report now)."""
     if row.state != PENDING:
         raise HTTPException(status.HTTP_409_CONFLICT, f"prealert_{row.state}")
     now = datetime.now(UTC)
@@ -150,7 +208,8 @@ async def decide(session: AsyncSession, row: Prealert, user_id: uuid.UUID, actio
 
 
 async def escalate_due(session: AsyncSession, now: datetime | None = None) -> int:
-    """Raise to the room every pending pre-alert whose delay ran out."""
+    """Move on every pending pre-alert whose delay ran out: from the safety officer to the owner, from the owner to
+    the room."""
     now = now or datetime.now(UTC)
     due = list(
         await session.scalars(
@@ -162,6 +221,12 @@ async def escalate_due(session: AsyncSession, now: datetime | None = None) -> in
         )
     )
     for row in due:
+        if row.stage == OFFICER:
+            row.stage = OWNER
+            row.deadline_at = now + timedelta(seconds=await _delay(session, OWNER))
+            _alert(session, await _owners(session, row.org_id), row)
+            log.info("prealert.to_owner", prealert_id=str(row.id))
+            continue
         row.state = ESCALATED
         await _report(session, row, now)
     await session.flush()
@@ -235,9 +300,14 @@ LABELS_AR = {"fire": "نار", "smoke": "دخان"}
 
 
 def prealert_text(row: Prealert) -> str:
-    """The report's text: what was seen, how sure, and how the owner answered (no name, no personal data)."""
+    """The report's text: what was seen, how sure, and who answered (no name, no personal data)."""
     seen = LABELS_AR.get(row.label, row.label)
-    how = "أكّده صاحب المؤسسة" if row.state == CONFIRMED else "لم يُجب صاحب المؤسسة في الأجل"
+    if row.stage == ROOM:
+        how = "جهاز تتابعه الحماية المدنية: أُبلغت القاعة مباشرة"
+    elif row.state == CONFIRMED:
+        how = "أكّده مسؤول السلامة" if row.stage == OFFICER else "أكّده صاحب المؤسسة"
+    else:
+        how = "لم يُجب مسؤول السلامة ولا صاحب المؤسسة في الأجل"
     sim = "[SIM] " if row.simulated else ""
     return f"{sim}تنبيه مسبق من كاميرا المؤسسة: {seen} (ثقة {round(row.confidence * 100)}٪). {how}."
 
@@ -272,6 +342,7 @@ def out(row: Prealert, org_name: str | None = None) -> dict[str, Any]:
         "confidence": round(row.confidence, 3),
         "simulated": row.simulated,
         "state": row.state,
+        "stage": row.stage,
         "raised_at": row.raised_at,
         "deadline_at": row.deadline_at,
         "seconds_left": seconds_left(row),

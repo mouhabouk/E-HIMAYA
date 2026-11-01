@@ -128,6 +128,8 @@ from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
 from app.modules.snacr.router import router as snacr_router
 from app.modules.strategies.router import router as strategies_router
+from app.modules.streams.camera_events import router as camera_events_router
+from app.modules.streams.camera_events import staff_router as camera_events_staff_router
 from app.modules.streams.internal import router as streams_internal_router
 from app.modules.streams.router import router as streams_router
 from app.modules.streams.staff_router import router as streams_staff_router
@@ -325,6 +327,8 @@ def create_app() -> FastAPI:
         streams_router,
         streams_staff_router,
         streams_internal_router,
+        camera_events_router,
+        camera_events_staff_router,
         audit_router,
         privacy_router,
         weather_router,

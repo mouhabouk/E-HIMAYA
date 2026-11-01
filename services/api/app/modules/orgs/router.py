@@ -14,7 +14,7 @@ from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.orgs import certificate, domain, schemas, service
 from app.modules.orgs.domain import OrgRole, OrgStatus
-from app.modules.orgs.models import Document, Equipment, Hazmat, MapFeature, Organization, TeamMember
+from app.modules.orgs.models import Document, Equipment, Hazmat, MapFeature, Member, Organization, TeamMember
 from app.modules.orgs.service import CurrentUser, PortalUser
 
 log = structlog.get_logger()
@@ -123,6 +123,28 @@ async def set_member_role(
         action="org.member_role",
         target=f"org:{org_id}",
         details={"user_id": str(user_id), "role": body.role.value},
+    )
+    await session.commit()
+    return service.member_out(target)
+
+
+@router.put("/orgs/{org_id}/members/{user_id}/safety-officer", response_model=schemas.MemberOut)
+async def set_safety_officer(
+    org_id: OrgId, user_id: uuid.UUID, body: schemas.SafetyOfficerIn, user: CurrentUser, session: Session
+) -> schemas.MemberOut:
+    """The administrator names (or un-names) the safety officer: the first one alerted when a camera of the
+    institution sees a fire (60 s before the owner is)."""
+    await service.membership(session, user, org_id, OrgRole.ADMIN, lock=True)
+    target = await session.get(Member, (org_id, user_id), with_for_update=True)
+    if target is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    target.safety_officer = body.safety_officer
+    await audit.record(
+        session,
+        actor=user.actor,
+        action="org.safety_officer",
+        target=f"org:{org_id}",
+        details={"user_id": str(user_id), "safety_officer": body.safety_officer},
     )
     await session.commit()
     return service.member_out(target)

@@ -1286,6 +1286,10 @@ class OrgPrealert {
   /// `pending` | `cancelled` | `confirmed` | `escalated`.
   String get state => json['state'] as String? ?? 'pending';
   bool get pending => state == 'pending';
+
+  /// Who is asked (Yamen, 2026-11-01): `officer` (the safety officer, 60 s), then `owner`
+  /// (60 s), then the room; `room` for a device the Civil Protection follows.
+  String get stage => json['stage'] as String? ?? 'owner';
   int get secondsLeft => (json['seconds_left'] as num?)?.toInt() ?? 0;
   DateTime get raisedAt => DateTime.parse(json['raised_at']! as String);
   DateTime get deadlineAt => DateTime.parse(json['deadline_at']! as String);

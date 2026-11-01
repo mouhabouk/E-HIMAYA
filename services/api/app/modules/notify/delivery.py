@@ -299,6 +299,9 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
                         data,
                         bool(p.get("alert")),
                         bool(p.get("critical")),
+                        # Yamen 2026-11-01: the fire pre-alert of an institution opens full screen and rings on the
+                        # alarm stream through silent mode and Do Not Disturb, so the app shows it itself.
+                        data_only=p["type"] == "prealert",
                     ),
                 )
                 for t, plat, loc in targets

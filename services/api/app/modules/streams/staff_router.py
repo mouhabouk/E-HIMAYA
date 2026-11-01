@@ -72,9 +72,21 @@ async def register_source(
         if body.source != "camera" or org is None or org.gouvernorat_code != body.gouvernorat_code:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "invalid_org")
     spec = service.FixedSource(
-        Source(body.source), body.label, body.gouvernorat_code, body.lat, body.lon, org_id=body.org_id
+        Source(body.source),
+        body.label,
+        body.gouvernorat_code,
+        body.lat,
+        body.lon,
+        org_id=body.org_id,
+        monitored_by=body.monitored_by,
     )
     stream, token = await service.register_fixed(session, spec, actor)
+    event_key = None
+    if body.source == "camera":
+        from app.modules.streams import camera_events
+
+        event_key = camera_events.new_key()
+        stream.event_key_enc = camera_events.seal(event_key)
     await audit.record(
         session,
         actor=actor,
@@ -85,6 +97,7 @@ async def register_source(
             "label": body.label,
             "gouvernorat_code": body.gouvernorat_code,
             "org": str(body.org_id) if body.org_id else None,
+            "monitored_by": body.monitored_by,
         },
     )
     await session.commit()
@@ -94,6 +107,7 @@ async def register_source(
         publish_url_rtsp=service.rtsp_publish_url(stream),
         publish_url_rtmp=service.rtmp_publish_url(stream),
         publish_token=token,
+        event_key=event_key,
     )
 
 

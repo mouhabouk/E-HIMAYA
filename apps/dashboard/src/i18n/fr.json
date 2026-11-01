@@ -3920,7 +3920,8 @@
         "orgs": {
           "invitation_days": "Validité d’une invitation d’établissement",
           "reservation_due_soon_days": "Alerte avant l’échéance des réserves",
-          "prealert_seconds": "Délai du responsable avant que la pré-alerte ne remonte à la salle"
+          "prealert_seconds": "Délai du responsable sécurité avant d'alerter le propriétaire",
+          "prealert_owner_seconds": "Délai du propriétaire avant que l'alerte ne remonte à la salle"
         },
         "snacr": {
           "target": {
@@ -8406,7 +8407,7 @@
   },
   "cameras": {
     "pageTitle": "Caméras des établissements et pré-alertes",
-    "intro": "Quand une caméra d'établissement confirme un feu ou une fumée, le responsable est prévenu d'abord ; le signalement remonte à la salle s'il confirme ou ne répond pas dans le délai (paramètres : « délai du responsable »). Les fausses alertes restent visibles ici avec leur motif.",
+    "intro": "Deux sortes de caméras d'établissement. Suivie par l'établissement : quand elle confirme un feu ou une fumée, le responsable sécurité est alerté d'abord (60 s), puis le propriétaire (60 s), puis la salle automatiquement sans réponse. Suivie par la Protection civile : le signalement arrive directement à la salle. Les fausses alertes restent visibles ici avec leur motif.",
     "prealerts": "Pré-alertes",
     "none": "Aucune pré-alerte.",
     "when": "Heure",
@@ -8420,10 +8421,13 @@
       "smoke": "Fumée"
     },
     "states": {
-      "pending": "Attente du responsable ({{seconds}} s)",
-      "cancelled": "Fausse alerte",
-      "confirmed": "Confirmée par le responsable",
-      "escalated": "Transmise à la fin du délai"
+      "pending": "Attend le propriétaire ({{seconds}} s)",
+      "pendingOfficer": "Attend le responsable sécurité ({{seconds}} s)",
+      "cancelled": "Fausse alerte ou non confirmée",
+      "confirmed": "Confirmée par le propriétaire",
+      "confirmedOfficer": "Confirmée par le responsable sécurité",
+      "escalated": "Remontée après les deux délais",
+      "room": "Suivie par la Protection civile : directement à la salle"
     },
     "add": "Enregistrer une caméra",
     "addHelp": "Caméra d'un établissement (par exemple Tapo C200) ou caméra fixe de la Protection civile. Une caméra qui n'offre que le RTSP passe par le relais sur le même ordinateur.",
@@ -8432,7 +8436,12 @@
     "register": "Enregistrer",
     "registered": "Caméra enregistrée. Lancez le relais avec cette ligne sur l'ordinateur de démonstration :",
     "tokenOnce": "Le jeton de diffusion n'est affiché qu'une fois ; seule son empreinte est gardée.",
-    "copied": "Copié"
+    "copied": "Copié",
+    "monitoredBy": "Qui suit l'appareil",
+    "monitoredOwner": "L'établissement (responsable sécurité, propriétaire, puis la salle)",
+    "monitoredRoom": "La Protection civile (directement à la salle)",
+    "bridgeKey": "Ajoutez ces deux lignes au fichier du pont de l'établissement (bridge.json) si la caméra détecte le feu elle-même (caméra thermique). La clé n'est affichée qu'une fois :",
+    "renewKey": "Renouveler la clé du pont d'alarme"
   },
   "dictation": {
     "record": "Dicter",

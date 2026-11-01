@@ -69,6 +69,8 @@ export function portalApi(api: ApiClient) {
     members: (id: string, signal?: AbortSignal) => api.request<Member[]>(`${orgPath(id)}/members`, { signal }),
     setMemberRole: (id: string, userId: string, role: OrgRole) =>
       api.request<Member>(`${orgPath(id)}/members/${enc(userId)}`, { method: "PUT", body: { role } }),
+    setSafetyOfficer: (id: string, userId: string, on: boolean) =>
+      api.request<Member>(`${orgPath(id)}/members/${enc(userId)}/safety-officer`, { method: "PUT", body: { safety_officer: on } }),
     removeMember: (id: string, userId: string) =>
       api.request<undefined>(`${orgPath(id)}/members/${enc(userId)}`, { method: "DELETE" }),
     invitations: (id: string, signal?: AbortSignal) =>

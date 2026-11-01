@@ -82,5 +82,7 @@ PushChannelNames _channelNames(String? code) {
     generalDescription: l10n.channelGeneralDesc,
     critical: l10n.channelCritical,
     criticalDescription: l10n.channelCriticalDesc,
+    prealert: l10n.channelPrealert,
+    prealertDescription: l10n.channelPrealertDesc,
   );
 }

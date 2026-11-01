@@ -76,6 +76,9 @@ flutter:
     - assets/emergency_guide.json
     # Logo of the Office (phase A, addition 1): intro, sign-in and home screens.
     - assets/brand/logo.png
+    # The alarm of the fire pre-alert, played in the app while the screen waits for an answer
+    # (copy of android/app/src/main/res/raw/ehimaya_alert.ogg).
+    - assets/sounds/ehimaya_alert.ogg
   # Design system font (docs/design-system.md §2.4): IBM Plex Sans Arabic, SIL OFL 1.1
   # (assets/fonts/OFL.txt), Arabic and Latin in one family.
   fonts:

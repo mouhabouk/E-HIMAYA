@@ -31,6 +31,7 @@ PUSH_DATA_KEYS = frozenset(
         "incident_id",
         "prealert_id",
         "org_id",
+        "stage",
         "stream_id",
     }
 )
