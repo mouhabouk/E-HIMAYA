@@ -100,6 +100,7 @@ async def test_detail_shows_reporter_and_is_audited(
     detail = (await client.get(f"/api/v1/staff/reports/{report['id']}", headers=operator)).json()
     assert detail["reporter"] == {
         "kind": "citizen",
+        "roles": [],
         "masked": True,
         "first_name": None,
         "last_name": None,
@@ -110,6 +111,7 @@ async def test_detail_shows_reporter_and_is_audited(
     detail = (await client.get(f"/api/v1/staff/reports/{report['id']}", headers=operator)).json()
     assert detail["reporter"] == {
         "kind": "citizen",
+        "roles": [],
         "masked": False,
         "first_name": "Amira",
         "last_name": "Ben Salah",
@@ -132,6 +134,7 @@ async def test_detail_shows_reporter_and_is_audited(
     detail = (await client.get(f"/api/v1/staff/reports/{anonymous['id']}", headers=operator)).json()
     assert detail["reporter"] == {
         "kind": "anonymous",
+        "roles": [],
         "masked": True,
         "first_name": None,
         "last_name": None,

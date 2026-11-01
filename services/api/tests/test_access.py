@@ -294,6 +294,7 @@ async def test_reporter_masked_unless_handling_room(
         body = (await detail(client, headers, report["id"])).json()
         assert body["reporter"] == {
             "kind": "citizen",
+            "roles": [],
             "masked": True,
             "first_name": None,
             "last_name": None,
