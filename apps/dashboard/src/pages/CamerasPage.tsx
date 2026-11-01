@@ -10,7 +10,12 @@ import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { canRegisterCameras } from "../lib/roles";
-import { streamKeys, type Prealert, type RegisteredSource } from "../lib/streamsApi";
+import { prealertState } from "../lib/prealert";
+import {
+  streamKeys,
+  type Prealert,
+  type RegisteredSource,
+} from "../lib/streamsApi";
 import { StreamsNav } from "./StreamsPage";
 
 const STATE_TONE: Record<Prealert["state"], Tone> = {
@@ -21,7 +26,13 @@ const STATE_TONE: Record<Prealert["state"], Tone> = {
 };
 
 /** The publish URL and the token, shown once, with the relay line for a camera that only offers RTSP (Tapo). */
-function Registered({ source, onClose }: { source: RegisteredSource; onClose: () => void }) {
+function Registered({
+  source,
+  onClose,
+}: {
+  source: RegisteredSource;
+  onClose: () => void;
+}) {
   const { t } = useTranslation();
   const relay =
     `CAMERA_RTSP_URL='rtsp://<user>:<password>@<camera-ip>:554/stream1' ` +
@@ -48,12 +59,20 @@ function RegisterForm({ gouvernorat }: { gouvernorat: number }) {
   const id = useId();
   const [label, setLabel] = useState("");
   const [org, setOrg] = useState("");
+  const [monitoredBy, setMonitoredBy] = useState<"owner" | "room">("owner");
   const [shown, setShown] = useState<RegisteredSource | null>(null);
   const orgs = useQuery({
     queryKey: ["orgs", "cameras", gouvernorat],
     queryFn: ({ signal }) =>
       api.orgs(
-        { status: "active", kind: null, gouvernorat, certificate: null, hasHazmat: null, q: "" },
+        {
+          status: "active",
+          kind: null,
+          gouvernorat,
+          certificate: null,
+          hasHazmat: null,
+          q: "",
+        },
         { limit: 200, signal },
       ),
   });
@@ -64,6 +83,7 @@ function RegisterForm({ gouvernorat }: { gouvernorat: number }) {
         label: label.trim(),
         gouvernorat_code: gouvernorat,
         org_id: org || null,
+        monitored_by: org ? monitoredBy : "owner",
         lat: chosen?.location?.lat ?? null,
         lon: chosen?.location?.lon ?? null,
       }),
@@ -85,7 +105,11 @@ function RegisterForm({ gouvernorat }: { gouvernorat: number }) {
       <form className="form-row" onSubmit={submit}>
         <div className="field">
           <label htmlFor={`${id}-org`}>{t("cameras.org")}</label>
-          <select id={`${id}-org`} value={org} onChange={(e) => setOrg(e.target.value)}>
+          <select
+            id={`${id}-org`}
+            value={org}
+            onChange={(e) => setOrg(e.target.value)}
+          >
             <option value="">{t("cameras.noOrg")}</option>
             {orgs.data?.items.map((o) => (
               <option key={o.id} value={o.id}>
@@ -94,6 +118,21 @@ function RegisterForm({ gouvernorat }: { gouvernorat: number }) {
             ))}
           </select>
         </div>
+        {org && (
+          <div className="field">
+            <label htmlFor={`${id}-by`}>{t("cameras.monitoredBy")}</label>
+            <select
+              id={`${id}-by`}
+              value={monitoredBy}
+              onChange={(e) =>
+                setMonitoredBy(e.target.value === "room" ? "room" : "owner")
+              }
+            >
+              <option value="owner">{t("cameras.monitoredOwner")}</option>
+              <option value="room">{t("cameras.monitoredRoom")}</option>
+            </select>
+          </div>
+        )}
         <div className="field">
           <label htmlFor={`${id}-label`}>
             {t("cameras.label")} <span className="required">*</span>
@@ -107,7 +146,11 @@ function RegisterForm({ gouvernorat }: { gouvernorat: number }) {
             onChange={(e) => setLabel(e.target.value)}
           />
         </div>
-        <button type="submit" className="btn btn--primary" disabled={create.isPending || !label.trim()}>
+        <button
+          type="submit"
+          className="btn btn--primary"
+          disabled={create.isPending || !label.trim()}
+        >
           {t("cameras.register")}
         </button>
       </form>
@@ -127,7 +170,11 @@ export function CamerasPage() {
   const national = user?.identity.national ?? false;
   const [chosen, setChosen] = useState("");
   const pickId = useId();
-  const gouvernorat = national ? (chosen ? Number(chosen) : null) : (user?.identity.gouvernoratCode ?? null);
+  const gouvernorat = national
+    ? chosen
+      ? Number(chosen)
+      : null
+    : (user?.identity.gouvernoratCode ?? null);
   const query = useQuery({
     queryKey: streamKeys.prealerts(gouvernorat),
     queryFn: ({ signal }) => api.prealerts(gouvernorat, signal),
@@ -146,7 +193,11 @@ export function CamerasPage() {
       {national && (
         <div className="field">
           <label htmlFor={pickId}>{t("filters.gouvernorat")}</label>
-          <select id={pickId} value={chosen} onChange={(e) => setChosen(e.target.value)}>
+          <select
+            id={pickId}
+            value={chosen}
+            onChange={(e) => setChosen(e.target.value)}
+          >
             <option value="">{t("streams.filters.allGouvernorats")}</option>
             {gouvernorats.list.map((g) => (
               <option key={g.code} value={g.code}>
@@ -159,12 +210,18 @@ export function CamerasPage() {
       <section className="card" aria-labelledby="sec-prealerts">
         <h2 id="sec-prealerts">{t("cameras.prealerts")}</h2>
         {query.isPending && <Loading />}
-        {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
-        {query.isSuccess && query.data.length === 0 && <p className="muted">{t("cameras.none")}</p>}
+        {query.isError && (
+          <ErrorBox error={query.error} onRetry={() => void query.refetch()} />
+        )}
+        {query.isSuccess && query.data.length === 0 && (
+          <p className="muted">{t("cameras.none")}</p>
+        )}
         {query.isSuccess && query.data.length > 0 && (
           <div className="table-wrap">
             <table className="table">
-              <caption className="visually-hidden">{t("cameras.prealerts")}</caption>
+              <caption className="visually-hidden">
+                {t("cameras.prealerts")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("cameras.when")}</th>
@@ -182,18 +239,23 @@ export function CamerasPage() {
                       {p.org_name ?? "—"} {p.simulated && <SimTag />}
                     </td>
                     <td>
-                      {t(`cameras.labels.${p.label}`)} · {Math.round(p.confidence * 100)}%
+                      {t(`cameras.labels.${p.label}`)} ·{" "}
+                      {Math.round(p.confidence * 100)}%
                     </td>
                     <td>
                       <Pill tone={STATE_TONE[p.state]}>
-                        {p.state === "pending"
-                          ? t("cameras.states.pending", { seconds: p.seconds_left })
-                          : t(`cameras.states.${p.state}`)}
+                        {t(...prealertState(p))}
                       </Pill>
                       {p.reason && <div className="muted">{p.reason}</div>}
                     </td>
                     <td>
-                      {p.report_id ? <NavLink to={`/reports/${p.report_id}`}>{t("cameras.openReport")}</NavLink> : "—"}
+                      {p.report_id ? (
+                        <NavLink to={`/reports/${p.report_id}`}>
+                          {t("cameras.openReport")}
+                        </NavLink>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -202,7 +264,9 @@ export function CamerasPage() {
           </div>
         )}
       </section>
-      {canRegister && gouvernorat !== null && <RegisterForm gouvernorat={gouvernorat} />}
+      {canRegister && gouvernorat !== null && (
+        <RegisterForm gouvernorat={gouvernorat} />
+      )}
     </div>
   );
 }

@@ -163,11 +163,17 @@ class MemberOut(BaseModel):
     display_name: str | None
     email: str | None
     role: OrgRole
+    # The head of the safety team: told first when a camera of the institution sees a fire.
+    safety_officer: bool = False
     joined_at: datetime
 
 
 class MemberRoleIn(BaseModel):
     role: OrgRole
+
+
+class SafetyOfficerIn(BaseModel):
+    safety_officer: bool
 
 
 class InvitationIn(BaseModel):

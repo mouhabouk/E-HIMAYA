@@ -81,6 +81,8 @@ class Member(Base):
     role: Mapped[str] = mapped_column(Text)
     display_name: Mapped[str | None] = mapped_column(Text)
     email: Mapped[str | None] = mapped_column(Text)
+    # The head of the safety team: told first when a camera of the institution sees a fire (60 s, then the owner).
+    safety_officer: Mapped[bool] = mapped_column(Boolean, server_default="false")
     joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -397,9 +399,10 @@ class PreventionReservation(Base):
 
 
 class Prealert(Base):
-    """A camera or sensor of an institution saw a fire or smoke: the owner is told first and has a short delay
-    (``orgs.prealert_seconds``, 90 s by default) to call it a false alarm; after it, or when the owner confirms, the
-    alert becomes a report to the room (review point 25, docs/phase-d/design-d.md §2)."""
+    """A camera or sensor of an institution saw a fire or smoke. The safety officer is asked first
+    (``orgs.prealert_seconds``, 60 s), then the owner (``orgs.prealert_owner_seconds``, 60 s); without an answer, or
+    when one of them confirms, the alert becomes a report to the room (review point 25, Yamen 2026-11-01). A device
+    the Civil Protection follows skips both stages (``stage = room``)."""
 
     __tablename__ = "prealert"
     __table_args__ = _SCHEMA
@@ -417,6 +420,8 @@ class Prealert(Base):
     )
     simulated: Mapped[bool] = mapped_column(Boolean, server_default="false")
     state: Mapped[str] = mapped_column(Text, server_default="pending")
+    # officer → owner → (room); room at once for a device the Civil Protection follows.
+    stage: Mapped[str] = mapped_column(Text, server_default="owner")
     raised_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     deadline_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     decided_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("identity.account.user_id"))

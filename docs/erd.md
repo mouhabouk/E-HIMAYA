@@ -2233,6 +2233,7 @@ erDiagram
         text role
         text display_name
         text email
+        boolean safety_officer
         datetime joined_at
     }
     org__organization {
@@ -2275,6 +2276,7 @@ erDiagram
         uuid media_id FK
         boolean simulated
         text state
+        text stage
         datetime raised_at
         datetime deadline_at
         uuid decided_by FK
@@ -2770,6 +2772,7 @@ erDiagram
         jsonb vision_frames
         jsonb vision_alerts
         uuid org_id FK
+        text monitored_by
         uuid assignment_id FK
         uuid incident_id FK
     }

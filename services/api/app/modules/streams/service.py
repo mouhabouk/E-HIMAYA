@@ -460,6 +460,7 @@ class FixedSource:
     lon: float | None
     # The institution whose camera this is (review point 25): its detections go to the owner first.
     org_id: uuid.UUID | None = None
+    monitored_by: str = "owner"
 
 
 async def register_fixed(session: AsyncSession, spec: FixedSource, actor: str) -> tuple[LiveStream, str]:
@@ -481,6 +482,7 @@ async def register_fixed(session: AsyncSession, spec: FixedSource, actor: str) -
         created_by=actor,
         gouvernorat_code=spec.gouvernorat_code,
         org_id=spec.org_id,
+        monitored_by=spec.monitored_by,
     )
     if spec.lat is not None and spec.lon is not None:
         stream.last_location = _point(spec.lat, spec.lon)

@@ -16890,6 +16890,15 @@
             ],
             "title": "Lon"
           },
+          "monitored_by": {
+            "default": "owner",
+            "enum": [
+              "owner",
+              "room"
+            ],
+            "title": "Monitored By",
+            "type": "string"
+          },
           "org_id": {
             "anyOf": [
               {
@@ -23506,6 +23515,11 @@
           "role": {
             "$ref": "#/components/schemas/OrgRole"
           },
+          "safety_officer": {
+            "default": false,
+            "title": "Safety Officer",
+            "type": "boolean"
+          },
           "user_id": {
             "format": "uuid",
             "title": "User Id",
@@ -29596,6 +29610,15 @@
             "title": "Source",
             "type": "string"
           },
+          "stage": {
+            "enum": [
+              "officer",
+              "owner",
+              "room"
+            ],
+            "title": "Stage",
+            "type": "string"
+          },
           "state": {
             "enum": [
               "pending",
@@ -29628,6 +29651,7 @@
           "confidence",
           "simulated",
           "state",
+          "stage",
           "raised_at",
           "deadline_at",
           "seconds_left",
@@ -34278,6 +34302,19 @@
           "rules"
         ],
         "title": "RulesIn",
+        "type": "object"
+      },
+      "SafetyOfficerIn": {
+        "properties": {
+          "safety_officer": {
+            "title": "Safety Officer",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "safety_officer"
+        ],
+        "title": "SafetyOfficerIn",
         "type": "object"
       },
       "SavedIn": {
@@ -67504,6 +67541,75 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/members/{user_id}/safety-officer": {
+      "put": {
+        "description": "The administrator names (or un-names) the safety officer: the first one alerted when a camera of the\ninstitution sees a fire (60 s before the owner is).",
+        "operationId": "set_safety_officer_api_v1_orgs__org_id__members__user_id__safety_officer_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyOfficerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Safety Officer",
+        "tags": [
+          "institutions"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/messages": {
       "get": {
         "operationId": "list_messages_api_v1_orgs__org_id__messages_get",
@@ -67683,7 +67789,7 @@
     },
     "/api/v1/orgs/{org_id}/prealerts/{prealert_id}/decision": {
       "post": {
-        "description": "«False alarm» (with a reason) or «confirm» (the report goes to the room at once).",
+        "description": "«False alarm or unconfirmed» (with a reason) or «confirm» (the report goes to the room at once). The safety\nofficer answers as well as the administrators and editors.",
         "operationId": "decide_api_v1_orgs__org_id__prealerts__prealert_id__decision_post",
         "parameters": [
           {

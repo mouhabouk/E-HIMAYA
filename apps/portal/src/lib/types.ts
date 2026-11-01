@@ -161,6 +161,8 @@ export interface Member {
   display_name: string | null;
   email: string | null;
   role: OrgRole;
+  /** The head of the safety team: alerted first when a camera of the institution sees a fire (60 s, then the owner). */
+  safety_officer?: boolean;
   joined_at: string;
 }
 

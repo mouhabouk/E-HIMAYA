@@ -115,6 +115,9 @@ class FixedSourceIn(BaseModel):
     lon: float | None = Field(default=None, ge=LON_MIN, le=LON_MAX)
     # A camera of an institution (review point 25): a fire or smoke it confirms goes to the owner first (pre-alert).
     org_id: uuid.UUID | None = None
+    # Who follows it (Yamen 2026-11-01): the institution (staged pre-alert: safety officer, owner, then the room) or
+    # the Civil Protection (a device it installed or has the right to follow: a fire goes to the room at once).
+    monitored_by: Literal["owner", "room"] = "owner"
 
 
 class FixedSourceOut(BaseModel):

@@ -39,6 +39,11 @@ function MemberRow({ member, isMe, admin }: { member: Member; isMe: boolean; adm
     onSuccess: refresh,
   });
   const remove = useMutation({ mutationFn: () => api.removeMember(org.id, member.user_id), onSuccess: refresh });
+  const officer = useMutation({
+    mutationFn: (on: boolean) => api.setSafetyOfficer(org.id, member.user_id, on),
+    onSuccess: refresh,
+  });
+  const isOfficer = member.safety_officer ?? false;
 
   return (
     <tr>
@@ -71,6 +76,25 @@ function MemberRow({ member, isMe, admin }: { member: Member; isMe: boolean; adm
           </>
         ) : (
           <RoleBadge role={member.role} />
+        )}
+      </td>
+      <td>
+        {admin ? (
+          <>
+            <input
+              type="checkbox"
+              id={`officer-${member.user_id}`}
+              checked={isOfficer}
+              disabled={officer.isPending}
+              aria-label={t("members.safetyOfficerOf", { name })}
+              onChange={(e) => officer.mutate(e.target.checked)}
+            />
+            {officer.isError && <ErrorBox error={officer.error} />}
+          </>
+        ) : isOfficer ? (
+          <span className="tag">{t("members.safetyOfficer")}</span>
+        ) : (
+          "—"
         )}
       </td>
       <td>{fmt.date(member.joined_at)}</td>
@@ -285,6 +309,7 @@ export function MembersTab() {
       <section className="card" aria-labelledby="members-title">
         <h2 id="members-title">{t("members.title")}</h2>
         <p className="muted">{t("members.help")}</p>
+        <p className="muted">{t("members.safetyOfficerHelp")}</p>
         <BlockedNote action="manageMembers" />
         <div className="table-wrap">
           <table className="table">
@@ -293,6 +318,7 @@ export function MembersTab() {
                 <th scope="col">{t("members.name")}</th>
                 <th scope="col">{t("members.email")}</th>
                 <th scope="col">{t("members.role")}</th>
+                <th scope="col">{t("members.safetyOfficer")}</th>
                 <th scope="col">{t("members.joined")}</th>
                 {admin && <th scope="col">{t("common.actions")}</th>}
               </tr>

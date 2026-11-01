@@ -6819,17 +6819,18 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get prealertConfirm => 'Confirmer et signaler';
+  String get prealertConfirm => 'Confirmer le signalement (secours)';
 
   @override
-  String get prealertFalseAlarm => 'Fausse alerte';
+  String get prealertFalseAlarm => 'Fausse alerte ou alerte non confirmée';
 
   @override
   String get prealertHint =>
-      'Sans réponse, la salle est prévenue à la fin du décompte. Une annulation est enregistrée avec son motif.';
+      'L\'alarme sonne jusqu\'à votre réponse. Sans réponse du responsable sécurité puis du propriétaire, la salle est prévenue automatiquement. Une annulation est enregistrée avec son motif.';
 
   @override
-  String get prealertWhyFalse => 'Pourquoi est-ce une fausse alerte ?';
+  String get prealertWhyFalse =>
+      'Pourquoi est-ce une fausse alerte ou non confirmée ?';
 
   @override
   String get prealertReasonTest => 'Essai ou maintenance';
@@ -6847,13 +6848,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get prealertReasonOther => 'Autre raison vérifiée sur place';
 
   @override
-  String get prealertCancelled => 'Annulée : fausse alerte';
+  String get prealertCancelled => 'Annulée : fausse alerte ou non confirmée';
 
   @override
   String get prealertConfirmed => 'Confirmée, la salle est prévenue';
 
   @override
-  String get prealertEscalated => 'Transmise à la salle à la fin du délai';
+  String get prealertEscalated =>
+      'Personne n\'a répondu dans les deux délais : la salle est prévenue';
 
   @override
   String get prealertPending => 'En attente de votre réponse';
@@ -6946,4 +6948,39 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get calloutBySms =>
       'Pas d\'internet : votre réponse est prête dans un SMS signé. Appuyez sur « Envoyer » dans l\'application Messages.';
+
+  @override
+  String get channelPrealert =>
+      'Alertes incendie des caméras de votre établissement';
+
+  @override
+  String get channelPrealertDesc =>
+      'Sonnent comme un réveil même en mode silencieux ou Ne pas déranger, en plein écran.';
+
+  @override
+  String get prealertReasonUnconfirmed =>
+      'Non confirmée : ni feu ni fumée sur place';
+
+  @override
+  String get prealertRoom =>
+      'Appareil suivi par la Protection civile : la salle est prévenue directement';
+
+  @override
+  String get prealertMedia => 'Image capturée';
+
+  @override
+  String get prealertNoMedia => 'Pas d\'image pour cette alerte';
+
+  @override
+  String prealertStageOfficer(int seconds) {
+    return 'Tour du responsable sécurité : $seconds s, puis le propriétaire est alerté';
+  }
+
+  @override
+  String prealertStageOwner(int seconds) {
+    return 'Tour du propriétaire : $seconds s, puis la salle est prévenue automatiquement';
+  }
+
+  @override
+  String get prealertMute => 'Couper l\'alarme';
 }

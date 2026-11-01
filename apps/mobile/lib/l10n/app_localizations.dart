@@ -11929,25 +11929,25 @@ abstract class AppLocalizations {
   /// No description provided for @prealertConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Confirm and report now'**
+  /// **'Confirm the report (SOS)'**
   String get prealertConfirm;
 
   /// No description provided for @prealertFalseAlarm.
   ///
   /// In en, this message translates to:
-  /// **'False alarm'**
+  /// **'False alarm or unconfirmed'**
   String get prealertFalseAlarm;
 
   /// No description provided for @prealertHint.
   ///
   /// In en, this message translates to:
-  /// **'With no answer, the room is told when the countdown ends. A cancellation is recorded with its reason.'**
+  /// **'The alarm rings until you answer. Without an answer from the safety officer then the owner, the room is told automatically. A cancellation is recorded with its reason.'**
   String get prealertHint;
 
   /// No description provided for @prealertWhyFalse.
   ///
   /// In en, this message translates to:
-  /// **'Why is it a false alarm?'**
+  /// **'Why is it a false alarm or unconfirmed?'**
   String get prealertWhyFalse;
 
   /// No description provided for @prealertReasonTest.
@@ -11983,7 +11983,7 @@ abstract class AppLocalizations {
   /// No description provided for @prealertCancelled.
   ///
   /// In en, this message translates to:
-  /// **'Cancelled: false alarm'**
+  /// **'Cancelled: false alarm or unconfirmed'**
   String get prealertCancelled;
 
   /// No description provided for @prealertConfirmed.
@@ -11995,7 +11995,7 @@ abstract class AppLocalizations {
   /// No description provided for @prealertEscalated.
   ///
   /// In en, this message translates to:
-  /// **'Sent to the room when the delay ran out'**
+  /// **'Nobody answered in both delays: the room was told'**
   String get prealertEscalated;
 
   /// No description provided for @prealertPending.
@@ -12153,6 +12153,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No internet: your answer is ready in a signed SMS. Press Send in the messaging app.'**
   String get calloutBySms;
+
+  /// No description provided for @channelPrealert.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire alerts from your institution\'s cameras'**
+  String get channelPrealert;
+
+  /// No description provided for @channelPrealertDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ring like an alarm even on silent or Do Not Disturb, full screen.'**
+  String get channelPrealertDesc;
+
+  /// No description provided for @prealertReasonUnconfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unconfirmed: no fire or smoke on site'**
+  String get prealertReasonUnconfirmed;
+
+  /// No description provided for @prealertRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Device followed by the Civil Protection: the room was told directly'**
+  String get prealertRoom;
+
+  /// No description provided for @prealertMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Captured picture'**
+  String get prealertMedia;
+
+  /// No description provided for @prealertNoMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'No picture for this alert'**
+  String get prealertNoMedia;
+
+  /// No description provided for @prealertStageOfficer.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety officer\'s turn: {seconds} s, then the owner is alerted'**
+  String prealertStageOfficer(int seconds);
+
+  /// No description provided for @prealertStageOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner\'s turn: {seconds} s, then the room is told automatically'**
+  String prealertStageOwner(int seconds);
+
+  /// No description provided for @prealertMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Silence the alarm'**
+  String get prealertMute;
 }
 
 class _AppLocalizationsDelegate

@@ -54,6 +54,9 @@ class LiveStream(Base):
     org_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("org.organization.id", ondelete="SET NULL")
     )
+    # Who follows the institution's camera (Yamen 2026-11-01): ``owner`` (the staged pre-alert) or ``room`` (a device
+    # the Civil Protection installed or has the right to follow: a confirmed fire goes to the room at once).
+    monitored_by: Mapped[str] = mapped_column(Text, server_default="owner")
     # A team's stream (phase D, review point 17): the mission and its incident.
     assignment_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("ops.assignment.id", ondelete="SET NULL")

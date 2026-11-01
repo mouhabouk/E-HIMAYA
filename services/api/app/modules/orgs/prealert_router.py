@@ -20,7 +20,7 @@ from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.orgs import prealert, service
-from app.modules.orgs.domain import OrgRole
+from app.modules.orgs.domain import OrgRole, role_allows
 from app.modules.orgs.models import Organization, Prealert
 from app.modules.orgs.service import CurrentUser
 from app.modules.orgs.staff_router import ORG_READ_ROLES
@@ -42,6 +42,8 @@ class PrealertOut(BaseModel):
     confidence: float
     simulated: bool
     state: Literal["pending", "cancelled", "confirmed", "escalated"]
+    # Who is asked now: the safety officer, then the owner; «room» for a device the Civil Protection follows.
+    stage: Literal["officer", "owner", "room"]
     raised_at: datetime
     deadline_at: datetime
     seconds_left: int
@@ -87,8 +89,11 @@ async def list_prealerts(
 async def decide(
     org_id: uuid.UUID, prealert_id: uuid.UUID, body: DecisionIn, user: CurrentUser, session: Session
 ) -> PrealertOut:
-    """«False alarm» (with a reason) or «confirm» (the report goes to the room at once)."""
-    org, _ = await service.membership(session, user, org_id, OrgRole.EDITOR)
+    """«False alarm or unconfirmed» (with a reason) or «confirm» (the report goes to the room at once). The safety
+    officer answers as well as the administrators and editors."""
+    org, member = await service.membership(session, user, org_id)
+    if not member.safety_officer and not role_allows(OrgRole(member.role), OrgRole.EDITOR):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "org_role_required")
     if body.action == "cancel" and not body.reason:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "reason_required")
     row = await _row(session, org_id, prealert_id, lock=True)
@@ -101,7 +106,11 @@ async def decide(
         action=f"prealert.{body.action}",
         target=f"prealert:{row.id}",
         reason=body.reason,
-        details={"org": str(org_id), "report": str(row.report_id) if row.report_id else None},
+        details={
+            "org": str(org_id),
+            "stage": row.stage,
+            "report": str(row.report_id) if row.report_id else None,
+        },
     )
     await session.commit()
     return PrealertOut.model_validate(prealert.out(row, org.name))
