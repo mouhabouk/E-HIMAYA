@@ -218,11 +218,14 @@ def _step_at(clause: str, begin: int, end: int) -> tuple[str, tuple[int, int]] |
 
 def _date_of(seconds: int, written_at: datetime) -> datetime:
     """The clock time on the day it was written, or the day before when it would be after the writing (a note at
-    00:10 about a return at 23:50)."""
+    00:10 about a return at 23:50), or the day after when it falls just past midnight within the allowed skew (a
+    note at 23:59 about an arrival at 00:01)."""
     local = written_at.astimezone(TUNIS)
     at = datetime(local.year, local.month, local.day, tzinfo=TUNIS) + timedelta(seconds=seconds)
     if at > local + FUTURE_SKEW:
         at -= timedelta(days=1)
+    elif at + timedelta(days=1) <= local + FUTURE_SKEW:
+        at += timedelta(days=1)
     return at
 
 
