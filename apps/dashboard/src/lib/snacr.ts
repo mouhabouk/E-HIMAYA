@@ -206,6 +206,101 @@ export interface SnacrPlan extends SnacrPlanSummary {
   references: SnacrReference[];
 }
 
+// ── Studies in the Office's format (SEC_GLOB, SAP, SR, LCI, SB, DIV): the methodology note of 2026-11-01. ──
+
+export const STUDY_TABLES = ["SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"] as const;
+export type StudyTableKey = (typeof STUDY_TABLES)[number];
+export type StudyPeriod = "J" | "S" | "T";
+
+/** Counts per year (null: the délégation was under another unit that year, "*"), yearly mean, travel minutes. */
+export interface StudyFigures {
+  counts: Record<string, Partial<Record<StudyPeriod, number>> | null>;
+  mean: Partial<Record<StudyPeriod, number | null>>;
+  travel: Partial<Record<StudyPeriod, number | null>>;
+  total: number;
+}
+
+export interface StudyRow extends StudyFigures {
+  delegation_id: number | null;
+  delegation: string;
+  area_km2: number | null;
+  population: number | null;
+  density: number | null;
+}
+
+export interface StudyUnit {
+  unit: string;
+  rows: StudyRow[];
+  subtotal: StudyFigures & { delegations: number; area_km2: number | null };
+}
+
+export interface StudyTable {
+  key: StudyTableKey;
+  label_ar: string;
+  gouvernorats: { gouvernorat_code: number; gouvernorat: string; units: StudyUnit[]; total: StudyFigures }[];
+  total: StudyFigures;
+}
+
+export interface SnacrStudySummary {
+  id: string;
+  number: number;
+  gouvernorat_code: number | null;
+  years: number[];
+  split: boolean;
+  travel_max: number;
+  status: "current" | "archived";
+  simulated: boolean;
+  quality: Record<string, unknown>;
+  created_by_name: string | null;
+  created_at: string;
+  archived_at: string | null;
+}
+
+/** One table of the study read as a class: by year, its share of all outings, its change, its night share. */
+export interface StudyClassFinding {
+  key: StudyTableKey;
+  label_ar: string;
+  per_year: Record<string, number | null>;
+  total: number;
+  share_pct: number;
+  change_pct: number | null;
+  steps: { from: number; to: number; change_pct: number | null }[];
+  night_pct: number | null;
+  travel: Partial<Record<StudyPeriod, number | null>>;
+}
+
+export interface StudyDelegationFinding {
+  gouvernorat: string;
+  delegation: string;
+  units: string[];
+  per_year: Record<string, number | null>;
+  mean: number;
+  population: number | null;
+  rate_per_1000: number | null;
+  change_pct: number | null;
+  travel: number | null;
+}
+
+export type StudyNoteTone = "up" | "down" | "warn" | "info";
+
+export interface StudyFindings {
+  classes: StudyClassFinding[];
+  delegations: StudyDelegationFinding[];
+  notes: { tone: StudyNoteTone; text_ar: string }[];
+}
+
+export interface SnacrStudy extends SnacrStudySummary {
+  tables: { years: number[]; periods: StudyPeriod[]; tables: StudyTable[] };
+  findings: StudyFindings;
+}
+
+export interface StudyIn {
+  gouvernorat_code: number | null;
+  years: readonly number[];
+  split: boolean;
+  travel_max: number;
+}
+
 const S = "/api/v1/staff/snacr";
 const enc = encodeURIComponent;
 
@@ -218,6 +313,8 @@ export const snacrKeys = {
   special: (gouvernorat: number | null) => ["snacr", "special", gouvernorat] as const,
   plans: (gouvernorat: number | null) => ["snacr", "plans", gouvernorat] as const,
   plan: (id: string) => ["snacr", "plan", id] as const,
+  studies: (gouvernorat: number | null) => ["snacr", "studies", gouvernorat] as const,
+  study: (id: string) => ["snacr", "study", id] as const,
 };
 
 export function snacrApi(api: ApiClient) {
@@ -225,10 +322,11 @@ export function snacrApi(api: ApiClient) {
     snacr: (signal?: AbortSignal) => api.request<SnacrOverview>(S, { signal }),
     snacrAnalysis: (years: readonly number[], gouvernorat: number | null, signal?: AbortSignal) =>
       api.request<SnacrAnalysis>(`${S}/analysis`, { query: { years, gouvernorat }, signal }),
-    importSnacr: (year: number, file: File) =>
-      api.request<{ dataset: SnacrDataset }>(`${S}/datasets`, {
+    /** ``year`` null: every year the file covers; ``merge``: only the file's gouvernorats are replaced. */
+    importSnacr: (year: number | null, file: File, merge = false) =>
+      api.request<{ dataset: SnacrDataset; datasets: SnacrDataset[] }>(`${S}/datasets`, {
         method: "POST",
-        query: { year, file_name: file.name },
+        query: { year: year ?? undefined, file_name: file.name, merge: merge || undefined },
         rawBody: file,
       }),
     simulateSnacr: (year: number) =>
@@ -250,6 +348,20 @@ export function snacrApi(api: ApiClient) {
     createSnacrPlan: (gouvernorat: number | null, years: readonly number[]) =>
       api.request<SnacrPlan>(`${S}/plans`, { method: "POST", body: { gouvernorat_code: gouvernorat, years } }),
     approveSnacrPlan: (id: string) => api.request<SnacrPlan>(`${S}/plans/${enc(id)}/approve`, { method: "POST" }),
+    snacrStudies: (gouvernorat: number | null, signal?: AbortSignal) =>
+      api.request<SnacrStudySummary[]>(`${S}/studies`, { query: { gouvernorat }, signal }),
+    snacrStudy: (id: string, signal?: AbortSignal) => api.request<SnacrStudy>(`${S}/studies/${enc(id)}`, { signal }),
+    launchSnacrStudy: (body: StudyIn) => api.request<SnacrStudy>(`${S}/studies`, { method: "POST", body }),
+    snacrStudyExport: async (
+      study: Pick<SnacrStudySummary, "id" | "number" | "gouvernorat_code">,
+      format: "pdf" | "xlsx",
+    ): Promise<Download> => {
+      const accept =
+        format === "pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const response = await api.requestRaw(`${S}/studies/${enc(study.id)}/export`, { query: { format }, accept });
+      const scope = study.gouvernorat_code === null ? "national" : `g${study.gouvernorat_code}`;
+      return { blob: await response.blob(), filename: `snacr-study-${scope}-${study.number}.${format}` };
+    },
     snacrPlanPdf: async (plan: Pick<SnacrPlanSummary, "id" | "version" | "gouvernorat_code">): Promise<Download> => {
       const response = await api.requestRaw(`${S}/plans/${enc(plan.id)}/document`, {
         query: { format: "pdf" },

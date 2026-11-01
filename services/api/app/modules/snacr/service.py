@@ -16,7 +16,7 @@ from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.settings import service as settings_service
 from app.modules.settings.thresholds import SPECS
 from app.modules.snacr import domain
-from app.modules.snacr.models import Alias, Dataset, Plan, SpecialRisk
+from app.modules.snacr.models import Alias, Dataset, Intervention, Plan, SpecialRisk
 
 BATCH = 5_000
 
@@ -35,16 +35,18 @@ async def places(session: AsyncSession) -> domain.Places:
 _INSERT = text(
     """
 INSERT INTO snacr.intervention (dataset_id, year, family, nature, subtype, gouvernorat_code, delegation_id,
-    delegation_raw, called_at, departed_at, arrived_at, ended_at, arrival_min, flags)
+    delegation_raw, called_at, departed_at, arrived_at, ended_at, arrival_min, flags, seq_num, unit_raw, intervened)
 SELECT CAST(:dataset AS uuid), CAST(:year AS smallint), u.family, u.nature, u.subtype, u.gouvernorat_code,
     u.delegation_id, u.delegation_raw, u.called_at, u.departed_at, u.arrived_at, u.ended_at, u.arrival_min,
-    CASE WHEN u.flags = '' THEN '{}'::text[] ELSE string_to_array(u.flags, ',') END
+    CASE WHEN u.flags = '' THEN '{}'::text[] ELSE string_to_array(u.flags, ',') END, u.seq_num, u.unit_raw,
+    u.intervened
 FROM unnest(CAST(:family AS text[]), CAST(:nature AS text[]), CAST(:subtype AS text[]),
     CAST(:gouvernorat AS smallint[]), CAST(:delegation AS integer[]), CAST(:raw AS text[]),
     CAST(:called AS timestamptz[]), CAST(:departed AS timestamptz[]), CAST(:arrived AS timestamptz[]),
-    CAST(:ended AS timestamptz[]), CAST(:arrival AS double precision[]), CAST(:flags AS text[]))
+    CAST(:ended AS timestamptz[]), CAST(:arrival AS double precision[]), CAST(:flags AS text[]),
+    CAST(:seq AS bigint[]), CAST(:unit AS text[]), CAST(:intervened AS boolean[]))
     AS u(family, nature, subtype, gouvernorat_code, delegation_id, delegation_raw, called_at, departed_at,
-         arrived_at, ended_at, arrival_min, flags)
+         arrived_at, ended_at, arrival_min, flags, seq_num, unit_raw, intervened)
 """
 )
 
@@ -67,6 +69,9 @@ async def _insert(session: AsyncSession, dataset: uuid.UUID, year: int, rows: li
             "ended": [r.ended_at for r in rows],
             "arrival": [r.arrival_min for r in rows],
             "flags": [",".join(r.flags) for r in rows],
+            "seq": [r.seq_num for r in rows],
+            "unit": [r.unit_raw for r in rows],
+            "intervened": [r.intervened for r in rows],
         },
     )
 
@@ -79,25 +84,15 @@ async def load(
     file_name: str | None,
     actor: str,
     actor_name: str | None,
+    merge: bool = False,
 ) -> Dataset:
-    """Replace the dataset of ``year`` with the cleaned ``records``; rows of another year are left out."""
+    """Replace the dataset of ``year`` with the cleaned ``records``; rows of another year are left out.
+
+    ``merge`` (a regional file, 2026-11-01): only the gouvernorats found in the file are replaced in the year already
+    loaded; the others stay. Without it the whole year is replaced, as with the Office's national export."""
     known = await places(session)
     quality = domain.Quality()
-    await session.execute(delete(Dataset).where(Dataset.year == year))
-    dataset = Dataset(
-        id=uuid.uuid4(),
-        year=year,
-        source=source,
-        simulated=source == "simulated",
-        file_name=file_name,
-        rows=0,
-        quality={},
-        imported_by=actor,
-        imported_by_name=actor_name,
-    )
-    session.add(dataset)
-    await session.flush()
-    batch: list[domain.Row] = []
+    rows: list[domain.Row] = []
     for record in records:
         if quality.read >= domain.MAX_ROWS:
             raise domain.FileError("file_too_many_rows")
@@ -108,18 +103,57 @@ async def load(
             quality.kept -= 1
             quality.skip("other_year")
             continue
-        batch.append(row)
-        if len(batch) >= BATCH:
-            await _insert(session, dataset.id, year, batch)
-            batch = []
-    if batch:
-        await _insert(session, dataset.id, year, batch)
+        rows.append(row)
     if quality.kept == 0:
         raise domain.FileError("file_empty")
-    dataset.rows = quality.kept
-    dataset.quality = quality.out()
+    existing = await session.scalar(select(Dataset).where(Dataset.year == year)) if merge else None
+    if existing is not None and existing.source != source:
+        existing = None  # a [SIM] or live year is replaced whole, never mixed with the Office's rows
+    out = quality.out()
+    if existing is None:
+        await session.execute(delete(Dataset).where(Dataset.year == year))
+        dataset = Dataset(
+            id=uuid.uuid4(),
+            year=year,
+            source=source,
+            simulated=source == "simulated",
+            file_name=file_name,
+            rows=0,
+            quality={},
+            imported_by=actor,
+            imported_by_name=actor_name,
+        )
+        session.add(dataset)
+        await session.flush()
+    else:
+        dataset = existing
+        codes = sorted({r.gouvernorat_code for r in rows})
+        await session.execute(
+            text("DELETE FROM snacr.intervention WHERE dataset_id = :d AND gouvernorat_code = ANY(:codes)"),
+            {"d": dataset.id, "codes": codes},
+        )
+        before = dict(dataset.quality or {})
+        merged = dict(before.get("by_gouvernorat") or {})
+        merged.update(out["by_gouvernorat"])
+        out = {**out, "by_gouvernorat": merged, "files": [*(before.get("files") or []), file_name]}
+        dataset.file_name = file_name
+        dataset.imported_by, dataset.imported_by_name = actor, actor_name
+    for start in range(0, len(rows), BATCH):
+        await _insert(session, dataset.id, year, rows[start : start + BATCH])
+    dataset.rows = int(await session.scalar(select(func.count()).where(Intervention.dataset_id == dataset.id)) or 0)
+    dataset.quality = out
     await session.flush()
     return dataset
+
+
+def years_in(records: list[dict[str, Any]]) -> list[int]:
+    """The years a file covers, from the time of each call (a regional file often holds several years)."""
+    found: set[int] = set()
+    for r in records:
+        called = domain.moment(r.get("called"))
+        if called is not None:
+            found.add(called.astimezone(domain.TUNIS).year)
+    return sorted(found)
 
 
 # One row per incident of the year, from the records of the operations rooms (phase S2): the call is the opening of

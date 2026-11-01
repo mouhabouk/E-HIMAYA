@@ -4,7 +4,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { navGroups } from "../components/Navigation";
 import { identityFromClaims } from "../auth/identity";
-import type { SnacrAnalysis, SnacrOverview, SnacrPlanSummary } from "../lib/snacr";
+import type { SnacrAnalysis, SnacrOverview, SnacrPlanSummary, SnacrStudy, StudyFigures } from "../lib/snacr";
 import type { StrategyItem } from "../lib/strategies";
 import { fakeApi, fakeAuth, renderApp } from "../test/render";
 import { SnacrPage } from "./SnacrPage";
@@ -235,6 +235,86 @@ describe("SnacrPage", () => {
     fireEvent.click(await screen.findByRole("button", { name: "اعتماد" }));
     await waitFor(() => expect(api.approveSnacrPlan).toHaveBeenCalledWith("p1"));
     expect(screen.getByRole("button", { name: /إعداد مسودة مخطط ولاية/ })).toBeInTheDocument();
+  });
+
+  it("launches a SNACR study in the Office's tables, keeps the archive and exports it", async () => {
+    vi.stubGlobal("URL", Object.assign(URL, { createObjectURL: () => "blob:x", revokeObjectURL: () => undefined }));
+    const fig = (j: number, s: number): StudyFigures => ({
+      counts: { "2024": { J: j, S: s }, "2025": null },
+      mean: { J: j, S: s },
+      travel: { J: 6.5, S: null },
+      total: j + s,
+    });
+    const study: SnacrStudy = {
+      id: "s2", number: 2, gouvernorat_code: 21, years: [2024, 2025], split: true, travel_max: 60,
+      status: "current", simulated: false, created_by_name: "Test", created_at: "2026-11-01T08:00:00Z", archived_at: null,
+      quality: { rows: 120, white: 4, travel_kept: 100, travel_missing: 10, travel_negative: 1, travel_over: 5 },
+      findings: { classes: [], delegations: [], notes: [] },
+      tables: {
+        years: [2024, 2025],
+        periods: ["J", "S"],
+        tables: (["SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"] as const).map((key) => ({
+          key, label_ar: key,
+          gouvernorats: [{
+            gouvernorat_code: 21, gouvernorat: "نابل",
+            units: [{
+              unit: "الحمامات",
+              rows: [{ delegation_id: 2101, delegation: "الحمامات", area_km2: 120, population: 100000, density: 833, ...fig(3, 2) }],
+              subtotal: { ...fig(3, 2), delegations: 1, area_km2: 120 },
+            }],
+            total: fig(3, 2),
+          }],
+          total: fig(3, 2),
+        })),
+      },
+    };
+    study.findings = {
+      classes: study.tables.tables.map((tb) => ({
+        key: tb.key, label_ar: tb.key, per_year: { "2024": 5, "2025": 8 }, total: 13, share_pct: 100,
+        change_pct: tb.key === "SEC_GLOB" ? 60 : null, steps: [], night_pct: 40, travel: { J: 6.5, S: 8 },
+      })),
+      delegations: [{
+        gouvernorat: "نابل", delegation: "الحمامات", units: ["الحمامات"], per_year: { "2024": 5, "2025": 8 },
+        mean: 6.5, population: 100000, rate_per_1000: 0.07, change_pct: 60, travel: 7.25,
+      }],
+      notes: [
+        { tone: "up", text_ar: "ارتفع عدد الخرجات من 5 سنة 2024 إلى 8 سنة 2025 (+60%)." },
+        { tone: "warn", text_ar: "زمن الانطلاق ليلا أطول بـ01:30 من النهار." },
+      ],
+    };
+    const archived = { ...study, id: "s1", number: 1, status: "archived" as const, archived_at: "2026-11-01T08:00:00Z" };
+    const api = fakeApi({
+      snacr: vi.fn(() => Promise.resolve({ ...OVERVIEW, can_import: false })),
+      snacrAnalysis: vi.fn(() => Promise.resolve(ANALYSIS)),
+      snacrPlans: vi.fn(() => Promise.resolve([])),
+      snacrStudies: vi.fn(() => Promise.resolve([study, archived])),
+      snacrStudy: vi.fn(() => Promise.resolve(study)),
+      launchSnacrStudy: vi.fn(() => Promise.resolve(study)),
+      snacrStudyExport: vi.fn(() => Promise.resolve({ blob: new Blob(["%PDF"]), filename: "snacr-1.pdf" })),
+    });
+    renderApp(<SnacrPage />, { api, auth: fakeAuth(claims(["local_committee"], "21")), lang: "ar", path: "/snacr" });
+    fireEvent.click(await screen.findByRole("tab", { name: "دراسات SNACR" }));
+    expect(await screen.findByRole("heading", { name: /الدراسة رقم 2/ })).toBeInTheDocument();
+    expect(api.snacrStudies).toHaveBeenCalledWith(21, expect.anything());
+    const table = screen.getByRole("table", { name: /SEC_GLOB · جملة التدخلات · نابل/ });
+    expect(within(table).getByRole("rowheader", { name: "مجموع الوحدة (1 معتمديات)" })).toBeInTheDocument();
+    expect(within(table).getAllByText("*").length).toBeGreaterThan(0);
+    expect(within(table).getAllByText("06:30").length).toBeGreaterThan(0);
+    expect(screen.getByText("مؤرشفة")).toBeInTheDocument();
+    // The statistical board and the technical notes.
+    expect(screen.getByRole("heading", { name: "لوحة إحصائية وملاحظات تقنية" })).toBeInTheDocument();
+    expect(screen.getByText("ارتفع عدد الخرجات من 5 سنة 2024 إلى 8 سنة 2025 (+60%).")).toBeInTheDocument();
+    const classes = screen.getByRole("table", { name: "الأصناف: العدد والحصة والتطور" });
+    expect(within(classes).getByRole("rowheader", { name: "SR · النجدة على الطرقات" })).toBeInTheDocument();
+    expect(screen.getByRole("table", { name: "المعتمديات حسب عدد الخرجات" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("radio", { name: "يوم كامل (حصة واحدة)" }));
+    fireEvent.click(screen.getByRole("button", { name: /إطلاق دراسة/ }));
+    await waitFor(() =>
+      expect(api.launchSnacrStudy).toHaveBeenCalledWith({ gouvernorat_code: 21, years: [2023, 2024, 2025], split: false, travel_max: 60 }),
+    );
+    fireEvent.click(screen.getAllByRole("button", { name: "PDF" })[1] as HTMLElement);
+    await waitFor(() => expect(api.snacrStudyExport).toHaveBeenCalledWith(archived, "pdf"));
   });
 
   it("gives the national room the archive and the references", async () => {

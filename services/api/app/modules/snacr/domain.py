@@ -57,6 +57,11 @@ COLUMNS = {
     "delegation": "DESIG_DELEG",
     "nature": "DESIGNATION",
     "subtype": "DESIGNATION_1",
+    # Studies (2026-11-01): the intervention number (the key of the damage tables), the unit that went out, and
+    # whether there was an intervention (لا: a white outing, SB).
+    "seq": "NUM_SEQUENTIEL",
+    "unit": "NOM_BRIGADE",
+    "intervened": "INTERV_OUI_NON",
 }
 REQUIRED = ("called", "gouvernorat", "delegation", "nature")
 
@@ -289,6 +294,9 @@ class Row:
     ended_at: datetime | None
     arrival_min: float | None
     flags: list[str]
+    seq_num: int | None = None
+    unit_raw: str | None = None
+    intervened: bool | None = None
 
 
 @dataclass(slots=True)
@@ -377,7 +385,69 @@ def clean(record: dict[str, Any], places: Places, quality: Quality) -> Row | Non
         ended_at=ended,
         arrival_min=round(arrival, 2) if arrival is not None else None,
         flags=flags,
+        seq_num=_integer(record.get("seq")),
+        unit_raw=_SPACES.sub(" ", str(record.get("unit") or "")).strip() or None,
+        intervened=intervened_of(record.get("intervened")),
     )
+
+
+def _integer(value: Any) -> int | None:
+    try:
+        return int(str(value).strip()) if value not in (None, "") else None
+    except ValueError:
+        return None
+
+
+_NO = {"لا", "non", "no", "0", "false", "n"}
+_YES = {"نعم", "oui", "yes", "1", "true", "o", "y"}
+
+
+def intervened_of(value: Any) -> bool | None:
+    """INTERV_OUI_NON: «لا» is a white outing (SB); empty or unknown counts as an intervention."""
+    text = normalize(str(value or "")).lower()
+    if text in _NO:
+        return False
+    if text in _YES:
+        return True
+    return None
+
+
+# ---------------------------------------------------------------- studies (the Office's six tables)
+
+# The unified classes of DESIGNATION_2: a white outing first (INTERV_OUI_NON = لا), else the family of the nature.
+SnacrClass = Literal["SAP", "SR", "LCI", "DIV", "SB"]
+CLASSES: tuple[SnacrClass, ...] = ("SAP", "SR", "LCI", "DIV", "SB")
+CLASS_OF_FAMILY: dict[str, SnacrClass] = {"medical": "SAP", "road": "SR", "fire": "LCI", "rescue": "DIV"}
+CLASS_AR = {
+    "SAP": "إسعاف الأشخاص",
+    "SR": "النجدة على الطرقات",
+    "LCI": "مكافحة الحرائق",
+    "DIV": "تدخلات مختلفة",
+    "SB": "خرجات بيضاء",
+}
+# The tables of a study, in the order of the Office's file: SEC_GLOB holds every outing, white ones included.
+TABLES: tuple[str, ...] = ("SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV")
+# Day (J) from 06:00 to 18:00 included, night (S) from 18:01 to 05:59, by the hour of the call in Tunis.
+DAY_START_MIN = 6 * 60
+DAY_END_MIN = 18 * 60
+TRAVEL_MAX_DEFAULT = 60
+
+
+def snacr_class(family: str, intervened: bool | None) -> SnacrClass:
+    if intervened is False:
+        return "SB"
+    return CLASS_OF_FAMILY.get(family, "DIV")
+
+
+def period_of(called: datetime) -> Literal["J", "S"]:
+    local = called.astimezone(TUNIS)
+    minute = local.hour * 60 + local.minute
+    return "J" if DAY_START_MIN <= minute <= DAY_END_MIN else "S"
+
+
+def unit_key(raw: str | None) -> str:
+    """Spellings of one unit meet ("أريانة المدينة" and "اريانة المدينة")."""
+    return normalize(raw or "")
 
 
 # ---------------------------------------------------------------- grading

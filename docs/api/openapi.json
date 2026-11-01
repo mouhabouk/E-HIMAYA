@@ -40427,6 +40427,261 @@
         "title": "StressIn",
         "type": "object"
       },
+      "StudyIn": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "split": {
+            "default": true,
+            "title": "Split",
+            "type": "boolean"
+          },
+          "travel_max": {
+            "default": 60,
+            "maximum": 600.0,
+            "minimum": 5.0,
+            "title": "Travel Max",
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "years"
+        ],
+        "title": "StudyIn",
+        "type": "object"
+      },
+      "StudyOut": {
+        "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "findings": {
+            "additionalProperties": true,
+            "title": "Findings",
+            "type": "object"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "quality": {
+            "additionalProperties": true,
+            "title": "Quality",
+            "type": "object"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "split": {
+            "title": "Split",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "current",
+              "archived"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tables": {
+            "additionalProperties": true,
+            "title": "Tables",
+            "type": "object"
+          },
+          "travel_max": {
+            "title": "Travel Max",
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "gouvernorat_code",
+          "years",
+          "split",
+          "travel_max",
+          "status",
+          "simulated",
+          "quality",
+          "created_by_name",
+          "created_at",
+          "archived_at",
+          "tables",
+          "findings"
+        ],
+        "title": "StudyOut",
+        "type": "object"
+      },
+      "StudySummary": {
+        "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "quality": {
+            "additionalProperties": true,
+            "title": "Quality",
+            "type": "object"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "split": {
+            "title": "Split",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "current",
+              "archived"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "travel_max": {
+            "title": "Travel Max",
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "gouvernorat_code",
+          "years",
+          "split",
+          "travel_max",
+          "status",
+          "simulated",
+          "quality",
+          "created_by_name",
+          "created_at",
+          "archived_at"
+        ],
+        "title": "StudySummary",
+        "type": "object"
+      },
       "SubtypeCount": {
         "properties": {
           "rows": {
@@ -55241,6 +55496,14 @@
         "properties": {
           "dataset": {
             "$ref": "#/components/schemas/DatasetOut"
+          },
+          "datasets": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/DatasetOut"
+            },
+            "title": "Datasets",
+            "type": "array"
           }
         },
         "required": [
@@ -97897,20 +98160,9 @@
     },
     "/api/v1/staff/snacr/datasets": {
       "post": {
-        "description": "The Office's yearly export (xlsx or CSV) is the request body. It replaces the year already loaded. Only the\ntimes, the place and the nature are read; the address, the free texts, the crew and the vehicles never are.",
+        "description": "The Office's export (xlsx or CSV) is the request body. Only the times, the place, the nature, the intervention\nnumber, the unit and INTERV_OUI_NON are read; the address, the free texts, the crew and the vehicles never are.\n\n``year``: that year only, replacing the year already loaded. Without it, every year the file covers is loaded\n(a regional file of 2022–2025). ``merge``: only the gouvernorats of the file are replaced in each year, the others\nstay (the files of the 24 regional directorates loaded one after the other).",
         "operationId": "import_dataset_api_v1_staff_snacr_datasets_post",
         "parameters": [
-          {
-            "in": "query",
-            "name": "year",
-            "required": true,
-            "schema": {
-              "maximum": 2100,
-              "minimum": 2000,
-              "title": "Year",
-              "type": "integer"
-            }
-          },
           {
             "in": "query",
             "name": "file_name",
@@ -97920,6 +98172,34 @@
               "minLength": 1,
               "title": "File Name",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 2100,
+                  "minimum": 2000,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Year"
+            }
+          },
+          {
+            "in": "query",
+            "name": "merge",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Merge",
+              "type": "boolean"
             }
           }
         ],
@@ -98525,6 +98805,222 @@
           }
         ],
         "summary": "Delete Special Risk",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/studies": {
+      "get": {
+        "description": "The studies of a scope, the current one first then the archive (the national studies without a\ngouvernorat; a regional account sees its own gouvernorat's).",
+        "operationId": "list_studies_api_v1_staff_snacr_studies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 83,
+                  "minimum": 11,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StudySummary"
+                  },
+                  "title": "Response List Studies Api V1 Staff Snacr Studies Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Studies",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      },
+      "post": {
+        "description": "A new study with its settings (years, day split, travel-time ceiling); the current study of the same scope is\narchived as it was, never rewritten.",
+        "operationId": "launch_study_api_v1_staff_snacr_studies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Launch Study",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/studies/{study_id}": {
+      "get": {
+        "operationId": "get_study_api_v1_staff_snacr_studies__study_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "study_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Study Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Study",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/studies/{study_id}/export": {
+      "get": {
+        "description": "The study as the Office's file: PDF (A4 landscape) or Excel (one sheet per table, the layout of \"ariana\"),\nfor the current study as for any archived one.",
+        "operationId": "export_study_api_v1_staff_snacr_studies__study_id__export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "study_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Study Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "pdf",
+              "pattern": "^(pdf|xlsx|html)$",
+              "title": "Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {},
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {},
+              "text/html": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Study",
         "tags": [
           "staff",
           "snacr"

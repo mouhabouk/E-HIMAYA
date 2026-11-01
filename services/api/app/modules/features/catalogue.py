@@ -950,6 +950,11 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /snacr/plans",
             "POST /snacr/plans/{plan_id}/approve",
         ),
+        button(
+            "snacr.study",
+            ("إطلاق دراسة SNACR", "Lancer une étude SNACR", "Launch a SNACR study"),
+            "POST /snacr/studies",
+        ),
     ),
     page(
         "coastal",

@@ -9738,3 +9738,76 @@ button.nav-card:hover {
 .cross__down { color: var(--ok-text); font-weight: 600; }
 .cross__findings { margin: 0 0 12px; padding-inline-start: 1.2em; }
 .cross__findings li { margin-bottom: 4px; }
+
+/* SNACR studies (the Office's six tables): units span their délégations, subtotals and totals stand out. */
+.snacr-study th[scope="rowgroup"] {
+  vertical-align: middle;
+  font-weight: 700;
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+}
+.snacr-study thead th {
+  text-align: center;
+  white-space: nowrap;
+}
+.snacr-study td.num {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.snacr-study__sub > * {
+  font-weight: 600;
+  background: var(--surface);
+  border-block-start: 1px solid var(--border);
+}
+.snacr-study__total > * {
+  font-weight: 700;
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+  border-block-start: 2px solid var(--tone-navy-ink);
+}
+
+/* SNACR study board: the change tiles, the trend cells and the technical notes. */
+.snacr-board {
+  margin-block: 1rem;
+}
+.kpi--up {
+  border-inline-start-color: var(--tone-red);
+}
+.kpi--down {
+  border-inline-start-color: var(--ok-text);
+}
+.trend--up {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.trend--down {
+  color: var(--ok-text);
+  font-weight: 600;
+}
+.snacr-notes {
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+.snacr-notes__item {
+  padding: 0.45rem 0.75rem;
+  border-inline-start: 4px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+.snacr-notes__item--up {
+  border-inline-start-color: var(--tone-red);
+}
+.snacr-notes__item--down {
+  border-inline-start-color: var(--ok-text);
+}
+.snacr-notes__item--warn {
+  border-inline-start-color: var(--tone-amber);
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.snacr-notes__item--info {
+  border-inline-start-color: var(--tone-navy-ink);
+}
