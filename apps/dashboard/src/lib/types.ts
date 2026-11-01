@@ -25,7 +25,14 @@ import type {
 import type { MediaAnalysis } from "./streamTypes";
 import type { KindFieldValue } from "./kindFields";
 
-export const REPORT_STATUSES = ["received", "in_progress", "intervened", "ongoing", "closed", "rejected"] as const;
+export const REPORT_STATUSES = [
+  "received",
+  "in_progress",
+  "intervened",
+  "ongoing",
+  "closed",
+  "rejected",
+] as const;
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
 
 export const CATEGORIES = [
@@ -41,12 +48,22 @@ export const CATEGORIES = [
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-export type ReporterKind = "citizen" | "anonymous";
+export type ReporterKind = "citizen" | "organization" | "anonymous";
+/** What a registered reporter also is, once approved by staff. */
+export type ReporterRole = "volunteer" | "doctor";
 /** `recording`: a segment of a live stream (phase 6 §1), stored with `stream_id` and `duration_s`. */
 export type MediaKind = "image" | "video" | "audio" | "recording";
-export type MediaStatus = "uploading" | "verifying" | "stored" | "rejected" | "quarantined";
+export type MediaStatus =
+  | "uploading"
+  | "verifying"
+  | "stored"
+  | "rejected"
+  | "quarantined";
 /** Why the verification worker refused a file (phase 5.5, A7). */
-export type MediaRejectionReason = "sha256_mismatch" | "type_mismatch" | "disallowed_type";
+export type MediaRejectionReason =
+  | "sha256_mismatch"
+  | "type_mismatch"
+  | "disallowed_type";
 export const MEDIA_REJECTION_REASONS: readonly MediaRejectionReason[] = [
   "sha256_mismatch",
   "type_mismatch",
@@ -54,11 +71,23 @@ export const MEDIA_REJECTION_REASONS: readonly MediaRejectionReason[] = [
 ];
 /** Why a report was accepted but flagged for a human check (phase 5.5, A1/A2). */
 /** `anonymous_quota`: an SOS accepted beyond the anonymous quota (phase 9 §3). */
-export type VerificationReason = "anonymous_budget" | "limiter_degraded" | "anonymous_quota";
-export const VERIFICATION_REASONS: readonly VerificationReason[] = ["anonymous_budget", "limiter_degraded", "anonymous_quota"];
+export type VerificationReason =
+  | "anonymous_budget"
+  | "limiter_degraded"
+  | "anonymous_quota";
+export const VERIFICATION_REASONS: readonly VerificationReason[] = [
+  "anonymous_budget",
+  "limiter_degraded",
+  "anonymous_quota",
+];
 export type TextLang = "ar" | "fr" | "en";
 
-export const ANALYSIS_STATES = ["pending", "running", "done", "failed"] as const;
+export const ANALYSIS_STATES = [
+  "pending",
+  "running",
+  "done",
+  "failed",
+] as const;
 export type AnalysisState = (typeof ANALYSIS_STATES)[number];
 
 export interface GeoPoint {
@@ -159,8 +188,22 @@ export interface HistoryEntry {
  * break-glass grant: `masked: true`, names null and the phone reduced to its last two digits ("+216••••••12").
  */
 export type Reporter =
-  | { kind: "citizen"; first_name: string | null; last_name: string | null; phone: string | null; masked?: boolean }
-  | { kind: "anonymous"; masked?: boolean; first_name?: null; last_name?: null; phone?: string | null };
+  | {
+      kind: "citizen" | "organization";
+      first_name: string | null;
+      last_name: string | null;
+      phone: string | null;
+      masked?: boolean;
+      roles?: ReporterRole[];
+    }
+  | {
+      kind: "anonymous";
+      masked?: boolean;
+      first_name?: null;
+      last_name?: null;
+      phone?: string | null;
+      roles?: [];
+    };
 
 export interface StaffReportDetail extends StaffReport {
   history: HistoryEntry[];
@@ -211,9 +254,20 @@ export const PRIORITY_COMPONENTS = [
 ] as const;
 export type PriorityComponent = (typeof PRIORITY_COMPONENTS)[number];
 
-export const ANALYSIS_STEPS = ["transcribe", "extract", "translate", "embed"] as const;
+export const ANALYSIS_STEPS = [
+  "transcribe",
+  "extract",
+  "translate",
+  "embed",
+] as const;
 export type AnalysisStep = (typeof ANALYSIS_STEPS)[number];
-export const STEP_STATES = ["done", "skipped", "failed", "unavailable", "disabled"] as const;
+export const STEP_STATES = [
+  "done",
+  "skipped",
+  "failed",
+  "unavailable",
+  "disabled",
+] as const;
 export type StepState = (typeof STEP_STATES)[number];
 
 export interface ScoreComponent {
@@ -298,7 +352,12 @@ export interface Analysis {
 
 // ---------- Incidents (phase 3, FR-C-02, BR-10, BR-11) ----------
 
-export const INCIDENT_STATUSES = ["open", "closed", "merged", "dissolved"] as const;
+export const INCIDENT_STATUSES = [
+  "open",
+  "closed",
+  "merged",
+  "dissolved",
+] as const;
 export type IncidentStatus = (typeof INCIDENT_STATUSES)[number];
 
 export const TIMELINE_KINDS = [
@@ -419,7 +478,13 @@ export interface AiSettings {
   };
 }
 
-export const AI_CAPABILITIES = ["transcribe", "translate_fr", "translate_en", "embed", "extract"] as const;
+export const AI_CAPABILITIES = [
+  "transcribe",
+  "translate_fr",
+  "translate_en",
+  "embed",
+  "extract",
+] as const;
 export type AiCapability = (typeof AI_CAPABILITIES)[number];
 
 export interface CapabilityHealth {
@@ -475,7 +540,9 @@ export interface Me {
 }
 
 export function isReportStatus(v: unknown): v is ReportStatus {
-  return typeof v === "string" && (REPORT_STATUSES as readonly string[]).includes(v);
+  return (
+    typeof v === "string" && (REPORT_STATUSES as readonly string[]).includes(v)
+  );
 }
 
 export function isCategory(v: unknown): v is Category {
@@ -483,16 +550,27 @@ export function isCategory(v: unknown): v is Category {
 }
 
 export function isIncidentStatus(v: unknown): v is IncidentStatus {
-  return typeof v === "string" && (INCIDENT_STATUSES as readonly string[]).includes(v);
+  return (
+    typeof v === "string" &&
+    (INCIDENT_STATUSES as readonly string[]).includes(v)
+  );
 }
 
 // ---------- Institutions (phase 4, FR-B-001…FR-B-011, FR-C-05) ----------
 
-export function isOneOf<T extends string>(list: readonly T[], v: unknown): v is T {
+export function isOneOf<T extends string>(
+  list: readonly T[],
+  v: unknown,
+): v is T {
   return typeof v === "string" && (list as readonly string[]).includes(v);
 }
 
-export const ORG_STATUSES = ["pending_review", "active", "rejected", "suspended"] as const;
+export const ORG_STATUSES = [
+  "pending_review",
+  "active",
+  "rejected",
+  "suspended",
+] as const;
 export type OrgStatus = (typeof ORG_STATUSES)[number];
 
 export const ORG_KINDS = [
@@ -511,7 +589,12 @@ export const ORG_KINDS = [
 ] as const;
 export type OrgKind = (typeof ORG_KINDS)[number];
 
-export const ORG_FAMILIES = ["high_rise", "industrial", "erp", "workplace"] as const;
+export const ORG_FAMILIES = [
+  "high_rise",
+  "industrial",
+  "erp",
+  "workplace",
+] as const;
 export type OrgFamily = (typeof ORG_FAMILIES)[number];
 
 /** Codes of `classification.required` and `completeness.missing` (§1). */
@@ -544,14 +627,29 @@ export const ORG_ALERT_KINDS = [
   "prevention_expired",
 ] as const;
 
-export const CERTIFICATE_STATUSES = ["draft", "submitted", "approved", "rejected", "revoked"] as const;
+export const CERTIFICATE_STATUSES = [
+  "draft",
+  "submitted",
+  "approved",
+  "rejected",
+  "revoked",
+] as const;
 export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number];
 /** `certificate_status` of a StaffOrg and the `certificate=` list filter. */
-export const ORG_CERTIFICATE_STATES = ["none", ...CERTIFICATE_STATUSES, "expired"] as const;
+export const ORG_CERTIFICATE_STATES = [
+  "none",
+  ...CERTIFICATE_STATUSES,
+  "expired",
+] as const;
 export type OrgCertificateState = (typeof ORG_CERTIFICATE_STATES)[number];
 
 export const TEAM_ROLES = ["representative", "member"] as const;
-export const TRAINING_STATUSES = ["valid", "expiring", "expired", "unknown"] as const;
+export const TRAINING_STATUSES = [
+  "valid",
+  "expiring",
+  "expired",
+  "unknown",
+] as const;
 export type TrainingStatus = (typeof TRAINING_STATUSES)[number];
 export const EQUIPMENT_KINDS = [
   "extinguisher",
@@ -563,18 +661,43 @@ export const EQUIPMENT_KINDS = [
   "fire_door",
   "other",
 ] as const;
-export const MAINTENANCE_STATUSES = ["ok", "due_soon", "overdue", "unknown"] as const;
+export const MAINTENANCE_STATUSES = [
+  "ok",
+  "due_soon",
+  "overdue",
+  "unknown",
+] as const;
 export type MaintenanceStatus = (typeof MAINTENANCE_STATUSES)[number];
 export const HAZMAT_UNITS = ["kg", "t", "l", "m3"] as const;
-export const FEATURE_KINDS = ["evacuation_point", "water_point", "alarm"] as const;
+export const FEATURE_KINDS = [
+  "evacuation_point",
+  "water_point",
+  "alarm",
+] as const;
 export type FeatureKind = (typeof FEATURE_KINDS)[number];
-export const DOCUMENT_KINDS = ["safety_file", "safety_plan", "sds", "other"] as const;
+export const DOCUMENT_KINDS = [
+  "safety_file",
+  "safety_plan",
+  "sds",
+  "other",
+] as const;
 export const MEMBER_ROLES = ["admin", "editor", "member"] as const;
 /** `reason` of the sensitive_sites priority component (§10). */
-export const SENSITIVE_REASONS = ["hazmat", "high_rise", "large_public", "public", "nearby"] as const;
+export const SENSITIVE_REASONS = [
+  "hazmat",
+  "high_rise",
+  "large_public",
+  "public",
+  "nearby",
+] as const;
 
 /** Registration review decisions (§9) and the institution statuses they apply to. */
-export const ORG_DECISIONS = ["approve", "reject", "suspend", "reinstate"] as const;
+export const ORG_DECISIONS = [
+  "approve",
+  "reject",
+  "suspend",
+  "reinstate",
+] as const;
 export type OrgDecision = (typeof ORG_DECISIONS)[number];
 
 export interface OrgRef {
@@ -737,7 +860,14 @@ export interface StampBody {
   note?: string | null;
 }
 
-export const COUNTER_REASONS = ["not_approved", "revoked", "superseded", "expired", "signature", "org_inactive"] as const;
+export const COUNTER_REASONS = [
+  "not_approved",
+  "revoked",
+  "superseded",
+  "expired",
+  "signature",
+  "org_inactive",
+] as const;
 export type CounterReason = (typeof COUNTER_REASONS)[number];
 
 /** GET /staff/certificates/lookup: what the agent at the counter sees. */
@@ -900,7 +1030,11 @@ export interface CertificateEvent {
 }
 
 /** `kind` (P2a): the auditor sets the right kind, on approval only. */
-export type OrgReviewBody = { decision: OrgDecision; reason?: string; kind?: OrgKind };
+export type OrgReviewBody = {
+  decision: OrgDecision;
+  reason?: string;
+  kind?: OrgKind;
+};
 export type CertificateReviewBody =
   | { decision: "approve"; valid_until: string; reason?: string }
   | { decision: "reject"; reason: string };

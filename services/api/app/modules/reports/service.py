@@ -11,12 +11,13 @@ from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException, status
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import Select, and_, cast, exists, func, or_, select, union
+from sqlalchemy import Select, and_, cast, exists, func, or_, select, text, union
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import Ctx, active_grants
 from app.core.config import get_settings
+from app.core.db import as_system
 from app.core.events import emit
 from app.core.security import Principal
 from app.modules.ai import pipeline
@@ -359,7 +360,8 @@ def staff_report(
         location=_location(row),
         gouvernorat_code=r.gouvernorat_code,
         delegation_id=r.delegation_id,
-        reporter_kind=reporter_kind,
+        # A report sent for an institution is the institution's, whoever of its members pressed the button.
+        reporter_kind="organization" if org is not None else reporter_kind,
         media_count=media_count,
         created_at=r.created_at,
         received_at=r.received_at,
@@ -452,6 +454,29 @@ async def incident_gouvernorats(
     from app.modules.ops import service as ops
 
     return await ops.incident_gouvernorats(session, incident_id)
+
+
+async def reporter_roles(session: AsyncSession, user_id: uuid.UUID | None) -> list[schemas.ReporterRole]:
+    """What the reporter also is, approved by staff: a volunteer, a doctor (in that order). Read as the system, since
+    the doctors' register is closed to the rooms; only the two statuses leave this function."""
+    if user_id is None:
+        return []
+    async with as_system(session):
+        row = (
+            await session.execute(
+                text(
+                    "SELECT EXISTS (SELECT 1 FROM identity.volunteer WHERE user_id = :u AND status = 'approved'),"
+                    " EXISTS (SELECT 1 FROM identity.doctor WHERE user_id = :u AND status = 'approved')"
+                ),
+                {"u": user_id},
+            )
+        ).one()
+    roles: list[schemas.ReporterRole] = []
+    if row[0]:
+        roles.append("volunteer")
+    if row[1]:
+        roles.append("doctor")
+    return roles
 
 
 async def report_ctx(session: AsyncSession, report: Report) -> Ctx:

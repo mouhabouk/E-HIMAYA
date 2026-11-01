@@ -142,6 +142,12 @@ async def summary(session: AsyncSession, incident: Incident) -> schemas.Incident
     )
 
 
+DELEGATION_AT_CENTROID = text(
+    "SELECT d.id FROM geo.delegation d JOIN ops.incident i ON ST_Contains(d.boundary, i.centroid::geometry) "
+    "WHERE i.id = :id ORDER BY d.id LIMIT 1"
+)
+
+
 def add_timeline(
     session: AsyncSession,
     incident_id: uuid.UUID,
@@ -372,6 +378,12 @@ async def refresh(session: AsyncSession, incident: Incident, actor: str = "syste
         await _timeline(session, incident, "reopened", actor)
     await session.flush()
     await session.refresh(incident)
+    # The délégation the team and the documents name: the one whose boundary holds the incident's centre, else
+    # that of its first located report (a centre off the coast, between two islands).
+    incident.delegation_id = await session.scalar(DELEGATION_AT_CENTROID, {"id": incident.id}) or next(
+        (m.delegation_id for m in members if m.delegation_id is not None), None
+    )
+    await session.flush()
     await update_command_level(session, incident, actor)
 
 

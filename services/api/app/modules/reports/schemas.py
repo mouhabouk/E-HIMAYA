@@ -212,8 +212,14 @@ class StaffHistoryEntry(BaseModel):
     note: str | None
 
 
+ReporterRole = Literal["volunteer", "doctor"]
+
+
 class Reporter(BaseModel):
     kind: Literal["citizen", "organization", "anonymous"]
+    # What the registered reporter also is, once approved by staff: an approved volunteer, an approved doctor. A role,
+    # not an identity, so it is shown to every room that reads the report; it weighs the report's credibility.
+    roles: list[ReporterRole] = Field(default_factory=list)
     # Identity hidden outside the handling operations room (§1.3): names null, phone reduced to its last two digits.
     masked: bool = False
     first_name: str | None = None

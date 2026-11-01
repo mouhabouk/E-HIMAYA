@@ -1,0 +1,132 @@
+name: APK
+
+# The two Android apps built for distribution, left to download from the run's page (Actions → APK → the run →
+# Artifacts). Started by hand with the server's addresses, or by a version tag (v*) with the repository variables.
+# Signed with the release key when the secrets hold it; otherwise with the debug key and named "-test" (to try on a
+# phone, never to publish: a later signed version cannot update it).
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_base_url:
+        description: API address (https://api.example.tn)
+        required: true
+        default: https://api.ehimaya.tn
+      auth_base_url:
+        description: Keycloak address (https://auth.example.tn)
+        required: true
+        default: https://auth.ehimaya.tn
+      sms_number:
+        description: SMS reporting number (empty hides the SMS button)
+        required: false
+        default: ''
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: APK · citizen and staff
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      API_BASE_URL: ${{ inputs.api_base_url || vars.API_BASE_URL || 'https://api.ehimaya.tn' }}
+      AUTH_BASE_URL: ${{ inputs.auth_base_url || vars.AUTH_BASE_URL || 'https://auth.ehimaya.tn' }}
+      SMS_NUMBER: ${{ inputs.sms_number || vars.SMS_REPORT_NUMBER || '' }}
+      FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      FIREBASE_STAFF_APP_ID: ${{ secrets.FIREBASE_STAFF_APP_ID }}
+      FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+      FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.7
+          channel: stable
+          cache: true
+
+      - name: Free runner disk space
+        if: runner.environment == 'github-hosted'
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+
+      - name: Release key
+        id: key
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            {
+              echo "storeFile=$RUNNER_TEMP/release.jks"
+              echo "storePassword=$KEYSTORE_PASSWORD"
+              echo "keyAlias=$KEY_ALIAS"
+              echo "keyPassword=${KEY_PASSWORD:-$KEYSTORE_PASSWORD}"
+            } > android/key.properties
+            echo "suffix=" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No release key in the secrets: the APKs are signed with the debug key (-test)."
+            echo "suffix=-test" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Build the citizen app
+        run: |
+          flutter build apk --release --flavor citizen \
+            --dart-define=API_BASE_URL="$API_BASE_URL" \
+            --dart-define=TUS_URL="$API_BASE_URL/api/v1/uploads/" \
+            --dart-define=OIDC_ISSUER="$AUTH_BASE_URL/realms/ehimaya-public" \
+            --dart-define=SMS_REPORT_NUMBER="$SMS_NUMBER" \
+            --dart-define=FIREBASE_API_KEY="$FIREBASE_API_KEY" \
+            --dart-define=FIREBASE_APP_ID="$FIREBASE_APP_ID" \
+            --dart-define=FIREBASE_MESSAGING_SENDER_ID="$FIREBASE_MESSAGING_SENDER_ID" \
+            --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID"
+
+      - name: Build the staff app
+        run: |
+          flutter build apk --release --flavor staff -t lib/main_staff.dart \
+            --dart-define=API_BASE_URL="$API_BASE_URL" \
+            --dart-define=STAFF_OIDC_ISSUER="$AUTH_BASE_URL/realms/ehimaya-staff" \
+            --dart-define=STAFF_ROOM_PHONE=198 \
+            --dart-define=STAFF_SMS_NUMBER="$SMS_NUMBER" \
+            --dart-define=FIREBASE_API_KEY="$FIREBASE_API_KEY" \
+            --dart-define=FIREBASE_APP_ID="$FIREBASE_STAFF_APP_ID" \
+            --dart-define=FIREBASE_MESSAGING_SENDER_ID="$FIREBASE_MESSAGING_SENDER_ID" \
+            --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID"
+
+      - name: Name and checksum
+        run: |
+          out=build/app/outputs/flutter-apk
+          suffix="${{ steps.key.outputs.suffix }}"
+          version=$(grep '^version:' pubspec.yaml | awk '{print $2}' | tr '+' '-')
+          mkdir -p dist
+          cp "$out/app-citizen-release.apk" "dist/e-himaya-citizen-$version$suffix.apk"
+          cp "$out/app-staff-release.apk" "dist/e-himaya-staff-$version$suffix.apk"
+          (cd dist && sha256sum *.apk > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          rm -f android/key.properties "$RUNNER_TEMP/release.jks"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: e-himaya-apk
+          path: apps/mobile/dist/
+          retention-days: 30
+          if-no-files-found: error
