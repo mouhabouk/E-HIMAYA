@@ -56,6 +56,10 @@ class Intervention(Base):
     returned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     crew_count: Mapped[int | None] = mapped_column(SmallInteger)
     flags: Mapped[list[str]] = mapped_column(ARRAY(Text))
+    # Studies (migration 0090): the intervention number, the unit that went out, and false for a white outing (SB).
+    seq_num: Mapped[int | None] = mapped_column(BigInteger)
+    unit_raw: Mapped[str | None] = mapped_column(Text)
+    intervened: Mapped[bool | None] = mapped_column(Boolean)
 
 
 class Alias(Base):
@@ -111,3 +115,26 @@ class Plan(Base):
     approved_by: Mapped[str | None] = mapped_column(Text)
     approved_by_name: Mapped[str | None] = mapped_column(Text)
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Study(Base):
+    """A SNACR study in the Office's format (SEC_GLOB, SAP, SR, LCI, SB, DIV), frozen with its settings; the next
+    study of the same scope archives it (migration 0090)."""
+
+    __tablename__ = "study"
+    __table_args__ = {"schema": "snacr"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    number: Mapped[int] = mapped_column(Integer)
+    gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    years: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger))
+    split: Mapped[bool] = mapped_column(Boolean)
+    travel_max: Mapped[int] = mapped_column(SmallInteger)
+    status: Mapped[str] = mapped_column(Text)
+    simulated: Mapped[bool] = mapped_column(Boolean)
+    tables: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    quality: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

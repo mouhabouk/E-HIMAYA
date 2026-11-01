@@ -17,8 +17,9 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.analytics.service import resolve_scope
 from app.modules.audit import service as audit
-from app.modules.snacr import documents, domain, schemas, service, simulate
-from app.modules.snacr.models import Dataset, Plan, SpecialRisk
+from app.modules.snacr import documents, domain, schemas, service, simulate, study_export
+from app.modules.snacr import study as studies
+from app.modules.snacr.models import Dataset, Plan, SpecialRisk, Study
 
 router = APIRouter(prefix="/api/v1/staff/snacr", tags=["staff", "snacr"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -102,35 +103,48 @@ async def import_dataset(
     principal: Editor,
     session: Session,
     request: Request,
-    year: Annotated[int, Query(ge=2000, le=2100)],
     file_name: Annotated[str, Query(min_length=1, max_length=200)],
+    year: Annotated[int | None, Query(ge=2000, le=2100)] = None,
+    merge: bool = False,
 ) -> schemas.ImportOut:
-    """The Office's yearly export (xlsx or CSV) is the request body. It replaces the year already loaded. Only the
-    times, the place and the nature are read; the address, the free texts, the crew and the vehicles never are."""
+    """The Office's export (xlsx or CSV) is the request body. Only the times, the place, the nature, the intervention
+    number, the unit and INTERV_OUI_NON are read; the address, the free texts, the crew and the vehicles never are.
+
+    ``year``: that year only, replacing the year already loaded. Without it, every year the file covers is loaded
+    (a regional file of 2022–2025). ``merge``: only the gouvernorats of the file are replaced in each year, the others
+    stay (the files of the 24 regional directorates loaded one after the other)."""
     _national(principal)
     data = await _read_body(request)
     try:
-        dataset = await service.load(
-            session,
-            year,
-            domain.read(file_name, data),
-            "office",
-            file_name,
-            audit.actor_of(principal),
-            audit.name_of(principal),
-        )
+        records = list(domain.read(file_name, data))
+        years = [year] if year is not None else service.years_in(records)
+        if not years:
+            raise domain.FileError("file_empty")
+        loaded = [
+            await service.load(
+                session, y, records, "office", file_name, audit.actor_of(principal), audit.name_of(principal), merge
+            )
+            for y in years
+        ]
     except domain.FileError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
-    await audit.record(
-        session,
-        actor=audit.actor_of(principal),
-        action="snacr.dataset_imported",
-        target=f"snacr_dataset:{year}",
-        details={"rows": dataset.rows, "file_name": file_name, "skipped": dataset.quality.get("skipped")},
-    )
+    for dataset in loaded:
+        await audit.record(
+            session,
+            actor=audit.actor_of(principal),
+            action="snacr.dataset_imported",
+            target=f"snacr_dataset:{dataset.year}",
+            details={
+                "rows": dataset.rows,
+                "file_name": file_name,
+                "merge": merge,
+                "skipped": dataset.quality.get("skipped"),
+            },
+        )
     await session.commit()
-    await session.refresh(dataset)
-    return schemas.ImportOut(dataset=_dataset(dataset))
+    for dataset in loaded:
+        await session.refresh(dataset)
+    return schemas.ImportOut(dataset=_dataset(loaded[0]), datasets=[_dataset(d) for d in loaded])
 
 
 @router.post("/datasets/simulate", response_model=schemas.ImportOut, status_code=status.HTTP_201_CREATED)
@@ -458,4 +472,140 @@ async def plan_document(
         documents.render_pdf(page),
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="snacr-{scope}-v{plan.version}-{stamp}.pdf"'},
+    )
+
+
+# ---------------------------------------------------------------- studies (the Office's six tables)
+
+STUDY_ROLES = (Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.CENTRAL_COMMITTEE)
+Launcher = Annotated[Principal, Depends(require_roles(*STUDY_ROLES))]
+
+
+def _study_summary(s: Study) -> dict[str, Any]:
+    return {
+        "id": s.id,
+        "number": s.number,
+        "gouvernorat_code": s.gouvernorat_code,
+        "years": s.years,
+        "split": s.split,
+        "travel_max": s.travel_max,
+        "status": s.status,
+        "simulated": s.simulated,
+        "quality": s.quality,
+        "created_by_name": s.created_by_name,
+        "created_at": s.created_at,
+        "archived_at": s.archived_at,
+    }
+
+
+async def _study(session: AsyncSession, principal: Principal, study_id: uuid.UUID) -> Study:
+    found = await session.get(Study, study_id)
+    if found is None or (
+        found.gouvernorat_code is not None and not principal.can_access_gouvernorat(found.gouvernorat_code)
+    ):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    return found
+
+
+@router.get("/studies", response_model=list[schemas.StudySummary])
+async def list_studies(
+    principal: Reader, session: Session, gouvernorat: Annotated[int | None, Query(ge=11, le=83)] = None
+) -> list[dict[str, Any]]:
+    """The studies of a scope, the current one first then the archive (the national studies without a
+    gouvernorat; a regional account sees its own gouvernorat's)."""
+    if gouvernorat is None and not principal.is_national:
+        gouvernorat = _codes(principal, None)[0]
+    elif gouvernorat is not None:
+        _codes(principal, gouvernorat)
+    stmt = select(Study).where(
+        Study.gouvernorat_code.is_(None) if gouvernorat is None else Study.gouvernorat_code == gouvernorat
+    )
+    rows = (await session.scalars(stmt.order_by(Study.number.desc()))).all()
+    return [_study_summary(s) for s in rows]
+
+
+@router.post("/studies", response_model=schemas.StudyOut, status_code=status.HTTP_201_CREATED)
+async def launch_study(principal: Launcher, session: Session, body: schemas.StudyIn) -> dict[str, Any]:
+    """A new study with its settings (years, day split, travel-time ceiling); the current study of the same scope is
+    archived as it was, never rewritten."""
+    if body.gouvernorat_code is None:
+        _national(principal)
+    else:
+        _codes(principal, body.gouvernorat_code)
+    years = await _years(session, body.years)
+    study = await studies.launch(
+        session,
+        body.gouvernorat_code,
+        years,
+        body.split,
+        body.travel_max,
+        audit.actor_of(principal),
+        audit.name_of(principal),
+    )
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="snacr.study_launched",
+        target=f"snacr_study:{study.id}",
+        details={"number": study.number, "years": years, "split": body.split, "travel_max": body.travel_max},
+        gouvernorats=[study.gouvernorat_code] if study.gouvernorat_code else None,
+    )
+    await session.commit()
+    await session.refresh(study)
+    return {**_study_summary(study), "tables": study.tables}
+
+
+@router.get("/studies/{study_id}", response_model=schemas.StudyOut)
+async def get_study(principal: Reader, session: Session, study_id: uuid.UUID) -> dict[str, Any]:
+    found = await _study(session, principal, study_id)
+    return {**_study_summary(found), "tables": found.tables}
+
+
+@router.get(
+    "/studies/{study_id}/export",
+    response_class=Response,
+    responses={
+        200: {
+            "content": {
+                "application/pdf": {},
+                "text/html": {},
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {},
+            }
+        }
+    },
+)
+async def export_study(
+    principal: Reader,
+    session: Session,
+    study_id: uuid.UUID,
+    format: Annotated[str, Query(pattern="^(pdf|xlsx|html)$")] = "pdf",
+) -> Response:
+    """The study as the Office's file: PDF (A4 landscape) or Excel (one sheet per table, the layout of "ariana"),
+    for the current study as for any archived one."""
+    found = await _study(session, principal, study_id)
+    names = await documents.names(session)
+    g_name = names["gouvernorats"].get(found.gouvernorat_code) if found.gouvernorat_code else None
+    scope = "national" if found.gouvernorat_code is None else f"g{found.gouvernorat_code}"
+    stem = f"snacr-study-{scope}-{found.number}-{found.created_at:%Y%m%d}"
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="snacr.study_exported",
+        target=f"snacr_study:{found.id}",
+        details={"format": format},
+        gouvernorats=[found.gouvernorat_code] if found.gouvernorat_code else None,
+    )
+    await session.commit()
+    if format == "html":
+        return Response(study_export.render_html(found, g_name), media_type="text/html; charset=utf-8")
+    if format == "xlsx":
+        return Response(
+            study_export.render_xlsx(found, g_name),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f'attachment; filename="{stem}.xlsx"'},
+        )
+    return Response(
+        study_export.render_pdf(found, g_name),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{stem}.pdf"'},
     )

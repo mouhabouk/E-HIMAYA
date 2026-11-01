@@ -13,6 +13,7 @@ import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
 import type { MapAdmin } from "../components/MapView";
 import { PageTitle } from "../components/PageTitle";
+import { StudiesTab } from "../components/SnacrStudies";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
@@ -40,7 +41,7 @@ import {
   type SpecialRisk,
 } from "../lib/snacr";
 
-const TABS = ["indicators", "matrix", "seasons", "special", "plan", "archive", "method"] as const;
+const TABS = ["indicators", "studies", "matrix", "seasons", "special", "plan", "archive", "method"] as const;
 type Tab = (typeof TABS)[number];
 const METRICS = ["priority", "rate", "compliance", "completeness"] as const;
 type Metric = (typeof METRICS)[number];
@@ -746,10 +747,12 @@ function ArchiveTab({ overview }: { overview: SnacrOverview }) {
   const id = useId();
   const [year, setYear] = useState(new Date().getFullYear() - 1);
   const [file, setFile] = useState<File | null>(null);
+  const [allYears, setAllYears] = useState(false);
+  const [merge, setMerge] = useState(false);
   const [aliasing, setAliasing] = useState<string | null>(null);
   const unmatched = useQuery({ queryKey: snacrKeys.unmatched, queryFn: ({ signal }) => api.snacrUnmatched(signal) });
   const invalidate = () => void qc.invalidateQueries({ queryKey: snacrKeys.all });
-  const upload = useMutation({ mutationFn: () => api.importSnacr(year, file as File), onSuccess: invalidate });
+  const upload = useMutation({ mutationFn: () => api.importSnacr(allYears ? null : year, file as File, merge), onSuccess: invalidate });
   const simulate = useMutation({ mutationFn: () => api.simulateSnacr(year), onSuccess: invalidate });
   const live = useMutation({ mutationFn: () => api.liveSnacr(year), onSuccess: invalidate });
   const remove = useMutation({ mutationFn: (y: number) => api.deleteSnacrYear(y), onSuccess: invalidate });
@@ -822,12 +825,22 @@ function ArchiveTab({ overview }: { overview: SnacrOverview }) {
           <div className="form-grid">
             <div className="field">
               <label htmlFor={`${id}-y`}>{t("snacr.archive.year")}</label>
-              <input id={`${id}-y`} type="number" min={2000} max={2100} value={year} onChange={(e) => setYear(Number(e.target.value))} />
+              <input id={`${id}-y`} type="number" min={2000} max={2100} value={year} disabled={allYears} onChange={(e) => setYear(Number(e.target.value))} />
             </div>
             <div className="field">
               <label htmlFor={`${id}-f`}>{t("snacr.archive.file")}</label>
               <input id={`${id}-f`} type="file" accept=".xlsx,.csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
               <p className="field__hint">{t("snacr.archive.fileHint")}</p>
+            </div>
+            <div className="field">
+              <label className="checkbox">
+                <input type="checkbox" checked={allYears} onChange={(e) => setAllYears(e.target.checked)} />
+                <span>{t("snacr.archive.allYears")}</span>
+              </label>
+              <label className="checkbox">
+                <input type="checkbox" checked={merge} onChange={(e) => setMerge(e.target.checked)} />
+                <span>{t("snacr.archive.merge")}</span>
+              </label>
             </div>
           </div>
           {error && (
@@ -1041,6 +1054,7 @@ export function SnacrPage() {
           {needsAnalysis && analysis.data && tab === "matrix" && <MatrixTab analysis={analysis.data} />}
           {needsAnalysis && analysis.data && tab === "seasons" && <SeasonsTab analysis={analysis.data} />}
           {tab === "special" && <SpecialTab gouvernorat={gouvernorat} canEdit={canEdit} />}
+          {tab === "studies" && <StudiesTab gouvernorat={gouvernorat} years={years} />}
           {tab === "plan" && <PlanTab gouvernorat={gouvernorat} years={years} />}
           {tab === "archive" && <ArchiveTab overview={data} />}
           {tab === "method" && <MethodTab overview={data} />}

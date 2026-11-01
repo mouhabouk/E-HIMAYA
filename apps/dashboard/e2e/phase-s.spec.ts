@@ -103,12 +103,50 @@ async function mockApi(page: Page) {
         id: `r${i}`, gouvernorat_code: 21, hazard, probability, gravity, level, note: null, simulated, updated_by_name: null, updated_at: null,
       })));
     }
+    if (pathname === "/api/v1/staff/snacr/studies") return json(route, [{ ...SIM_STUDY, tables: undefined }]);
+    if (pathname.startsWith("/api/v1/staff/snacr/studies/")) return json(route, SIM_STUDY);
     if (pathname === "/api/v1/staff/snacr/plans") return json(route, []);
     if (pathname === "/api/v1/staff/features/mine") return json(route, { granted: [], hidden: [], lent: {} });
     return json(route, {});
   });
   return m;
 }
+
+// [SIM] a study of Nabeul in the Office's six tables (invented figures, no record).
+const simFig = (j: number, s: number, star = false) => ({
+  counts: { "2023": { J: j, S: s }, "2024": star ? null : { J: j + 3, S: s + 1 }, "2025": { J: j + 5, S: s + 2 } },
+  mean: { J: j + 2.7, S: s + 1 },
+  travel: { J: 7.25, S: 9.5 },
+  total: 3 * (j + s) + 11,
+});
+const simUnit = (unit: string, rows: [string, number, number, number, number, number, boolean?][]) => ({
+  unit,
+  rows: rows.map(([delegation, area_km2, population, density, j, s, star]) => ({
+    delegation_id: null, delegation, area_km2, population, density, ...simFig(j, s, star),
+  })),
+  subtotal: { ...simFig(rows.reduce((a, r) => a + r[4], 0), rows.reduce((a, r) => a + r[5], 0)), delegations: rows.length, area_km2: rows.reduce((a, r) => a + r[1], 0) },
+});
+const SIM_STUDY = {
+  id: "sim-study", number: 3, gouvernorat_code: 21, years: [2023, 2024, 2025], split: true, travel_max: 60,
+  status: "current", simulated: true, created_by_name: "[SIM] لجنة نابل", created_at: "2026-11-01T08:00:00Z", archived_at: null,
+  quality: { rows: 5120, white: 212, travel_kept: 4630, travel_missing: 301, travel_negative: 12, travel_over: 177 },
+  tables: {
+    years: [2023, 2024, 2025],
+    periods: ["J", "S"],
+    tables: ["SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"].map((key) => ({
+      key, label_ar: key,
+      gouvernorats: [{
+        gouvernorat_code: 21, gouvernorat: "نابل",
+        units: [
+          simUnit("نابل", [["نابل", 31, 82000, 2645, 410, 190], ["دار شعبان الفهري", 22, 51000, 2318, 160, 70]]),
+          simUnit("قرمبالية", [["قرمبالية", 222, 61000, 275, 230, 110], ["بوعرقوب", 148, 28000, 189, 90, 40, true]]),
+        ],
+        total: simFig(890, 410),
+      }],
+      total: simFig(890, 410),
+    })),
+  },
+};
 
 test.describe("phase S", () => {
   test("the strategies menu and an item the administrator adds", async ({ page }) => {
@@ -141,6 +179,7 @@ test.describe("phase S", () => {
       ["مصفوفة الأولويات", "s-snacr-matrix"],
       ["المواسم والساعات", "s-snacr-seasons"],
       ["المخاطر الخاصة", "s-snacr-special"],
+      ["دراسات SNACR", "s-snacr-studies"],
       ["الأرشيف", "s-snacr-archive"],
       ["المنهجية والمراجع", "s-snacr-method"],
     ] as const) {

@@ -234,3 +234,34 @@ class PlanOut(PlanSummary):
 
 class ImportOut(BaseModel):
     dataset: DatasetOut
+    # Every year a file loaded (a regional file often covers several); ``dataset`` is the first.
+    datasets: list[DatasetOut] = []
+
+
+# ---------------------------------------------------------------- studies (the Office's six tables)
+
+
+class StudyIn(BaseModel):
+    gouvernorat_code: int | None = Field(default=None, ge=11, le=83)
+    years: list[int] = Field(min_length=1, max_length=10)
+    split: bool = True
+    travel_max: int = Field(default=60, ge=5, le=600)
+
+
+class StudySummary(BaseModel):
+    id: uuid.UUID
+    number: int
+    gouvernorat_code: int | None
+    years: list[int]
+    split: bool
+    travel_max: int
+    status: Literal["current", "archived"]
+    simulated: bool
+    quality: dict[str, Any]
+    created_by_name: str | None
+    created_at: datetime
+    archived_at: datetime | None
+
+
+class StudyOut(StudySummary):
+    tables: dict[str, Any]

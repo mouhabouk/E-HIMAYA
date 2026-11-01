@@ -7893,7 +7893,8 @@
       "special": "Specific risks",
       "plan": "Plan",
       "archive": "Archive",
-      "method": "Method and references"
+      "method": "Method and references",
+      "studies": "SNACR studies"
     },
     "unit": {
       "min": "min"
@@ -8072,7 +8073,9 @@
       "aliasTo": "Tie “{{raw}}” to a délégation",
       "pick": "Choose the délégation",
       "live": "Operations rooms' records",
-      "fromRecords": "Build {{year}} from the records"
+      "fromRecords": "Build {{year}} from the records",
+      "allYears": "All years in the file",
+      "merge": "Merge into the existing year (replaces only the file's gouvernorats)"
     },
     "method": {
       "title": "Method",
@@ -8109,6 +8112,51 @@
       "length": "Call to return",
       "crew": "Mean crew",
       "note": "Computed from the times the teams and rooms recorded; the Office's archive has no left-scene, hospital or return times."
+    },
+    "study": {
+      "intro": "A SNACR study in the Office's format: the six tables per intervention unit and délégation, over the chosen years, day and night or a whole day, with the mean travel time. Launching a new study archives the previous one as it was, still exportable to PDF and Excel.",
+      "unit": "Intervention unit",
+      "delegation": "Délégation",
+      "area": "Area (km²)",
+      "population": "Population",
+      "density": "Density",
+      "mean": "Annual mean",
+      "travel": "Mean travel time (mm:ss)",
+      "total": "Total",
+      "period": {
+        "J": "Day",
+        "S": "Night",
+        "T": "24h"
+      },
+      "tables": {
+        "SEC_GLOB": "All interventions",
+        "SAP": "Medical assistance",
+        "SR": "Road rescue",
+        "LCI": "Firefighting",
+        "SB": "False outings",
+        "DIV": "Other"
+      },
+      "subtotal": "Unit total ({{count}} délégations)",
+      "gouvernoratTotal": "Gouvernorat total",
+      "nationalTotal": "National total",
+      "quality": "Rows: {{rows}} · false outings: {{white}} · travel times kept: {{kept}} · missing: {{missing}} · negative: {{negative}} · over {{max}} min: {{over}}",
+      "split": "Sessions",
+      "splitTwo": "Day (06:00–18:00) and night",
+      "splitDay": "Whole day (one session)",
+      "travelMax": "Maximum travel time kept (min)",
+      "launch": "Launch a {{scope}} study for {{years}}",
+      "none": "No study yet.",
+      "list": "{{scope}} studies",
+      "number": "No.",
+      "launched": "Launched",
+      "status": {
+        "current": "Current",
+        "archived": "Archived"
+      },
+      "show": "Show",
+      "title": "Study no. {{number}} · {{scope}}",
+      "table": "Table",
+      "legend": "\"*\": a year when the délégation was under another unit. The mean covers the years shown. Travel time runs from departure to arrival, from 0 to the maximum kept."
     }
   },
   "record": {

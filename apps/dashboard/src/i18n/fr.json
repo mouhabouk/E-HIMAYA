@@ -7893,7 +7893,8 @@
       "special": "Risques particuliers",
       "plan": "Schéma",
       "archive": "Archive",
-      "method": "Méthode et références"
+      "method": "Méthode et références",
+      "studies": "Études SNACR"
     },
     "unit": {
       "min": "min"
@@ -8072,7 +8073,9 @@
       "aliasTo": "Rattacher « {{raw}} » à une délégation",
       "pick": "Choisir la délégation",
       "live": "Relevés des salles",
-      "fromRecords": "Construire {{year}} depuis les relevés"
+      "fromRecords": "Construire {{year}} depuis les relevés",
+      "allYears": "Toutes les années du fichier",
+      "merge": "Fusionner avec l’année existante (remplace seulement les gouvernorats du fichier)"
     },
     "method": {
       "title": "Méthode",
@@ -8109,6 +8112,51 @@
       "length": "De l'appel au retour",
       "crew": "Agents en moyenne",
       "note": "Calculé sur les heures saisies par les équipes et les salles ; l'archive de l'Office n'a ni le départ des lieux, ni l'hôpital, ni le retour."
+    },
+    "study": {
+      "intro": "Étude SNACR au format de l’Office : les six tableaux par unité d’intervention et délégation, sur les années choisies, jour et nuit ou journée entière, avec le temps mis en route moyen. Lancer une nouvelle étude archive la précédente telle quelle, toujours exportable en PDF et Excel.",
+      "unit": "Unité d’intervention",
+      "delegation": "Délégation",
+      "area": "Superficie (km²)",
+      "population": "Nb_pop",
+      "density": "Dens_Pop",
+      "mean": "Moyenne annuelle",
+      "travel": "Temps mis en route moyen (mm:ss)",
+      "total": "Total",
+      "period": {
+        "J": "J",
+        "S": "S",
+        "T": "24h"
+      },
+      "tables": {
+        "SEC_GLOB": "Secours global",
+        "SAP": "Secours à personne",
+        "SR": "Secours routier",
+        "LCI": "Lutte contre l’incendie",
+        "SB": "Sorties blanches",
+        "DIV": "Divers"
+      },
+      "subtotal": "Total de l’unité ({{count}} délégations)",
+      "gouvernoratTotal": "Total du gouvernorat",
+      "nationalTotal": "Total national",
+      "quality": "Lignes : {{rows}} · sorties blanches : {{white}} · temps retenus : {{kept}} · manquants : {{missing}} · négatifs : {{negative}} · au-delà de {{max}} min : {{over}}",
+      "split": "Séances",
+      "splitTwo": "Jour (06:00–18:00) et nuit",
+      "splitDay": "Journée entière (une séance)",
+      "travelMax": "Temps de mise en route maximal retenu (min)",
+      "launch": "Lancer une étude {{scope}} pour {{years}}",
+      "none": "Aucune étude pour l’instant.",
+      "list": "Études {{scope}}",
+      "number": "N°",
+      "launched": "Lancée le",
+      "status": {
+        "current": "En cours",
+        "archived": "Archivée"
+      },
+      "show": "Afficher",
+      "title": "Étude n° {{number}} · {{scope}}",
+      "table": "Tableau",
+      "legend": "« * » : année où la délégation relevait d’une autre unité. La moyenne porte sur les années affichées. Le temps mis en route va du départ à l’arrivée, de 0 au maximum retenu."
     }
   },
   "record": {
