@@ -3296,6 +3296,9 @@ erDiagram
         datetime returned_at
         smallint crew_count
         array flags
+        bigint seq_num
+        text unit_raw
+        boolean intervened
     }
     snacr__plan {
         uuid id PK
@@ -3324,12 +3327,29 @@ erDiagram
         text updated_by_name
         datetime updated_at
     }
+    snacr__study {
+        uuid id PK
+        integer number
+        smallint gouvernorat_code FK
+        array years
+        boolean split
+        smallint travel_max
+        text status
+        boolean simulated
+        jsonb tables
+        jsonb quality
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime archived_at
+    }
     geo__delegation ||--o{ snacr__alias : "delegation_id"
     geo__delegation ||--o{ snacr__intervention : "delegation_id"
     geo__gouvernorat ||--o{ snacr__alias : "gouvernorat_code"
     geo__gouvernorat ||--o{ snacr__intervention : "gouvernorat_code"
     geo__gouvernorat ||--o{ snacr__plan : "gouvernorat_code"
     geo__gouvernorat ||--o{ snacr__special_risk : "gouvernorat_code"
+    geo__gouvernorat ||--o{ snacr__study : "gouvernorat_code"
     snacr__dataset ||--o{ snacr__intervention : "dataset_id"
 ```
 
