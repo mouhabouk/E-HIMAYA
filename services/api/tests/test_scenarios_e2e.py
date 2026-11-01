@@ -491,6 +491,35 @@ async def test_s3_factory_report_team_steps_and_midnight_voice(
     assert assignment["crew"]["leader_name"] == "سامي الطرابلسي" and assignment["crew"]["crew_size"] == 4
     assert assignment["resource"]["label"] == resource["label"]
 
+    # The mission sheet (أمر مهمة): an official paper with the times, the reporter, the place on a map with the route
+    # in a bold colour, the institution's card and its hazards, the team's names and vehicle, and the signatures.
+    sheet_url = f"{STAFF}/assignments/{assignment['id']}/sheet"
+    page = (await client.get(sheet_url, params={"format": "html"}, headers=staff(["operator"]))).text
+    for words in (
+        "أمر مهمة",
+        "صفاقس الجنوبية",
+        "Société Chimique du Sud",
+        "Chlore",
+        "1017",
+        "نقطة التجمع الشمالية",
+        "سامي العياري",
+        "كمال الزواري",
+        resource["label"],
+        "تسرب كلور بمصنع",
+        "رئيس الفريق",
+        "الإمضاء",
+        'stroke="#d32f2f" stroke-width="6"',
+        "مواد خطرة في الموقع",
+        rep["text"] if "text" in rep else "تسرب غاز الكلور",
+    ):
+        assert words in page, words
+    pdf = await client.get(sheet_url, headers=staff(["operator"]))
+    assert pdf.status_code == 200 and pdf.content.startswith(b"%PDF")
+    if out := os.environ.get("SCENARIO_SHEET_OUT"):
+        with open(out, "wb") as f:  # noqa: ASYNC230 - a test's optional sample for the review
+            f.write(pdf.content)
+    assert (await client.get(sheet_url, headers=staff(["operator"], 11))).status_code == 404
+
     # The staff app, step by step: the mission arrives, the leader acknowledges, goes, arrives, reports, sends a
     # photo, a voice message and a note, counts and is released.
     missions = (await leader.get("/missions")).json()["items"]
@@ -500,6 +529,8 @@ async def test_s3_factory_report_team_steps_and_midnight_voice(
     assert mission["incident"]["location"]["lat"] == pytest.approx(place["lat"], abs=1e-4)
     assert mission["contact_phone"] == "+216 74 000 111"
     path = f"/missions/{assignment['id']}"
+    on_phone = await leader.client.get(f"/api/v1/crew{path}/sheet", headers=leader.h)
+    assert on_phone.status_code == 200 and on_phone.content.startswith(b"%PDF")
     assert (await leader.post(f"{path}/ack", write())).json()["acknowledged_at"]
     r = await leader.post(f"{path}/status", write(status="en_route", lat=34.74, lon=10.76))
     assert r.json()["status"] == "en_route" and r.json()["distance_m"] > 3000

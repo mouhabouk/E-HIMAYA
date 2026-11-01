@@ -24,6 +24,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import print_footer
 from app.core.config import get_settings
 from app.core.storage import get_store
 from app.modules.identity.models import Profile
@@ -162,7 +163,9 @@ def render_html(cert: RewardCertificate, full_name: str | None) -> str:
 def _render_pdf_sync(document: str) -> bytes:
     from weasyprint import HTML
 
-    pdf: bytes = HTML(string=document).write_pdf()
+    pdf: bytes = HTML(
+        string=print_footer.apply(document, ["منصة ء-حماية · الديوان الوطني للحماية المدنية", "شهادة تقدير"])
+    ).write_pdf()
     return pdf
 
 

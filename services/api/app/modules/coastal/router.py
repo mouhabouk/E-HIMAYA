@@ -17,6 +17,7 @@ from geoalchemy2 import Geometry
 from sqlalchemy import cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import print_footer
 from app.core.db import as_system, get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
@@ -572,7 +573,9 @@ tr.red td:nth-child(3){{color:#D7141A;font-weight:bold}}tr.yellow td:nth-child(3
 <p class="small">{e(attribution)}</p></body></html>"""
     from weasyprint import HTML
 
-    pdf: bytes = HTML(string=page).write_pdf()
+    pdf: bytes = HTML(
+        string=print_footer.apply(page, ["منصة ء-حماية · الديوان الوطني للحماية المدنية", "النشرة الساحلية"])
+    ).write_pdf()
     await audit.record(
         session,
         actor=principal.subject,

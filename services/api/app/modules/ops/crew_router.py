@@ -10,7 +10,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -299,6 +299,19 @@ async def upload(
     write = schemas.CrewWrite(client_id=client_id, device_at=device_at)
     assignment = await crew.upload(session, principal, assignment_id, write, kind, content_type, data, duration_s)
     return await _answer(session, principal, f"crew.{kind}", assignment)
+
+
+@router.get(
+    "/missions/{assignment_id}/sheet",
+    response_class=Response,
+    responses={200: {"content": {"application/pdf": {}}}},
+)
+async def mission_sheet(principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID) -> Response:
+    """The mission sheet on the leader's phone, the same paper the room prints (the reporter's identity masked)."""
+    from app.modules.ops.router import _sheet
+
+    assignment, _ = await crew._mission(session, principal, assignment_id)
+    return await _sheet(session, principal, assignment, "pdf")
 
 
 @router.post("/missions/{assignment_id}/detailed-report", response_model=schemas.MissionOut)
