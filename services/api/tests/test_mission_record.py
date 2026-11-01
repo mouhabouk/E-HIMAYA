@@ -209,6 +209,12 @@ départ des lieux 14h41. Arrivée urgences 14h56
     # Written at 00:10 about a return at 23:50: the day before.
     late = record_suggest.Written("room_note", "رجعنا 23:50", datetime(2026, 10, 30, 23, 10, tzinfo=UTC))
     assert record_suggest.read(late)[0][1] == datetime(2026, 10, 30, 23, 50, tzinfo=record_suggest.TUNIS)
+    # Written at 23:59 about an arrival at 00:01, within the two minutes a clock may be ahead: the day after.
+    early = record_suggest.Written("team_voice", "وصلنا 00:01", datetime(2026, 10, 31, 22, 59, tzinfo=UTC))
+    assert record_suggest.read(early)[0][1] == datetime(2026, 11, 1, 0, 1, tzinfo=record_suggest.TUNIS)
+    # Beyond the two minutes it is not a future time: it stays on the day it was written.
+    beyond = record_suggest.Written("team_voice", "وصلنا 00:05", datetime(2026, 10, 31, 22, 59, tzinfo=UTC))
+    assert record_suggest.read(beyond)[0][1] == datetime(2026, 10, 31, 0, 5, tzinfo=record_suggest.TUNIS)
 
 
 async def test_times_suggested_to_the_room(client: httpx.AsyncClient, staff: Staff) -> None:
