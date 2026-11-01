@@ -16,7 +16,23 @@ const KEYS = {
   rules: (ended: boolean) => ["features", "rules", ended] as const,
   preview: (role: string, gouvernorat: string) => ["features", "preview", role, gouvernorat] as const,
 };
-const GROUPS = ["ops", "crisis", "disasters", "alerts", "people", "orgs", "knowledge", "system"] as const;
+const GROUPS = [
+  "ops",
+  "crisis",
+  "disasters",
+  "alerts",
+  "people",
+  "orgs",
+  "knowledge",
+  "system",
+  // Phase 5: the field app, the citizen app and the portal.
+  "field_app",
+  "citizen_app",
+  "portal",
+] as const;
+/** The surfaces whose users are citizens and organisations: a public role, or everyone, is a target there. */
+const PUBLIC_GROUPS = new Set(["citizen_app", "portal"]);
+const PUBLIC_ROLES = ["citizen", "volunteer", "org_admin", "org_member"] as const;
 
 function useName() {
   const lang = useLanguage();
@@ -62,13 +78,15 @@ function RuleForm({ features }: { features: Feature[] }) {
   const [reason, setReason] = useState("");
   const [tried, setTried] = useState(false);
   const feature = features.find((f) => f.key === key);
+  const publicWindow = PUBLIC_GROUPS.has(feature?.group ?? "");
+  const roles = publicWindow ? [...PUBLIC_ROLES, ...STAFF_ROLES] : STAFF_ROLES;
   const create = useMutation({
     mutationFn: () =>
       api.createFeatureRule({
         feature_key: key,
         effect,
         target_kind: kind,
-        target: kind === "role" ? role : account.trim(),
+        target: kind === "role" ? role : kind === "everyone" ? "*" : account.trim(),
         target_name: kind === "user" ? accountName.trim() || null : null,
         gouvernorat_code: kind === "role" && gouvernorat ? Number(gouvernorat) : null,
         reason: reason.trim(),
@@ -129,19 +147,21 @@ function RuleForm({ features }: { features: Feature[] }) {
       </fieldset>
       <fieldset className="perm-form__row">
         <legend>{t("permissions.target")}</legend>
-        {(["role", "user"] as const).map((v) => (
+        {(["role", "user", "everyone"] as const).map((v) => (
           <label key={v} className="radio">
             <input type="radio" name={`${id}-kind`} checked={kind === v} onChange={() => setKind(v)} />{" "}
             {t(`permissions.targets.${v}`)}
           </label>
         ))}
       </fieldset>
-      {kind === "role" ? (
+      {kind === "everyone" ? (
+        <p className="field__hint">{t("permissions.everyoneHint")}</p>
+      ) : kind === "role" ? (
         <div className="perm-form__row">
           <div className="field">
             <label htmlFor={`${id}-role`}>{t("permissions.role")}</label>
             <select id={`${id}-role`} value={role} onChange={(e) => setRole(e.target.value)}>
-              {STAFF_ROLES.map((r) => (
+              {roles.map((r) => (
                 <option key={r} value={r}>
                   {t(`roles.${r}`)}
                 </option>
@@ -283,7 +303,9 @@ function Rules({ features }: { features: Feature[] }) {
             const f = byKey.get(r.feature_key);
             const parent = f?.parent ? byKey.get(f.parent) : undefined;
             const who =
-              r.target_kind === "role"
+              r.target_kind === "everyone"
+                ? t("permissions.targets.everyone")
+                : r.target_kind === "role"
                 ? `${t(`roles.${r.target}`)}${r.gouvernorat_code ? ` · ${gouvernorats.nameOf(r.gouvernorat_code)}` : ""}`
                 : (r.target_name ?? r.target);
             return (

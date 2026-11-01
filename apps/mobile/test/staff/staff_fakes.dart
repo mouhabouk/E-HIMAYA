@@ -77,6 +77,10 @@ class FakeCrewServer {
   ];
   String? pushToken;
 
+  /// Phase 5: the buttons the administrator hid, and their message.
+  List<String> hiddenFeatures = [];
+  Map<String, dynamic>? announcement;
+
   Dio dio() => Dio()..httpClientAdapter = adapter;
 
   /// The phone's key for its text messages (phase P4d).
@@ -346,6 +350,8 @@ class FakeCrewServer {
             'activated_agent': activatedAgent,
             'charter_accepted': charterAccepted,
             'field': {'hold_ms': holdMs, 'undo_seconds': undoSeconds},
+            'hidden_features': hiddenFeatures,
+            'announcement': announcement,
           },
         );
       case ('POST', '/charter'):

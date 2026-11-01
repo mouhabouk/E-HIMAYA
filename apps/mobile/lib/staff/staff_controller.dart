@@ -223,6 +223,7 @@ class StaffState {
 /// The whole staff app: sign-in with the device grant, the PIN lock, the shift and its missions.
 class StaffController extends Notifier<StaffState> {
   Timer? _poll;
+  int _polls = 0;
   Timer? _signIn;
   Timer? _retry;
   Timer? _undo;
@@ -628,6 +629,14 @@ class StaffController extends Notifier<StaffState> {
   Future<void> poll() async {
     if (state.phase != StaffPhase.onShift) return;
     await sync();
+    // Phase 5: what the administrator hides and says reaches the phone within a minute.
+    if (++_polls % 4 == 0) {
+      final me = await _guard(_api.me);
+      if (me != null && me.shift != null && state.phase == StaffPhase.onShift) {
+        state = state.copyWith(me: me);
+        _keep();
+      }
+    }
     final missions = await _guard(_api.missions);
     if (missions != null && state.phase == StaffPhase.onShift) {
       _server = [for (final m in missions) m.json];

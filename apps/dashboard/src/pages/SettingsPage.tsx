@@ -1,3 +1,4 @@
+import { ANNOUNCEMENT_KEY, AnnouncementCard } from "../components/Announcement";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -253,6 +254,7 @@ export function SettingsPage() {
   const checkMax = settingOf(items, "safety.check_max_hours");
   const locationHistory = settingOf(items, "safety.location_history");
   const thresholds = settingOf(items, "operations.thresholds");
+  const announcement = settingOf(items, ANNOUNCEMENT_KEY);
   const anyEditable = items.some((s) => s.editable);
   const seconds = t("settings.seconds");
 
@@ -265,6 +267,8 @@ export function SettingsPage() {
       </div>
       <p className="muted">{t("settings.intro")}</p>
       {!anyEditable && <p className="alert alert--info">{t("settings.readOnly")}</p>}
+
+      {announcement && <AnnouncementCard key={`${announcement.key}-${announcement.version}`} setting={announcement} />}
 
       {delays && (
         <SettingCard

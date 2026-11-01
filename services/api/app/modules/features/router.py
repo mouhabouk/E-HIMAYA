@@ -2,19 +2,20 @@
 
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import ApiError
-from app.core.db import as_system, get_session
-from app.core.security import REALM_ROLES, Principal, Realm, Role, require_roles
+from app.core.db import as_system, get_session, get_system_sessionmaker
+from app.core.security import REALM_ROLES, Principal, Realm, Role, get_optional_principal, require_roles
 from app.modules.audit import service as audit
 from app.modules.features import registry, schemas, service
 from app.modules.features.models import FeatureRule
 from app.modules.features.registry import TECHNICAL, Feature
+from app.modules.settings import service as settings_service
 
 router = APIRouter(prefix="/api/v1/staff/features", tags=["features"])
 
@@ -77,6 +78,11 @@ def _rule_out(row: FeatureRule, now: datetime) -> schemas.RuleOut:
     )
 
 
+async def _announcement(surface: str) -> dict[str, str] | None:
+    async with get_system_sessionmaker()() as session:
+        return await settings_service.announcement(session, surface)
+
+
 @router.get("/mine", response_model=schemas.Mine)
 async def mine(principal: AnyStaff) -> schemas.Mine:
     rules = await service.rules_in_force()
@@ -87,6 +93,7 @@ async def mine(principal: AnyStaff) -> schemas.Mine:
         granted=granted,
         hidden=[k for k, e in eff.items() if e.hidden],
         lent={k: act_as.value for k in granted if (act_as := features[k].act_as) is not None},
+        announcement=schemas.Announcement(**message) if (message := await _announcement("dashboard")) else None,
     )
 
 
@@ -117,17 +124,32 @@ def _refuse(code: str, **extra: object) -> ApiError:
     return ApiError(status.HTTP_422_UNPROCESSABLE_CONTENT, code, **extra)
 
 
+#: The surfaces whose users are citizens and organisations (phase 5): their windows are hidden, never granted.
+PUBLIC_GROUPS = frozenset({"citizen_app", "portal"})
+PUBLIC_ROLES = frozenset(r.value for r in REALM_ROLES[Realm.PUBLIC])
+
+
 def _check(principal: Principal, body: schemas.RuleIn, feature: Feature, now: datetime) -> None:
+    public = feature.group in PUBLIC_GROUPS
     if body.target_kind == "role":
-        if body.target not in {r.value for r in STAFF_ROLES}:
+        if body.target not in {r.value for r in STAFF_ROLES} | (PUBLIC_ROLES if public else frozenset()):
             raise _refuse("unknown_role")
+    elif body.target_kind == "everyone":
+        if body.target != "*" or body.gouvernorat_code is not None:
+            raise _refuse("everyone_rule_is_global")
+        if body.effect != "hide":
+            raise _refuse("ceiling", reason="fixed")
     elif body.gouvernorat_code is not None:
         raise _refuse("user_rule_has_no_gouvernorat")
     if body.ends_at is not None and (body.ends_at <= now or (body.starts_at and body.ends_at <= body.starts_at)):
         raise _refuse("invalid_period")
     if body.effect == "hide":
+        if "safety" in feature.flags:
+            # The emergency report, the SOS, the crew's alerts: never hidden.
+            raise _refuse("ceiling", reason="safety")
         if feature.page == service.PERMISSIONS and (
-            (body.target_kind == "role" and body.target == Role.SYSADMIN.value)
+            body.target_kind == "everyone"
+            or (body.target_kind == "role" and body.target == Role.SYSADMIN.value)
             or (body.target_kind == "user" and body.target == principal.subject)
         ):
             raise _refuse("self_lockout")
@@ -237,3 +259,20 @@ async def preview(
         schemas.PreviewRow(key=k, default=e.default, hidden=e.hidden, granted=e.granted, refused=e.refused, open=e.open)
         for k, e in service.effective(who, rules, now).items()
     ]
+
+
+public_router = APIRouter(prefix="/api/v1/app", tags=["features"])
+
+
+@public_router.get("/features", response_model=schemas.Hidden)
+async def public_features(
+    principal: Annotated[Principal | None, Depends(get_optional_principal)],
+    surface: Annotated[Literal["citizen_app", "portal"], Query()] = "citizen_app",
+) -> schemas.Hidden:
+    """The windows of the citizen app or of the portal the administrator closed for the caller (anonymous too), and
+    the administrator's message for that surface."""
+    message = await _announcement(surface)
+    return schemas.Hidden(
+        hidden=await service.hidden_keys(principal, (surface,)),
+        announcement=schemas.Announcement(**message) if message else None,
+    )

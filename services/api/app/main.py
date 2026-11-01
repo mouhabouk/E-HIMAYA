@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 import structlog
-from fastapi import FastAPI, Request, Response
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -19,6 +19,7 @@ from app.core.config import get_settings
 from app.core.db import dispose_engine, get_system_sessionmaker
 from app.core.events import relay_forever, start_bus, stop_bus
 from app.core.logging import configure_logging
+from app.core.security import feature_guard
 from app.modules import models as _models  # noqa: F401  (registers every table for cross-module foreign keys)
 from app.modules.access import accounts
 from app.modules.access.router import router as access_router
@@ -59,6 +60,7 @@ from app.modules.drones.router import router as drones_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
 from app.modules.features import registry as features_registry
+from app.modules.features.router import public_router as features_public_router
 from app.modules.features.router import router as features_router
 from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
@@ -234,6 +236,8 @@ def create_app() -> FastAPI:
         docs_url=None if production else "/docs",
         redoc_url=None if production else "/redoc",
         openapi_url=None if production else "/openapi.json",
+        # Phase 5: the windows of the citizen app and of the portal the administrator closed, on every route.
+        dependencies=[Depends(feature_guard)],
     )
     headers = dict(_SECURITY_HEADERS)
     if production:
@@ -379,6 +383,7 @@ def create_app() -> FastAPI:
         app.include_router(router)
     app.include_router(accounts.router)
     app.include_router(features_router)
+    app.include_router(features_public_router)
     app.include_router(window_router)
     app.include_router(drill_router)
     features_registry.install(app.routes)

@@ -113,6 +113,8 @@ class CrewMe {
     this.holdMs = 1500,
     this.undoSeconds = 10,
     this.damageLists = DamageLists.defaults,
+    this.hiddenFeatures = const {},
+    this.announcement,
   });
 
   factory CrewMe.fromJson(Map<String, dynamic> j) => CrewMe(
@@ -133,6 +135,10 @@ class CrewMe {
     damageLists: j['damage_lists'] == null
         ? DamageLists.defaults
         : DamageLists.fromJson(j['damage_lists'] as Map<String, dynamic>),
+    hiddenFeatures: {
+      for (final k in j['hidden_features'] as List? ?? const []) k as String,
+    },
+    announcement: Announcement.fromJson(j['announcement']),
   );
 
   final String? name;
@@ -156,6 +162,16 @@ class CrewMe {
 
   /// Phase 2: the places and crops of a damage line (the room's reference lists).
   final DamageLists damageLists;
+
+  /// Phase 5: the buttons the system administrator hid from this account (catalogue keys such
+  /// as `field_missions.record`; a hidden page hides its buttons), and the administrator's message.
+  final Set<String> hiddenFeatures;
+  final Announcement? announcement;
+
+  /// False when the administrator hid [key] or its page; the server refuses it anyway.
+  bool shows(String key) =>
+      !hiddenFeatures.contains(key) &&
+      !hiddenFeatures.contains(key.split('.').first);
 
   bool get leader => roles.contains('team_leader');
   bool get inspector => roles.contains('org_auditor');
@@ -517,6 +533,40 @@ class Hospital {
   final String name;
   final int distanceM;
   final bool simulated;
+}
+
+/// The system administrator's message (phase 5), shown at once in the apps.
+class Announcement {
+  const Announcement({
+    required this.warn,
+    required this.ar,
+    this.fr = '',
+    this.en = '',
+  });
+
+  static Announcement? fromJson(Object? j) {
+    if (j is! Map) return null;
+    final ar = j['ar'] as String? ?? '';
+    if (ar.trim().isEmpty) return null;
+    return Announcement(
+      warn: j['tone'] == 'warn',
+      ar: ar,
+      fr: j['fr'] as String? ?? '',
+      en: j['en'] as String? ?? '',
+    );
+  }
+
+  final bool warn;
+  final String ar;
+  final String fr;
+  final String en;
+
+  /// The text in [code] ('ar', 'fr', 'en'), the Arabic one when missing.
+  String textIn(String code) => switch (code) {
+    'fr' when fr.trim().isNotEmpty => fr,
+    'en' when en.trim().isNotEmpty => en,
+    _ => ar,
+  };
 }
 
 /// The unit of a damage line: hectares, bales (hay, straw) or bags.

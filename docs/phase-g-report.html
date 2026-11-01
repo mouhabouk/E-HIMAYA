@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة G</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة G (المرحلة 5 من خطة المراحل الخمس): صلاحيات مدير النظام على كل الأسطح، المراجعة العامة والترابط بين الطبقات، النموذج العلائقي لقاعدة البيانات، والنصائح وأفضل الممارسات.</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-11-01</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-xq2ez8</span></div>
+    <div><b>الترحيل الجديد</b><span class="ltr">0092_feature_everyone</span></div>
+    <div><b>المراجع</b><a href="data-model/e-Himaya_Database.dbml">DBML</a> · <a href="data-model/e-Himaya_Database.drawio">draw.io</a> · <a href="versions.md">الإصدارات</a> · <a href="backlog.md">المؤجّل</a></div>
+  </div>
+</header>
+
+<section>
+<h2>1. ما طلبته وما أُنجز</h2>
+<div class="tbl"><table>
+<tr><th>النقطة</th><th>الطلب</th><th>ما أُنجز</th></tr>
+<tr><td>1</td><td>مراجعة صلاحيات مدير النظام على التطبيق واللوحة والبوابة، وتوزيع المهام ونقل العناصر بين المحاور</td><td>الفهرس يغطي الآن أربعة أسطح: اللوحة، تطبيق الأعوان، تطبيق المواطن، البوابة. نقل رابط من محور إلى آخر. رسالة المدير على الأسطح الأربعة. التفصيل في القسم 2.</td></tr>
+<tr><td>2</td><td>الدفع للتجربة</td><td>طلب دمج جديد على الفرع، مع خطوات التجربة في القسم 8.</td></tr>
+<tr><td>3</td><td>ما ينقص المفاهيم والصياغة من إضافات فنية وتقنية ووظيفية</td><td>القسم 5.</td></tr>
+<tr><td>4</td><td>متطلبات ونصائح لتفادي الأخطاء</td><td>القسم 6.</td></tr>
+<tr><td>5</td><td>المراجعة العامة والنهائية والترابط بين الطبقات</td><td>القسم 4: فحوص آلية بين الواجهات والخادم والقاعدة، والاختبارات كلها.</td></tr>
+<tr><td>6</td><td>نصائح أفضل الممارسات</td><td>القسم 7.</td></tr>
+<tr><td>7</td><td>قاعدة بيانات برسوم احترافية وقابلة للتعديل ووصف دقيق للعلاقات</td><td>القسم 3: 223 جدولا و341 علاقة، ملف DBML وملف draw.io من 37 صفحة ووثيقة من 75 صفحة.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. صلاحيات مدير النظام (النقطة 1)</h2>
+<p>قبل هذه المرحلة كان فهرس الخصائص يغطي صفحات اللوحة وأزرارها وحدها. مدير النظام يملك الآن على كل سطح ما يلي، دون إصدار جديد للتطبيقات:</p>
+<div class="tbl"><table>
+<tr><th>السطح</th><th>ما يضبطه المدير</th><th>متى يسري</th><th>ما لا يُمسّ</th></tr>
+<tr><td>اللوحة المركزية</td><td>إظهار وإخفاء كل صفحة وتبويب وزر لحساب أو لدور أو لولاية، ومنح خاصية لحساب ليس له دورها (يعمل بدور مستعار)، وترتيب القائمة ونقل أي رابط من محور إلى آخر</td><td>فورا (الخادم يرفض خلال 5 ثوان تقريبا، والقائمة تتحدث عند إعادة القراءة)</td><td>صفحة الصلاحيات نفسها لا تُخفى عن المدير (منع الإقفال الذاتي)</td></tr>
+<tr><td>تطبيق الأعوان</td><td>إخفاء أزرار المهمة (الخطوات، المحضر، الحصيلة، المصابون، الوسائط، البث) والمناوبة والوقاية، ومنحها لعون فيعمل بدور قائد الفريق أو المفقِّد: هكذا تُوزَّع المهام</td><td>عند المزامنة (نحو دقيقة) أو فتح التطبيق</td><td>التنبيهات والمواقع ونداء الخطر للعون: خاصية سلامة لا تُخفى</td></tr>
+<tr><td>تطبيق المواطن</td><td>غلق نوافذ (الفيديو، الدليل، التطوع، المكافآت، الشواطئ...) للجميع أو لدور (مواطن، متطوع)</td><td>عند فتح التطبيق أو الرجوع إليه</td><td>البلاغ الطارئ وزر النجدة SOS، وحقوق الشخص على معطياته (التصدير والحذف)</td></tr>
+<tr><td>البوابة</td><td>غلق أقسام المؤسسة (المواد الخطرة، المعدات، الوثائق، التقارير، الشهادة...)</td><td>خلال دقيقتين على الأكثر</td><td>نظرة المؤسسة العامة</td></tr>
+</table></div>
+<h3>الحدود الثابتة (قرارك في هذه المرحلة: إبقاؤها)</h3>
+<ul>
+  <li>الحسابات التقنية (مدير النظام، مدير الأمن، مدير الذكاء الاصطناعي، مدير الحسابات الجهوية) لا تُمنح صلاحيات تشغيلية.</li>
+  <li>الوالي والوزير لا يريان المعطيات الشخصية.</li>
+  <li>الخصائص الوطنية لا تُمنح لحساب جهوي.</li>
+  <li>نوافذ تطبيق المواطن والبوابة تُغلق ولا تُمنح: الإخفاء للجميع عام لكل الولايات.</li>
+</ul>
+<h3>رسالة المدير</h3>
+<p>من «الإعدادات» يكتب المدير رسالة بالعربية (والفرنسية والإنجليزية اختياريا)، بنبرة إعلام أو تحذير وتاريخ انتهاء اختياري، ويختار الأسطح التي تظهر عليها: التطبيق، تطبيق الأعوان، البوابة، اللوحة. كل تغيير في الصلاحيات أو في الرسالة يُسجَّل في سجل التدقيق بالسبب والفاعل.</p>
+<div class="note">تقنيا: المسارات العامة (<code>/api/v1/...</code>) ومسارات الأعوان (<code>/api/v1/crew/...</code>) دخلت الفهرس تحت العلامتين <code>/@public</code> و <code>/@crew</code>. حارس عام على التطبيق يرفض المسار المغلق بالرمز <code>feature_hidden</code> حتى لمن لم يسجّل الدخول، والهاتف يخفي الزر نفسه. اختبار يتحقق أن كل مسار في الأسطح الأربعة له خاصية في الفهرس.</div>
+</section>
+
+<section>
+<h2>3. قاعدة البيانات: النموذج العلائقي (النقطة 7)</h2>
+<div class="tbl"><table>
+<tr><th>الملف</th><th>المحتوى</th><th>للتعديل</th></tr>
+<tr><td><code>database/model/e-Himaya_Modele_Relationnel.pdf</code> و <code>.docx</code></td><td>75 صفحة: الرموز، أرقام العلاقات، قواعد التصميم، نظرة عامة على العلاقات بين 37 مخططا، ثم لكل مخطط رسمه وجداوله وجدول علاقاته (التابع، العمود، المرجع، النوع 1:N أو 1:1 إلزامي أو اختياري، وما يحدث عند الحذف)</td><td>Word</td></tr>
+<tr><td><code>database/model/e-Himaya_Database.dbml</code></td><td>النموذج كاملا: 223 جدولا بكل أعمدتها وأنواعها وقيودها، 341 علاقة بعددها وقاعدة الحذف، ملاحظة عربية لكل جدول، ومجموعة لكل مخطط. تحقّقت منه بتحويله إلى SQL بأداة dbml2sql</td><td>dbdiagram.io أو dbdocs</td></tr>
+<tr><td><code>database/model/e-Himaya_Database.drawio</code></td><td>37 صفحة: نظرة عامة ثم صفحة لكل مخطط، الجداول صناديق قابلة للسحب والعلاقات برموز قدم الغراب</td><td>diagrams.net أو draw.io للحاسوب، دون إنترنت</td></tr>
+<tr><td><code>database/model/png/</code></td><td>الرسوم صورا</td><td>—</td></tr>
+</table></div>
+<p>أرقام: 179 علاقة واحد إلى متعدد إلزامية، 139 اختيارية، 23 واحد إلى واحد، 169 علاقة بين مخططين مختلفين، و <code>geo.gouvernorat</code> هو الجدول الأكثر ارتباطا لأنه محور العزل حسب الولاية. الملفات تُولَّد من القاعدة نفسها (<code>docs/deliverables/data-model</code>)، فتبقى مطابقة للشيفرة. وصف كل عمود في قاموس البيانات 2.0.</p>
+</section>
+
+<section>
+<h2>4. المراجعة العامة والترابط بين الطبقات (النقطة 5)</h2>
+<div class="tbl"><table>
+<tr><th>الفحص</th><th>النتيجة</th></tr>
+<tr><td>كل نداء من الواجهات إلى الخادم له مسار موجود في عقد الواجهة البرمجية (OpenAPI)</td><td>245 نداء (اللوحة 126، الهاتف 105، البوابة 14): كلها موجودة. الاستثناء الوحيد قناة WebSocket الحية، وهي موجودة في الخادم ولا يصفها OpenAPI بطبيعتها</td></tr>
+<tr><td>كل مفتاح خاصية يستعمله الهاتف أو البوابة موجود في الفهرس</td><td>نعم</td></tr>
+<tr><td>كل مسار للّوحة والأعوان والجمهور له خاصية في الفهرس</td><td>نعم (اختبار <code>test_features</code>)</td></tr>
+<tr><td>عقد الواجهة ومخطط الكيانات (ERD) ودليل البذور ومصفوفة التتبع</td><td>أُعيد توليدها، وفحوصها ناجحة</td></tr>
+<tr><td>اختبارات اللوحة</td><td>650 من 650، مع tsc و ESLint دون تحذير</td></tr>
+<tr><td>اختبارات البوابة</td><td>108 من 108</td></tr>
+<tr><td>اختبارات الهاتف</td><td>602 من 602، و flutter analyze نظيف</td></tr>
+<tr><td>اختبارات الخادم</td><td>1158 ناجحة. 25 تفشل محليا عندي، وتفشل نفسها على نسخة main دون تعديلاتي في قاعدة جديدة، فهي من بيئتي المحلية لا من هذه المرحلة. CI هو المرجع</td></tr>
+<tr><td>الترحيل 0092</td><td>صعودا ونزولا. يضيف الهدف «الجميع» ويقيده بقيد في القاعدة (إخفاء فقط، وعلى كل الولايات)</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>5. ما ينقص المفاهيم والصياغة (النقطة 3)</h2>
+<p>المنظومة متكاملة في جوهرها. لو كنت مكانك لأضفت ما يلي، مرتبا حسب الأولوية:</p>
+<div class="cards">
+<div class="card"><h3><span class="prio p1">1</span> مبدأ «العينين الأربع» على صلاحيات المدير</h3><p>المدير يملك التفويض المطلق، وهذا مطلوب، لكن خطأ واحدا (إخفاء صفحة القاعة للجميع مثلا) يوقف العمل. الإضافة: كل إخفاء «للجميع» أو منح وطني ينتظر تأكيد مدير الأمن، وكل تغيير يُشعر به مدير الأمن فورا. المنظومة تطبق هذا المبدأ أصلا على إرسال التنبيهات العامة.</p></div>
+<div class="card"><h3><span class="prio p1">1</span> لقطة للصلاحيات والرجوع إليها</h3><p>حفظ «مجموعة صلاحيات» باسم (عادي، كارثة، تمرين) وتطبيقها أو الرجوع إليها بزر واحد، بدل إعادة القواعد واحدة واحدة.</p></div>
+<div class="card"><h3><span class="prio p2">2</span> رسالة المدير حسب الولاية وبتاريخ بداية</h3><p>الرسالة الآن وطنية ولها تاريخ انتهاء. إضافة تاريخ بداية واستهداف ولاية أو دور تجعلها أداة إعلام في الأزمات الجهوية.</p></div>
+<div class="card"><h3><span class="prio p2">2</span> مؤشرات الخدمة المعلنة</h3><p>كتابة الأهداف بالأرقام في كراس الشروط: زمن استلام البلاغ، زمن الإرسال، التوفر الشهري، أقصى فقد للمعطيات (RPO) وأقصى مدة انقطاع (RTO)، ثم قياسها في لوحة المراقبة.</p></div>
+<div class="card"><h3><span class="prio p2">2</span> اتفاقيات تبادل المعطيات</h3><p>مع الصحة (الإسعاف والمستشفيات)، والأمن، ومشغلي الاتصالات (الرسائل القصيرة والموقع). تقنيا الواجهات جاهزة، وقانونيا تحتاج اتفاقية لكل جهة تحدد الغرض والمدة وفق القانون 63-2004.</p></div>
+<div class="card"><h3><span class="prio p3">3</span> مراجعة ما بعد التدخل</h3><p>بطاقة «الدروس المستفادة» بعد كل تدخل كبير أو كارثة، تغذي الاستراتيجيات و SNACR، بدل أن تبقى في التقارير.</p></div>
+<div class="card"><h3><span class="prio p3">3</span> صياغة: معجم موحد</h3><p>الكلمة الواحدة تأتي أحيانا بأكثر من صيغة بين الوثائق والواجهات (محور، مخطط؛ قاعة، غرفة العمليات). اعتماد المعجم الموجود في ملفات المشروع مرجعا وحيدا لكل الوثائق والواجهات.</p></div>
+<div class="card"><h3><span class="prio p3">3</span> نموذج الحوكمة</h3><p>من يملك المنظومة بعد التسليم: لجنة توجيه، مسؤول المعطيات، مسؤول الأمن، دورة الإصدارات، وطريقة قبول طلبات التغيير. هذا ما تسأل عنه اللجان عادة.</p></div>
+</div>
+</section>
+
+<section>
+<h2>6. متطلبات ونصائح لتفادي الأخطاء (النقطة 4)</h2>
+<ol>
+  <li><b>لا تجرّب على الإنتاج:</b> كل تغيير في الصلاحيات يُجرَّب أولا بزر «المعاينة» في صفحة الصلاحيات (ماذا يرى الدور في الولاية)، ثم بحساب تجريبي، ثم يُطبَّق مع تاريخ انتهاء إن كان مؤقتا.</li>
+  <li><b>السبب إلزامي ومكتوب جيدا:</b> السبب يبقى في سجل التدقيق. اكتب ما سيفهمه مدقق بعد سنة.</li>
+  <li><b>حساب مدير احتياطي:</b> حسابان لمدير النظام على الأقل، بمفتاحي تحقق مختلفين، وأحدهما في ظرف مختوم. الوصول الاستثنائي (break-glass) موجود لهذه الحالة.</li>
+  <li><b>الترحيلات قبل الشيفرة:</b> عند كل تحديث <code>alembic upgrade head</code> أولا، ثم إعادة تشغيل الخدمات. النسخة الاحتياطية قبل كل ترحيل.</li>
+  <li><b>لا أسرار في المستودع:</b> الأسرار الثمانية والثلاثون في الملف التقني والأمني تتغير قبل الإنتاج، وتبقى في ملف <code>.env</code> أو خزنة أسرار.</li>
+  <li><b>معطيات الديوان الخام لا تدخل المستودع:</b> قاعدة معمول بها منذ البداية، تبقى كذلك.</li>
+  <li><b>المستودع العام مؤقت:</b> اجعله عاما أثناء CI فقط وخاصا بعد الدمج، كما نعمل الآن.</li>
+  <li><b>[SIM] ليس حقيقة:</b> كل رقم بشارة [SIM] يُستبدل بمعطيات الديوان قبل أي عرض رسمي للأرقام.</li>
+  <li><b>تحديث التطبيقات:</b> الإخفاء يصل دون تحديث، لكن الأزرار الجديدة تحتاج إصدارا. اجعل التحديث الإلزامي (الإصدار الأدنى) مفعّلا للأعوان.</li>
+</ol>
+</section>
+
+<section>
+<h2>7. أفضل الممارسات (النقطة 6)</h2>
+<div class="tbl"><table>
+<tr><th>المجال</th><th>الممارسة</th><th>الوضع في المشروع</th></tr>
+<tr><td>الأمن</td><td>أقل امتياز، تحقق بخطوتين، عزل حسب الولاية في القاعدة نفسها (RLS)، تشفير الحقول الحساسة، سجل تدقيق لا يُعدَّل</td><td>مطبَّق. يبقى: مبدأ العينين الأربع على الصلاحيات (القسم 5)</td></tr>
+<tr><td>الجودة</td><td>كل تغيير بطلب دمج واختبارات آلية ومراجعة، ولا دمج إلا والفحوص خضراء</td><td>مطبَّق (26 فحصا في CI)</td></tr>
+<tr><td>العقود</td><td>عقد الواجهة البرمجية ومخطط الكيانات مولَّدان ومفحوصان في CI</td><td>مطبَّق، والنموذج العلائقي الآن مولَّد بالطريقة نفسها</td></tr>
+<tr><td>التشغيل</td><td>مراقبة ومؤشرات وتنبيهات، أدلة تدخل للأعطال، تمرين استرجاع النسخة الاحتياطية</td><td>مطبَّق. يبقى: أهداف رقمية معلنة (القسم 5)</td></tr>
+<tr><td>الإصدار</td><td>بيئة تجريبية مطابقة للإنتاج، نشر تدريجي، إمكانية الرجوع، ومفاتيح إيقاف للخصائص</td><td>مفاتيح الإيقاف موجودة الآن بصلاحيات المدير؛ البيئة التجريبية مطلوبة قبل الإنتاج</td></tr>
+<tr><td>المعطيات الشخصية</td><td>الغرض، الموافقة، مدة الحفظ، حق النفاذ والحذف، تقييم الأثر، التصريح لدى الهيئة الوطنية لحماية المعطيات الشخصية</td><td>مطبَّق تقنيا؛ التصريح إجراء إداري على الديوان</td></tr>
+<tr><td>الوصول</td><td>WCAG 2.2 AA، العربية من اليمين، التكبير، الوضع المبسط</td><td>مطبَّق ومفحوص آليا</td></tr>
+<tr><td>التوثيق</td><td>الوثائق تُولَّد من الشيفرة حيث أمكن، وتُحدَّث كلها معا آخر كل مرحلة</td><td>مطبَّق (القاعدة الدائمة)</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>8. التجربة (النقطة 2)</h2>
+<ol>
+  <li>بعد سحب الفرع: <code>alembic upgrade head</code> (الترحيل 0092).</li>
+  <li>في اللوحة بحساب مدير النظام: «الصلاحيات»، اختر خاصية من «تطبيق المواطن» مثل الدليل، الهدف «الجميع»، إخفاء، مع سبب. افتح التطبيق: تختفي البطاقة من الرئيسية.</li>
+  <li>اختر زرا من «تطبيق الأعوان» مثل «المحضر»، وأخفه لدور قائد الفريق في ولاية. خلال دقيقة يختفي من شاشة المهمة.</li>
+  <li>«ترتيب القائمة»: انقل رابطا إلى محور آخر من القائمة المنسدلة بجانبه، ثم احفظ.</li>
+  <li>«الإعدادات»، بطاقة «رسالة المدير»: اكتب رسالة واختر الأسطح. تظهر في أعلى اللوحة والبوابة والتطبيقين.</li>
+  <li>جرّب إخفاء زر النجدة SOS: ترفضه المنظومة لأنه خاصية سلامة.</li>
+</ol>
+</section>
+
+<section>
+<h2>9. تحديثات آخر المرحلة</h2>
+<ul>
+  <li><code>versions.md</code> البند 42، و <code>backlog.md</code> القسم 3.14 (ما اقترحته في القسم 5).</li>
+  <li>النموذج العلائقي الجديد في <code>database/model/</code>، ومولّده في <code>docs/deliverables/data-model</code>.</li>
+</ul>
+</section>
+<footer>ء-حماية · المرحلة G · 2026-11-01</footer>
+</div>
+</body>
+</html>

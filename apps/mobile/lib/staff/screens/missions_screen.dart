@@ -57,7 +57,7 @@ class MissionsScreen extends ConsumerWidget {
             onSelected: (v) =>
                 unawaited(v == 'end' ? _endShift(context, ref) : c.signOut()),
             itemBuilder: (_) => [
-              if (!readOnly)
+              if (!readOnly && (s.me?.shows('field_shift.manage') ?? true))
                 PopupMenuItem(
                   key: const Key('end-shift'),
                   value: 'end',
@@ -87,7 +87,7 @@ class MissionsScreen extends ConsumerWidget {
                         l10n.staffCrewCount(shift.crewSize),
                       ].join(' · '),
                     ),
-                  if (!readOnly)
+                  if (!readOnly && (s.me?.shows('field_missions.open') ?? true))
                     NavCard(
                       key: const Key('open-mission'),
                       icon: Icons.add_location_alt,

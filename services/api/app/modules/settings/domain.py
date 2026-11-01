@@ -6,6 +6,7 @@ Codes never change with the language; the dashboard translates the keys. Default
 
 import re
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
@@ -43,6 +44,10 @@ THRESHOLDS = "operations.thresholds"
 # Phase D (review point 9): the order of the dashboard's menu, set by the system administrator by drag and drop.
 # Empty lists keep the built-in order; groups and links not named keep theirs after the named ones.
 MENU_ORDER = "menu.order"
+# Phase 5 (Yamen 2026-11-01): a message the system administrator shows at once in the apps, the portal and the
+# dashboard (no new release of the apps).
+ANNOUNCEMENT = "app.announcement"
+SURFACES = ("citizen_app", "field_app", "portal", "dashboard")
 MENU_GROUPS = ("ops", "crisis", "strategies", "disasters", "alerts", "people", "orgs", "knowledge", "system")
 MENU_PATH = r"^/[a-z0-9/_-]{0,80}$"
 LEARNING_TASKS = (
@@ -164,6 +169,38 @@ def _learning_schedule(value: Any) -> Any:
     return {k: out.get(k, {"enabled": False, "every_days": 7}) for k in LEARNING_TASKS}
 
 
+class Announcement(BaseModel):
+    """The administrator's message: its text in the three languages, its tone, where it shows and until when."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    active: bool = False
+    tone: Literal["info", "warn"] = "info"
+    text: ReleaseNotes = Field(default_factory=ReleaseNotes)
+    surfaces: list[Literal[SURFACES]] = Field(default_factory=list, max_length=len(SURFACES))  # type: ignore[valid-type]
+    ends_at: datetime | None = None
+
+    @model_validator(mode="after")
+    def _shown(self) -> "Announcement":
+        if self.active and not (self.text.ar.strip() and self.surfaces):
+            raise ValueError("an active message needs its Arabic text and at least one surface")
+        if len(set(self.surfaces)) != len(self.surfaces):
+            raise ValueError("a surface is named twice")
+        return self
+
+
+def shown(value: Any, surface: str, now: datetime | None = None) -> dict[str, str] | None:
+    """The message as a surface shows it now ({tone, ar, fr, en}), or None."""
+    try:
+        a = Announcement.model_validate(value)
+    except ValueError:
+        return None
+    now = now or datetime.now(UTC)
+    if not a.active or surface not in a.surfaces or (a.ends_at is not None and a.ends_at <= now):
+        return None
+    return {"tone": a.tone, **a.text.model_dump()}
+
+
 class MenuOrder(BaseModel):
     """The groups of the dashboard's menu in order, and the links of each group (their paths) in order."""
 
@@ -222,6 +259,13 @@ DEFAULTS: dict[str, Any] = {
     LEARNING_SCHEDULE: {key: {"enabled": False, "every_days": 7} for key in LEARNING_TASKS},
     THRESHOLDS: thresholds.DEFAULTS,
     MENU_ORDER: {"groups": [], "items": {}},
+    ANNOUNCEMENT: {
+        "active": False,
+        "tone": "info",
+        "text": {"ar": "", "fr": "", "en": ""},
+        "surfaces": [],
+        "ends_at": None,
+    },
 }
 
 # Roles allowed to change each key (national scope required). Missing = read-only.
@@ -241,6 +285,7 @@ EDITORS: dict[str, frozenset[Role]] = {
     LEARNING_SCHEDULE: frozenset({Role.SYSADMIN, Role.AI_ADMIN}),
     THRESHOLDS: frozenset({Role.SYSADMIN, Role.CENTRAL_COMMITTEE}),
     MENU_ORDER: frozenset({Role.SYSADMIN}),
+    ANNOUNCEMENT: frozenset({Role.SYSADMIN}),
 }
 # Keys no one may change in phase 9: enabling them needs a formal approval outside the platform (§7.4).
 FORMAL_APPROVAL = frozenset({NOTIFY_REAL_SEND})
@@ -261,6 +306,7 @@ VALIDATORS: dict[str, Callable[[Any], Any]] = {
     LEARNING_SCHEDULE: _learning_schedule,
     THRESHOLDS: thresholds.validate,
     MENU_ORDER: _model(MenuOrder),
+    ANNOUNCEMENT: lambda v: Announcement.model_validate(v).model_dump(mode="json"),
 }
 
 

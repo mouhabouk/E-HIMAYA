@@ -2,7 +2,7 @@
 
 export type FeatureKind = "page" | "tab" | "button";
 export type Effect = "grant" | "hide";
-export type TargetKind = "user" | "role";
+export type TargetKind = "user" | "role" | "everyone";
 
 export interface Feature {
   key: string;
@@ -23,6 +23,16 @@ export interface MyFeatures {
   hidden: string[];
   /** Absent from an older API answer. */
   lent?: Record<string, string>;
+  /** Phase 5: the system administrator's message for the dashboard. */
+  announcement?: Announcement | null;
+}
+
+/** The system administrator's message (phase 5), shown at once. */
+export interface Announcement {
+  tone: "info" | "warn";
+  ar: string;
+  fr: string;
+  en: string;
 }
 
 export interface FeatureRule {

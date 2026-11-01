@@ -57,7 +57,10 @@
       "orgs": "Institutions",
       "knowledge": "Analysis and knowledge",
       "system": "System",
-      "strategies": "Strategies"
+      "strategies": "Strategies",
+      "field_app": "Field app",
+      "citizen_app": "Citizen app",
+      "portal": "Organisations portal"
     },
     "inventory": "Resources register",
     "plans": "Intervention plans",
@@ -124,7 +127,11 @@
     "medical_coordinator": "Regional medical coordinator",
     "team_leader": "Team leader",
     "governor": "Regional committee",
-    "minister": "National committee"
+    "minister": "National committee",
+    "citizen": "Citizen",
+    "volunteer": "Volunteer",
+    "org_admin": "Organisation admin",
+    "org_member": "Organisation member"
   },
   "status": {
     "received": "Received",
@@ -597,7 +604,8 @@
     "damage_crop_required": "Choose the crop or fodder lost.",
     "damage_out_of_range": "Value out of range.",
     "damage_place_unknown": "Place not in the reference list.",
-    "damage_crop_unknown": "Crop not in the reference list."
+    "damage_crop_unknown": "Crop not in the reference list.",
+    "everyone_rule_is_global": "An “everyone” rule is national."
   },
   "kpi": {
     "title": "Key indicators",
@@ -6656,7 +6664,8 @@
     "target": "For whom",
     "targets": {
       "role": "A role",
-      "user": "One account"
+      "user": "One account",
+      "everyone": "Everyone"
     },
     "role": "Role",
     "gouvernorat": "Gouvernorat",
@@ -6696,19 +6705,24 @@
     "flag": {
       "personal": "Personal data",
       "national": "National",
-      "fixed": "Fixed"
+      "fixed": "Fixed",
+      "dormant": "Dormant",
+      "safety": "Safety: never hidden"
     },
     "flagHint": {
       "personal": "Never granted to the regional or national committee.",
       "national": "Granted to a national account only.",
-      "fixed": "Never granted; hidden only."
+      "fixed": "Never granted; hidden only.",
+      "dormant": "Nobody holds it until the administrator grants it.",
+      "safety": "The emergency report, the distress call and the crew's alerts always stay open."
     },
     "ceiling": {
       "fixed": "A fixed feature: never granted, hidden only.",
       "personal_data": "Personal data: never granted to the regional or national committee.",
       "national_scope": "A national feature: never granted to a role of one gouvernorat.",
       "technical_account": "Technical accounts never receive operational rights.",
-      "not_staff": "Never granted to a citizen account."
+      "not_staff": "Never granted to a citizen account.",
+      "safety": "Never hidden: the emergency report, the distress call and the crew's alerts stay open."
     },
     "preview": "What an account sees",
     "previewState": {
@@ -6716,7 +6730,8 @@
       "closed": "Closed",
       "hidden": "Hidden",
       "granted": "Granted"
-    }
+    },
+    "everyoneHint": "Applies to every user of this surface, even without an account. Hiding only."
   },
   "window": {
     "title": "Decision window",
@@ -8458,7 +8473,7 @@
   "menuOrder": {
     "title": "Menu order",
     "back": "Back to the settings",
-    "intro": "Drag the groups and links into the order you want, or use the arrows. The order applies to everyone; each user only sees what their roles allow.",
+    "intro": "Drag the groups and links into the order you want, or use the arrows. The order applies to everyone; each user only sees what their roles allow. A link can also move to another axis (drop-down list).",
     "readOnly": "Only the system administrator changes the menu order.",
     "groups": "Groups",
     "up": "Move {{name}} up",
@@ -8468,7 +8483,8 @@
     "undo": "Undo the changes",
     "builtIn": "Built-in order",
     "builtInHint": "Puts the built-in order in the draft; nothing is saved before «Save the order».",
-    "saved": "Order saved. Everyone now sees the new menu."
+    "saved": "Order saved. Everyone now sees the new menu.",
+    "moveTo": "Move “{{name}}” to the axis"
   },
   "reporterRole": {
     "volunteer": "Approved volunteer",
@@ -8496,5 +8512,31 @@
     "newLabel": "New item",
     "add": "Add",
     "exportAll": "Export all lists"
+  },
+  "announcement": {
+    "title": "Administrator's message",
+    "help": "Shows at once, with no new release, on the surfaces chosen and until the end set.",
+    "active": "Show the message",
+    "text": {
+      "ar": "Arabic text (required)",
+      "fr": "French text",
+      "en": "English text"
+    },
+    "surfaces": "Where it shows",
+    "surface": {
+      "citizen_app": "Citizen app",
+      "field_app": "Field app",
+      "portal": "Organisations portal",
+      "dashboard": "Dashboard"
+    },
+    "tone": "Kind",
+    "tones": {
+      "info": "Information",
+      "warn": "Warning"
+    },
+    "until": "Until (optional)",
+    "save": "Save the message",
+    "saved": "Message saved and shown.",
+    "missing": "A shown message needs its Arabic text and at least one surface."
   }
 }

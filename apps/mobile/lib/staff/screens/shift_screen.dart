@@ -93,7 +93,8 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
                       l10n.staffHello(s.me!.name!),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                  if (s.me?.inspector ?? false)
+                  if ((s.me?.inspector ?? false) &&
+                      (s.me?.shows('field_prevention') ?? true))
                     NavCard(
                       key: const Key('open-visits'),
                       icon: Icons.fact_check,
@@ -248,7 +249,9 @@ class _ShiftScreenState extends ConsumerState<ShiftScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: (s.me?.readOnly ?? false)
+      bottomNavigationBar:
+          (s.me?.readOnly ?? false) ||
+              !(s.me?.shows('field_shift.manage') ?? true)
           ? null
           : BottomActionBar(
               actions: [

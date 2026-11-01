@@ -28,6 +28,20 @@ SHARED = {
 }
 
 
+SURFACES = {"field_app", "citizen_app", "portal"}
+FREE = (
+    "/@crew/charter",
+    "/@crew/devices",
+    "/@crew/me",
+    "/@public/charter",
+    "/@public/consents",
+    "/@public/devices",
+    "/@public/layers",
+    "/@public/me",
+    "/@public/notifications",
+)
+
+
 def admin(staff: Staff) -> dict[str, str]:
     return staff(["sysadmin"], gouvernorat=None)
 
@@ -50,7 +64,9 @@ def test_the_catalogue_covers_every_staff_route() -> None:
     reg = registry.get()
     assert len(reg.order) == len(set(reg.order))
     unowned = {route for route in reg.routes if not reg.match(*route)}
-    assert unowned == SHARED
+    assert {r for r in unowned if registry.is_staff_path(r[1])} == SHARED
+    # The apps' and the portal's own plumbing and the person's rights stay out of the catalogue (phase 5).
+    assert all(r[1].startswith(FREE) for r in unowned if not registry.is_staff_path(r[1])), unowned
     for method, path in reg.routes:
         chain = reg.match(method, path)
         if method != "GET" and chain:
@@ -59,7 +75,7 @@ def test_the_catalogue_covers_every_staff_route() -> None:
     for key in reg.order:
         f = reg.features[key]
         assert f.act_as is None or f.act_as not in TECHNICAL, key
-        assert f.kind != "page" or (f.nav and f.group), key
+        assert f.kind != "page" or (f.group and (f.nav or f.group in SURFACES)), key
         # Every route a feature names exists.
         for route in f.routes:
             method, path = route.split(" ", 1)

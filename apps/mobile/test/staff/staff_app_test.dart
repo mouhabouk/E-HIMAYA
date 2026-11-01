@@ -136,6 +136,44 @@ void main() {
     );
   });
 
+  testWidgets('phase 5: the buttons the administrator hid, and their message', (
+    tester,
+  ) async {
+    final server = FakeCrewServer()
+      ..shiftOpen = true
+      ..hiddenFeatures = ['field_missions.open', 'field_missions.record']
+      ..announcement = {
+        'tone': 'warn',
+        'ar': 'صيانة الليلة',
+        'fr': '',
+        'en': 'Maintenance tonight',
+      }
+      ..missions.add({
+        ...FakeCrewServer.mission(
+          status: 'on_scene',
+          acknowledgedAt: '2026-10-26T09:00:10Z',
+        ),
+        'en_route_at': '2026-10-26T09:01:00Z',
+        'on_scene_at': '2026-10-26T09:09:00Z',
+      });
+    final store = await signedInStore();
+    await StaffVault(store).setPin('123456', 'salt');
+    await pumpStaffApp(tester, server, store: store);
+    await enterPin(tester, '123456');
+    expect(find.text('Maintenance tonight'), findsOneWidget);
+    expect(find.byKey(const Key('open-mission')), findsNothing);
+    await tester.tap(find.byKey(const Key('mission-m-1')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('open-record'), skipOffstage: false),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const Key('open-transports'), skipOffstage: false),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('S2: the steps after the arrival, the crew and the resources', (
     tester,
   ) async {

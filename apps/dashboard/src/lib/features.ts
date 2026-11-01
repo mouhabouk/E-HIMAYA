@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ApiClient } from "./api";
 import { useServices } from "../context/services";
 import { useAuth } from "../context/auth";
-import type { Feature, FeatureRule, FeatureRuleIn, MyFeatures, PreviewRow } from "./featureTypes";
+import type { Announcement, Feature, FeatureRule, FeatureRuleIn, MyFeatures, PreviewRow } from "./featureTypes";
 
 export type * from "./featureTypes";
 
@@ -116,6 +116,19 @@ export function useMyFeatures(): FeatureAccess {
   });
   if (!q.data) return NONE;
   return { granted: new Set(q.data.granted), hidden: new Set(q.data.hidden), lent: q.data.lent ?? {} };
+}
+
+/** Phase 5: the system administrator's message for the dashboard (the same answer as the caller's features). */
+export function useAnnouncement(): Announcement | null {
+  const { api } = useServices();
+  const { user } = useAuth();
+  const q = useQuery({
+    queryKey: ["features", "mine", user?.identity.subject ?? ""],
+    queryFn: ({ signal }) => api.myFeatures(signal),
+    enabled: user !== null,
+    staleTime: 60_000,
+  });
+  return q.data?.announcement ?? null;
 }
 
 /** Open to the caller: held through their roles or granted, and not hidden. */

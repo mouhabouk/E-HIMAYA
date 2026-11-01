@@ -7,6 +7,7 @@ import 'core/settings/settings_controller.dart';
 import 'core/ui/environment_strip.dart';
 import 'core/ui/messenger.dart';
 import 'core/ui/theme.dart';
+import 'features/admin/app_features.dart';
 import 'l10n/app_localizations.dart';
 
 class EHimayaApp extends ConsumerWidget {
@@ -27,7 +28,9 @@ class EHimayaApp extends ConsumerWidget {
       themeMode: settings.themeMode,
       routerConfig: router,
       builder: (context, child) => ScreenFlash(
-        child: EnvironmentStrip(child: child ?? const SizedBox.shrink()),
+        child: AppFeaturesRefresher(
+          child: EnvironmentStrip(child: child ?? const SizedBox.shrink()),
+        ),
       ),
       scaffoldMessengerKey: rootMessengerKey,
     );

@@ -12,6 +12,7 @@ import '../../core/ui/language_bar.dart';
 import '../../core/ui/theme.dart';
 import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
+import '../admin/app_features.dart';
 import '../alerts/alerts_providers.dart';
 import '../alerts/notifications_screen.dart';
 import '../emergency/dialer.dart';
@@ -41,6 +42,8 @@ class HomeScreen extends ConsumerWidget {
     final orgs = ref.watch(myOrgsProvider).value ?? const <MyOrg>[];
     final identity = ref.watch(identityProvider);
     final alertsCount = ref.watch(currentAlertsProvider).length;
+    // Phase 5: the windows the system administrator closed leave the home screen.
+    final open = ref.watch(shownFeaturesProvider);
     final shortcuts = <_Shortcut>[
       _Shortcut(
         const Key('home-my-reports'),
@@ -57,20 +60,22 @@ class HomeScreen extends ConsumerWidget {
         () => context.push(Routes.track),
       ),
       // FR-A-031: the Live button, independent of the SOS and of the report form.
-      _Shortcut(
-        const Key('home-live'),
-        Icons.videocam_rounded,
-        l10n.homeLive,
-        Tone.red,
-        () => context.push(Routes.live),
-      ),
-      _Shortcut(
-        const Key('home-tips'),
-        Icons.health_and_safety_rounded,
-        l10n.tipsTitle,
-        Tone.green,
-        () => context.push(Routes.tips),
-      ),
+      if (open.shows('citizen_reports.video'))
+        _Shortcut(
+          const Key('home-live'),
+          Icons.videocam_rounded,
+          l10n.homeLive,
+          Tone.red,
+          () => context.push(Routes.live),
+        ),
+      if (open.shows('citizen_guide'))
+        _Shortcut(
+          const Key('home-tips'),
+          Icons.health_and_safety_rounded,
+          l10n.tipsTitle,
+          Tone.green,
+          () => context.push(Routes.tips),
+        ),
       _Shortcut(
         const Key('home-alerts'),
         Icons.campaign_rounded,
@@ -78,7 +83,9 @@ class HomeScreen extends ConsumerWidget {
         Tone.sky,
         () => context.push(Routes.notifications),
       ),
-      if (identity.isRegistered && identity.role == UserRole.citizen)
+      if (identity.isRegistered &&
+          identity.role == UserRole.citizen &&
+          open.shows('citizen_volunteer'))
         _Shortcut(
           const Key('home-volunteer'),
           Icons.volunteer_activism_rounded,
@@ -87,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
           () => context.push(Routes.volunteer),
         ),
       // FR-A-072: anonymous citizens see why they earn no points.
-      if (identity.role == UserRole.citizen)
+      if (identity.role == UserRole.citizen && open.shows('citizen_rewards'))
         _Shortcut(
           const Key('home-rewards'),
           Icons.military_tech_rounded,
@@ -162,6 +169,7 @@ class HomeScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            const AnnouncementCard(),
             const HighAlertsBanner(),
             const LocationStrip(),
             const SizedBox(height: 12),

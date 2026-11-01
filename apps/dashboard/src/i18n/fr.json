@@ -57,7 +57,10 @@
       "orgs": "Établissements",
       "knowledge": "Analyse et savoir",
       "system": "Système",
-      "strategies": "Stratégies"
+      "strategies": "Stratégies",
+      "field_app": "Application de terrain",
+      "citizen_app": "Application citoyenne",
+      "portal": "Portail des établissements"
     },
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
@@ -124,7 +127,11 @@
     "medical_coordinator": "Coordinateur médical régional",
     "team_leader": "Chef d'agrès",
     "governor": "Comité régional",
-    "minister": "Comité national"
+    "minister": "Comité national",
+    "citizen": "Citoyen",
+    "volunteer": "Bénévole",
+    "org_admin": "Responsable d'établissement",
+    "org_member": "Membre d'établissement"
   },
   "status": {
     "received": "Reçu",
@@ -597,7 +604,8 @@
     "damage_crop_required": "Choisissez la culture ou le fourrage touché.",
     "damage_out_of_range": "Valeur hors de la plage admise.",
     "damage_place_unknown": "Lieu absent de la liste de référence.",
-    "damage_crop_unknown": "Culture absente de la liste de référence."
+    "damage_crop_unknown": "Culture absente de la liste de référence.",
+    "everyone_rule_is_global": "Une règle « tout le monde » est nationale."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -6656,7 +6664,8 @@
     "target": "Pour qui",
     "targets": {
       "role": "Un rôle",
-      "user": "Un compte"
+      "user": "Un compte",
+      "everyone": "Tout le monde"
     },
     "role": "Rôle",
     "gouvernorat": "Gouvernorat",
@@ -6696,19 +6705,24 @@
     "flag": {
       "personal": "Données personnelles",
       "national": "National",
-      "fixed": "Fixe"
+      "fixed": "Fixe",
+      "dormant": "Inactif par défaut",
+      "safety": "Sécurité : jamais masqué"
     },
     "flagHint": {
       "personal": "Jamais accordé au comité régional ni au comité national.",
       "national": "Accordé seulement à un compte national.",
-      "fixed": "Jamais accordé ; seulement masqué."
+      "fixed": "Jamais accordé ; seulement masqué.",
+      "dormant": "Personne ne l'a tant que l'administrateur ne l'accorde pas.",
+      "safety": "Le signalement d'urgence, la détresse et les alertes de l'équipe restent toujours ouverts."
     },
     "ceiling": {
       "fixed": "Fonction fixe : jamais accordée, seulement masquée.",
       "personal_data": "Données personnelles : jamais accordées au comité régional ni au comité national.",
       "national_scope": "Fonction nationale : jamais accordée à un rôle d'un seul gouvernorat.",
       "technical_account": "Les comptes techniques ne reçoivent pas de droits opérationnels.",
-      "not_staff": "Jamais accordé à un compte citoyen."
+      "not_staff": "Jamais accordé à un compte citoyen.",
+      "safety": "Jamais masqué : le signalement d'urgence, la détresse et les alertes de l'équipe restent ouverts."
     },
     "preview": "Ce que voit un compte",
     "previewState": {
@@ -6716,7 +6730,8 @@
       "closed": "Fermée",
       "hidden": "Masquée",
       "granted": "Accordée"
-    }
+    },
+    "everyoneHint": "S'applique à tous les utilisateurs de cette surface, même sans compte. Masquage seulement."
   },
   "window": {
     "title": "Fenêtre de décision",
@@ -8458,7 +8473,7 @@
   "menuOrder": {
     "title": "Ordre du menu",
     "back": "Retour aux paramètres",
-    "intro": "Glissez les groupes et les liens dans l'ordre voulu, ou utilisez les flèches. L'ordre vaut pour tous ; chacun ne voit que ce que ses rôles permettent.",
+    "intro": "Glissez les groupes et les liens dans l'ordre voulu, ou utilisez les flèches. L'ordre vaut pour tous ; chacun ne voit que ce que ses rôles permettent. Un lien peut aussi changer d'axe (liste déroulante).",
     "readOnly": "Seul l'administrateur système change l'ordre du menu.",
     "groups": "Groupes",
     "up": "Monter {{name}}",
@@ -8468,7 +8483,8 @@
     "undo": "Annuler les changements",
     "builtIn": "Ordre d'origine",
     "builtInHint": "Remet l'ordre d'origine dans le brouillon ; rien n'est enregistré avant « Enregistrer l'ordre ».",
-    "saved": "Ordre enregistré. Le nouveau menu s'affiche pour tous."
+    "saved": "Ordre enregistré. Le nouveau menu s'affiche pour tous.",
+    "moveTo": "Déplacer « {{name}} » vers l'axe"
   },
   "reporterRole": {
     "volunteer": "Bénévole agréé",
@@ -8496,5 +8512,31 @@
     "newLabel": "Nouvel élément",
     "add": "Ajouter",
     "exportAll": "Exporter toutes les listes"
+  },
+  "announcement": {
+    "title": "Message de l'administrateur",
+    "help": "S'affiche aussitôt, sans nouvelle version, sur les surfaces choisies et jusqu'à l'échéance fixée.",
+    "active": "Afficher le message",
+    "text": {
+      "ar": "Texte en arabe (obligatoire)",
+      "fr": "Texte en français",
+      "en": "Texte en anglais"
+    },
+    "surfaces": "Où l'afficher",
+    "surface": {
+      "citizen_app": "Application citoyenne",
+      "field_app": "Application de terrain",
+      "portal": "Portail des établissements",
+      "dashboard": "Tableau de bord"
+    },
+    "tone": "Type",
+    "tones": {
+      "info": "Information",
+      "warn": "Avertissement"
+    },
+    "until": "Jusqu'au (facultatif)",
+    "save": "Enregistrer le message",
+    "saved": "Message enregistré et affiché.",
+    "missing": "Un message affiché demande son texte arabe et au moins une surface."
   }
 }

@@ -1,0 +1,54 @@
+@startuml
+!include style.iuml
+title Diagramme de classes : catalogue des fonctions et pouvoirs de l'administrateur (G)
+hide empty methods
+skinparam linetype ortho
+class "Fonction du catalogue" as Feature {
+  clé : page | page.onglet | page.bouton
+  surface : tableau de bord | app agents (/@crew)\n | app citoyen (/@public) | portail (/@public)
+  routes : méthode + chemin
+  drapeaux : personnel, national, dormant,\n sécurité (jamais masquée), fixe (jamais accordée)
+  rôles par défaut (lus des routes)
+  agir_comme : rôle prêté à qui la reçoit
+}
+class "Règle" as Rule {
+  effet : accorder | masquer
+  cible : compte | rôle | tous (*)
+  gouvernorat (rôle seulement)
+  début, fin
+  raison (5 à 500 car.)
+  créée_par, révoquée_le, motif
+}
+class "Plafonds fixes" as Ceiling <<invariant>> {
+  comptes techniques : aucun droit opérationnel
+  gouverneur, ministre : jamais de données personnelles
+  fonctions nationales : jamais à un compte régional
+  tous : masquer seulement, sur tout le pays
+  sécurité : SOS, signalement d'urgence,\n alertes et positions des agents
+}
+class "Annonce de l'administrateur" as Announcement {
+  active
+  ton : info | avertissement
+  texte : ar (obligatoire), fr, en
+  surfaces : app, agents, portail, tableau
+  fin (optionnelle)
+}
+class "Ordre du menu" as MenuOrder {
+  groupes : axe -> liens ordonnés
+  un lien peut changer d'axe
+}
+class "Journal d'audit" as Audit
+class "Garde des routes" as Guard <<service>> {
+  personnel : apply() dans get_principal
+  public : feature_guard (même anonyme)
+  refus : 403 feature_hidden
+}
+Feature "1" *-- "0..*" Feature : onglets et boutons
+Feature "1" -- "0..*" Rule : visée par
+Rule ..> Ceiling : vérifiée contre
+Guard ..> Rule : lit (cache ~5 s)
+Guard ..> Feature : registre des routes
+Rule ..> Audit : création, révocation
+Announcement ..> Audit : modification
+MenuOrder ..> Audit : modification
+@enduml

@@ -28,6 +28,18 @@ export function useEnvironment() {
   });
 }
 
+/** Phase 5: what the system administrator closed in the portal (nothing while unknown; the API refuses it anyway). */
+export function useAdminFeatures() {
+  const { api } = useServices();
+  return useQuery({
+    queryKey: queryKeys.adminFeatures,
+    queryFn: ({ signal }) => api.adminFeatures(signal),
+    staleTime: 60_000,
+    refetchInterval: 2 * 60_000,
+    retry: false,
+  });
+}
+
 /** Gouvernorat names (public reference; English uses the official French transliteration, as the API does). */
 export function useGouvernorats() {
   const { api } = useServices();

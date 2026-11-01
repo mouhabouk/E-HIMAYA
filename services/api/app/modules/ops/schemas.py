@@ -798,6 +798,10 @@ class CrewMe(BaseModel):
     field: FieldSettings | None = None
     # Phase 2 (Yamen, 2026-11-01): the places and crops of a damage line, in hectares or bales.
     damage_lists: DamageLists | None = None
+    # Phase 5: the buttons of the field app the administrator hid from this account (catalogue keys).
+    hidden_features: list[str] = Field(default_factory=list)
+    # Phase 5: the administrator's message for the field app ({tone, ar, fr, en}), shown at once.
+    announcement: dict[str, str] | None = None
 
 
 class MissionIncident(BaseModel):

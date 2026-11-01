@@ -1618,6 +1618,39 @@
         "title": "AnchorPage",
         "type": "object"
       },
+      "Announcement": {
+        "description": "The system administrator's message, shown at once (phase 5).",
+        "properties": {
+          "ar": {
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "title": "Fr",
+            "type": "string"
+          },
+          "tone": {
+            "enum": [
+              "info",
+              "warn"
+            ],
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tone",
+          "ar",
+          "fr",
+          "en"
+        ],
+        "title": "Announcement",
+        "type": "object"
+      },
       "AnnualCount": {
         "properties": {
           "expired": {
@@ -7740,6 +7773,20 @@
             "title": "Activated Agent",
             "type": "boolean"
           },
+          "announcement": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Announcement"
+          },
           "charter_accepted": {
             "default": true,
             "title": "Charter Accepted",
@@ -7771,6 +7818,13 @@
           "gouvernorat_code": {
             "title": "Gouvernorat Code",
             "type": "integer"
+          },
+          "hidden_features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Hidden Features",
+            "type": "array"
           },
           "name": {
             "anyOf": [
@@ -18502,6 +18556,33 @@
         "title": "HeavyRainOut",
         "type": "object"
       },
+      "Hidden": {
+        "description": "The windows and buttons of the field app, the citizen app or the portal hidden from the caller (phase 5).",
+        "properties": {
+          "announcement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Announcement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hidden": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Hidden",
+            "type": "array"
+          }
+        },
+        "required": [
+          "hidden"
+        ],
+        "title": "Hidden",
+        "type": "object"
+      },
       "HistoryEntry": {
         "properties": {
           "at": {
@@ -24097,6 +24178,16 @@
       "Mine": {
         "description": "What the administrator's rules change for the caller: the dashboard opens and hides accordingly.",
         "properties": {
+          "announcement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Announcement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "granted": {
             "items": {
               "type": "string"
@@ -49067,7 +49158,8 @@
           "target_kind": {
             "enum": [
               "user",
-              "role"
+              "role",
+              "everyone"
             ],
             "title": "Target Kind",
             "type": "string"
@@ -49220,7 +49312,8 @@
           "target_kind": {
             "enum": [
               "user",
-              "role"
+              "role",
+              "everyone"
             ],
             "title": "Target Kind",
             "type": "string"
@@ -57667,6 +57760,59 @@
         "summary": "App Environment",
         "tags": [
           "app"
+        ]
+      }
+    },
+    "/api/v1/app/features": {
+      "get": {
+        "description": "The windows of the citizen app or of the portal the administrator closed for the caller (anonymous too), and\nthe administrator's message for that surface.",
+        "operationId": "public_features_api_v1_app_features_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "surface",
+            "required": false,
+            "schema": {
+              "default": "citizen_app",
+              "enum": [
+                "citizen_app",
+                "portal"
+              ],
+              "title": "Surface",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hidden"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Public Features",
+        "tags": [
+          "features"
         ]
       }
     },

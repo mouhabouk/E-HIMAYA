@@ -21,6 +21,7 @@ from app.modules.ai.client import get_ai_client
 from app.modules.audit import service as audit
 from app.modules.decision import voice
 from app.modules.decision.schemas import VoiceOut
+from app.modules.features import service as features_service
 from app.modules.ops import crew, crew_flow, field_agents, interventions, record, schemas, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.models import Assignment, CrewAlert, Shift, StaffDevice
@@ -113,6 +114,8 @@ async def me(principal: FieldStaff, session: Session, device: FieldDevice) -> sc
             undo_seconds=await settings_service.threshold(session, "field.undo_seconds"),
         ),
         damage_lists=await record.damage_lists(session),
+        hidden_features=await features_service.hidden_keys(principal, ("field_app",)),
+        announcement=await settings_service.announcement(session, "field_app"),
     )
     agent = await field_agents.agent_of(session, principal)
     if agent is not None:

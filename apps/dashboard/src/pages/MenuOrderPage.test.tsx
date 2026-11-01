@@ -2,7 +2,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { NavGroup } from "../components/Navigation";
-import { applyMenuOrder, menuOrderOf, moved } from "../lib/menuOrder";
+import { applyMenuOrder, menuOrderOf, moved, movedTo } from "../lib/menuOrder";
 import type { PlatformSetting } from "../lib/phase9Types";
 import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { MenuOrderPage } from "./MenuOrderPage";
@@ -56,6 +56,17 @@ describe("the order of the menu", () => {
       menuOrderOf({ groups: ["ops", 3], items: { ops: ["/", null] } }),
     ).toEqual({ groups: ["ops"], items: { ops: ["/"] } });
     expect(moved(["a", "b", "c"], 2, 0)).toEqual(["c", "a", "b"]);
+  });
+
+  it("moves a link from one axis to another, and drops an axis left empty (phase 5)", () => {
+    const out = applyMenuOrder(GROUPS, { groups: [], items: { system: ["/settings", "/alerts"] } });
+    expect(out.map((g) => g.key)).toEqual(["ops", "system"]);
+    expect(out[1]?.items.map((i) => i.to)).toEqual(["/settings", "/alerts"]);
+    // A link named under a group the user does not see stays where it is.
+    expect(applyMenuOrder(GROUPS, { groups: [], items: { nowhere: ["/map"] } })).toEqual(GROUPS);
+    const moved2 = movedTo(GROUPS, "/map", "alerts");
+    expect(moved2[0]?.items.map((i) => i.to)).toEqual(["/", "/reports"]);
+    expect(moved2[1]?.items.map((i) => i.to)).toEqual(["/alerts", "/map"]);
   });
 
   it("the system administrator moves a group and saves the order with a reason", async () => {

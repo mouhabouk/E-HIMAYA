@@ -304,6 +304,7 @@ export const ERROR_CODES = [
   "feature_hidden",
   "ceiling",
   "self_lockout",
+  "everyone_rule_is_global",
   "unknown_feature",
   "unknown_role",
   "user_rule_has_no_gouvernorat",
