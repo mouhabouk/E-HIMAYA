@@ -180,7 +180,28 @@ def board_html(study: Study) -> str:
 <p class="small">التطور: من السنة الأولى إلى الأخيرة. الحصة: من مجموع الخرجات (SEC_GLOB)، والخرجات البيضاء منها.</p>
 <h3>المعتمديات الأكثر خرجات</h3>
 <table><tr><th>المعتمدية</th><th>الوحدة</th><th>المعدل السنوي</th><th>لكل ألف ساكن</th><th>التطور</th>
-<th>زمن الانطلاق</th></tr>{dl}</table>"""
+<th>زمن الانطلاق</th></tr>{dl}</table>{_damages_html(f["damages"], years)}"""
+
+
+def _damages_html(damages: dict[str, Any], years: list[int]) -> str:
+    e = html.escape
+    out = ""
+    head = "".join(f"<th>{y}</th>" for y in years)
+    for kind, title_ar in (("forest", "المساحات المحترقة (هكتار)"), ("agri", "الخسائر الفلاحية")):
+        lines = damages.get(kind) or []
+        if not lines:
+            continue
+        rows = "".join(
+            f"<tr><th>{e(x['label'])}</th><td>{e(study_findings.UNIT_AR.get(x['unit'], x['unit']))}</td>"
+            + "".join(f"<td class='num'>{study_findings.num(x['per_year'].get(str(y), 0))}</td>" for y in years)
+            + f"<td class='num'>{study_findings.num(x['total'])}</td><td class='num'>{x['outings']}</td></tr>"
+            for x in lines
+        )
+        out += (
+            f"<h3>{title_ar}</h3><table><tr><th>الصنف</th><th>الوحدة</th>{head}<th>المجموع</th>"
+            f"<th>التدخلات</th></tr>{rows}</table>"
+        )
+    return out
 
 
 def render_html(study: Study, gouvernorat_name: str | None) -> str:
@@ -354,3 +375,14 @@ def _analysis_sheet(wb: Any, study: Study, bold: Any, grey: Any) -> None:
         ws.cell(ws.max_row, len(head)).number_format = "[mm]:ss"
     ws.column_dimensions["A"].width = 26
     ws.column_dimensions["B"].width = 22
+    dg = wb.create_sheet("DEGATS")
+    dg.sheet_view.rightToLeft = True
+    head = ["Nature", "Catégorie", "Libellé", "Unité", *years, "Total", "Interventions"]
+    dg.append(head)
+    for c in range(1, len(head) + 1):
+        dg.cell(1, c).font, dg.cell(1, c).fill = bold, grey
+    for kind, name in (("forest", "Forestier"), ("agri", "Agricole")):
+        for x in f["damages"].get(kind) or []:
+            dg.append([name, x.get("code"), x["label"], x["unit"], *[x["per_year"].get(str(y), 0) for y in years],
+                       x["total"], x["outings"]])  # fmt: skip
+    dg.column_dimensions["C"].width = 24

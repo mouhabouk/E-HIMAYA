@@ -409,6 +409,13 @@ export const ERROR_CODES = [
   "plan_not_draft",
   "years_not_loaded",
   "file_columns_missing",
+  "damage_file_unknown",
+  "reference_exists",
+  "damage_unit_invalid",
+  "damage_crop_required",
+  "damage_out_of_range",
+  "damage_place_unknown",
+  "damage_crop_unknown",
   // The record of a mission (docs/phase-s/design-s2.md).
   "time_needs_previous",
   "time_without_zone",

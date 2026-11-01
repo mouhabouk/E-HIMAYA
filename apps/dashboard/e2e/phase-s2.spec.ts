@@ -34,6 +34,7 @@ const ASSIGNMENT = {
   cancelled_at: null,
   crew_count: 5,
   consumables: { water_m3: 2, absorbent_kg: 10 },
+  damages: [{ kind: "forest", place: "أعشاب جافة", crop: null, unit: "ha", value: 2.5 }],
   time_sources: { en_route_at: "app", on_scene_at: "app", left_scene_at: "sms" },
   record_warnings: [],
 };
@@ -56,6 +57,19 @@ const SUGGESTIONS = [
     conflict: null,
   },
 ];
+
+// The places and crops a damage line picks from (a part of the Office's reference lists, migration 0091).
+const refItem = (id: string, label_ar: string, unit: string | null = null) => ({
+  id, code: null, label_ar, label_fr: null, unit, sort: 10, active: true, updated_by_name: null, updated_at: ago(60).toISOString(),
+});
+const REFERENCES = {
+  can_manage: false,
+  lists: [
+    { key: "forest_place", name_ar: "أماكن الأضرار الغابية", name_fr: "", name_en: "", items: [refItem("f1", "أعشاب جافة"), refItem("f2", "غابة مورقة")] },
+    { key: "agri_place", name_ar: "أماكن الأضرار الفلاحية", name_fr: "", name_en: "", items: [refItem("a1", "مزرعة")] },
+    { key: "crop_loss", name_ar: "خسائر المحاصيل", name_fr: "", name_en: "", items: [refItem("c1", "قمح", "ha"), refItem("c5", "قرط", "bale")] },
+  ],
+};
 
 async function mockApi(page: Page) {
   const m = await baseMock(page);
@@ -93,6 +107,7 @@ async function mockApi(page: Page) {
         callouts: [],
       });
     }
+    if (verb === "GET" && pathname === "/api/v1/staff/references") return json(route, REFERENCES);
     if (verb === "POST" && pathname === "/api/v1/staff/assignments/a-1/record/suggestions") return json(route, SUGGESTIONS);
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/recommendations") {
       return json(route, { generated_at: new Date().toISOString(), items: [] });
@@ -136,5 +151,10 @@ test.describe("phase S2: the record of a mission", () => {
     await expect(editor.getByRole("textbox", { name: "الوصول للمستشفى" })).toHaveValue(`${clock(hospital)}:00`);
     await expect(editor.getByRole("textbox", { name: "متاحون في طريق العودة" })).toHaveValue(`${clock(free)}:00`);
     await editor.screenshot({ path: `${SHOTS}/s2-record-applied.png` });
+
+    // What the fire destroyed (2026-11-01): the burnt grass in hectares, the places from the reference lists.
+    const damages = editor.locator(".record-damages");
+    await expect(damages.getByRole("combobox", { name: "المكان" })).toHaveValue("أعشاب جافة");
+    await damages.screenshot({ path: `${SHOTS}/s2-record-damages.png` });
   });
 });

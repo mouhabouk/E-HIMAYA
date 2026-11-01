@@ -225,6 +225,7 @@ Map<String, dynamic> applyLocally(
     case 'record':
       if (b['crew_count'] != null) m['crew_count'] = b['crew_count'];
       if (b['consumables'] != null) m['consumables'] = b['consumables'];
+      if (b['damages'] != null) m['damages'] = b['damages'];
     case 'casualties':
       final c = Map<String, dynamic>.of(
         m['casualties'] as Map<String, dynamic>? ?? const {},

@@ -481,6 +481,7 @@ class FakeCrewServer {
         case 'record':
           x['crew_count'] = body['crew_count'];
           x['consumables'] = body['consumables'];
+          if (body['damages'] != null) x['damages'] = body['damages'];
         case 'situation':
           if (x['status'] != 'on_scene') {
             return const FakeResponse(409, json: {'detail': 'not_on_scene'});

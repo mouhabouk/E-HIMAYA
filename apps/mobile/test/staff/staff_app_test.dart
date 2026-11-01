@@ -192,6 +192,27 @@ void main() {
     await tester.tap(find.byKey(const Key('record-water_m3-plus')));
     await tester.tap(find.byKey(const Key('record-water_m3-plus')));
     await tester.pump();
+    // Phase 2: a fodder loss in bales (the crop gives its unit), sent with the record.
+    await reveal(tester, 'add-agri-damage');
+    await tester.tap(find.byKey(const Key('add-agri-damage')));
+    await tester.pumpAndSettle();
+    for (final chip in ['مزرعة', 'قرط']) {
+      final f = find.widgetWithText(ChoiceChip, chip);
+      await tester.ensureVisible(f);
+      await tester.pumpAndSettle();
+      await tester.tap(f);
+      await tester.pump();
+      expect(tester.widget<ChoiceChip>(f).selected, isTrue);
+    }
+    expect(
+      tester
+          .widget<ChoiceChip>(find.byKey(const Key('damage-0-bale')))
+          .selected,
+      isTrue,
+    );
+    await reveal(tester, 'damage-0-value');
+    await tester.enterText(find.byKey(const Key('damage-0-value')), '40');
+    await tester.pump();
     await tester.tap(find.byKey(const Key('send-record')));
     await tester.pumpAndSettle();
     final record = server.writes.last;
@@ -201,6 +222,15 @@ void main() {
       containsPair('crew_count', 6),
     ); // the shift's 5, plus one
     expect((record.json! as Map)['consumables'], {'water_m3': 2});
+    expect((record.json! as Map)['damages'], [
+      {
+        'kind': 'agri',
+        'place': 'مزرعة',
+        'crop': 'قرط',
+        'unit': 'bale',
+        'value': 40.0,
+      },
+    ]);
 
     // Free on the way back: the vehicle can be sent again, the return stays to be given.
     await holdStep(tester, 'available');

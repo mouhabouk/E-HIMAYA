@@ -5426,6 +5426,47 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staffUsedAbsorbent => 'المادة الماصّة (كغ)';
 
   @override
+  String get staffDamagesTitle =>
+      'الأضرار: المساحات المحترقة والخسائر الفلاحية';
+
+  @override
+  String get staffDamagesHint =>
+      'الغابات بالهكتار؛ الحبوب بالهكتار، والقرط والتبن بالحزم.';
+
+  @override
+  String get staffDamageForest => 'مساحة غابية محترقة';
+
+  @override
+  String get staffDamageAgri => 'خسارة فلاحية';
+
+  @override
+  String get staffDamageAddForest => 'إضافة مساحة غابية';
+
+  @override
+  String get staffDamageAddAgri => 'إضافة خسارة فلاحية';
+
+  @override
+  String get staffDamagePlace => 'المكان';
+
+  @override
+  String get staffDamageCrop => 'المحصول أو العلف';
+
+  @override
+  String get staffDamageValue => 'الكمية';
+
+  @override
+  String get staffDamageRemove => 'حذف هذا السطر';
+
+  @override
+  String get staffDamageHectare => 'هكتار';
+
+  @override
+  String get staffDamageBale => 'حزمة';
+
+  @override
+  String get staffDamageBag => 'كيس';
+
+  @override
   String staffRecordAgents(int count) {
     return '$count أعوان';
   }

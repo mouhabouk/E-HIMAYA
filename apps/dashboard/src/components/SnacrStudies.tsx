@@ -15,6 +15,7 @@ import {
   snacrKeys,
   type SnacrStudy,
   type SnacrStudySummary,
+  type StudyDamages,
   type StudyFigures,
   type StudyFindings,
   type StudyPeriod,
@@ -191,6 +192,51 @@ function Pct({ v, signed = false }: { v: number | null | undefined; signed?: boo
 }
 
 /** The statistical board and the technical notes of a study (read by the API from the study's own tables). */
+/** The damages joined to the study's interventions: the burnt forest (hectares) and the farm losses, per year. */
+function DamageTables({ damages, years }: { damages: StudyDamages; years: number[] }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const groups = (["forest", "agri"] as const).filter((k) => damages[k].length > 0);
+  if (groups.length === 0) return <p className="muted">{t("snacr.board.damages.none")}</p>;
+  return (
+    <>
+      {groups.map((k) => (
+        <div key={k} className="table-wrap">
+          <table className="table table--compact snacr-study">
+            <caption>{t(`snacr.board.damages.${k}`)}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{t("snacr.board.damages.label")}</th>
+                <th scope="col">{t("snacr.board.damages.unit")}</th>
+                {years.map((y) => (
+                  <th key={y} scope="col">{y}</th>
+                ))}
+                <th scope="col">{t("snacr.study.total")}</th>
+                <th scope="col">{t("snacr.board.damages.outings")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {damages[k].map((l) => (
+                <tr key={`${l.label}-${l.unit}`}>
+                  <th scope="row">{l.label}</th>
+                  <td>{t(`record.damages.units.${l.unit}`)}</td>
+                  {years.map((y) => (
+                    <td key={y} className="num">
+                      {fmt.number(l.per_year[String(y)] ?? 0)}
+                    </td>
+                  ))}
+                  <td className="num">{fmt.number(l.total)}</td>
+                  <td className="num">{fmt.number(l.outings)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function StudyBoard({ findings, years }: { findings: StudyFindings; years: number[] }) {
   const { t } = useTranslation();
   const fmt = useFormat();
@@ -302,6 +348,12 @@ export function StudyBoard({ findings, years }: { findings: StudyFindings; years
           </tbody>
         </table>
       </div>
+      {findings.damages && (
+        <>
+          <h4>{t("snacr.board.damages.title")}</h4>
+          <DamageTables damages={findings.damages} years={years} />
+        </>
+      )}
       <div className="table-wrap">
         <table className="table table--compact snacr-study">
           <caption>{t("snacr.board.delegations")}</caption>

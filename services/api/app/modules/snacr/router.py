@@ -17,7 +17,7 @@ from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.analytics.service import resolve_scope
 from app.modules.audit import service as audit
-from app.modules.snacr import documents, domain, schemas, service, simulate, study_export, study_findings
+from app.modules.snacr import damage, documents, domain, schemas, service, simulate, study_export, study_findings
 from app.modules.snacr import study as studies
 from app.modules.snacr.models import Dataset, Plan, SpecialRisk, Study
 
@@ -145,6 +145,45 @@ async def import_dataset(
     for dataset in loaded:
         await session.refresh(dataset)
     return schemas.ImportOut(dataset=_dataset(loaded[0]), datasets=[_dataset(d) for d in loaded])
+
+
+@router.post("/damages", response_model=schemas.DamageImportOut, status_code=status.HTTP_201_CREATED)
+async def import_damages(
+    principal: Editor,
+    session: Session,
+    request: Request,
+    file_name: Annotated[str, Query(min_length=1, max_length=200)],
+) -> schemas.DamageImportOut:
+    """A damage table of the Office (degat_forestieres or degat_Agriculteur, CSV or xlsx), recognised by its headings;
+    it replaces the lines of its kind. Each line is tied to its intervention by NUM_SEQUENTIEL."""
+    _national(principal)
+    data = await _read_body(request)
+    try:
+        report, lines = damage.read(file_name, data, await service.crop_reference(session))
+    except domain.FileError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
+    await service.load_damages(session, lines, report.kind, file_name, audit.actor_of(principal))
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="snacr.damages_imported",
+        target=f"snacr_damage:{report.kind}",
+        details={"file_name": file_name, "read": report.read, "kept": report.kept, "rejected": report.rejected},
+    )
+    await session.commit()
+    return schemas.DamageImportOut(
+        kind=report.kind,
+        read=report.read,
+        kept=report.kept,
+        rejected=report.rejected,
+        status=[schemas.DamageStatus(**s) for s in await service.damage_status(session)],
+    )
+
+
+@router.get("/damages", response_model=list[schemas.DamageStatus])
+async def damages_status(principal: Reader, session: Session) -> list[dict[str, Any]]:
+    """The damage tables loaded, and how many of their lines find their intervention in the archive."""
+    return await service.damage_status(session)
 
 
 @router.post("/datasets/simulate", response_model=schemas.ImportOut, status_code=status.HTTP_201_CREATED)

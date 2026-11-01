@@ -234,6 +234,7 @@ class Assignment(Base):
     back_at_unit_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     crew_count: Mapped[int | None] = mapped_column(SmallInteger)
     consumables: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    damages: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, server_default="[]")
     time_sources: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
     # Phase F: the point the room picked on the map for the team, the nature the team confirmed, the steps it skipped
     # (step -> reason), the end without intervention and its reason, and a mission the team opened from the field.

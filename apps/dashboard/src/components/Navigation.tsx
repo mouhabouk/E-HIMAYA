@@ -208,6 +208,7 @@ export function navGroups(
       label: t("nav.group.system"),
       items: [
         ...e(canOpenLayers(roles), "/layers", "layers", "teal", "layers"),
+        ...e(reads, "/references", "menuBook", "slate", "references"),
         ...e(canReadPlatformSettings(roles), "/settings", "settings", "slate", "settings", true),
         ...e(reads || canEditAiSettings(identity), "/settings/ai", "smartToy", "slate", "aiSettings", true),
         ...e(canReadModelCards(identity), "/settings/ai/models", "science", "slate", "modelCards"),

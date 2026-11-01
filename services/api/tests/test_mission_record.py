@@ -6,6 +6,8 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import httpx
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.ops import crew_sms, record, record_checks, record_suggest
 from tests.test_crew import Staff, _on_shift, new_incident, write
@@ -104,6 +106,31 @@ async def test_team_records_the_mission(client: httpx.AsyncClient, staff: Staff)
         "detail"
     ] == "consumable_out_of_range"
 
+    # What the fire destroyed: a surface in hectares, or a crop or fodder in hectares, bales or bags (2026-11-01).
+    # The phone keeps the lists to pick from with the rest of /me.
+    lists = (await leader.get("/me")).json()["damage_lists"]
+    assert "غابة شعراء" in lists["forest_place"] and "ضيعة فلاحية" in lists["agri_place"]
+    assert {"label": "قرط", "unit": "bale"} in lists["crop_loss"]
+    assert {"label": "قمح", "unit": "ha"} in lists["crop_loss"]
+    burnt = [
+        {"kind": "forest", "place": "غابة شعراء", "unit": "ha", "value": 1.5},
+        {"kind": "agri", "place": "مواد علفية وفلاحية", "crop": "تبن", "unit": "bale", "value": 120},
+        {"kind": "agri", "place": "ضيعة فلاحية", "crop": "قمح", "unit": "ha", "value": 0.75},
+    ]
+    r = await leader.post(f"{path}/record", write(damages=burnt))
+    assert r.status_code == 200, r.text
+    assert r.json()["damages"][0] == {**burnt[0], "crop": None} and r.json()["damages"][1]["value"] == 120
+    assert r.json()["crew_count"] == 5  # the rest of the record stays
+    for wrong, why in (
+        ({"kind": "forest", "place": "غابة شعراء", "unit": "bale", "value": 3}, "damage_unit_invalid"),
+        ({"kind": "agri", "place": "مزرعة", "unit": "ha", "value": 1}, "damage_crop_required"),
+        ({"kind": "forest", "place": "حديقة", "unit": "ha", "value": 1}, "damage_place_unknown"),
+        ({"kind": "agri", "place": "مزرعة", "crop": "طماطم", "unit": "ha", "value": 1}, "damage_crop_unknown"),
+        ({"kind": "forest", "place": "غابة شعراء", "unit": "ha", "value": 200000}, "damage_out_of_range"),
+    ):
+        assert (await leader.post(f"{path}/record", write(damages=[wrong]))).json()["detail"] == why
+    assert (await leader.post(f"{path}/record", write(damages=[{**burnt[0], "value": 0}]))).status_code == 422
+
     # Free on the way back ends the mission and frees the vehicle for another one before it reaches the unit.
     mission = (await leader.post(f"{path}/milestone", write(step="available"))).json()
     assert mission["status"] == "released" and mission["released_at"] == mission["available_at"]
@@ -140,6 +167,9 @@ async def test_team_records_the_mission(client: httpx.AsyncClient, staff: Staff)
     assert r.status_code == 200, r.text
     saved = r.json()
     assert saved["crew_count"] == 6 and saved["time_sources"]["on_scene_at"] == "room"
+    assert len(saved["damages"]) == 3  # kept when the room corrects a time
+    r = await client.put(url, json={"damages": burnt[:1]}, headers=operator)
+    assert [d["kind"] for d in r.json()["damages"]] == ["forest"]
     assert saved["time_sources"]["en_route_at"] == "app"
     detail = (await client.get(f"/api/v1/staff/incidents/{incident_id}", headers=operator)).json()
     kinds = [e["kind"] for e in detail["timeline"]]
@@ -247,7 +277,7 @@ async def test_times_suggested_to_the_room(client: httpx.AsyncClient, staff: Sta
     assert (await client.post(url, json={}, headers=tunis)).status_code in (403, 404)
 
 
-async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Staff) -> None:
+async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Staff, session: AsyncSession) -> None:
     """The records of the rooms feed SNACR: a year drawn from them, with the parts of the mission and the crew."""
     resource = await make_resource(client, staff)
     incident_id, _ = await new_incident(client, staff, random_place())
@@ -261,7 +291,11 @@ async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Sta
     times = dict(zip(record.EDITABLE, at, strict=True))
     r = await client.put(
         f"/api/v1/staff/assignments/{assignment['id']}/record",
-        json={"times": times, "crew_count": 5},
+        json={
+            "times": times,
+            "crew_count": 5,
+            "damages": [{"kind": "forest", "place": "أعشاب جافة", "unit": "ha", "value": 2.5}],
+        },
         headers=operator,
     )
     assert r.status_code == 200, r.text
@@ -282,6 +316,13 @@ async def test_snacr_year_from_the_records(client: httpx.AsyncClient, staff: Sta
     mission = analysis["mission"]["fire"]
     assert mission["rows"] >= 1 and mission["crew_mean"] is not None and mission["length_median"] is not None
     assert analysis["datasets"][0]["source"] == "live"
+    # The damages the team recorded reach the SNACR study of that year.
+    r = await client.post(f"{url}/studies", json={"gouvernorat_code": 61, "years": [year]}, headers=room)
+    assert r.status_code == 201, r.text
+    grass = next(x for x in r.json()["tables"]["damages"]["forest"] if x["label"] == "أعشاب جافة")
+    assert grass["per_year"][str(year)] >= 2.5 and grass["unit"] == "ha"
+    await session.execute(text("DELETE FROM snacr.study WHERE gouvernorat_code = 61"))
+    await session.commit()
     # Never over the Office's file or a [SIM] year.
     r = await client.post(f"{url}/datasets/simulate", params={"year": 2034, "rows": 100}, headers=room)
     assert r.status_code == 201

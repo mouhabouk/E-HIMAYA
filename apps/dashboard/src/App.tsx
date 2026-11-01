@@ -152,6 +152,8 @@ const DrillsPage = page(() => import("./pages/DrillsPage"), "DrillsPage");
 const StrategiesPage = page(() => import("./pages/StrategiesPage"), "StrategiesPage");
 const StrategyItemPage = page(() => import("./pages/StrategiesPage"), "StrategyItemPage");
 const SnacrPage = page(() => import("./pages/SnacrPage"), "SnacrPage");
+// Phase 2: the Office's reference lists.
+const ReferencesPage = page(() => import("./pages/ReferencesPage"), "ReferencesPage");
 const DrillPage = page(() => import("./pages/DrillPage"), "DrillPage");
 // Phase L5b: sensors of the local network.
 const SensorsPage = page(() => import("./pages/SensorsPage"), "SensorsPage");
@@ -295,6 +297,7 @@ export function AppRoutes() {
         <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
         <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
         <Route path="layers" element={gated(canOpenLayers, <LayersPage />)} />
+        <Route path="references" element={gated(hasReadAccess, <ReferencesPage />)} />
         <Route path="coastal" element={gated(canOpenCoastal, <CoastalPage />)} />
         <Route path="programmes" element={gated(canOpenProgrammes, <ProgrammesPage />)} />
         <Route path="strategies" element={gated(() => true, <StrategiesPage />)} />

@@ -138,3 +138,24 @@ class Study(Base):
     created_by_name: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Damage(Base):
+    """One line of the Office's damage tables, tied to the archive by NUM_SEQUENTIEL (``seq_num``)."""
+
+    __tablename__ = "damage"
+    __table_args__ = {"schema": "snacr"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    kind: Mapped[str] = mapped_column(Text)
+    source_key: Mapped[int | None] = mapped_column(Integer)
+    seq_num: Mapped[int] = mapped_column(BigInteger)
+    place_code: Mapped[str | None] = mapped_column(Text)
+    place_label: Mapped[str | None] = mapped_column(Text)
+    crop_code: Mapped[str | None] = mapped_column(Text)
+    crop_label: Mapped[str | None] = mapped_column(Text)
+    unit: Mapped[str] = mapped_column(Text)
+    value: Mapped[float] = mapped_column(Float)
+    file_name: Mapped[str | None] = mapped_column(Text)
+    imported_by: Mapped[str] = mapped_column(Text)
+    imported_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -287,6 +287,41 @@ export interface StudyFindings {
   classes: StudyClassFinding[];
   delegations: StudyDelegationFinding[];
   notes: { tone: StudyNoteTone; text_ar: string }[];
+  /** Absent from the studies read before the damages were joined. */
+  damages?: StudyDamages;
+}
+
+/** The damages of the study's interventions (joined by NUM_SEQUENTIEL), per year. */
+export interface StudyDamageLine {
+  code: string | null;
+  label: string;
+  unit: "ha" | "bale" | "bag";
+  per_year: Record<string, number>;
+  outings: number;
+  total: number;
+}
+
+export interface StudyDamages {
+  forest: StudyDamageLine[];
+  agri: StudyDamageLine[];
+  forest_ha: Record<string, number>;
+}
+
+export interface DamageStatus {
+  kind: "forest" | "agri";
+  lines: number;
+  matched: number;
+  file_name: string | null;
+  imported_at: string | null;
+  years: number[];
+}
+
+export interface DamageImport {
+  kind: "forest" | "agri";
+  read: number;
+  kept: number;
+  rejected: Record<string, number>;
+  status: DamageStatus[];
 }
 
 export interface SnacrStudy extends SnacrStudySummary {
@@ -315,6 +350,7 @@ export const snacrKeys = {
   plan: (id: string) => ["snacr", "plan", id] as const,
   studies: (gouvernorat: number | null) => ["snacr", "studies", gouvernorat] as const,
   study: (id: string) => ["snacr", "study", id] as const,
+  damages: ["snacr", "damages"] as const,
 };
 
 export function snacrApi(api: ApiClient) {
@@ -329,6 +365,10 @@ export function snacrApi(api: ApiClient) {
         query: { year: year ?? undefined, file_name: file.name, merge: merge || undefined },
         rawBody: file,
       }),
+    /** A damage table of the Office (degat_forestieres or degat_Agriculteur), recognised by its headings. */
+    importSnacrDamages: (file: File) =>
+      api.request<DamageImport>(`${S}/damages`, { method: "POST", query: { file_name: file.name }, rawBody: file }),
+    snacrDamages: (signal?: AbortSignal) => api.request<DamageStatus[]>(`${S}/damages`, { signal }),
     simulateSnacr: (year: number) =>
       api.request<{ dataset: SnacrDataset }>(`${S}/datasets/simulate`, { method: "POST", query: { year } }),
     liveSnacr: (year: number) =>

@@ -1,3 +1,4 @@
+import type { DamageEntry } from "./missionRecord";
 import type { OrgKind } from "./types";
 import type { CrewRef } from "./crewTypes";
 
@@ -291,6 +292,8 @@ export interface Assignment {
   back_at_unit_at?: string | null;
   crew_count?: number | null;
   consumables?: Partial<Record<string, number>>;
+  /** What the fire destroyed (2026-11-01): a surface in hectares, or a crop or fodder in hectares, bales or bags. */
+  damages?: DamageEntry[];
   time_sources?: Partial<Record<string, "app" | "sms" | "room">>;
   /** Times that hold but are not credible, for the room to check. */
   record_warnings?: string[];

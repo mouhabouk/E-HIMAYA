@@ -2287,6 +2287,13 @@
             ],
             "title": "Crew Nature"
           },
+          "damages": {
+            "items": {
+              "$ref": "#/components/schemas/DamageEntry"
+            },
+            "title": "Damages",
+            "type": "array"
+          },
           "en_route_at": {
             "anyOf": [
               {
@@ -7738,6 +7745,16 @@
             "title": "Charter Accepted",
             "type": "boolean"
           },
+          "damage_lists": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DamageLists"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "device": {
             "$ref": "#/components/schemas/DeviceOut"
           },
@@ -7975,6 +7992,227 @@
           "time"
         ],
         "title": "Cron",
+        "type": "object"
+      },
+      "DamageCrop": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ha",
+                  "bale",
+                  "bag"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "required": [
+          "label",
+          "unit"
+        ],
+        "title": "DamageCrop",
+        "type": "object"
+      },
+      "DamageEntry": {
+        "description": "What a fire destroyed, as the team records it (Yamen, 2026-11-01): the place burnt and its surface in hectares,\nor the crop or fodder lost in hectares, bales or bags. The labels come from the reference lists\n(``forest_place``, ``agri_place``, ``crop_loss``).",
+        "properties": {
+          "crop": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crop"
+          },
+          "kind": {
+            "enum": [
+              "forest",
+              "agri"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "place": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Place",
+            "type": "string"
+          },
+          "unit": {
+            "enum": [
+              "ha",
+              "bale",
+              "bag"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "place",
+          "unit",
+          "value"
+        ],
+        "title": "DamageEntry",
+        "type": "object"
+      },
+      "DamageImportOut": {
+        "properties": {
+          "kept": {
+            "title": "Kept",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "forest",
+              "agri"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "read": {
+            "title": "Read",
+            "type": "integer"
+          },
+          "rejected": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Rejected",
+            "type": "object"
+          },
+          "status": {
+            "items": {
+              "$ref": "#/components/schemas/DamageStatus"
+            },
+            "title": "Status",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "read",
+          "kept",
+          "rejected",
+          "status"
+        ],
+        "title": "DamageImportOut",
+        "type": "object"
+      },
+      "DamageLists": {
+        "description": "The items a team picks a damage line from (the active items of the reference lists), kept on the phone with\nthe rest of ``/me`` so the record works without network.",
+        "properties": {
+          "agri_place": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Agri Place",
+            "type": "array"
+          },
+          "crop_loss": {
+            "items": {
+              "$ref": "#/components/schemas/DamageCrop"
+            },
+            "title": "Crop Loss",
+            "type": "array"
+          },
+          "forest_place": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Forest Place",
+            "type": "array"
+          }
+        },
+        "required": [
+          "forest_place",
+          "agri_place",
+          "crop_loss"
+        ],
+        "title": "DamageLists",
+        "type": "object"
+      },
+      "DamageStatus": {
+        "properties": {
+          "file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Name"
+          },
+          "imported_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imported At"
+          },
+          "kind": {
+            "enum": [
+              "forest",
+              "agri"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lines": {
+            "title": "Lines",
+            "type": "integer"
+          },
+          "matched": {
+            "title": "Matched",
+            "type": "integer"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "lines",
+          "matched",
+          "file_name",
+          "imported_at",
+          "years"
+        ],
+        "title": "DamageStatus",
         "type": "object"
       },
       "DatasetOut": {
@@ -20764,72 +21002,6 @@
         "title": "ItemCreate",
         "type": "object"
       },
-      "ItemPatch": {
-        "additionalProperties": false,
-        "properties": {
-          "call_198": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Call 198"
-          },
-          "content": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ItemContent"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "hidden": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Hidden"
-          },
-          "reason": {
-            "maxLength": 500,
-            "minLength": 5,
-            "title": "Reason",
-            "type": "string"
-          },
-          "topic_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Topic Id"
-          },
-          "version": {
-            "minimum": 1.0,
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "version",
-          "reason"
-        ],
-        "title": "ItemPatch",
-        "type": "object"
-      },
       "ItemStatusIn": {
         "properties": {
           "reason": {
@@ -22268,6 +22440,63 @@
           "items"
         ],
         "title": "LinkList",
+        "type": "object"
+      },
+      "ListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__references__schemas__ItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "title": "Name En",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name_ar",
+          "name_fr",
+          "name_en",
+          "items"
+        ],
+        "title": "ListOut",
+        "type": "object"
+      },
+      "ListsOut": {
+        "properties": {
+          "can_manage": {
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "lists": {
+            "items": {
+              "$ref": "#/components/schemas/ListOut"
+            },
+            "title": "Lists",
+            "type": "array"
+          }
+        },
+        "required": [
+          "lists",
+          "can_manage"
+        ],
+        "title": "ListsOut",
         "type": "object"
       },
       "LiveIn": {
@@ -24420,6 +24649,13 @@
               }
             ],
             "title": "Crew Nature"
+          },
+          "damages": {
+            "items": {
+              "$ref": "#/components/schemas/DamageEntry"
+            },
+            "title": "Damages",
+            "type": "array"
           },
           "detailed_report": {
             "anyOf": [
@@ -31437,6 +31673,21 @@
               }
             ],
             "title": "Crew Count"
+          },
+          "damages": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DamageEntry"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Damages"
           },
           "reason": {
             "anyOf": [
@@ -41705,6 +41956,21 @@
             ],
             "title": "Crew Count"
           },
+          "damages": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DamageEntry"
+                },
+                "maxItems": 20,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Damages"
+          },
           "device_at": {
             "anyOf": [
               {
@@ -47709,6 +47975,72 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "app__modules__content__guide__ItemPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "call_198": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Call 198"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ItemContent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hidden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hidden"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "topic_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Id"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "reason"
+        ],
+        "title": "ItemPatch",
+        "type": "object"
+      },
       "app__modules__crisis__schemas__Area": {
         "description": "GeoJSON polygon drawn on the map (Polygon or MultiPolygon, WGS 84).",
         "properties": {
@@ -52811,6 +53143,245 @@
           "items"
         ],
         "title": "RevisionsOut",
+        "type": "object"
+      },
+      "app__modules__references__schemas__ItemIn": {
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "label_ar": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Label Ar",
+            "type": "string"
+          },
+          "label_fr": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Fr"
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "maximum": 100000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ha",
+                  "bale",
+                  "bag"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "required": [
+          "label_ar"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "app__modules__references__schemas__ItemOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label_ar": {
+            "title": "Label Ar",
+            "type": "string"
+          },
+          "label_fr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Fr"
+          },
+          "sort": {
+            "title": "Sort",
+            "type": "integer"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ha",
+                  "bale",
+                  "bag"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "label_ar",
+          "label_fr",
+          "unit",
+          "sort",
+          "active",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
+      "app__modules__references__schemas__ItemPatch": {
+        "properties": {
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "label_ar": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Ar"
+          },
+          "label_fr": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Fr"
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "maximum": 100000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ha",
+                  "bale",
+                  "bag"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "title": "ItemPatch",
         "type": "object"
       },
       "app__modules__register__schemas__AttachmentOut": {
@@ -78387,7 +78958,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ItemPatch"
+                "$ref": "#/components/schemas/app__modules__content__guide__ItemPatch"
               }
             }
           },
@@ -89715,6 +90286,221 @@
         ]
       }
     },
+    "/api/v1/staff/references": {
+      "get": {
+        "description": "Every list with its items, the retired ones included (marked).",
+        "operationId": "list_references_api_v1_staff_references_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List References",
+        "tags": [
+          "staff",
+          "references"
+        ]
+      }
+    },
+    "/api/v1/staff/references/export": {
+      "get": {
+        "description": "The lists as a workbook (one sheet per list) or one list as CSV (UTF-8 with BOM, for Excel).",
+        "operationId": "export_references_api_v1_staff_references_export_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "format",
+            "required": false,
+            "schema": {
+              "default": "xlsx",
+              "enum": [
+                "xlsx",
+                "csv"
+              ],
+              "title": "Format",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[a-z][a-z0-9_]{1,40}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {},
+              "text/csv": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export References",
+        "tags": [
+          "staff",
+          "references"
+        ]
+      }
+    },
+    "/api/v1/staff/references/items/{item_id}": {
+      "patch": {
+        "description": "Rename an item, give it a code, a unit or a place, retire it or bring it back.",
+        "operationId": "change_item_api_v1_staff_references_items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__references__schemas__ItemPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__references__schemas__ItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change Item",
+        "tags": [
+          "staff",
+          "references"
+        ]
+      }
+    },
+    "/api/v1/staff/references/{key}/items": {
+      "post": {
+        "operationId": "add_item_api_v1_staff_references__key__items_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z][a-z0-9_]{1,40}$",
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__references__schemas__ItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__references__schemas__ItemOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Item",
+        "tags": [
+          "staff",
+          "references"
+        ]
+      }
+    },
     "/api/v1/staff/register/attachments/{attachment_id}": {
       "get": {
         "operationId": "get_attachment_api_v1_staff_register_attachments__attachment_id__get",
@@ -98152,6 +98938,87 @@
           }
         ],
         "summary": "Analysis",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      }
+    },
+    "/api/v1/staff/snacr/damages": {
+      "get": {
+        "description": "The damage tables loaded, and how many of their lines find their intervention in the archive.",
+        "operationId": "damages_status_api_v1_staff_snacr_damages_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DamageStatus"
+                  },
+                  "title": "Response Damages Status Api V1 Staff Snacr Damages Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Damages Status",
+        "tags": [
+          "staff",
+          "snacr"
+        ]
+      },
+      "post": {
+        "description": "A damage table of the Office (degat_forestieres or degat_Agriculteur, CSV or xlsx), recognised by its headings;\nit replaces the lines of its kind. Each line is tied to its intervention by NUM_SEQUENTIEL.",
+        "operationId": "import_damages_api_v1_staff_snacr_damages_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DamageImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import Damages",
         "tags": [
           "staff",
           "snacr"

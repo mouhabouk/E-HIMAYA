@@ -134,6 +134,32 @@ Consumable = Literal[
 TimeSource = Literal["app", "sms", "room"]
 
 
+class DamageEntry(BaseModel):
+    """What a fire destroyed, as the team records it (Yamen, 2026-11-01): the place burnt and its surface in hectares,
+    or the crop or fodder lost in hectares, bales or bags. The labels come from the reference lists
+    (``forest_place``, ``agri_place``, ``crop_loss``)."""
+
+    kind: Literal["forest", "agri"]
+    place: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)]
+    crop: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=160)] | None = None
+    unit: Literal["ha", "bale", "bag"]
+    value: float = Field(gt=0, le=1_000_000)
+
+
+class DamageCrop(BaseModel):
+    label: str
+    unit: Literal["ha", "bale", "bag"] | None
+
+
+class DamageLists(BaseModel):
+    """The items a team picks a damage line from (the active items of the reference lists), kept on the phone with
+    the rest of ``/me`` so the record works without network."""
+
+    forest_place: list[str]
+    agri_place: list[str]
+    crop_loss: list[DamageCrop]
+
+
 class MissionRecord(BaseModel):
     """The rest of a mission's times, its crew, what it used and who gave each time (phase S2)."""
 
@@ -143,6 +169,7 @@ class MissionRecord(BaseModel):
     back_at_unit_at: datetime | None = None
     crew_count: int | None = None
     consumables: dict[Consumable, float] = Field(default_factory=dict)
+    damages: list[DamageEntry] = Field(default_factory=list)
     time_sources: dict[str, TimeSource] = Field(default_factory=dict)
     #: Times that hold but are not credible, for the room to check (``record_checks.WARNINGS``).
     record_warnings: list[str] = Field(default_factory=list)
@@ -260,6 +287,7 @@ class RecordIn(BaseModel):
     times: RecordTimes | None = None
     crew_count: int | None = Field(default=None, ge=1, le=60)
     consumables: dict[Consumable, float] | None = Field(default=None, max_length=12)
+    damages: list[DamageEntry] | None = Field(default=None, max_length=20)
     #: Required when a time the team gave changes.
     reason: Annotated[Text, StringConstraints(max_length=300)] | None = None
 
@@ -768,6 +796,8 @@ class CrewMe(BaseModel):
     activated_agent: bool = False
     charter_accepted: bool = True
     field: FieldSettings | None = None
+    # Phase 2 (Yamen, 2026-11-01): the places and crops of a damage line, in hectares or bales.
+    damage_lists: DamageLists | None = None
 
 
 class MissionIncident(BaseModel):
@@ -839,6 +869,7 @@ class TeamRecordIn(CrewWrite):
 
     crew_count: int | None = Field(default=None, ge=1, le=60)
     consumables: dict[Consumable, float] | None = Field(default=None, max_length=12)
+    damages: list[DamageEntry] | None = Field(default=None, max_length=20)
 
 
 class FirstReportIn(CrewWrite):

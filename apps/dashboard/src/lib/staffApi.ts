@@ -17,6 +17,7 @@ import { scheduleApi } from "./schedule";
 import { featuresApi } from "./features";
 import { windowApi } from "./window";
 import { drillApi } from "./drill";
+import { referencesApi } from "./references";
 import { snacrApi } from "./snacr";
 import { strategiesApi } from "./strategies";
 import { sensorsApi } from "./sensors";
@@ -283,6 +284,7 @@ export function staffApi(api: ApiClient) {
     ...windowApi(api),
     ...drillApi(api),
     ...snacrApi(api),
+    ...referencesApi(api),
     ...strategiesApi(api),
     ...sensorsApi(api),
     ...towersApi(api),

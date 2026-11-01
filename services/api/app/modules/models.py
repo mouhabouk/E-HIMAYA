@@ -84,6 +84,7 @@ from app.modules.orgs.models import (
 )
 from app.modules.places.models import SavedPlace
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
+from app.modules.references.models import RefItem, RefList
 from app.modules.register.models import Attachment as RegisterAttachment
 from app.modules.register.models import Counter as RegisterCounter
 from app.modules.register.models import Dispatch as RegisterDispatch
@@ -116,6 +117,7 @@ from app.modules.schedule.models import SuggestionDismissal
 from app.modules.schedule.models import Template as ScheduleTemplate
 from app.modules.sensors.models import SensorDevice, SensorReading
 from app.modules.snacr.models import Alias as SnacrAlias
+from app.modules.snacr.models import Damage as SnacrDamage
 from app.modules.snacr.models import Dataset as SnacrDataset
 from app.modules.snacr.models import Intervention as SnacrIntervention
 from app.modules.snacr.models import Plan as SnacrPlan
@@ -253,6 +255,8 @@ __all__ = [
     "Programme",
     "ProgrammePoint",
     "ProgrammeRevision",
+    "RefItem",
+    "RefList",
     "RegisterAttachment",
     "RegisterCounter",
     "RegisterDispatch",
@@ -292,6 +296,7 @@ __all__ = [
     "Sitrep",
     "SmsInbound",
     "SnacrAlias",
+    "SnacrDamage",
     "SnacrDataset",
     "SnacrIntervention",
     "SnacrPlan",
