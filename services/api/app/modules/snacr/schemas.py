@@ -266,3 +266,23 @@ class StudySummary(BaseModel):
 class StudyOut(StudySummary):
     tables: dict[str, Any]
     findings: dict[str, Any]
+
+
+# ---------------------------------------------------------------- damages
+
+
+class DamageStatus(BaseModel):
+    kind: Literal["forest", "agri"]
+    lines: int
+    matched: int
+    file_name: str | None
+    imported_at: datetime | None
+    years: list[int]
+
+
+class DamageImportOut(BaseModel):
+    kind: Literal["forest", "agri"]
+    read: int
+    kept: int
+    rejected: dict[str, int]
+    status: list[DamageStatus]

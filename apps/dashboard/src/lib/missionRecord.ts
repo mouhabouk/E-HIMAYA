@@ -47,6 +47,22 @@ export const CONSUMABLES = [
   { key: "absorbent_kg", max: 5000, step: 1 },
 ] as const;
 export type Consumable = (typeof CONSUMABLES)[number]["key"];
+
+/** A damage line of a fire, its labels from the reference lists (forest_place, agri_place, crop_loss). */
+export interface DamageEntry {
+  kind: "forest" | "agri";
+  place: string;
+  crop?: string | null;
+  unit: "ha" | "bale" | "bag";
+  value: number;
+}
+
+/** The lines complete enough to send: a place, a quantity above zero, a crop for a farm loss. */
+export function completeDamages(lines: readonly DamageEntry[]): DamageEntry[] {
+  return lines
+    .filter((d) => d.place && d.value > 0 && (d.kind === "forest" || d.crop))
+    .map((d) => ({ ...d, crop: d.kind === "agri" ? (d.crop ?? null) : null, unit: d.kind === "forest" ? "ha" : d.unit }));
+}
 export type TimeSource = "app" | "sms" | "room";
 
 export type RecordTimes = Record<RecordStep, Date | null>;
@@ -198,6 +214,7 @@ export interface RecordBody {
   times?: Partial<Record<EditableStep, string | null>>;
   crew_count?: number | null;
   consumables?: Partial<Record<Consumable, number>>;
+  damages?: DamageEntry[];
   reason?: string | null;
 }
 
@@ -211,6 +228,7 @@ export function recordBody(
     after: Record<string, number>;
   },
   reason: string,
+  damages?: { before: readonly DamageEntry[]; after: readonly DamageEntry[] },
 ): RecordBody {
   const body: RecordBody = {};
   const changed: Partial<Record<EditableStep, string | null>> = {};
@@ -230,6 +248,10 @@ export function recordBody(
     );
   if (tidy(consumables.before) !== tidy(consumables.after))
     body.consumables = Object.fromEntries(Object.entries(consumables.after).filter(([, v]) => v > 0));
+  if (damages) {
+    const after = completeDamages(damages.after);
+    if (JSON.stringify(completeDamages(damages.before)) !== JSON.stringify(after)) body.damages = after;
+  }
   if (reason.trim()) body.reason = reason.trim();
   return body;
 }

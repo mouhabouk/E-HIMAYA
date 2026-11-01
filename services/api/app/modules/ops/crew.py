@@ -451,6 +451,7 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
         back_at_unit_at=assignment.back_at_unit_at,
         crew_count=assignment.crew_count,
         consumables=assignment.consumables or {},
+        damages=assignment.damages or [],
         time_sources=assignment.time_sources or {},
         incident=schemas.MissionIncident(
             id=incident.id,
@@ -681,14 +682,15 @@ async def team_record(
         return assignment
     if assignment.status == "cancelled":
         raise HTTPException(status.HTTP_409_CONFLICT, "assignment_cancelled")
-    record.team_record(assignment, body.crew_count, body.consumables)
+    damages = await record.check_damages(session, body.damages) if body.damages is not None else None
+    record.team_record(assignment, body.crew_count, body.consumables, damages)
     _event(
         session,
         principal,
         body,
         "record",
         assignment,
-        {"crew_count": assignment.crew_count, "consumables": assignment.consumables},
+        {"crew_count": assignment.crew_count, "consumables": assignment.consumables, "damages": assignment.damages},
     )
     _timeline(
         session,
@@ -697,6 +699,7 @@ async def team_record(
         _who(principal),
         crew_count=assignment.crew_count,
         consumables=assignment.consumables,
+        damages=assignment.damages,
     )
     await _announce(session, assignment)
     return assignment

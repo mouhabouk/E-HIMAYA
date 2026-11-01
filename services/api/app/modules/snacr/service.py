@@ -15,7 +15,7 @@ from app.core.db import as_system
 from app.modules.geo.models import Delegation, Gouvernorat
 from app.modules.settings import service as settings_service
 from app.modules.settings.thresholds import SPECS
-from app.modules.snacr import domain
+from app.modules.snacr import damage, domain
 from app.modules.snacr.models import Alias, Dataset, Intervention, Plan, SpecialRisk
 
 BATCH = 5_000
@@ -163,7 +163,7 @@ _LIVE = text(
     """
 INSERT INTO snacr.intervention (dataset_id, year, family, nature, subtype, gouvernorat_code, delegation_id,
     delegation_raw, called_at, departed_at, arrived_at, ended_at, arrival_min, flags, left_at, hospital_at,
-    returned_at, crew_count)
+    returned_at, crew_count, incident_id)
 SELECT CAST(:dataset AS uuid), CAST(:year AS smallint),
     CASE i.category WHEN 'fire' THEN 'fire' WHEN 'traffic_accident' THEN 'road' WHEN 'medical' THEN 'medical'
         ELSE 'rescue' END,
@@ -171,7 +171,7 @@ SELECT CAST(:dataset AS uuid), CAST(:year AS smallint),
     i.opened_at, a.departed, a.arrived, coalesce(a.returned, a.released), a.arrival_min,
     CASE WHEN a.arrived IS NULL THEN ARRAY['arrival_missing']
          WHEN a.arrival_min > :ceiling THEN ARRAY['arrival_outlier'] ELSE '{}'::text[] END,
-    a.left_at, a.hospital_at, a.returned, a.crew
+    a.left_at, a.hospital_at, a.returned, a.crew, i.id
 FROM ops.incident i
 LEFT JOIN geo.delegation d ON d.id = i.delegation_id
 JOIN LATERAL (
@@ -750,3 +750,58 @@ async def approve(session: AsyncSession, plan: Plan, actor: str, actor_name: str
     plan.approved_by_name = actor_name
     plan.approved_at = datetime.now(UTC)
     await session.flush()
+
+
+# ---------------------------------------------------------------- damages (degat_forestieres, degat_Agriculteur)
+
+
+async def crop_reference(session: AsyncSession) -> dict[str, tuple[str, str | None]]:
+    """The reference list of crops lost: normalized label → (code, unit)."""
+    rows = await session.execute(
+        text("SELECT label_ar, code, unit FROM ref.item WHERE list_key = 'crop_loss' AND code IS NOT NULL")
+    )
+    return {domain.normalize(label): (code, unit) for label, code, unit in rows}
+
+
+async def load_damages(
+    session: AsyncSession, lines: list[damage.Line], kind: str, file_name: str | None, actor: str
+) -> None:
+    """Replace the damage lines of ``kind`` with those of the file (the Office exports the whole table)."""
+    await session.execute(text("DELETE FROM snacr.damage WHERE kind = :k"), {"k": kind})
+    if lines:
+        await session.execute(
+            text(
+                "INSERT INTO snacr.damage (kind, source_key, seq_num, place_code, place_label, crop_code, crop_label, "
+                "unit, value, file_name, imported_by) VALUES (:kind, :source_key, :seq_num, :place_code, "
+                ":place_label, :crop_code, :crop_label, :unit, :value, :file_name, :actor)"
+            ),
+            [
+                {
+                    "kind": ln.kind, "source_key": ln.source_key, "seq_num": ln.seq_num, "place_code": ln.place_code,
+                    "place_label": ln.place_label, "crop_code": ln.crop_code, "crop_label": ln.crop_label,
+                    "unit": ln.unit, "value": ln.value, "file_name": file_name, "actor": actor,
+                }
+                for ln in lines
+            ],
+        )  # fmt: skip
+
+
+async def damage_status(session: AsyncSession) -> list[dict[str, Any]]:
+    """Each damage table: its lines, how many find their intervention in the archive, the years they fall in."""
+    rows = await session.execute(
+        text(
+            """
+            SELECT d.kind, count(*) AS lines, count(i.seq_num) AS matched,
+                   max(d.file_name) AS file_name, max(d.imported_at) AS imported_at,
+                   array_remove(array_agg(DISTINCT i.year), NULL) AS years
+            FROM snacr.damage d
+            LEFT JOIN LATERAL (SELECT seq_num, year FROM snacr.intervention WHERE seq_num = d.seq_num LIMIT 1) i
+              ON true
+            GROUP BY d.kind ORDER BY d.kind
+            """
+        )
+    )
+    return [
+        {"kind": k, "lines": n, "matched": m, "file_name": f, "imported_at": at, "years": sorted(y or [])}
+        for k, n, m, f, at, y in rows
+    ]

@@ -92,6 +92,12 @@ async function mockApi(page: Page) {
     }
     if (pathname === "/api/v1/staff/snacr/analysis") return json(route, SIM.analysis);
     if (pathname === "/api/v1/geo/boundaries/delegations") return json(route, SIM.boundaries);
+    if (pathname === "/api/v1/staff/snacr/damages") {
+      return json(route, [
+        { kind: "forest", lines: 0, matched: 0, file_name: null, imported_at: null, years: [] },
+        { kind: "agri", lines: 0, matched: 0, file_name: null, imported_at: null, years: [] },
+      ]);
+    }
     if (pathname === "/api/v1/staff/snacr/unmatched") return json(route, [{ gouvernorat_code: 43, raw: "سيدي بوزيد المدينة", rows: 1184 }]);
     if (pathname === "/api/v1/staff/snacr/special-risks") {
       return json(route, [

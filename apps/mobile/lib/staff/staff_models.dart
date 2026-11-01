@@ -112,6 +112,7 @@ class CrewMe {
     this.charterAccepted = true,
     this.holdMs = 1500,
     this.undoSeconds = 10,
+    this.damageLists = DamageLists.defaults,
   });
 
   factory CrewMe.fromJson(Map<String, dynamic> j) => CrewMe(
@@ -129,6 +130,9 @@ class CrewMe {
     charterAccepted: j['charter_accepted'] as bool? ?? true,
     holdMs: (j['field'] as Map?)?['hold_ms'] as int? ?? 1500,
     undoSeconds: (j['field'] as Map?)?['undo_seconds'] as int? ?? 10,
+    damageLists: j['damage_lists'] == null
+        ? DamageLists.defaults
+        : DamageLists.fromJson(j['damage_lists'] as Map<String, dynamic>),
   );
 
   final String? name;
@@ -149,6 +153,9 @@ class CrewMe {
   final bool charterAccepted;
   final int holdMs;
   final int undoSeconds;
+
+  /// Phase 2: the places and crops of a damage line (the room's reference lists).
+  final DamageLists damageLists;
 
   bool get leader => roles.contains('team_leader');
   bool get inspector => roles.contains('org_auditor');
@@ -512,6 +519,101 @@ class Hospital {
   final bool simulated;
 }
 
+/// The unit of a damage line: hectares, bales (hay, straw) or bags.
+enum DamageUnit {
+  ha,
+  bale,
+  bag;
+
+  static DamageUnit? fromWire(String? s) => switch (s) {
+    'ha' => ha,
+    'bale' => bale,
+    'bag' => bag,
+    _ => null,
+  };
+}
+
+/// A crop or fodder of the reference list, with its usual unit.
+class DamageCrop {
+  const DamageCrop(this.label, this.unit);
+
+  final String label;
+  final DamageUnit? unit;
+}
+
+/// The items a team picks a damage line from (`/me`, kept on the phone). The defaults are the
+/// Office's lists, for a phone that never reached the server since the update.
+class DamageLists {
+  const DamageLists({
+    required this.forestPlaces,
+    required this.agriPlaces,
+    required this.crops,
+  });
+
+  factory DamageLists.fromJson(Map<String, dynamic> j) => DamageLists(
+    forestPlaces: [for (final x in j['forest_place'] as List) x as String],
+    agriPlaces: [for (final x in j['agri_place'] as List) x as String],
+    crops: [
+      for (final x in j['crop_loss'] as List)
+        DamageCrop(
+          (x as Map<String, dynamic>)['label'] as String,
+          DamageUnit.fromWire(x['unit'] as String?),
+        ),
+    ],
+  );
+
+  static const defaults = DamageLists(
+    forestPlaces: ['غابة مورقة', 'أعشاب جافة', 'أرض بيضاء', 'غابة شعراء'],
+    agriPlaces: ['مواد علفية وفلاحية', 'مزرعة', 'منطقة فلاحية', 'ضيعة فلاحية'],
+    crops: [
+      DamageCrop('قمح', DamageUnit.ha),
+      DamageCrop('شعير', DamageUnit.ha),
+      DamageCrop('زراعات أخرى', DamageUnit.ha),
+      DamageCrop('حصيدة', DamageUnit.ha),
+      DamageCrop('قرط', DamageUnit.bale),
+      DamageCrop('تبن', DamageUnit.bale),
+    ],
+  );
+
+  final List<String> forestPlaces;
+  final List<String> agriPlaces;
+  final List<DamageCrop> crops;
+}
+
+/// What a fire destroyed (Yamen, 2026-11-01): a forest burnt, in hectares, or a crop or fodder
+/// lost, in hectares, bales or bags.
+class DamageEntry {
+  const DamageEntry({
+    required this.forest,
+    required this.place,
+    required this.unit,
+    required this.value,
+    this.crop,
+  });
+
+  factory DamageEntry.fromJson(Map<String, dynamic> j) => DamageEntry(
+    forest: j['kind'] == 'forest',
+    place: j['place'] as String,
+    crop: j['crop'] as String?,
+    unit: DamageUnit.fromWire(j['unit'] as String?) ?? DamageUnit.ha,
+    value: (j['value'] as num).toDouble(),
+  );
+
+  final bool forest;
+  final String place;
+  final String? crop;
+  final DamageUnit unit;
+  final double value;
+
+  Map<String, dynamic> toJson() => {
+    'kind': forest ? 'forest' : 'agri',
+    'place': place,
+    if (!forest) 'crop': crop,
+    'unit': forest ? 'ha' : unit.name,
+    'value': value,
+  };
+}
+
 class Mission {
   const Mission({
     required this.id,
@@ -529,6 +631,7 @@ class Mission {
     this.backAtUnitAt,
     this.crewCount,
     this.consumables = const {},
+    this.damages = const [],
     this.category,
     this.classification,
     this.title,
@@ -582,6 +685,7 @@ class Mission {
         for (final e in (j['consumables'] as Map? ?? const {}).entries)
           e.key as String: (e.value as num).toInt(),
       },
+      damages: [for (final d in list('damages')) DamageEntry.fromJson(d)],
       incidentId: inc['id'] as String,
       category: ReportCategory.fromWire(inc['category'] as String?),
       classification: inc['classification'] as String?,
@@ -652,6 +756,9 @@ class Mission {
   final DateTime? backAtUnitAt;
   final int? crewCount;
   final Map<String, int> consumables;
+
+  /// Phase 2: the burnt areas and the farm losses.
+  final List<DamageEntry> damages;
   final String incidentId;
   final ReportCategory? category;
   final String? classification;

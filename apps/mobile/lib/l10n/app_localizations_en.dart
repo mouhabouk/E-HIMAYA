@@ -5495,6 +5495,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffUsedAbsorbent => 'Absorbent (kg)';
 
   @override
+  String get staffDamagesTitle => 'Damage: burnt areas and farm losses';
+
+  @override
+  String get staffDamagesHint =>
+      'Forest in hectares; cereals in hectares, hay and straw in bales.';
+
+  @override
+  String get staffDamageForest => 'Burnt forest';
+
+  @override
+  String get staffDamageAgri => 'Farm loss';
+
+  @override
+  String get staffDamageAddForest => 'Add burnt forest';
+
+  @override
+  String get staffDamageAddAgri => 'Add a farm loss';
+
+  @override
+  String get staffDamagePlace => 'Place';
+
+  @override
+  String get staffDamageCrop => 'Crop or fodder';
+
+  @override
+  String get staffDamageValue => 'Amount';
+
+  @override
+  String get staffDamageRemove => 'Remove this line';
+
+  @override
+  String get staffDamageHectare => 'hectares';
+
+  @override
+  String get staffDamageBale => 'bales';
+
+  @override
+  String get staffDamageBag => 'bags';
+
+  @override
   String staffRecordAgents(int count) {
     return '$count agents';
   }

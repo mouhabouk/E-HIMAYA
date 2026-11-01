@@ -738,6 +738,90 @@ function AliasForm({ code, raw, onDone }: { code: number; raw: string; onDone: (
   );
 }
 
+/** The Office's damage tables (degat_forestieres, degat_Agriculteur), joined to the interventions by NUM_SEQUENTIEL. */
+function DamagesCard({ canImport }: { canImport: boolean }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const qc = useQueryClient();
+  const fmt = useFormat();
+  const id = useId();
+  const [file, setFile] = useState<File | null>(null);
+  const status = useQuery({ queryKey: snacrKeys.damages, queryFn: ({ signal }) => api.snacrDamages(signal) });
+  const upload = useMutation({
+    mutationFn: () => api.importSnacrDamages(file as File),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: snacrKeys.all }),
+  });
+  const rejected = upload.data ? Object.entries(upload.data.rejected).filter(([, n]) => n > 0) : [];
+  return (
+    <section className="card">
+      <h3>{t("snacr.damages.title")}</h3>
+      <p className="muted">{t("snacr.damages.intro")}</p>
+      {status.error && <ErrorBox error={status.error} />}
+      {status.data && (
+        <div className="table-wrap">
+          <table className="table table--compact">
+            <caption className="visually-hidden">{t("snacr.damages.title")}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{t("snacr.damages.kind")}</th>
+                <th scope="col">{t("snacr.damages.lines")}</th>
+                <th scope="col">{t("snacr.damages.matched")}</th>
+                <th scope="col">{t("snacr.damages.years")}</th>
+                <th scope="col">{t("snacr.archive.source")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {status.data.map((d) => (
+                <tr key={d.kind}>
+                  <th scope="row">{t(`snacr.damages.${d.kind}`)}</th>
+                  <td>{fmt.number(d.lines)}</td>
+                  <td>{fmt.number(d.matched)}</td>
+                  <td>{d.years.length > 0 ? d.years.join("، ") : "—"}</td>
+                  <td className="muted">
+                    {d.file_name ? <bdi dir="ltr">{d.file_name}</bdi> : "—"}
+                    {d.imported_at && <> · {fmt.dateTime(d.imported_at)}</>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {canImport && (
+        <form
+          className="snacr-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (file) upload.mutate();
+          }}
+        >
+          <div className="field">
+            <label htmlFor={`${id}-f`}>{t("snacr.damages.file")}</label>
+            <input id={`${id}-f`} type="file" accept=".xlsx,.csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            <p className="field__hint">{t("snacr.damages.fileHint")}</p>
+          </div>
+          {upload.error && (
+            <p className="alert alert--error" role="alert">
+              {t(errorMessageKey(upload.error))}
+            </p>
+          )}
+          {upload.data && (
+            <p className="alert alert--ok" role="status">
+              {t("snacr.damages.done", { kept: upload.data.kept, read: upload.data.read })}
+              {rejected.length > 0 && <> {t("snacr.damages.rejected", { list: rejected.map(([k, n]) => `${t(`snacr.damages.reasons.${k}`)} (${n})`).join("، ") })}</>}
+            </p>
+          )}
+          <div className="actions">
+            <button type="submit" className="btn btn--primary" disabled={!file || upload.isPending}>
+              {upload.isPending ? t("snacr.archive.reading") : t("snacr.damages.import")}
+            </button>
+          </div>
+        </form>
+      )}
+    </section>
+  );
+}
+
 function ArchiveTab({ overview }: { overview: SnacrOverview }) {
   const { t } = useTranslation();
   const { api } = useServices();
@@ -861,6 +945,7 @@ function ArchiveTab({ overview }: { overview: SnacrOverview }) {
           </div>
         </form>
       )}
+      <DamagesCard canImport={overview.can_import} />
       <section className="card">
         <h3>{t("snacr.archive.unmatched")}</h3>
         <p className="muted">{t("snacr.archive.unmatchedIntro")}</p>

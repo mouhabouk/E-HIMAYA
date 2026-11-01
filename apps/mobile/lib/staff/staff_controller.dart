@@ -778,16 +778,20 @@ class StaffController extends Notifier<StaffState> {
       _write(id, 'milestone', {'step': step});
 
   /// The crew and what the mission used (phase S2).
+  /// Phase 2: [damages], the burnt areas and farm losses, replace the ones recorded (null keeps
+  /// them).
   Future<bool> teamRecord(
     String id, {
     required int crewCount,
     required Map<String, int> consumables,
+    List<DamageEntry>? damages,
   }) => _write(id, 'record', {
     'crew_count': crewCount,
     'consumables': {
       for (final e in consumables.entries)
         if (e.value > 0) e.key: e.value,
     },
+    if (damages != null) 'damages': [for (final d in damages) d.toJson()],
   });
 
   /// Situation report (design §5.5); backup chips mean "backup needed".

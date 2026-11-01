@@ -27,8 +27,10 @@ import {
   type RecordTimes,
   type TimeSource,
   type TimeSuggestion,
+  type DamageEntry,
 } from "../lib/missionRecord";
 import type { Assignment } from "../lib/opsTypes";
+import { DamagesEditor } from "./DamagesEditor";
 import { Stepper } from "./Stepper";
 
 /** Ready reasons for correcting a time the team gave (design-system.md "less typing"); «other» opens the text. */
@@ -360,6 +362,8 @@ export function MissionRecordEditor({
     [assignment.consumables],
   );
   const [used, setUsed] = useState<Record<string, number>>(usedBefore);
+  const damagesBefore = useMemo(() => assignment.damages ?? [], [assignment.damages]);
+  const [damages, setDamages] = useState<DamageEntry[]>(damagesBefore);
   const [reason, setReason] = useState<Reason | null>(null);
   const [other, setOther] = useState("");
   const sources = assignment.time_sources ?? {};
@@ -374,8 +378,9 @@ export function MissionRecordEditor({
     { before: crewBefore, after: crew },
     { before: usedBefore, after: used },
     corrected.length > 0 ? reasonText : "",
+    { before: damagesBefore, after: damages },
   );
-  const nothing = !body.times && body.crew_count === undefined && !body.consumables;
+  const nothing = !body.times && body.crew_count === undefined && !body.consumables && !body.damages;
   const invalid = Object.keys(errors).length > 0;
   const mutation = useMutation({
     mutationFn: () => api.saveMissionRecord(assignment.id, body),
@@ -482,6 +487,7 @@ export function MissionRecordEditor({
           ))}
         </div>
       </fieldset>
+      <DamagesEditor value={damages} onChange={setDamages} disabled={locked} />
       {corrected.length > 0 && (
         <fieldset className="chips" aria-describedby={ids.reason}>
           <legend>

@@ -21,7 +21,7 @@ from app.modules.ai.client import get_ai_client
 from app.modules.audit import service as audit
 from app.modules.decision import voice
 from app.modules.decision.schemas import VoiceOut
-from app.modules.ops import crew, crew_flow, field_agents, interventions, schemas, templates
+from app.modules.ops import crew, crew_flow, field_agents, interventions, record, schemas, templates
 from app.modules.ops import service as incidents
 from app.modules.ops.models import Assignment, CrewAlert, Shift, StaffDevice
 from app.modules.reports.staff_router import READ_ROLES, WRITE_ROLES
@@ -112,6 +112,7 @@ async def me(principal: FieldStaff, session: Session, device: FieldDevice) -> sc
             hold_ms=await settings_service.threshold(session, "field.hold_ms"),
             undo_seconds=await settings_service.threshold(session, "field.undo_seconds"),
         ),
+        damage_lists=await record.damage_lists(session),
     )
     agent = await field_agents.agent_of(session, principal)
     if agent is not None:

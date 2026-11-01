@@ -9676,6 +9676,84 @@ abstract class AppLocalizations {
   /// **'Absorbent (kg)'**
   String get staffUsedAbsorbent;
 
+  /// No description provided for @staffDamagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Damage: burnt areas and farm losses'**
+  String get staffDamagesTitle;
+
+  /// No description provided for @staffDamagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest in hectares; cereals in hectares, hay and straw in bales.'**
+  String get staffDamagesHint;
+
+  /// No description provided for @staffDamageForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnt forest'**
+  String get staffDamageForest;
+
+  /// No description provided for @staffDamageAgri.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm loss'**
+  String get staffDamageAgri;
+
+  /// No description provided for @staffDamageAddForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Add burnt forest'**
+  String get staffDamageAddForest;
+
+  /// No description provided for @staffDamageAddAgri.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a farm loss'**
+  String get staffDamageAddAgri;
+
+  /// No description provided for @staffDamagePlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Place'**
+  String get staffDamagePlace;
+
+  /// No description provided for @staffDamageCrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop or fodder'**
+  String get staffDamageCrop;
+
+  /// No description provided for @staffDamageValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get staffDamageValue;
+
+  /// No description provided for @staffDamageRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this line'**
+  String get staffDamageRemove;
+
+  /// No description provided for @staffDamageHectare.
+  ///
+  /// In en, this message translates to:
+  /// **'hectares'**
+  String get staffDamageHectare;
+
+  /// No description provided for @staffDamageBale.
+  ///
+  /// In en, this message translates to:
+  /// **'bales'**
+  String get staffDamageBale;
+
+  /// No description provided for @staffDamageBag.
+  ///
+  /// In en, this message translates to:
+  /// **'bags'**
+  String get staffDamageBag;
+
   /// No description provided for @staffRecordAgents.
   ///
   /// In en, this message translates to:

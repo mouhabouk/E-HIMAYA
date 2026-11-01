@@ -206,7 +206,61 @@ async def compute(
                 "total": _finish(grand, years, periods, None),
             }
         )
-    return {"years": years, "periods": periods, "tables": tables}, dict(quality)
+    damages = await _damages(session, gouvernorat, years)
+    return {"years": years, "periods": periods, "tables": tables, "damages": damages}, dict(quality)
+
+
+_DAMAGES = text(
+    """
+SELECT d.kind, coalesce(d.crop_code, d.place_code) AS code, coalesce(d.crop_label, d.place_label) AS label, d.unit,
+       i.year AS y, sum(d.value) AS v, count(DISTINCT d.seq_num) AS n
+FROM snacr.damage d
+JOIN snacr.intervention i ON i.seq_num = d.seq_num
+WHERE i.year = ANY(CAST(:years AS smallint[]))
+  AND (CAST(:g AS smallint) IS NULL OR i.gouvernorat_code = CAST(:g AS smallint))
+GROUP BY 1, 2, 3, 4, 5
+UNION ALL
+SELECT e->>'kind', NULL, coalesce(e->>'crop', e->>'place'), e->>'unit', i.year,
+       sum(CAST(e->>'value' AS double precision)), count(DISTINCT i.id)
+FROM snacr.intervention i
+JOIN ops.assignment a ON a.incident_id = i.incident_id AND a.status <> 'cancelled'
+CROSS JOIN LATERAL jsonb_array_elements(a.damages) e
+WHERE i.incident_id IS NOT NULL AND i.year = ANY(CAST(:years AS smallint[]))
+  AND (CAST(:g AS smallint) IS NULL OR i.gouvernorat_code = CAST(:g AS smallint))
+GROUP BY 1, 2, 3, 4, 5
+"""
+)
+
+
+async def _damages(session: AsyncSession, gouvernorat: int | None, years: list[int]) -> dict[str, Any]:
+    """The damages of the interventions of the study: the Office's tables joined by NUM_SEQUENTIEL, and the teams'
+    records of the years drawn from the rooms (by incident). The forest surface burnt by place, the crops and fodder
+    lost by kind and unit, per year. A label written two ways is one line (compared without diacritics or spaces)."""
+    rows = (await session.execute(_DAMAGES, {"years": years, "g": gouvernorat})).all()
+    out: dict[str, list[dict[str, Any]]] = {"forest": [], "agri": []}
+    found: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for kind, code, label, unit, y, v, n in rows:
+        key = (kind, domain.normalize(label or "—").replace(" ", ""), unit)
+        line = found.get(key)
+        if line is not None and line["code"] is None:
+            line["code"] = code
+        if line is None:
+            line = {
+                "code": code,
+                "label": (label or "—").strip(),
+                "unit": unit,
+                "per_year": dict.fromkeys(map(str, years), 0.0),
+                "outings": 0,
+            }
+            found[key] = line
+            out[kind].append(line)
+        line["per_year"][str(y)] = round(line["per_year"][str(y)] + float(v), 4)
+        line["outings"] += int(n)
+    for lines in out.values():
+        for line in lines:
+            line["total"] = round(sum(line["per_year"].values()), 4)
+        lines.sort(key=lambda x: (x["unit"], -x["total"]))
+    return out
 
 
 async def launch(

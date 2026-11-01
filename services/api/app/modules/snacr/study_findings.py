@@ -278,17 +278,89 @@ def _notes(
     return notes
 
 
+UNIT_AR = {"ha": "هكتار", "bale": "بالة", "bag": "كيس"}
+
+
+def num(value: float) -> str:
+    return f"{round(value, 2):g}"
+
+
+def _damage_notes(damages: dict[str, Any] | None, years: list[int], lci_total: int) -> list[dict[str, str]]:
+    """The burnt surfaces and the farm losses of the study's interventions."""
+    notes: list[dict[str, str]] = []
+    if damages is None:
+        return notes
+    forest, agri = damages.get("forest") or [], damages.get("agri") or []
+    if not forest and not agri:
+        if lci_total >= MIN_COUNT:
+            notes.append(
+                {"tone": "info", "text_ar": "لا أضرار مرتبطة بتدخلات هذه الدراسة: تُستورد جداول الأضرار من الأرشيف."}
+            )
+        return notes
+    if forest:
+        total = sum(x["total"] for x in forest)
+        outings = sum(x["outings"] for x in forest)
+        top = max(forest, key=lambda x: x["total"])
+        notes.append(
+            {
+                "tone": "info",
+                "text_ar": f"احترق {num(total)} هكتار من الغابات والأعشاب والأراضي في {outings} تدخلا، أكثرها "
+                f"{top['label']} ({_pct(top['total'], total):g}%).",
+            }
+        )
+        if len(years) > 1:
+            first = sum(x["per_year"].get(str(years[0]), 0) for x in forest)
+            last = sum(x["per_year"].get(str(years[-1]), 0) for x in forest)
+            pct = change_pct(last, first)
+            if pct is not None and abs(pct) >= MIN_CHANGE_PCT and first + last >= 1:
+                word, tone = ("ارتفعت", "up") if pct > 0 else ("انخفضت", "down")
+                notes.append(
+                    {
+                        "tone": tone,
+                        "text_ar": f"{word} المساحات المحترقة من {num(first)} هكتار سنة {years[0]} إلى {num(last)} "
+                        f"هكتار سنة {years[-1]} ({ltr(f'{pct:+g}%')}).",
+                    }
+                )
+    if agri:
+        by_unit: dict[str, list[dict[str, Any]]] = {}
+        for x in agri:
+            by_unit.setdefault(x["unit"], []).append(x)
+        parts = []
+        for unit in ("ha", "bale", "bag"):
+            lines = sorted(by_unit.get(unit, []), key=lambda x: -x["total"])
+            if lines:
+                total = sum(x["total"] for x in lines)
+                names = "، ".join(x["label"] for x in lines[:3])
+                parts.append(f"{num(total)} {UNIT_AR[unit]} ({names})")
+        notes.append({"tone": "warn", "text_ar": "الخسائر الفلاحية: " + "؛ ".join(parts) + "."})
+    return notes
+
+
+def _damage_board(damages: dict[str, Any] | None, years: list[int]) -> dict[str, Any]:
+    if not damages:
+        return {"forest": [], "agri": [], "forest_ha": {}}
+    forest = damages.get("forest") or []
+    return {
+        "forest": forest,
+        "agri": damages.get("agri") or [],
+        "forest_ha": {str(y): round(sum(x["per_year"].get(str(y), 0) for x in forest), 4) for y in years},
+    }
+
+
 def read(tables: dict[str, Any], quality: dict[str, Any], travel_max: int) -> dict[str, Any]:
     years: list[int] = tables.get("years") or []
     periods: list[str] = tables.get("periods") or []
     found = tables.get("tables") or []
     if not years or not found:
-        return {"classes": [], "delegations": [], "notes": []}
+        return {"classes": [], "delegations": [], "notes": [], "damages": _damage_board(None, years)}
     classes = _classes(found, years, periods)
     glob = next((tb for tb in found if tb["key"] == "SEC_GLOB"), None)
     delegations = _delegations(glob, years) if glob else []
+    lci = next((c["total"] for c in classes if c["key"] == "LCI"), 0)
+    damages = tables.get("damages")
     return {
         "classes": classes,
         "delegations": delegations,
-        "notes": _notes(classes, delegations, years, periods, quality, travel_max),
+        "notes": _notes(classes, delegations, years, periods, quality, travel_max) + _damage_notes(damages, years, lci),
+        "damages": _damage_board(damages, years),
     }

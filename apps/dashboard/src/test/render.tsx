@@ -1,5 +1,6 @@
 import type { ContactDetail, ContactInbox } from "../lib/contact";
 import type { LayerFeature, MapLayer } from "../lib/layers";
+import type { RefItem, RefLists } from "../lib/references";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -199,6 +200,34 @@ export function fakeLayersApi() {
   };
 }
 
+const refItem = (id: string, label_ar: string, unit: RefItem["unit"] = null, code: string | null = null): RefItem => ({
+  id,
+  code,
+  label_ar,
+  label_fr: null,
+  unit,
+  sort: 10,
+  active: true,
+  updated_by_name: null,
+  updated_at: "2026-11-01T08:00:00Z",
+});
+
+/** A part of the Office's reference lists: the places of the damages and the crops lost. */
+export const REFERENCES: RefLists = {
+  can_manage: false,
+  lists: [
+    { key: "forest_place", name_ar: "أماكن الحرائق الغابية", name_fr: "Lieux forestiers", name_en: "Forest places", items: [refItem("f1", "غابة", null, "1")] },
+    { key: "agri_place", name_ar: "أماكن الأضرار الفلاحية", name_fr: "Lieux agricoles", name_en: "Farm places", items: [refItem("a1", "حقل", null, "2")] },
+    {
+      key: "crop_loss",
+      name_ar: "الخسائر الفلاحية",
+      name_fr: "Pertes agricoles",
+      name_en: "Crop losses",
+      items: [refItem("c1", "قمح", "ha", "1"), refItem("c5", "قرط", "bale", "5")],
+    },
+  ],
+};
+
 export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
   return {
     // Phase P5b: ratings of the mobile app (settings page).
@@ -232,6 +261,13 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     snacrStudy: vi.fn(),
     launchSnacrStudy: vi.fn(),
     snacrStudyExport: vi.fn(),
+    // Phase 2: the damage tables and the reference lists.
+    importSnacrDamages: vi.fn(),
+    snacrDamages: vi.fn(() => Promise.resolve([])),
+    references: vi.fn(() => Promise.resolve(REFERENCES)),
+    addReference: vi.fn(),
+    changeReference: vi.fn(),
+    referencesExport: vi.fn(),
     strategyItems: vi.fn(() => Promise.resolve({ items: [], can_manage: false })),
     strategyItem: vi.fn(),
     saveStrategyItem: vi.fn(),

@@ -168,7 +168,7 @@ async def test_study_tables_archive_and_exports(client: httpx.AsyncClient, staff
     xlsx = await client.get(f"{URL}/studies/{first['id']}/export", params={"format": "xlsx"}, headers=central)
     assert xlsx.status_code == 200
     wb = load_workbook(io.BytesIO(xlsx.content))
-    assert wb.sheetnames == ["ETUDE", "ANALYSE", "SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"]
+    assert wb.sheetnames == ["ETUDE", "ANALYSE", "DEGATS", "SEC_GLOB", "SAP", "SR", "LCI", "SB", "DIV"]
     assert wb["SEC_GLOB"]["A1"].value == "Unité d’intervention" and wb["SEC_GLOB"]["F2"].value == 2041
     page = (await client.get(f"{URL}/studies/{first['id']}/export", params={"format": "html"}, headers=central)).text
     assert "مؤرشفة" in page and "سري" not in page and "اسم خاص" not in page

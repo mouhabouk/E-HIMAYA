@@ -103,6 +103,7 @@ from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
 from app.modules.programmes.router import router as programmes_router
 from app.modules.programmes.worker import programmes_forever
+from app.modules.references.router import router as references_router
 from app.modules.register.router import router as register_router
 from app.modules.register.worker import register_forever
 from app.modules.reports.jurisdiction import sla_forever
@@ -365,6 +366,7 @@ def create_app() -> FastAPI:
         places_router,
         availability_router,
         snacr_router,
+        references_router,
         strategies_router,
         drones_router,
         drones_internal_router,

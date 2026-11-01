@@ -74,7 +74,8 @@
     "strategies": "All strategies",
     "snacr": "Risk analysis and coverage (SNACR)",
     "lessons": "Lessons learned",
-    "fieldAgents": "Agents and phones"
+    "fieldAgents": "Agents and phones",
+    "references": "Reference lists"
   },
   "header": {
     "scope": "Geographic scope",
@@ -589,7 +590,14 @@
     "time_required": "A time the mission reached cannot be cleared.",
     "correction_reason_required": "Correcting a time the team gave needs a reason.",
     "year_has_dataset": "This year comes from the Office's file or is [SIM]: delete it first.",
-    "no_records": "No records for this year."
+    "no_records": "No records for this year.",
+    "damage_file_unknown": "Damage table not recognised: a DGF_ (forest) or DGA_ (farm) file is expected.",
+    "reference_exists": "This item is already in the list.",
+    "damage_unit_invalid": "Burnt forest is recorded in hectares.",
+    "damage_crop_required": "Choose the crop or fodder lost.",
+    "damage_out_of_range": "Value out of range.",
+    "damage_place_unknown": "Place not in the reference list.",
+    "damage_crop_unknown": "Crop not in the reference list."
   },
   "kpi": {
     "title": "Key indicators",
@@ -8182,7 +8190,36 @@
       "rate": "Per 1,000 inhabitants",
       "all": "All délégations ({{count}})",
       "fewer": "Fewer",
-      "tables": "Study tables"
+      "tables": "Study tables",
+      "damages": {
+        "title": "Damage joined to the interventions",
+        "forest": "Burnt areas",
+        "agri": "Farm losses",
+        "label": "Item",
+        "unit": "Unit",
+        "outings": "Interventions",
+        "none": "No damage joined to the period's interventions."
+      }
+    },
+    "damages": {
+      "title": "Damage tables",
+      "intro": "The Office's forest (DGF_) and farm (DGA_) damages, joined to the interventions by NUM_SEQUENTIEL. An import replaces the lines of the same kind.",
+      "kind": "Kind",
+      "lines": "Lines",
+      "matched": "Joined to an intervention",
+      "years": "Joined years",
+      "forest": "Forest damage",
+      "agri": "Farm damage",
+      "file": "Damage file",
+      "fileHint": "CSV or Excel, as the Office exports it (DGF_… or DGA_…).",
+      "import": "Import the damages",
+      "done": "{{kept}} of {{read}} lines saved.",
+      "rejected": "Rejected: {{list}}.",
+      "reasons": {
+        "no_number": "no number",
+        "no_unit": "no unit",
+        "bad_value": "bad value"
+      }
     }
   },
   "record": {
@@ -8287,6 +8324,25 @@
         "team_note": "Team note",
         "pasted": "Pasted text",
         "team_voice": "Team voice message"
+      }
+    },
+    "damages": {
+      "title": "Damage: burnt areas and farm losses",
+      "hint": "Forest in hectares; cereals in hectares, hay and straw in bales.",
+      "kind": "Kind",
+      "place": "Place",
+      "crop": "Crop",
+      "value": "Amount",
+      "unit": "Unit",
+      "remove": "Remove",
+      "removeLine": "Remove line {{n}}",
+      "forest": "Forest",
+      "agri": "Farm",
+      "add": "Add a damage",
+      "units": {
+        "ha": "hectare",
+        "bale": "bale",
+        "bag": "bag"
       }
     }
   },
@@ -8417,5 +8473,28 @@
   "reporterRole": {
     "volunteer": "Approved volunteer",
     "doctor": "Approved doctor"
+  },
+  "references": {
+    "title": "Reference lists",
+    "intro": "The values of the forms and imports: vehicle types, agent status, farm losses, damage places… The central room adds, renames or retires an item; none is deleted.",
+    "lists": "Lists",
+    "search": "Search",
+    "code": "Code",
+    "label": "Label",
+    "labelFr": "French label",
+    "unit": "Unit",
+    "state": "State",
+    "updated": "Last change",
+    "actions": "Actions",
+    "active": "Active",
+    "retired": "Retired",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "retire": "Retire",
+    "restore": "Restore",
+    "newLabel": "New item",
+    "add": "Add",
+    "exportAll": "Export all lists"
   }
 }

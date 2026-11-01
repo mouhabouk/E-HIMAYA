@@ -270,6 +270,7 @@ def _assignment_out(
         back_at_unit_at=a.back_at_unit_at,
         crew_count=a.crew_count,
         consumables=a.consumables or {},
+        damages=a.damages or [],
         time_sources=a.time_sources or {},
         crew=(
             schemas.CrewRef(

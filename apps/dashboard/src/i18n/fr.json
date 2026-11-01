@@ -74,7 +74,8 @@
     "strategies": "Toutes les stratégies",
     "snacr": "Analyse et couverture des risques (SNACR)",
     "lessons": "Retours d'expérience",
-    "fieldAgents": "Agents et appareils"
+    "fieldAgents": "Agents et appareils",
+    "references": "Listes de référence"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -589,7 +590,14 @@
     "time_required": "Une heure atteinte par la mission ne peut pas être effacée.",
     "correction_reason_required": "Corriger une heure donnée par l'équipe demande un motif.",
     "year_has_dataset": "Cette année vient du fichier de l'Office ou de [SIM] : supprimez-la d'abord.",
-    "no_records": "Aucun relevé pour cette année."
+    "no_records": "Aucun relevé pour cette année.",
+    "damage_file_unknown": "Table des dégâts non reconnue : un fichier DGF_ (forêts) ou DGA_ (agriculture) est attendu.",
+    "reference_exists": "Cet élément existe déjà dans la liste.",
+    "damage_unit_invalid": "La surface forestière brûlée se saisit en hectares.",
+    "damage_crop_required": "Choisissez la culture ou le fourrage touché.",
+    "damage_out_of_range": "Valeur hors de la plage admise.",
+    "damage_place_unknown": "Lieu absent de la liste de référence.",
+    "damage_crop_unknown": "Culture absente de la liste de référence."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -8182,7 +8190,36 @@
       "rate": "Pour 1 000 hab.",
       "all": "Toutes les délégations ({{count}})",
       "fewer": "Moins",
-      "tables": "Tableaux de l’étude"
+      "tables": "Tableaux de l’étude",
+      "damages": {
+        "title": "Dégâts reliés aux interventions",
+        "forest": "Surfaces brûlées",
+        "agri": "Pertes agricoles",
+        "label": "Catégorie",
+        "unit": "Unité",
+        "outings": "Interventions",
+        "none": "Aucun dégât relié aux interventions de la période."
+      }
+    },
+    "damages": {
+      "title": "Tables des dégâts",
+      "intro": "Dégâts forestiers (DGF_) et agricoles (DGA_) du bureau des études, reliés aux interventions par NUM_SEQUENTIEL. Un import remplace les lignes du même type.",
+      "kind": "Nature",
+      "lines": "Lignes",
+      "matched": "Reliées à une intervention",
+      "years": "Années reliées",
+      "forest": "Dégâts forestiers",
+      "agri": "Dégâts agricoles",
+      "file": "Fichier des dégâts",
+      "fileHint": "CSV ou Excel, tel qu'exporté par le bureau (DGF_… ou DGA_…).",
+      "import": "Importer les dégâts",
+      "done": "{{kept}} lignes enregistrées sur {{read}}.",
+      "rejected": "Rejetées : {{list}}.",
+      "reasons": {
+        "no_number": "sans numéro",
+        "no_unit": "sans unité",
+        "bad_value": "valeur invalide"
+      }
     }
   },
   "record": {
@@ -8287,6 +8324,25 @@
         "team_note": "Note de l'équipe",
         "pasted": "Texte collé",
         "team_voice": "Message vocal de l'équipe"
+      }
+    },
+    "damages": {
+      "title": "Dégâts : surfaces brûlées et pertes agricoles",
+      "hint": "Forêts en hectares ; céréales en hectares, foin et paille en bottes.",
+      "kind": "Nature",
+      "place": "Lieu",
+      "crop": "Culture",
+      "value": "Quantité",
+      "unit": "Unité",
+      "remove": "Retirer",
+      "removeLine": "Retirer la ligne {{n}}",
+      "forest": "Forestier",
+      "agri": "Agricole",
+      "add": "Ajouter un dégât",
+      "units": {
+        "ha": "hectare",
+        "bale": "botte",
+        "bag": "sac"
       }
     }
   },
@@ -8417,5 +8473,28 @@
   "reporterRole": {
     "volunteer": "Bénévole agréé",
     "doctor": "Médecin agréé"
+  },
+  "references": {
+    "title": "Listes de référence",
+    "intro": "Les valeurs des formulaires et des imports : types d'engins, statut de l'agent, pertes agricoles, lieux des dégâts… La salle centrale ajoute, renomme ou retire un élément ; aucun n'est supprimé.",
+    "lists": "Listes",
+    "search": "Rechercher",
+    "code": "Code",
+    "label": "Libellé",
+    "labelFr": "Libellé français",
+    "unit": "Unité",
+    "state": "État",
+    "updated": "Dernière modification",
+    "actions": "Actions",
+    "active": "Actif",
+    "retired": "Retiré",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "retire": "Retirer",
+    "restore": "Rétablir",
+    "newLabel": "Nouvel élément",
+    "add": "Ajouter",
+    "exportAll": "Exporter toutes les listes"
   }
 }

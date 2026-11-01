@@ -1693,6 +1693,7 @@ erDiagram
         datetime back_at_unit_at
         smallint crew_count
         jsonb consumables
+        jsonb damages
         jsonb time_sources
         geography_point_4326 target_location
         text target_note
@@ -2473,6 +2474,33 @@ erDiagram
     geo__layer ||--o{ programme__programme : "layer_id"
     programme__programme ||--o{ programme__point : "programme_id"
     programme__programme ||--o{ programme__revision : "programme_id"
+```
+
+## ref
+
+```mermaid
+erDiagram
+    ref__item {
+        uuid id PK
+        text list_key FK
+        text code
+        text label_ar
+        text label_fr
+        text unit
+        integer sort
+        boolean active
+        text updated_by
+        text updated_by_name
+        datetime updated_at
+    }
+    ref__list {
+        text key PK
+        text name_ar
+        text name_fr
+        text name_en
+        smallint sort
+    }
+    ref__list ||--o{ ref__item : "list_key"
 ```
 
 ## register
@@ -3263,6 +3291,21 @@ erDiagram
         text created_by
         text created_by_name
         datetime created_at
+    }
+    snacr__damage {
+        bigint id PK
+        text kind
+        integer source_key
+        bigint seq_num
+        text place_code
+        text place_label
+        text crop_code
+        text crop_label
+        text unit
+        float value
+        text file_name
+        text imported_by
+        datetime imported_at
     }
     snacr__dataset {
         uuid id PK

@@ -11,6 +11,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fastapi import HTTPException, status
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import Action
@@ -165,12 +166,74 @@ async def milestone(
     return True
 
 
-def team_record(assignment: Assignment, crew_count: int | None, consumables: Mapping[Any, float] | None) -> None:
-    """The crew and what it used, as the team gives them; the room's corrections come later."""
+#: The largest credible surface of one line, in hectares (a bale or a bag is checked by the schema's ceiling).
+MAX_DAMAGE_HA = 100_000
+#: The reference lists a damage line takes its labels from.
+DAMAGE_PLACES = {"forest": "forest_place", "agri": "agri_place"}
+
+
+async def damage_lists(session: AsyncSession) -> schemas.DamageLists:
+    """The active places and crops of the reference lists, in their order."""
+    rows = await session.execute(
+        text(
+            "SELECT list_key, label_ar, unit FROM ref.item "
+            "WHERE active AND list_key IN ('forest_place', 'agri_place', 'crop_loss') ORDER BY list_key, sort, label_ar"
+        )
+    )
+    out = schemas.DamageLists(forest_place=[], agri_place=[], crop_loss=[])
+    for key, label, unit in rows:
+        if key == "crop_loss":
+            out.crop_loss.append(schemas.DamageCrop(label=label, unit=unit))
+        else:
+            getattr(out, key).append(label)
+    return out
+
+
+async def check_damages(session: AsyncSession, entries: list[schemas.DamageEntry]) -> list[dict[str, Any]]:
+    """The damage lines kept: a forest burnt is counted in hectares; a farm loss names its crop or fodder; the place
+    and the crop are items of the reference lists (an item the central room retired is refused)."""
+    rows = await session.execute(
+        text(
+            "SELECT list_key, label_ar FROM ref.item "
+            "WHERE active AND list_key IN ('forest_place', 'agri_place', 'crop_loss')"
+        )
+    )
+    known: dict[str, set[str]] = {}
+    for key, label in rows:
+        known.setdefault(key, set()).add(label)
+    kept: list[dict[str, Any]] = []
+    for e in entries:
+        if e.kind == "forest" and e.unit != "ha":
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "damage_unit_invalid")
+        if e.kind == "agri" and not e.crop:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "damage_crop_required")
+        if e.unit == "ha" and e.value > MAX_DAMAGE_HA:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "damage_out_of_range")
+        if e.place not in known.get(DAMAGE_PLACES[e.kind], set()):
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "damage_place_unknown")
+        if e.crop is not None and e.crop not in known.get("crop_loss", set()):
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "damage_crop_unknown")
+        kept.append(
+            {"kind": e.kind, "place": e.place, "crop": e.crop if e.kind == "agri" else None, "unit": e.unit,
+             "value": round(float(e.value), 4)}
+        )  # fmt: skip
+    return kept
+
+
+def team_record(
+    assignment: Assignment,
+    crew_count: int | None,
+    consumables: Mapping[Any, float] | None,
+    damages: list[dict[str, Any]] | None = None,
+) -> None:
+    """The crew, what it used and what the fire destroyed, as the team gives them; the room's corrections come
+    later."""
     if crew_count is not None:
         assignment.crew_count = crew_count
     if consumables is not None:
         assignment.consumables = check_consumables(consumables)
+    if damages is not None:
+        assignment.damages = damages
 
 
 async def save(
@@ -226,11 +289,19 @@ async def save(
     if assignment.released_at is not None and assignment.on_scene_at is not None:
         assignment.released_at = max(assignment.released_at, assignment.on_scene_at)
     crew_before, used_before = assignment.crew_count, dict(assignment.consumables or {})
+    damages_before = list(assignment.damages or [])
     if "crew_count" in body.model_fields_set:
         assignment.crew_count = body.crew_count
     if body.consumables is not None:
         assignment.consumables = check_consumables(body.consumables)
-    if not changed and crew_before == assignment.crew_count and used_before == assignment.consumables:
+    if body.damages is not None:
+        assignment.damages = await check_damages(session, body.damages)
+    if (
+        not changed
+        and crew_before == assignment.crew_count
+        and used_before == assignment.consumables
+        and damages_before == list(assignment.damages or [])
+    ):
         return assignment
     _timeline(
         session,
@@ -240,6 +311,7 @@ async def save(
         times={f: {"from": _iso(before[f]), "to": _iso(v)} for f, v in changed.items()},
         crew_count=assignment.crew_count,
         consumables=assignment.consumables,
+        damages=assignment.damages,
         reason=(body.reason or "").strip() or None,
     )
     await session.flush()
