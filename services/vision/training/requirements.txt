@@ -1,9 +1,9 @@
 # Offline training of the fire/smoke detector (never installed in the service image). Versions used for v1.0.0.
 # PyTorch CPU (or CUDA) build: conda-forge pytorch=2.14.1=cpu* or the CPU wheel index of pytorch.org.
-torch==2.14.1
-torchvision==0.29.1
-transformers==5.20.2
-onnxruntime==1.31.0
+torch==2.15.0
+torchvision==0.29.2
+transformers==5.22.1
+onnxruntime==1.31.1
 onnx==1.23.2
 numpy==2.5.4
 pillow==13.0.0
