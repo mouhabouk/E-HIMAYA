@@ -1,6 +1,6 @@
 # Download and conversion of the models (Docker target "models", CI). Never installed in the runtime image.
 # torch comes from the CPU-only index: pip install --extra-index-url https://download.pytorch.org/whl/cpu
-huggingface-hub==2.3.0
+huggingface-hub==2.4.0
 transformers==5.20.2
 torch==2.14.1
 sentencepiece==0.2.2
