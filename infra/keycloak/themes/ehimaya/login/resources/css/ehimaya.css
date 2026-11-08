@@ -107,10 +107,21 @@ body::before {
   pointer-events: none;
 }
 
-/* The name, centred above the card (the emblem itself is in the bubbles), in place of the realm's name. */
+/* Above the card, centred: the Office's original emblem in a gold ring, on the right of the name «ء-حماية»
+   (Yamen, 2026-11-08), then the line «سلامتكم أولويتنا» in the page's language. The realm's name is hidden. */
+#kc-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #kc-header-wrapper {
   display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
   justify-content: center;
+  gap: 1.25rem;
   font-size: 0 !important;
   color: transparent !important;
   padding: 0 !important;
@@ -118,10 +129,40 @@ body::before {
 
 #kc-header-wrapper::before {
   content: "";
-  width: min(300px, 70vw);
-  aspect-ratio: 611 / 274;
+  flex: none;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #ffffff url("../img/logo.png") center / 74% no-repeat;
+  border: 3px solid var(--ehimaya-gold);
+  box-shadow: 0 0 0 4px rgb(11 26 63 / 85%), 0 0 0 5px rgb(201 162 74 / 55%), 0 8px 22px rgb(0 0 0 / 45%);
+}
+
+#kc-header-wrapper::after {
+  content: "";
+  flex: none;
+  width: 170px;
+  aspect-ratio: 330 / 196;
   filter: drop-shadow(0 6px 18px rgb(0 0 0 / 45%));
   background: url("../img/wordmark.png") center / contain no-repeat;
+}
+
+#kc-header::after {
+  content: "سلامتكم أولويتنا";
+  margin-block-start: 0.6rem;
+  color: var(--ehimaya-gold-light);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html:lang(fr) #kc-header::after {
+  content: "Votre sécurité, notre priorité";
+}
+
+html:lang(en) #kc-header::after {
+  content: "Your safety, our priority";
 }
 
 .pf-v5-c-login__header {
@@ -212,9 +253,32 @@ a:focus-visible {
   color: var(--ehimaya-gold-light);
 }
 
-/* On a phone the card takes the width: no frame across it. */
+/* On a phone: no frame, a smaller mark, and the card in the middle with the same margin left and right. */
 @media (max-width: 600px) {
   body::before {
     display: none;
+  }
+
+  #kc-header-wrapper {
+    gap: 0.85rem;
+  }
+
+  #kc-header-wrapper::before {
+    width: 72px;
+    height: 72px;
+  }
+
+  #kc-header-wrapper::after {
+    width: 128px;
+  }
+
+  .pf-v5-c-login__container {
+    padding-inline: 16px;
+  }
+
+  .pf-v5-c-login__main {
+    margin-inline: auto;
+    width: 100%;
+    border-radius: 12px;
   }
 }

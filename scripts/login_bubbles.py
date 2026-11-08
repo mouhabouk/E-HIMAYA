@@ -15,24 +15,16 @@ IMG = Path(__file__).resolve().parents[1] / "infra/keycloak/themes/ehimaya/login
 
 # (cx, cy, radius, opacity of the emblem, float period in s, phase in s) on a 1600 x 1000 canvas.
 BUBBLES = [
-    (140, 170, 150, 0.22, 19, 0),
-    (420, 90, 52, 0.30, 14, 2),
-    (330, 420, 86, 0.20, 17, 5),
-    (110, 640, 70, 0.26, 15, 1),
-    (300, 850, 175, 0.18, 22, 3),
-    (560, 960, 60, 0.28, 16, 6),
-    (1460, 140, 120, 0.22, 18, 4),
-    (1210, 70, 44, 0.32, 13, 1),
-    (1300, 360, 76, 0.22, 16, 0),
-    (1520, 560, 96, 0.20, 20, 2),
-    (1240, 760, 190, 0.17, 23, 5),
-    (1560, 930, 58, 0.28, 15, 3),
-    (980, 980, 46, 0.30, 14, 2),
-    (640, 40, 34, 0.34, 12, 4),
-    (930, 30, 28, 0.34, 12, 0),
-    (40, 430, 38, 0.30, 13, 7),
-    (1080, 560, 30, 0.28, 12, 3),
-    (520, 600, 26, 0.28, 12, 6),
+    # Left side, mirrored on the right: a few bubbles framing the card, none under it.
+    (170, 200, 132, 0.20, 21, 0),
+    (380, 640, 64, 0.26, 16, 4),
+    (120, 870, 92, 0.22, 19, 2),
+    (480, 120, 34, 0.30, 13, 6),
+    (1430, 800, 140, 0.20, 22, 3),
+    (1225, 360, 68, 0.26, 17, 1),
+    (1490, 160, 88, 0.22, 18, 5),
+    (1120, 905, 36, 0.30, 14, 2),
+    (800, 960, 26, 0.30, 12, 7),
 ]
 FADE = 0.62  # all emblems are kept faint: a background, not a pattern
 
@@ -59,7 +51,11 @@ HEAD = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preser
 def main() -> None:
     mark = Image.open(IMG / "logo-horizontal.png").convert("RGBA")
     name = mark.crop((0, 0, 611, mark.height))
-    name.crop(name.getbbox()).save(IMG / "wordmark.png", optimize=True)
+    name = name.crop(name.getbbox())
+    # The name and E-HIMAYA only: the line under them is set as text by the theme, in the page's language.
+    name = name.crop((0, 0, name.width, 206))
+    solid = name.getchannel("A").point(lambda a: 255 if a > 60 else 0)  # faint glow pixels do not count
+    name.crop(solid.getbbox()).save(IMG / "wordmark.png", optimize=True)
     emblem = mark.crop((611, 0, mark.width, mark.height))
     emblem = emblem.crop(emblem.getbbox()).resize((240, 240), Image.Resampling.LANCZOS)
     buf = io.BytesIO()
