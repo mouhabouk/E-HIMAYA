@@ -624,6 +624,18 @@ docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml --
 قواعد التنبيه في `infra/monitoring/alerts.yml` (منها `WalArchiveLag` و `BaseBackupMissing`)، ووجهة الإشعار في
 `infra/monitoring/alertmanager.yml`.
 
+### 11.7 السجلات وسجل التغييرات (`docs/phase-h/design-h5.md`)
+
+```bash
+echo 'LOKI_URL=http://loki:3100' >> .env
+docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml --profile monitoring --profile logs up -d
+```
+
+Loki يحفظ سجلات كل الحاويات 30 يوما على الشبكة الداخلية فقط (لا منفذ منشور)، وAlloy يقرؤها عبر مقبس Docker للقراءة
+فقط. نافذة «سجلات المنظومة» في اللوحة لمدير النظام ومسؤول الأمن الوطنيين؛ دون `LOKI_URL` تقول النافذة إن الجمع غير
+مشغّل. سجل التغييرات (`audit.change`) لا يحتاج إعدادا: ينشئه الترحيل 0097. التحديث بعد ذلك بإصدار موقّع:
+`scripts/deploy.sh vX.Y.Z` (`docs/cicd.md`).
+
 ## 12. الهاتف والرسائل القصيرة والإشعارات
 
 كل قناة اختيارية: دون إعداداتها تُسجَّل عمليات الإرسال «متجاوزة» وتواصل القنوات الأخرى عملها.
