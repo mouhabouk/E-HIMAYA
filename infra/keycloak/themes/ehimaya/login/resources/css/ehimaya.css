@@ -104,7 +104,7 @@ body::before {
   inset: 14px;
   border: 1px solid rgb(201 162 74 / 60%);
   border-radius: 6px;
-  box-shadow: inset 0 0 0 3px rgb(11 26 63 / 60%), inset 0 0 0 4px rgb(201 162 74 / 25%);
+  box-shadow: inset 0 0 0 3px rgb(0 0 0 / 30%), inset 0 0 0 4px rgb(201 162 74 / 25%);
   pointer-events: none;
 }
 
@@ -389,8 +389,29 @@ a:focus-visible {
 
 /* On a phone: a closer gold frame, a smaller mark, and the card in the middle with the same margin left and right. */
 @media (max-width: 600px) {
+  /* The frame runs from the top of the page to below the card (Yamen, 2026-11-08), clear of the phone's own
+     buttons at the bottom, instead of staying on the screen while the card scrolls past it. */
   body::before {
-    inset: 6px;
+    display: none;
+  }
+
+  .pf-v5-c-login {
+    min-height: 100dvh;
+  }
+
+  .pf-v5-c-login::after {
+    content: "";
+    position: absolute;
+    inset: 6px 6px calc(10px + env(safe-area-inset-bottom, 0px));
+    z-index: -1;
+    border: 1px solid rgb(201 162 74 / 60%);
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 3px rgb(0 0 0 / 30%), inset 0 0 0 4px rgb(201 162 74 / 25%);
+    pointer-events: none;
+  }
+
+  .pf-v5-c-login__container {
+    padding-block-end: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   #kc-header::before {
