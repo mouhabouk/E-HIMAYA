@@ -80,6 +80,7 @@ describe("role gating (contract §5)", () => {
 
   it("opens the dashboard to an institutions auditor without report roles", () => {
     expect(hasDashboardAccess(["org_auditor"])).toBe(true);
+    expect(hasDashboardAccess(["medical_coordinator"])).toBe(true);
     expect(hasReadAccess(["org_auditor"])).toBe(false);
     expect(hasDashboardAccess(["org_admin", "offline_access"])).toBe(false);
   });

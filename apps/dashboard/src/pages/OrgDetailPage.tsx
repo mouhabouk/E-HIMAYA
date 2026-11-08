@@ -999,104 +999,108 @@ export function OrgDetailPage() {
         )}
       </section>
 
-      <section className="card" aria-labelledby="sec-org-maintenance">
-        <h2 id="sec-org-maintenance">
-          {t("orgs.detail.maintenanceLog")} (
-          {fmt.number(org.maintenance?.length ?? 0)})
-        </h2>
-        {(org.maintenance?.length ?? 0) === 0 ? (
-          <p className="muted">{t("orgs.detail.noMaintenance")}</p>
-        ) : (
-          <div className="table-wrap">
-            <table className="table">
-              <caption className="visually-hidden">
-                {t("orgs.detail.maintenanceLog")}
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">{t("orgs.detail.maintenanceDone")}</th>
-                  <th scope="col">{t("orgs.detail.equipmentKindLabel")}</th>
-                  <th scope="col">{t("orgs.detail.maintenanceNote")}</th>
-                  <th scope="col">{t("orgs.detail.maintenanceBy")}</th>
-                  <th scope="col">{t("orgs.detail.maintenancePhoto")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {org.maintenance?.map((m) => {
-                  const item = org.equipment.find(
-                    (e) => e.id === m.equipment_id,
-                  );
-                  const version = m.photo_version;
-                  return (
-                    <tr key={m.id}>
-                      <th scope="row">{formatDay(fmt, m.done_on, "—")}</th>
-                      <td>{item ? equipmentKindLabel(t, item.kind) : "—"}</td>
-                      <td dir="auto">{m.note ?? "—"}</td>
-                      <td>{m.recorded_by ?? "—"}</td>
-                      <td>
-                        {m.document_id && version !== null ? (
-                          <DownloadButton
-                            label={t("orgs.detail.maintenancePhotoOf", {
-                              day: formatDay(fmt, m.done_on, "—"),
-                            })}
-                            fetchLink={() =>
-                              api.orgDocumentDownload(
-                                org.id,
-                                m.document_id ?? "",
-                                version,
-                              )
-                            }
-                          />
-                        ) : m.document_id ? (
-                          <span className="tag tag--level-warn">
-                            {t("orgs.detail.maintenancePhotoChecking")}
-                          </span>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      {!org.restricted && (
+        <section className="card" aria-labelledby="sec-org-maintenance">
+          <h2 id="sec-org-maintenance">
+            {t("orgs.detail.maintenanceLog")} (
+            {fmt.number(org.maintenance?.length ?? 0)})
+          </h2>
+          {(org.maintenance?.length ?? 0) === 0 ? (
+            <p className="muted">{t("orgs.detail.noMaintenance")}</p>
+          ) : (
+            <div className="table-wrap">
+              <table className="table">
+                <caption className="visually-hidden">
+                  {t("orgs.detail.maintenanceLog")}
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{t("orgs.detail.maintenanceDone")}</th>
+                    <th scope="col">{t("orgs.detail.equipmentKindLabel")}</th>
+                    <th scope="col">{t("orgs.detail.maintenanceNote")}</th>
+                    <th scope="col">{t("orgs.detail.maintenanceBy")}</th>
+                    <th scope="col">{t("orgs.detail.maintenancePhoto")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {org.maintenance?.map((m) => {
+                    const item = org.equipment.find(
+                      (e) => e.id === m.equipment_id,
+                    );
+                    const version = m.photo_version;
+                    return (
+                      <tr key={m.id}>
+                        <th scope="row">{formatDay(fmt, m.done_on, "—")}</th>
+                        <td>{item ? equipmentKindLabel(t, item.kind) : "—"}</td>
+                        <td dir="auto">{m.note ?? "—"}</td>
+                        <td>{m.recorded_by ?? "—"}</td>
+                        <td>
+                          {m.document_id && version !== null ? (
+                            <DownloadButton
+                              label={t("orgs.detail.maintenancePhotoOf", {
+                                day: formatDay(fmt, m.done_on, "—"),
+                              })}
+                              fetchLink={() =>
+                                api.orgDocumentDownload(
+                                  org.id,
+                                  m.document_id ?? "",
+                                  version,
+                                )
+                              }
+                            />
+                          ) : m.document_id ? (
+                            <span className="tag tag--level-warn">
+                              {t("orgs.detail.maintenancePhotoChecking")}
+                            </span>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
 
-      <section className="card" aria-labelledby="sec-org-activities">
-        <h2 id="sec-org-activities">
-          {t("orgs.detail.activities")} (
-          {fmt.number(org.activities?.length ?? 0)})
-        </h2>
-        {(org.activities?.length ?? 0) === 0 ? (
-          <p className="muted">{t("orgs.detail.noActivities")}</p>
-        ) : (
-          <ul className="org-activities">
-            {org.activities?.map((a) => (
-              <li key={a.id}>
-                <span className={`tag tag--activity-${a.kind}`}>
-                  {t(`orgs.activity.${a.kind}`)}
-                </span>{" "}
-                <strong dir="auto">{a.title}</strong>
-                <span className="muted">
-                  {" · "}
-                  {formatDay(fmt, a.starts_on, "—")}
-                  {a.ends_on && ` – ${formatDay(fmt, a.ends_on, "—")}`}
-                  {a.participants !== null &&
-                    ` · ${t("orgs.activity.participants", { count: a.participants })}`}
-                  {a.created_by && ` · ${a.created_by}`}
-                </span>
-                {a.notes && (
-                  <p dir="auto" className="muted">
-                    {a.notes}
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {!org.restricted && (
+        <section className="card" aria-labelledby="sec-org-activities">
+          <h2 id="sec-org-activities">
+            {t("orgs.detail.activities")} (
+            {fmt.number(org.activities?.length ?? 0)})
+          </h2>
+          {(org.activities?.length ?? 0) === 0 ? (
+            <p className="muted">{t("orgs.detail.noActivities")}</p>
+          ) : (
+            <ul className="org-activities">
+              {org.activities?.map((a) => (
+                <li key={a.id}>
+                  <span className={`tag tag--activity-${a.kind}`}>
+                    {t(`orgs.activity.${a.kind}`)}
+                  </span>{" "}
+                  <strong dir="auto">{a.title}</strong>
+                  <span className="muted">
+                    {" · "}
+                    {formatDay(fmt, a.starts_on, "—")}
+                    {a.ends_on && ` – ${formatDay(fmt, a.ends_on, "—")}`}
+                    {a.participants !== null &&
+                      ` · ${t("orgs.activity.participants", { count: a.participants })}`}
+                    {a.created_by && ` · ${a.created_by}`}
+                  </span>
+                  {a.notes && (
+                    <p dir="auto" className="muted">
+                      {a.notes}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <section className="card" aria-labelledby="sec-org-docs">
         <h2 id="sec-org-docs">
@@ -1113,88 +1117,92 @@ export function OrgDetailPage() {
         )}
       </section>
 
-      <section className="card" aria-labelledby="sec-org-certs">
-        <h2 id="sec-org-certs">
-          {t("orgs.detail.certificates")} ({fmt.number(org.certificates.length)}
-          )
-        </h2>
-        {org.certificates.length === 0 ? (
-          <p className="muted">{t("orgs.detail.noCertificates")}</p>
-        ) : (
-          <ul className="certs">
-            {org.certificates.map((cert) => (
-              <li key={cert.id} className="card cert">
-                <p className="cert__head">
-                  <span className="code" dir="ltr">
-                    {cert.code}
-                  </span>
-                  <CertificateChip status={cert.status} />
-                  {cert.superseded && (
-                    <span className="tag">{t("orgs.detail.superseded")}</span>
+      {!org.restricted && (
+        <section className="card" aria-labelledby="sec-org-certs">
+          <h2 id="sec-org-certs">
+            {t("orgs.detail.certificates")} (
+            {fmt.number(org.certificates.length)})
+          </h2>
+          {org.certificates.length === 0 ? (
+            <p className="muted">{t("orgs.detail.noCertificates")}</p>
+          ) : (
+            <ul className="certs">
+              {org.certificates.map((cert) => (
+                <li key={cert.id} className="card cert">
+                  <p className="cert__head">
+                    <span className="code" dir="ltr">
+                      {cert.code}
+                    </span>
+                    <CertificateChip status={cert.status} />
+                    {cert.superseded && (
+                      <span className="tag">{t("orgs.detail.superseded")}</span>
+                    )}
+                  </p>
+                  <dl className="fields">
+                    <dt>{t("orgs.detail.validUntilLabel")}</dt>
+                    <dd>{formatDay(fmt, cert.valid_until, "—")}</dd>
+                    <dt>{t("orgs.detail.submittedAt")}</dt>
+                    <dd>
+                      {cert.submitted_at
+                        ? fmt.dateTime(cert.submitted_at)
+                        : "—"}
+                    </dd>
+                    <dt>{t("orgs.detail.reviewedAt")}</dt>
+                    <dd>
+                      {cert.reviewed_at ? fmt.dateTime(cert.reviewed_at) : "—"}
+                    </dd>
+                    {cert.review_reason && (
+                      <>
+                        <dt>{t("orgs.detail.reviewReason")}</dt>
+                        <dd dir="auto">{cert.review_reason}</dd>
+                      </>
+                    )}
+                    <dt>{t("orgs.detail.fingerprint")}</dt>
+                    <dd className="hash" dir="ltr">
+                      {cert.fingerprint ?? "—"}
+                    </dd>
+                    <dt>{t("orgs.detail.pdfSha256")}</dt>
+                    <dd className="hash" dir="ltr">
+                      {cert.pdf_sha256 ?? "—"}
+                    </dd>
+                    {cert.verify_url && cert.status !== "draft" && (
+                      <>
+                        <dt>{t("orgs.detail.verify")}</dt>
+                        <dd>
+                          <a
+                            href={cert.verify_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            dir="ltr"
+                          >
+                            {cert.verify_url}
+                          </a>
+                        </dd>
+                      </>
+                    )}
+                  </dl>
+                  <DownloadButton
+                    label={`${t("orgs.detail.pdf")} ${cert.code}`}
+                    fetchLink={() => api.certificatePdf(org.id, cert.id)}
+                  />
+                  {cert.needs_update != null && (
+                    <CertificateChanges changes={cert.changes ?? []} />
                   )}
-                </p>
-                <dl className="fields">
-                  <dt>{t("orgs.detail.validUntilLabel")}</dt>
-                  <dd>{formatDay(fmt, cert.valid_until, "—")}</dd>
-                  <dt>{t("orgs.detail.submittedAt")}</dt>
-                  <dd>
-                    {cert.submitted_at ? fmt.dateTime(cert.submitted_at) : "—"}
-                  </dd>
-                  <dt>{t("orgs.detail.reviewedAt")}</dt>
-                  <dd>
-                    {cert.reviewed_at ? fmt.dateTime(cert.reviewed_at) : "—"}
-                  </dd>
-                  {cert.review_reason && (
+                  {(cert.stamps?.length ?? 0) > 0 && (
                     <>
-                      <dt>{t("orgs.detail.reviewReason")}</dt>
-                      <dd dir="auto">{cert.review_reason}</dd>
+                      <h3>{t("orgs.counter.stampsTitle")}</h3>
+                      <CertificateStamps
+                        certId={cert.id}
+                        stamps={cert.stamps ?? []}
+                      />
                     </>
                   )}
-                  <dt>{t("orgs.detail.fingerprint")}</dt>
-                  <dd className="hash" dir="ltr">
-                    {cert.fingerprint ?? "—"}
-                  </dd>
-                  <dt>{t("orgs.detail.pdfSha256")}</dt>
-                  <dd className="hash" dir="ltr">
-                    {cert.pdf_sha256 ?? "—"}
-                  </dd>
-                  {cert.verify_url && cert.status !== "draft" && (
-                    <>
-                      <dt>{t("orgs.detail.verify")}</dt>
-                      <dd>
-                        <a
-                          href={cert.verify_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          dir="ltr"
-                        >
-                          {cert.verify_url}
-                        </a>
-                      </dd>
-                    </>
-                  )}
-                </dl>
-                <DownloadButton
-                  label={`${t("orgs.detail.pdf")} ${cert.code}`}
-                  fetchLink={() => api.certificatePdf(org.id, cert.id)}
-                />
-                {cert.needs_update != null && (
-                  <CertificateChanges changes={cert.changes ?? []} />
-                )}
-                {(cert.stamps?.length ?? 0) > 0 && (
-                  <>
-                    <h3>{t("orgs.counter.stampsTitle")}</h3>
-                    <CertificateStamps
-                      certId={cert.id}
-                      stamps={cert.stamps ?? []}
-                    />
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       {org.restricted ? (
         <p
@@ -1214,44 +1222,46 @@ export function OrgDetailPage() {
       )}
 
       <div className="detail__grid">
-        <section className="card" aria-labelledby="sec-org-members">
-          <h2 id="sec-org-members">
-            {t("orgs.detail.members")} ({fmt.number(org.members.length)})
-          </h2>
-          {org.members.length === 0 ? (
-            <p className="muted">{t("orgs.detail.noMembers")}</p>
-          ) : (
-            <table className="table">
-              <caption className="visually-hidden">
-                {t("orgs.detail.members")}
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">{t("orgs.detail.name")}</th>
-                  <th scope="col">{t("orgs.detail.email")}</th>
-                  <th scope="col">{t("orgs.detail.memberRoleLabel")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {org.members.map((m, i) => (
-                  <tr key={`${m.email ?? ""}-${i}`}>
-                    <td dir="auto">
-                      {m.display_name ?? t("common.notAvailable")}
-                    </td>
-                    <td>
-                      <Email email={m.email} />
-                    </td>
-                    <td>
-                      {isOneOf(MEMBER_ROLES, m.role)
-                        ? t(`orgs.memberRole.${m.role}`)
-                        : m.role}
-                    </td>
+        {!org.restricted && (
+          <section className="card" aria-labelledby="sec-org-members">
+            <h2 id="sec-org-members">
+              {t("orgs.detail.members")} ({fmt.number(org.members.length)})
+            </h2>
+            {org.members.length === 0 ? (
+              <p className="muted">{t("orgs.detail.noMembers")}</p>
+            ) : (
+              <table className="table">
+                <caption className="visually-hidden">
+                  {t("orgs.detail.members")}
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{t("orgs.detail.name")}</th>
+                    <th scope="col">{t("orgs.detail.email")}</th>
+                    <th scope="col">{t("orgs.detail.memberRoleLabel")}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
+                </thead>
+                <tbody>
+                  {org.members.map((m, i) => (
+                    <tr key={`${m.email ?? ""}-${i}`}>
+                      <td dir="auto">
+                        {m.display_name ?? t("common.notAvailable")}
+                      </td>
+                      <td>
+                        <Email email={m.email} />
+                      </td>
+                      <td>
+                        {isOneOf(MEMBER_ROLES, m.role)
+                          ? t(`orgs.memberRole.${m.role}`)
+                          : m.role}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </section>
+        )}
 
         <section className="card" aria-labelledby="sec-org-reports">
           <h2 id="sec-org-reports">{t("orgs.detail.reports")}</h2>

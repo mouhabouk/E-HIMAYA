@@ -366,6 +366,11 @@ describe("OrgDetailPage", () => {
       /service de prévention/,
     );
     expect(orgPreventionVisits).not.toHaveBeenCalled();
+    // No empty, misleading sections: members, certificates, maintenance and drills are not shown at all.
+    for (const id of ["sec-org-members", "sec-org-certs", "sec-org-maintenance", "sec-org-activities"]) {
+      expect(document.getElementById(id)).toBeNull();
+    }
+    expect(document.getElementById("sec-org-docs")).not.toBeNull();
   });
 
   it("lets an auditor approve a pending registration after confirmation", async () => {

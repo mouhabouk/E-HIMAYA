@@ -134,6 +134,12 @@ describe("prevention tab (F-POR-08)", () => {
     expect(screen.queryByRole("button", { name: "Ask for a prevention visit" })).not.toBeInTheDocument();
   });
 
+  it("tells a plain member that the records stay with the safety officer", async () => {
+    open({ my_role: "member" }, { [VISITS]: { status: 403, body: { detail: "prevention_only" } } });
+    expect(await screen.findByTestId("prevention-only")).toHaveTextContent(/for the safety officer/);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
   it("shows the decision, the comparison, the certificate and answers a reservation", async () => {
     const { calls } = open({}, {
       [VISITS]: { body: [DECIDED] },

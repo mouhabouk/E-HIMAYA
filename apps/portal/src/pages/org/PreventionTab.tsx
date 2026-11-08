@@ -4,7 +4,8 @@ import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "../../components/Badges";
 import { CertificateChanges } from "../../components/CertificateExtras";
-import { ErrorBox, Loading } from "../../components/Feedback";
+import { ErrorBox, Loading, Notice } from "../../components/Feedback";
+import { isApiError } from "../../lib/api";
 import { useServices } from "../../context/services";
 import { useFormat } from "../../lib/hooks";
 import { openPresigned } from "../../lib/openUrl";
@@ -397,6 +398,13 @@ export function PreventionTab() {
   const list = useQuery({ queryKey: queryKeys.visits(org.id), queryFn: ({ signal }) => api.visits(org.id, signal) });
 
   if (list.isPending) return <Loading />;
+  // A plain member: the records stay with the safety officer, the editors and the administrators.
+  if (isApiError(list.error) && list.error.code === "prevention_only")
+    return (
+      <Notice>
+        <span data-testid="prevention-only">{t("errors.prevention_only")}</span>
+      </Notice>
+    );
   if (list.isError) return <ErrorBox error={list.error} onRetry={() => void list.refetch()} />;
   const hasOpen = list.data.some((v) => OPEN.includes(v.status));
 
