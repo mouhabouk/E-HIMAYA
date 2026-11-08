@@ -801,7 +801,7 @@ jobs:
           # Every realm, the administration console included, shows the e-Himaya sign-in page with its stylesheet.
           grep -q 'realm master: e-Himaya sign-in page' sync.log
           for realm in master ehimaya-staff ehimaya-public; do
-            page=$(curl -s "http://localhost:8080/realms/$realm/protocol/openid-connect/auth?client_id=account-console&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Frealms%2F$realm%2Faccount%2F&scope=openid")
+            page=$(curl -s "http://localhost:8080/realms/$realm/protocol/openid-connect/auth?client_id=account-console&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Frealms%2F$realm%2Faccount%2F&scope=openid&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256")
             grep -q 'resources/[^"]*/login/ehimaya/css/ehimaya.css' <<<"$page" || { echo "realm $realm: no e-Himaya theme"; exit 1; }
           done
       - name: Certificate PDFs render in the API image (Arabic shaping, fonts)
