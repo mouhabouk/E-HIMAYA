@@ -1,6 +1,6 @@
 # حوصلة الاستئناف: ء-حماية (e-Himaya)
 
-آخر تحديث: 2026-11-01، بعد المرحلة G (المرحلة 5 من خطة المراحل الخمس). هذه الوثيقة تكفي جلسة جديدة لتواصل العمل
+آخر تحديث: 2026-11-08، بعد المرحلة H1 والسجلات وسجل التغييرات وCI/CD وشاشة الدخول. هذه الوثيقة تكفي جلسة جديدة لتواصل العمل
 دون سؤالك عمّا سبق. انسخ «نص البداية» في آخرها والصقه في أول رسالة لأي جلسة جديدة.
 
 ## 1. المشروع في سطور
@@ -10,12 +10,13 @@
 - **المستودع:** `github.com/mouhabouk/E-HIMAYA` (كان سابقا عند `YaamenMegdiche/E-HIMAYA`). الفرع الرئيسي `main`.
 - **فرع العمل:** `claude/project-thread-xq2ez8`. بعد كل دمج يُعاد الفرع من `main` ويُفتح طلب دمج جديد.
 - **المكونات:**
-  - `services/api`: الخلفية FastAPI، PostgreSQL 17 + PostGIS + pgvector، Alembic (آخر ترحيل `0094_camera_bridge`).
+  - `services/api`: الخلفية FastAPI، PostgreSQL 17 + PostGIS + pgvector، Alembic (آخر ترحيل `0097_change_journal`).
   - `apps/dashboard`: اللوحة المركزية React + Vite (العربية والفرنسية والإنجليزية).
   - `apps/portal`: بوابة المؤسسات React.
   - `apps/mobile`: تطبيق Flutter واحد فيه تطبيق المواطن وتطبيق الأعوان (الحزمة `ehimaya`).
   - `services/ai`, `services/vision`, `services/notify-sim`: الذكاء الاصطناعي المحلي، كشف الحرائق والدخان، محاكي الإشعارات.
-  - `infra/`: Docker Compose، Keycloak (فضاءا `ehimaya-public` و `ehimaya-staff`)، Caddy، NATS، SeaweedFS، Asterisk، MediaMTX.
+  - `infra/`: Docker Compose، Keycloak (فضاءا `ehimaya-public` و `ehimaya-staff`)، Caddy، NATS، SeaweedFS، Asterisk، MediaMTX، Prometheus، Loki وAlloy (ملف التعريف `logs`).
+  - `.github/workflows/`: CI لكل دفعة، و`release.yml` للإصدار والتوقيع والنشر (`docs/cicd.md`)، و`scripts/deploy.sh` على الخادم.
   - `docs/`: تقارير المراحل HTML، `versions.md`، `backlog.md`، `design-system.md`، مولّدات الوثائق في `docs/deliverables`.
 
 ## 2. القواعد الدائمة (من يامن)
@@ -40,24 +41,22 @@
 | المرحلة | المحتوى | الحالة |
 |---|---|---|
 | 1 إلى 10، ثم P2..P5، UI، L1..L5، R، PL، M، N، S، S2، F، D، AI5 | المنظومة كاملة (التفاصيل في `docs/versions.md` البنود 1 إلى 40 وتقارير المراحل) | مدمجة |
-| خطة المراحل الخمس: 1 إلى 3 | مراجعة الملاحظات قبل التنفيذ، دراسات SNACR بصيغة الديوان (PR #154)، جداول الأضرار والقوائم المرجعية والمساحات المحروقة في سجل المهمة (PR #155) | مدمجة |
-| 4 (T) | الوثائق والأمن: BPMN، الملف التقني والأمني، قاموس البيانات 2.0، كراس الشروط، التحصين، عرض اللجنة (PR #147) | مدمجة |
-| 5 (G) | صلاحيات المدير على كل الأسطح، رسالة المدير، نقل الروابط بين المحاور، النموذج العلائقي، المراجعة العامة والنصائح | **طلب الدمج #156 مفتوح، بانتظار CI ودمج يامن** |
+| خطة المراحل الخمس (1 إلى 3، T، G) | الدراسات، الوثائق والأمن، صلاحيات المدير على كل الأسطح | مدمجة |
+| ما بعد G (البنود 43 إلى 50) | كشف النار على مرحلتين، جسر الكاميرات الحرارية، الصوت في كل مرحلة، فصل الوقاية عن القاعة، إصلاحات التنصيب | مدمجة (#158 إلى #174) |
+| H1 | فضاء التصرف في الأفراد: الملف الإداري، الغيابات، الموجود العام، دور `personnel_officer` (الترحيل 0096) | مدمجة (#175) |
+| H5 وCI/CD | السجلات (Loki وAlloy، نافذة «سجلات المنظومة»)، سجل التغييرات mouchard (`audit.change`، الترحيل 0097، نافذة مدير النظام وقسم مدير المؤسسة في البوابة)، الإصدار الموقّع والنشر بالرجوع الآلي، شاشة الدخول (كحلي وذهبي، الشعار فقاعات) | **طلب الدمج #176 مفتوح، بانتظار CI ودمج يامن** |
+| H2 إلى H4 | برامج التوزيع، نافذة الوضعيات واقتراح التدخل، برنامج العون في التطبيق والتقارير (`docs/phase-h/design-h.md` §8) | معتمدة، لم تبدأ |
 
-### المرحلة G بالتفصيل (للمتابعة)
+### طلب الدمج #176 بالتفصيل (للمتابعة)
 
-- **الخلفية:** `app/modules/features/` (catalogue و registry و service و router و schemas)، `app/core/security.py`
-  (`feature_guard`)، `app/main.py`، `app/modules/settings/domain.py` (`app.announcement`)، `ops/crew_router.py`
-  (`/crew/me` يعيد `hidden_features` و `announcement`)، الترحيل `0092_feature_everyone`، الاختبارات `test_features_surfaces.py`.
-- **اللوحة:** `PermissionsPage.tsx` (الأسطح والهدف «الجميع»)، `MenuOrderPage.tsx` و `lib/menuOrder.ts` (النقل بين المحاور)،
-  `components/Announcement.tsx` (الشريط والبطاقة في الإعدادات).
-- **الهاتف:** `lib/staff/*` (الأزرار حسب `shows()`، `AnnouncementStrip`، إعادة قراءة `/me` كل رابع مزامنة)،
-  `lib/features/admin/app_features.dart` (تطبيق المواطن).
-- **البوابة:** `lib/hooks.ts` (`useAdminFeatures`)، `components/AnnouncementBanner.tsx`، `pages/org/OrgWorkspace.tsx`.
-- **الوثائق:** `docs/phase-g-report.html`، `docs/data-model/` (DBML و draw.io)، `docs/deliverables/data-model/`
-  (المولّد)، الملف الوصفي V34، UML (`2d-class-features` و `7q-seq-feature-hide`)، العرض الرسمي، `backlog.md` 3.14، `versions.md` 42.
-- **ما بقي بعد الدمج:** قول «اجعل الجيت هيب خاص»؛ ثم المقترحات G-1 إلى G-7 في `backlog.md` القسم 3.14 إن اعتمدها يامن
-  (أولها: العينان الأربع على صلاحيات المدير، ومجموعات صلاحيات محفوظة).
+- **الخلفية:** `app/modules/syslogs/router.py` (وكيل Loki، الاستعلام يبنيه الخادم)، `app/modules/audit/journal.py`
+  (`EXCLUDED`، المسارات `/admin/changes` و`/orgs/{id}/changes`)، `app/core/db.py` (`ehimaya.actor` و`request_id` لكل
+  معاملة)، `app/main.py` (سطر `http.request`)، الترحيل `0097_change_journal`، الاختبارات `test_change_journal.py` و`test_syslogs.py`.
+- **اللوحة والبوابة:** `pages/SystemLogsPage.tsx` و`pages/ChangesPage.tsx` و`lib/systemApi.ts`؛ وفي البوابة `pages/org/ChangesTab.tsx`.
+- **البنية:** `infra/logging/`، `infra/compose.prod.yml` (loki وalloy)، `infra/compose.release.yml`، `.github/workflows/release.yml`،
+  `scripts/deploy.sh`، سمة الدخول `infra/keycloak/themes/ehimaya/login/` (الخلفية يولّدها `scripts/login_bubbles.py`).
+- **الوثائق:** `docs/phase-h/design-h5.md`، `docs/cicd.md`، `versions.md` 52، الملف الوصفي V35، النموذج العلائقي (227 جدولا).
+- **ما بقي:** متابعة CI حتى يخضرّ، ثم قول «اجعل الجيت هيب خاص» بعد الدمج؛ ثم H2.
 
 ## 4. الخيوط في المشروع
 
@@ -72,7 +71,7 @@
 | مراجعة الملاحظات قبل التنفيذ | خطة المراحل الخمس، المرحلتان 1 و2 | منتهٍ |
 | تصميم شعار ء-حماية الرسمي | الشعار | ينتظر يامن |
 | إكمال المرحلة 3 | المرحلة 3 | منتهٍ |
-| إنجاز المرحلة 4: الوثائق والأمن | المرحلتان 4 و5 (T و G) وعروض المناقشة | جارٍ |
+| إنجاز المرحلة 4: الوثائق والأمن | T و G، ثم H1 والسجلات وسجل التغييرات وCI/CD وشاشة الدخول | جارٍ (#176) |
 
 ## 5. تشغيل البيئة من الصفر (جلسة سحابية جديدة)
 
@@ -99,7 +98,7 @@ export PATH=/opt/flutterdl/flutter/bin:$PATH FLUTTER_SUPPRESS_ANALYTICS=true
 cd apps/mobile && flutter pub get && dart format lib test && flutter analyze && flutter test
 ```
 
-- محليا تفشل 25 اختبارا في الخلفية حتى على `main` دون تعديل (بيئة محلية)؛ CI على GitHub هو المرجع.
+- محليا تفشل نحو 34 اختبارا في الخلفية حتى على `main` دون تعديل (بيئة محلية)؛ CI على GitHub هو المرجع.
 - المولّدات: `docs/deliverables/*/build.js` تحتاج `npm install` في `docs/deliverables`؛ العرض يحتاج
   `NODE_PATH=docs/deliverables/node_modules PPTX_SKILL=/mnt/skills/public/pptx`؛ PDF بـ LibreOffice؛ UML بـ PlantUML؛
   النموذج العلائقي بـ Graphviz.
@@ -120,6 +119,6 @@ cd apps/mobile && flutter pub get && dart format lib test && flutter analyze && 
 ## 7. نص البداية لجلسة جديدة
 
 > أنت تواصل مشروع ء-حماية (e-Himaya) في المستودع mouhabouk/E-HIMAYA على الفرع claude/project-thread-xq2ez8.
-> اقرأ أولا `docs/handoff/resume.md` ثم `CLAUDE.md` و `docs/phase-end.md` و `docs/backlog.md` (القسم 3.14) وآخر تقرير
-> `docs/phase-g-report.html`. التزم بالقواعد الدائمة في القسم 2 من الحوصلة، ورد عليّ بالعربية. آخر ما أُنجز: المرحلة G
-> (طلب الدمج #156). المطلوب الآن: [اكتب طلبك هنا].
+> اقرأ أولا `docs/handoff/resume.md` ثم `CLAUDE.md` و `docs/phase-end.md` و `docs/phase-h/design-h.md` و
+> `docs/phase-h/design-h5.md` و `docs/cicd.md`. التزم بالقواعد الدائمة في القسم 2 من الحوصلة، ورد عليّ بالعربية. آخر ما
+> أُنجز: السجلات وسجل التغييرات وCI/CD وشاشة الدخول (طلب الدمج #176). المطلوب الآن: [اكتب طلبك هنا].

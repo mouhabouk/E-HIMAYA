@@ -1,0 +1,24 @@
+@startuml
+!include style.iuml
+title Séquence : journaux du système (Loki), H5
+participant "Service\n(API, worker...)" as S
+participant "Docker\nstdout" as O
+participant "Alloy" as AL
+database "Loki\n(30 jours)" as L
+actor "Administrateur système" as A
+participant "Tableau de bord" as D
+participant "API" as API
+S -> O : une ligne JSON par requête\n(http.request : route, statut, durée, request_id)\nsans donnée personnelle
+AL -> O : lit les conteneurs (socket en lecture seule)
+AL -> L : envoie (service, container, level)
+A -> D : Journaux du système\n(service, niveau, durée, request_id, texte)
+D -> API : GET /admin/logs?service=api&level=error
+API -> API : construit le LogQL à partir\ndes paramètres vérifiés (aucun LogQL du client)
+API -> L : query_range
+L --> API : flux
+API --> D : lignes + résumé par service
+API -> API : audit logs.read
+A -> D : clic sur un request_id
+D -> API : GET /admin/changes?request_id=...
+API --> D : ce que la requête a modifié en base
+@enduml

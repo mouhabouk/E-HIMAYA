@@ -37,7 +37,11 @@ export const TABS: readonly { path: string; key: string; icon: IconName; tone: T
   { path: "reports", key: "reports", icon: "campaign", tone: "red" },
   { path: "certificate", key: "certificate", icon: "workspacePremium", tone: "amber" },
   { path: "prevention", key: "prevention", icon: "policy", tone: "purple" },
+  { path: "changes", key: "changes", icon: "historyEdu", tone: "slate" },
 ];
+
+/** Sections only an administrator of the institution opens. */
+const ADMIN_TABS = new Set(["changes"]);
 
 /** The catalogue key of a section (the administrator's permissions, phase 5); the overview is never closed. */
 export function featureOfTab(key: string): string {
@@ -94,7 +98,9 @@ export function OrgWorkspace() {
         </div>
       </div>
       <nav className="tabs" aria-label={t("workspace.sections")}>
-        {TABS.filter((tab) => !closed.has(featureOfTab(tab.key))).map((tab) => (
+        {TABS.filter(
+          (tab) => !closed.has(featureOfTab(tab.key)) && (!ADMIN_TABS.has(tab.key) || org.my_role === "admin"),
+        ).map((tab) => (
           <NavLink key={tab.key} to={tab.path ? `${base}/${tab.path}` : base} end={tab.path === ""}>
             <IconTile name={tab.icon} tone={tab.tone} size="sm" />
             {t(`workspace.tabs.${tab.key}`)}

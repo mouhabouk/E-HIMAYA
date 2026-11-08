@@ -107,8 +107,34 @@ _INFO_KEY = "db_scope"
 _ELEVATED_KEY = "db_scope.elevated"
 _SET_SCOPE = text(
     "SELECT set_config('ehimaya.scope', :scope, true), set_config('ehimaya.gouvernorat', :gouvernorat, true), "
-    "set_config('ehimaya.subject', :subject, true)"
+    "set_config('ehimaya.subject', :subject, true), set_config('ehimaya.actor', :actor, true), "
+    "set_config('ehimaya.actor_name', :actor_name, true), set_config('ehimaya.request_id', :request_id, true)"
 )
+
+
+def _actor_settings() -> dict[str, str]:
+    """Who the transaction acts for, read by the change journal (migration 0097): the signed-in account of the
+    request (``realm:subject``, its display name for staff only) and the request id the logs carry."""
+    import structlog
+
+    from app.core.security import Realm, current_principal
+
+    principal = current_principal.get()
+    actor = name = ""
+    if principal is not None:
+        actor = f"{principal.realm.value}:{principal.subject}"[:300]
+        if principal.realm is Realm.STAFF:
+            claims = principal.claims
+            full = claims.get("name") or " ".join(
+                str(p) for p in (claims.get("given_name"), claims.get("family_name")) if p
+            )
+            name = str(full or claims.get("preferred_username") or "")[:200]
+    request_id = str(structlog.contextvars.get_contextvars().get("request_id") or "")[:64]
+    return {"actor": actor, "actor_name": name, "request_id": request_id}
+
+
+def _scope_params(scope: "DbScope") -> dict[str, str]:
+    return {**scope.settings(), **_actor_settings()}
 
 
 def current_scope(session: Session) -> DbScope:
@@ -127,7 +153,7 @@ class ScopedSession(Session):
 def _apply_scope(session: Session, transaction: SessionTransaction, connection: Connection) -> None:
     # Also fires for savepoints (begin_nested): inside an as_system block the scope stays system.
     scope = SYSTEM_SCOPE if session.info.get(_ELEVATED_KEY) else current_scope(session)
-    connection.execute(_SET_SCOPE, scope.settings())
+    connection.execute(_SET_SCOPE, _scope_params(scope))
 
 
 @asynccontextmanager
@@ -140,7 +166,7 @@ async def as_system(session: AsyncSession) -> AsyncIterator[AsyncSession]:
     outermost one flushes before the scope returns, since rows it loaded may be invisible afterwards."""
     depth = int(session.info.get(_ELEVATED_KEY, 0))
     if depth == 0:
-        await session.execute(_SET_SCOPE, SYSTEM_SCOPE.settings())
+        await session.execute(_SET_SCOPE, _scope_params(SYSTEM_SCOPE))
     session.info[_ELEVATED_KEY] = depth + 1
     failed = False
     try:
@@ -154,7 +180,7 @@ async def as_system(session: AsyncSession) -> AsyncIterator[AsyncSession]:
         session.info[_ELEVATED_KEY] = depth
         if depth == 0:
             try:
-                await session.execute(_SET_SCOPE, current_scope(session.sync_session).settings())
+                await session.execute(_SET_SCOPE, _scope_params(current_scope(session.sync_session)))
             except SQLAlchemyError:
                 # An aborted transaction is rolled back; the next one starts with the session's own scope.
                 if not failed:

@@ -233,6 +233,26 @@ erDiagram
 
 ```mermaid
 erDiagram
+    audit__change {
+        bigint id PK
+        datetime at
+        bigint txid
+        text actor
+        text actor_name
+        text scope
+        smallint actor_gouvernorat
+        text request_id
+        text schema_name
+        text table_name
+        varchar_1 op
+        jsonb row_key
+        array columns
+        array hidden
+        jsonb old_values
+        jsonb new_values
+        uuid org_id
+        smallint gouvernorat_code
+    }
     audit__log {
         bigint id PK
         bigint seq

@@ -90,3 +90,18 @@ for entry in "${STAFF_ROLES[@]}"; do
     exit 1
   fi
 done
+
+# The e-Himaya sign-in page on every realm (Yamen, 2026-11-08): the two realm files already say "loginTheme": "ehimaya",
+# but a realm imported before keeps its theme, and the master realm (the Keycloak administration console) has
+# Keycloak's own page. Setting it again is harmless.
+for realm in master ehimaya-staff ehimaya-public; do
+  if ! "$KCADM" get "realms/$realm" --fields realm >/dev/null 2>&1; then
+    continue
+  fi
+  if "$KCADM" update "realms/$realm" -s loginTheme=ehimaya >/dev/null; then
+    say "realm $realm: e-Himaya sign-in page"
+  else
+    say "could not set the sign-in page of realm $realm"
+    exit 1
+  fi
+done

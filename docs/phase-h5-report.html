@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة H5 وCI/CD</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="cover">
+<h1>ء-حماية: السجلات، سجل التغييرات، CI/CD، شاشة الدخول</h1>
+<p class="sub">طلبات يامن، 2026-11-08: «إدراج نظام Logs»، «نافذة mouchard لمدير النظام ولمدير المؤسسات»، «CI/CD عامة وشاملة»، «ألوان لها مهابة وقيادة واحترافية».</p>
+<div class="meta">
+<div><b>طلب الدمج</b>#176</div>
+<div><b>الترحيل</b>0097_change_journal</div>
+<div><b>الجداول المتابَعة</b>182 جدولا</div>
+<div><b>الملف الوصفي</b>V35</div>
+</div>
+</header>
+
+<section>
+<h2>1. ما أُنجز</h2>
+<div class="tbl"><table>
+<tr><th>الطلب</th><th>ما صار في المنظومة</th><th>المرجع</th></tr>
+<tr><td>نظام السجلات</td><td>سطر JSON لكل طلب (المسار القالب، الحالة، المدة، معرّف الطلب) دون معطى شخصي؛ Loki وAlloy في ملف التعريف <code>logs</code> (30 يوما، الشبكة الداخلية فقط)؛ نافذة «سجلات المنظومة» لمدير النظام ومسؤول الأمن الوطنيين، بطاقة لكل خدمة، ومصفيات، والانتقال من معرّف الطلب إلى ما غيّره.</td><td>F-DSH-128</td></tr>
+<tr><td>سجل التغييرات (mouchard)</td><td>مشغّل في قاعدة البيانات على 182 جدولا يكتب كل إضافة وتحيين وحذف في <code>audit.change</code>: من، ومتى، وأي طلب، وأي الأعمدة، وقيمها قبل وبعد. قيم الأسماء والهواتف والعناوين والأسرار والنصوص الحرة لا تُحفظ أبدا، والمخططات الشخصية بلا قيم. السجل للإضافة فقط.</td><td>F-DSH-129</td></tr>
+<tr><td>نافذة مدير المؤسسة</td><td>قسم «سجل التغييرات» في البوابة لمدير المؤسسة وحده: تغييرات سجلات مؤسسته، ومن قام بها (العضو باسمه، أو «الحماية المدنية»، أو «المنظومة»).</td><td>F-POR-15</td></tr>
+<tr><td>CI/CD</td><td>عند كل وسم <code>vX.Y.Z</code>: بناء 12 صورة مرة واحدة، فحص Trivy، نشر في GHCR مع SBOM ومصدر البناء، توقيع cosign دون مفتاح، إصدار GitHub بحزمة النشر. النشر: تجربة ثم إنتاج بموافقة يامن؛ <code>scripts/deploy.sh</code> يتحقق من التوقيعات ويحفظ القاعدة ويرحّل ويعود إلى النسخة السابقة إن فشلت الفحوص.</td><td>F-SRV-65، <code>docs/cicd.md</code></td></tr>
+<tr><td>شاشة الدخول</td><td>كحلي ليلي وذهبي في الفضاءات الثلاثة، بطاقة بيضاء في الوسط، «ء-حماية» فوقها، وشعار e-Himaya فقاعات شفافة بأحجام مختلفة.</td><td>F-DSH-130</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>2. القواعد الثابتة المحفوظة</h2>
+<ul>
+<li>الحسابات التقنية (مدير النظام، مسؤول الأمن) لا ترى أي معطى شخصي في السجلات ولا في سجل التغييرات: لم يُحفظ أصلا.</li>
+<li>النافذتان وطنيتان فقط، ولا تُمنحان لحساب جهوي. كل اطلاع يُكتب في سجل التدقيق (<code>logs.read</code>، <code>journal.read</code>، <code>org.changes_read</code>).</li>
+<li>الحساب العمومي يظهر باسم مستعار ثابت <code>public-…</code> في نافذة مدير النظام.</li>
+<li>لا سر في المستودع ولا في سجلات Actions؛ لا دمج ولا نشر في الإنتاج إلا بيامن.</li>
+</ul>
+</section>
+
+<section>
+<h2>3. الملفات في ملفات المشروع</h2>
+<ul>
+<li>اللقطات: <code>screens/phase-h5/</code> (سجلات المنظومة، سجل التغييرات، قسم البوابة، الدخول على الحاسوب والهاتف).</li>
+<li>الملف الوصفي: <code>spec/e-Himaya_Description_V35.docx</code> و<code>.pdf</code>.</li>
+<li>النموذج العلائقي: <code>database/model/</code> (227 جدولا، 349 علاقة، DBML وdraw.io والوثيقة).</li>
+<li>مخططات UML: <code>diagrams/e-Himaya_Diagrammes_UML.docx</code> مع ثلاثة مخططات تسلسل جديدة (7r سجل التغييرات، 7s السجلات، 7t الإصدار والنشر).</li>
+<li>حوصلة الاستئناف: <code>handoff/resume.md</code>؛ الأرشيف دون إنترنت: <code>archive/</code>.</li>
+<li>الأدلة: <code>guides/cicd.md</code> و<code>guide/install-guide.md</code> (§11.7).</li>
+</ul>
+</section>
+
+<section>
+<h2>4. حدود معروفة</h2>
+<ul>
+<li>السجل يكبر مع النشاط، ولا حذف آليا: الحذف الدوري يقوم به المالك في الصيانة بعد النسخة الاحتياطية.</li>
+<li>تغييرات Keycloak (الحسابات والأدوار) في سجل أحداث Keycloak لا في <code>audit.change</code>.</li>
+<li>النشر الآلي لا يعمل إلا بعد ضبط متغيرات الخادم ومفتاح SSH في إعدادات المستودع وإنشاء البيئة <code>production</code>.</li>
+</ul>
+</section>
+</div></body></html>

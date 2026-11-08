@@ -3064,3 +3064,50 @@ button.nav-card:hover {
 .annual {
   margin-top: 0.5rem;
 }
+
+/* ---------- The institution's change journal (Yamen, 2026-11-08) ---------- */
+.change-op {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.change-op--I {
+  background: var(--tone-green-tint);
+  color: var(--tone-green-ink);
+}
+.change-op--U {
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+}
+.change-op--D {
+  background: var(--tone-red-tint);
+  color: var(--tone-red-ink);
+}
+.change-columns {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+.change-columns li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+.change-columns__name {
+  color: var(--muted, inherit);
+  font-weight: 600;
+}
+.change-columns__name::after {
+  content: ":";
+}
+.change-columns del {
+  color: var(--tone-red-ink);
+}
+.change-columns ins {
+  color: var(--tone-green-ink);
+  text-decoration: none;
+}

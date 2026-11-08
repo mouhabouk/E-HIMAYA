@@ -1,41 +1,323 @@
-/* e-Himaya colours, taken from the Office's logo and darkened to reach WCAG AA on white (addition 1). */
+/* e-Himaya sign-in (Yamen, 2026-11-08: "colours with gravitas, command and professionalism"): the night navy and the
+   gold of the Office's emblem (brand/logo-final), a white card, the navy of the design system for actions
+   (docs/design-system.md: #1F3FA0) and its orange only for focus. Same look in the three realms (master included). */
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  --ehimaya-blue: #1f3d99;
-  --ehimaya-blue-dark: #142a6e;
-  --ehimaya-orange: #e07b00;
-  --ehimaya-green: #1b7f2a;
+  --ehimaya-night: #0b1a3f;
+  --ehimaya-night-deep: #060f27;
+  --ehimaya-navy: #1f3fa0;
+  --ehimaya-navy-dark: #152d78;
+  --ehimaya-gold: #c9a24a;
+  --ehimaya-gold-light: #e8cf8a;
+  --ehimaya-orange: #f08c00;
   --ehimaya-red: #c62828;
-  --pf-v5-global--primary-color--100: var(--ehimaya-blue);
-  --pf-v5-global--primary-color--200: var(--ehimaya-blue-dark);
-  --pf-v5-global--link--Color: var(--ehimaya-blue);
-  --pf-v5-global--link--Color--hover: var(--ehimaya-blue-dark);
+  --ehimaya-ink: #182038;
+  --pf-v5-global--FontFamily--text: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --pf-v5-global--FontFamily--heading: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --pf-v5-global--primary-color--100: var(--ehimaya-navy);
+  --pf-v5-global--primary-color--200: var(--ehimaya-navy-dark);
+  --pf-v5-global--link--Color: var(--ehimaya-navy);
+  --pf-v5-global--link--Color--hover: var(--ehimaya-navy-dark);
   --pf-v5-global--danger-color--100: var(--ehimaya-red);
+  --pf-v5-c-login__main--BackgroundColor: #ffffff;
+  --keycloak-card-top-color: var(--ehimaya-gold);
 }
 
-.pf-v5-theme-dark {
-  --pf-v5-global--primary-color--100: #8fa8ff;
-  --pf-v5-global--link--Color: #8fa8ff;
+html,
+body {
+  min-height: 100%;
+  font-family: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
 }
 
-/* Logo above the realm name, and a thin band in the logo's colours. */
-#kc-header-wrapper {
+/* The night of the emblem: a deep navy with a soft light behind the card and a fine gold frame. */
+body,
+.pf-v5-c-login,
+.login-pf body {
+  background-color: var(--ehimaya-night) !important;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgb(31 63 160 / 40%), transparent 70%),
+    linear-gradient(180deg, var(--ehimaya-night) 0%, var(--ehimaya-night-deep) 100%) !important;
+  background-attachment: fixed;
+}
+
+/* The emblem as translucent bubbles of every size across the whole page (Yamen, 2026-11-08), behind everything. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("../img/bubbles.svg") center / cover no-repeat;
+  pointer-events: none;
+}
+
+.pf-v5-c-login {
+  position: relative;
+  z-index: 0;
+  background: transparent !important;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 14px;
+  border: 1px solid rgb(201 162 74 / 60%);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 3px rgb(0 0 0 / 30%), inset 0 0 0 4px rgb(201 162 74 / 25%);
+  pointer-events: none;
+}
+
+/* Above the card, centred: the Office's original emblem in a gold ring, on the right of the name «ء-حماية»
+   (Yamen, 2026-11-08), then the line «تطبيق ذكي في خدمة المواطن والمؤسسات، سلامتكم أولويتنا» in the page's language.
+   The system is ء-حماية; the card signs in to its phone application, آلو - حماية (messages_*.properties). */
+#kc-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 700;
+}
+
+/* At the very top, the State's heading (Yamen, 2026-11-08): the Republic, the Ministry, then the Office. */
+#kc-header::before {
+  content: "الجمهورية التونسية\A وزارة الداخلية\A الديوان الوطني للحماية المدنية";
+  white-space: pre-line;
+  text-align: center;
+  margin-block-end: 1rem;
+  color: var(--ehimaya-gold-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html:lang(fr) #kc-header::before {
+  content: "République tunisienne\A Ministère de l’Intérieur\A Office national de la protection civile";
+}
+
+html:lang(en) #kc-header::before {
+  content: "Republic of Tunisia\A Ministry of the Interior\A National Office of Civil Protection";
+}
+
+#kc-header-wrapper {
+  display: flex;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  font-size: 0 !important;
+  color: transparent !important;
+  padding: 0 !important;
 }
 
 #kc-header-wrapper::before {
   content: "";
+  flex: none;
   width: 96px;
   height: 96px;
-  background: url("../img/logo.png") center / contain no-repeat;
+  border-radius: 50%;
+  background: #ffffff url("../img/logo.png") center / 74% no-repeat;
+  border: 3px solid var(--ehimaya-gold);
+  box-shadow: 0 0 0 4px rgb(11 26 63 / 85%), 0 0 0 5px rgb(201 162 74 / 55%), 0 8px 22px rgb(0 0 0 / 45%);
 }
 
+#kc-header-wrapper::after {
+  content: "";
+  flex: none;
+  width: 170px;
+  aspect-ratio: 330 / 196;
+  filter: drop-shadow(0 6px 18px rgb(0 0 0 / 45%));
+  background: url("../img/wordmark.png") center / contain no-repeat;
+}
+
+#kc-header::after {
+  content: "تطبيق ذكي في خدمة المواطن والمؤسسات،\A سلامتكم أولويتنا";
+  white-space: pre-line;
+  text-align: center;
+  line-height: 1.7;
+  max-width: 36rem;
+  margin-block-start: 0.75rem;
+  color: var(--ehimaya-gold-light);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html:lang(fr) #kc-header::after {
+  content: "Une application intelligente au service du citoyen et des entreprises.\A Votre sécurité, notre priorité";
+}
+
+html:lang(en) #kc-header::after {
+  content: "A smart application serving citizens and organisations.\A Your safety, our priority";
+}
+
+.pf-v5-c-login__header {
+  margin-block: 0.5rem 1.5rem;
+}
+
+/* The card: white, a gold rule on top, a navy title, a quiet shadow. */
 .pf-v5-c-login__main {
-  border-top: 6px solid transparent;
-  border-image: linear-gradient(90deg, var(--ehimaya-red) 0 33%, var(--ehimaya-orange) 33% 66%, var(--ehimaya-green) 66%) 1;
+  background: #ffffff;
+  border-radius: 12px;
+  border-top: 4px solid var(--ehimaya-gold);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%), 0 0 0 1px rgb(201 162 74 / 25%);
+  overflow: hidden;
+}
+
+/* The title in the middle at the top of the card; the language circle in its corner (Yamen, 2026-11-08). */
+.pf-v5-c-login__main-header {
+  position: relative;
+  display: block !important;
+  text-align: center;
+  padding-inline: 4.25rem !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid #e3e7ef;
+  padding-block-end: 1rem;
+}
+
+.pf-v5-c-login__main-header .pf-v5-c-title,
+#kc-page-title {
+  color: var(--ehimaya-night);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.pf-v5-c-login__main-header-utilities {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 2;
+}
+
+.ehimaya-lang {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ehimaya-lang__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ehimaya-lang__list[hidden] {
+  display: none;
+}
+
+.ehimaya-lang.is-open .ehimaya-lang__list li {
+  animation: ehimaya-drop 0.18s ease-out both;
+}
+
+.ehimaya-lang.is-open .ehimaya-lang__list li:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+@keyframes ehimaya-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ehimaya-lang.is-open .ehimaya-lang__list li {
+    animation: none;
+  }
+}
+
+.ehimaya-lang__circle {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid #8a6a22;
+  /* Gold coins (Yamen, 2026-11-08): a polished gold face, a fine light rim, the night navy for the letters. */
+  background:
+    radial-gradient(ellipse 70% 55% at 35% 22%, rgb(255 250 230 / 75%), transparent 60%),
+    linear-gradient(160deg, #f4e1a6 0%, #d9b766 38%, #c49a3f 68%, #9c7a2e 100%);
+  box-shadow:
+    inset 0 0 0 2px rgb(255 244 210 / 55%),
+    inset 0 -3px 6px rgb(110 80 20 / 35%),
+    0 4px 12px rgb(11 26 63 / 30%);
+  color: var(--ehimaya-night) !important;
+  text-shadow: 0 1px 0 rgb(255 248 225 / 60%);
+  font: 700 0.9rem/1 "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ehimaya-lang__circle[lang="ar"] {
+  font-size: 1.2rem;
+}
+
+.ehimaya-lang__circle:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow:
+    inset 0 0 0 2px rgb(255 244 210 / 75%),
+    inset 0 -3px 6px rgb(110 80 20 / 35%),
+    0 6px 16px rgb(11 26 63 / 40%);
+}
+
+.ehimaya-lang__circle:focus-visible {
+  outline: 3px solid var(--ehimaya-orange);
+  outline-offset: 2px;
+}
+
+.pf-v5-c-form__label-text {
+  color: var(--ehimaya-ink);
+  font-weight: 600;
 }
 
 /* Rule 2: a required field shows a red asterisk. */
@@ -47,4 +329,347 @@
 .pf-v5-c-button,
 .pf-v5-c-form-control > input {
   min-height: 48px;
+}
+
+.pf-v5-c-form-control {
+  border-radius: 8px;
+}
+
+/* The sign-in button (Yamen, 2026-11-08): the royal navy of the background, edged with a fine double gold thread. */
+.pf-v5-c-button.pf-m-primary {
+  position: relative;
+  --pf-v5-c-button--BorderRadius: 10px;
+  --pf-v5-c-button--after--BorderRadius: 10px;
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 10%), transparent 60%),
+    linear-gradient(180deg, #1a3684 0%, #10245c 55%, var(--ehimaya-night) 100%);
+  color: #f6ecd0 !important;
+  border: 1px solid var(--ehimaya-gold);
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow:
+    inset 0 0 0 3px #142b6c,
+    inset 0 0 0 4px rgb(232 207 138 / 70%),
+    0 6px 18px rgb(11 26 63 / 35%);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.pf-v5-c-button.pf-m-primary:hover {
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 14%), transparent 60%),
+    linear-gradient(180deg, #1f3fa0 0%, #142c70 55%, #0e1f4d 100%);
+  box-shadow:
+    inset 0 0 0 3px #183383,
+    inset 0 0 0 4px rgb(232 207 138 / 90%),
+    0 8px 22px rgb(11 26 63 / 45%);
+}
+
+/* Focus: the orange of the design system, visible on white and on navy. */
+.pf-v5-c-button:focus-visible,
+.pf-v5-c-form-control:focus-within,
+a:focus-visible {
+  outline: 3px solid var(--ehimaya-orange);
+  outline-offset: 2px;
+}
+
+/* «مستخدم جديد؟ تسجيل جديد» sits inside the white card: dark enough to read. */
+.pf-v5-c-login__main-footer-band {
+  color: #4a5470;
+}
+
+.pf-v5-c-login__footer {
+  color: #c9d2ea;
+}
+
+.pf-v5-c-login__footer a,
+#kc-locale-dropdown button {
+  color: var(--ehimaya-gold-light);
+}
+
+/* On a phone: a closer gold frame, a smaller mark, and the card in the middle with the same margin left and right. */
+@media (max-width: 600px) {
+  /* The frame runs from the top of the page to below the card (Yamen, 2026-11-08), clear of the phone's own
+     buttons at the bottom, instead of staying on the screen while the card scrolls past it. */
+  body::before {
+    display: none;
+  }
+
+  .pf-v5-c-login {
+    min-height: 100dvh;
+  }
+
+  .pf-v5-c-login::after {
+    content: "";
+    position: absolute;
+    inset: 6px 6px calc(10px + env(safe-area-inset-bottom, 0px));
+    z-index: -1;
+    border: 1px solid rgb(201 162 74 / 60%);
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 3px rgb(0 0 0 / 30%), inset 0 0 0 4px rgb(201 162 74 / 25%);
+    pointer-events: none;
+  }
+
+  .pf-v5-c-login__container {
+    padding-block-end: calc(30px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #kc-header::before {
+    font-size: 0.85rem;
+    margin-block-start: 0.75rem;
+  }
+
+  #kc-header::after {
+    font-size: 1.02rem;
+    padding-inline: 12px;
+  }
+
+  .pf-v5-c-login__main-header {
+    padding-inline: 3.75rem !important;
+  }
+
+  .pf-v5-c-login__main-header .pf-v5-c-title,
+  #kc-page-title {
+    font-size: 1.55rem;
+    line-height: 1.5;
+  }
+
+  .pf-v5-c-login__main-header-utilities {
+    inset-block-start: 0.85rem;
+    inset-inline-end: 0.75rem;
+  }
+
+  /* At the very top, the State's heading (Yamen, 2026-11-08): the Republic, the Ministry, then the Office. */
+#kc-header::before {
+  content: "الجمهورية التونسية\A وزارة الداخلية\A الديوان الوطني للحماية المدنية";
+  white-space: pre-line;
+  text-align: center;
+  margin-block-end: 1rem;
+  color: var(--ehimaya-gold-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html:lang(fr) #kc-header::before {
+  content: "République tunisienne\A Ministère de l’Intérieur\A Office national de la protection civile";
+}
+
+html:lang(en) #kc-header::before {
+  content: "Republic of Tunisia\A Ministry of the Interior\A National Office of Civil Protection";
+}
+
+#kc-header-wrapper {
+    gap: 0.85rem;
+  }
+
+  #kc-header-wrapper::before {
+    width: 72px;
+    height: 72px;
+  }
+
+  #kc-header-wrapper::after {
+    width: 128px;
+  }
+
+  .pf-v5-c-login__container {
+    padding-inline: 16px;
+  }
+
+  .pf-v5-c-login__main {
+    margin-inline: auto;
+    width: 100%;
+    border-radius: 12px;
+  }
+}
+
+/* A larger card and larger type for the essentials (Yamen, 2026-11-08: "the white card and what matters are small"). */
+.pf-v5-c-login__main-header {
+  padding-block: 1.75rem 1.25rem !important;
+}
+
+.pf-v5-c-login__main-header .pf-v5-c-title,
+#kc-page-title {
+  font-size: 1.85rem;
+  line-height: 1.45;
+}
+
+.pf-v5-c-login__main-body {
+  padding-inline: 2.5rem !important;
+  padding-block-start: 1.5rem !important;
+}
+
+.pf-v5-c-login__main-footer {
+  padding-inline: 2.5rem !important;
+}
+
+.pf-v5-c-form {
+  gap: 1.35rem;
+}
+
+.pf-v5-c-form__label-text {
+  font-size: 1.05rem;
+}
+
+.pf-v5-c-form-control > input {
+  min-height: 54px;
+  font-size: 1.1rem;
+}
+
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control {
+  min-width: 54px;
+}
+
+.pf-v5-c-form__helper-text,
+.pf-v5-c-login__main-footer-band {
+  font-size: 1rem;
+}
+
+.pf-v5-c-button.pf-m-primary {
+  min-height: 56px;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 600px) {
+  .pf-v5-c-login__main-header .pf-v5-c-title,
+  #kc-page-title {
+    font-size: 1.55rem;
+  }
+
+  .pf-v5-c-login__main-body,
+  .pf-v5-c-login__main-footer {
+    padding-inline: 1.5rem !important;
+  }
+}
+
+/* On a wide screen: the State, the emblem and the line on one side, the card on the other, both in view. */
+@media (min-width: 1100px) {
+  .pf-v5-c-login__container {
+    grid-template-columns: minmax(360px, 460px) minmax(560px, 620px) !important;
+    grid-template-areas: "header main" !important;
+    column-gap: clamp(3rem, 6vw, 6.5rem);
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: none !important;
+    min-height: calc(100vh - 4rem);
+    padding-block: 2rem;
+    box-sizing: border-box;
+  }
+
+  .pf-v5-c-login__header,
+  .pf-v5-c-login__main {
+    margin: 0;
+    align-self: center;
+  }
+
+  #kc-header::before {
+    font-size: 1.1rem;
+    margin-block-end: 1.75rem;
+  }
+
+  #kc-header-wrapper::before {
+    width: 124px;
+    height: 124px;
+  }
+
+  #kc-header-wrapper::after {
+    width: 220px;
+  }
+
+  #kc-header::after {
+    font-size: 1.45rem;
+    margin-block-start: 1.5rem;
+  }
+}
+
+/* The second colour, royal red (Yamen, 2026-11-08): chosen with the circle under the language circle
+   (resources/js/languages.js), kept on this device. Same gold, same white card; only the night and the actions change. */
+html.ehimaya-red {
+  --ehimaya-night: #3a0910;
+  --ehimaya-night-deep: #1f0408;
+  --ehimaya-navy: #9b1b2c;
+  --ehimaya-navy-dark: #761420;
+  --ehimaya-ink: #2a1418;
+  --pf-v5-global--primary-color--100: #9b1b2c;
+  --pf-v5-global--primary-color--200: #761420;
+  --pf-v5-global--link--Color: #9b1b2c;
+  --pf-v5-global--link--Color--hover: #761420;
+}
+
+html.ehimaya-red body {
+  background-color: var(--ehimaya-night) !important;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgb(163 24 44 / 42%), transparent 70%),
+    linear-gradient(180deg, var(--ehimaya-night) 0%, var(--ehimaya-night-deep) 100%) !important;
+}
+
+html.ehimaya-red body::after {
+  background-image: url("../img/bubbles-red.svg");
+}
+
+html.ehimaya-red #kc-header-wrapper::before {
+  box-shadow: 0 0 0 4px rgb(58 9 16 / 85%), 0 0 0 5px rgb(201 162 74 / 55%), 0 8px 22px rgb(0 0 0 / 45%);
+}
+
+html.ehimaya-red .pf-v5-c-button.pf-m-primary {
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 12%), transparent 60%),
+    linear-gradient(180deg, #a81d30 0%, #7d1422 55%, #4a0b14 100%);
+  box-shadow: inset 0 0 0 3px #6e1220, inset 0 0 0 4px rgb(232 207 138 / 75%), 0 6px 18px rgb(58 9 16 / 35%);
+}
+
+html.ehimaya-red .pf-v5-c-button.pf-m-primary:hover {
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 16%), transparent 60%),
+    linear-gradient(180deg, #b82236 0%, #8c1726 55%, #561019 100%);
+  box-shadow: inset 0 0 0 3px #7d1524, inset 0 0 0 4px rgb(232 207 138 / 92%), 0 8px 22px rgb(58 9 16 / 45%);
+}
+
+/* The colour circle: a coin of the other colour, gold-rimmed like the language coins, under them. */
+.ehimaya-theme {
+  display: block;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  align-self: center;
+  box-sizing: border-box;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--ehimaya-gold);
+  background:
+    radial-gradient(ellipse 70% 55% at 35% 25%, rgb(255 255 255 / 35%), transparent 60%),
+    linear-gradient(160deg, #a81d30 0%, #7d1422 55%, #4a0b14 100%);
+  box-shadow: inset 0 0 0 2px rgb(255 244 210 / 35%), 0 3px 10px rgb(0 0 0 / 25%);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+html.ehimaya-red .ehimaya-theme {
+  background:
+    radial-gradient(ellipse 70% 55% at 35% 25%, rgb(255 255 255 / 35%), transparent 60%),
+    linear-gradient(160deg, #1f3fa0 0%, #10245c 55%, #0b1a3f 100%);
+}
+
+.ehimaya-theme:hover {
+  transform: scale(1.08);
+}
+
+.ehimaya-theme:focus-visible {
+  outline: 3px solid var(--ehimaya-orange);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ehimaya-theme {
+    transition: none;
+  }
+}
+
+/* PatternFly draws its own button outline: the gold thread replaces it. */
+.pf-v5-c-button.pf-m-primary::after {
+  display: none !important;
 }

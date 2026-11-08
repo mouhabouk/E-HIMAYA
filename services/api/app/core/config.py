@@ -422,6 +422,9 @@ class Settings(BaseSettings):
 
     api_cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
     api_log_level: str = "INFO"
+    # Loki (profile "logs" of compose.prod.yml): the logs of every container, read by the system administrator's
+    # window (/api/v1/admin/logs). Unset: the window says the collection is not running.
+    loki_url: str | None = None
     db_pool_size: int = 10
     db_max_overflow: int = 20
 
@@ -499,6 +502,7 @@ class Settings(BaseSettings):
         "basemap_label_max_zoom",
         "ai_service_url",
         "ai_service_token",
+        "loki_url",
         "metrics_token",
         "tusd_hook_secret",
         "certificate_signing_key",

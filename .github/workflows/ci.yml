@@ -638,6 +638,19 @@ jobs:
           docker run --rm -v "$PWD/infra/monitoring:/m:ro" --entrypoint promtool prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996 check rules /m/alerts.yml
           docker run --rm -v "$PWD/infra/monitoring:/m:ro" -w /m --entrypoint promtool prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996 test rules alerts.test.yml
 
+      # Logs (docs/phase-h/design-h5.md §1): the Loki and Alloy configurations load with the pinned images.
+      - name: Logs configuration (Loki verify-config, Alloy fmt)
+        run: |
+          docker run --rm -v "$PWD/infra/logging:/l:ro" grafana/loki:3.5.7@sha256:0eaee7bf39cc83aaef46914fb58f287d4f4c4be6ec96b86c2ed55719a75e49c8 -config.file=/l/loki.yml -verify-config
+          docker run --rm -v "$PWD/infra/logging:/l:ro" grafana/alloy:v1.11.3@sha256:8c7256f412feb9f5f48f9f6f9394dc97ca887f63dea9304f347970ecc1787669 fmt /l/alloy.alloy > /dev/null
+
+      # CI/CD (docs/cicd.md): the release and deploy scripts are valid shell, the workflows are valid YAML.
+      - name: Release tooling
+        run: |
+          bash -n scripts/deploy.sh
+          shellcheck scripts/deploy.sh
+          python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]"
+
   backup-drill:
     name: Backup · restore drill
     runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
@@ -750,6 +763,10 @@ jobs:
           cat .env prod.env > prod-full.env
           docker compose --env-file prod-full.env -f infra/compose.yml -f infra/compose.prod.yml config > prod.yml
           python3 -c "import yaml; s=yaml.safe_load(open('prod.yml'))['services']; p={n:sorted(str(x.get('published'))+'/'+x.get('protocol','tcp') for x in v.get('ports',[])) for n,v in s.items() if v.get('ports')}; print(p); assert set(p)=={'caddy','mediamtx','telephony'}, p; assert p['mediamtx']==['1935/tcp','8189/udp','8554/tcp'], p; assert set(p['telephony'])=={'5060/tcp','5060/udp','5061/tcp'}|{f'{n}/udp' for n in range(10000,10100)}, p['telephony']; assert all('8088' not in x for x in p['telephony']); assert 'notify-sim' not in s and 'mailpit' not in s and 'stream-sim' not in s and 'call-sim' not in s; e=s['worker']['environment']; assert e['TELEPHONY_RECORDING_ENABLED']=='false' and e['TELEPHONY_SIM_TOKEN']=='' and e['TELEPHONY_WS_PUBLIC_URL']=='wss://api.ehimaya.test/telephony/ws', e"
+      - name: Release overlay renders (registry images, logs profile)
+        run: |
+          EHIMAYA_VERSION=v0.0.0-ci docker compose --env-file prod-full.env -f infra/compose.yml -f infra/compose.prod.yml -f infra/compose.release.yml --profile logs config > release.yml
+          python3 -c "import yaml; s=yaml.safe_load(open('release.yml'))['services']; bad={n:v.get('image') for n,v in s.items() if n in ('api','worker','migrate','postgres','keycloak','telephony') and not str(v.get('image','')).startswith('ghcr.io/mouhabouk/ehimaya-')}; assert not bad, bad; assert all('build' not in s[n] for n in ('api','worker','migrate')); assert 'build' in s['dashboard'] and 'build' in s['portal']; assert {'loki','alloy'} <= set(s); assert s['api']['environment']['LOKI_URL']=='' ; print('release overlay ok')"
       - name: Terrain one-shot service renders (opt-in profile)
         run: docker compose --env-file .env -f infra/compose.yml --profile terrain config -q
       - name: Start the stack
@@ -781,6 +798,12 @@ jobs:
             $k delete roles/personnel_officer -r ehimaya-staff'
           $C run --rm keycloak-sync | tee sync.log
           grep -q 'realm role personnel_officer created' sync.log
+          # Every realm, the administration console included, shows the e-Himaya sign-in page with its stylesheet.
+          grep -q 'realm master: e-Himaya sign-in page' sync.log
+          for realm in master ehimaya-staff ehimaya-public; do
+            page=$(curl -s "http://localhost:8080/realms/$realm/protocol/openid-connect/auth?client_id=account-console&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Frealms%2F$realm%2Faccount%2F&scope=openid&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256")
+            grep -q 'resources/[^"]*/login/ehimaya/css/ehimaya.css' <<<"$page" || { echo "realm $realm: no e-Himaya theme"; exit 1; }
+          done
       - name: Certificate PDFs render in the API image (Arabic shaping, fonts)
         run: |
           docker compose --env-file .env -f infra/compose.yml exec -T api python -c "

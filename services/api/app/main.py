@@ -2,6 +2,7 @@
 
 import asyncio
 import re
+import time
 import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable, Coroutine
 from contextlib import asynccontextmanager
@@ -34,6 +35,7 @@ from app.modules.anomaly.router import router as anomaly_router
 from app.modules.appdownload.router import router as appdownload_router
 from app.modules.appinfo.feedback import router as appinfo_feedback_router
 from app.modules.appinfo.router import router as appinfo_router
+from app.modules.audit.journal import router as journal_router
 from app.modules.audit.router import router as audit_router
 from app.modules.availability.router import router as availability_router
 from app.modules.basemap.router import router as basemap_router
@@ -135,6 +137,7 @@ from app.modules.streams.internal import router as streams_internal_router
 from app.modules.streams.router import router as streams_router
 from app.modules.streams.staff_router import router as streams_staff_router
 from app.modules.streams.worker import ingest_forever, streams_forever, vision_images_forever
+from app.modules.syslogs.router import router as syslogs_router
 from app.modules.telephony.internal import router as telephony_internal_router
 from app.modules.telephony.staff_router import router as telephony_staff_router
 from app.modules.telephony.worker import ari_events_forever, endpoints_forever, recordings_forever
@@ -194,6 +197,13 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
+# Probes and scrapes: no access log line (they would drown the rest).
+_QUIET_PATHS = ("/health/", "/metrics")
+
+
+def _route_of(request: Request) -> str:
+    route = request.scope.get("route")
+    return str(getattr(route, "path", None) or "unmatched")
 
 
 def start_worker_loops(sessionmaker: async_sessionmaker[AsyncSession]) -> list[asyncio.Task[None]]:
@@ -272,13 +282,27 @@ def create_app() -> FastAPI:
             response: Response = JSONResponse({"detail": "worker_process"}, status_code=503)
         else:
             area = "reports" if request.url.path.startswith("/api/v1/reports") else "other"
+            started = time.perf_counter()
             try:
                 response = await call_next(request)
             except Exception:
                 metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
+                log.exception("http.unhandled", method=request.method, route=_route_of(request))
                 raise
             if response.status_code >= 500:
                 metrics.HTTP_SERVER_ERRORS.labels(area=area).inc()
+            if not request.url.path.startswith(_QUIET_PATHS):
+                # One line per request (the logs window, docs/phase-h/design-h5.md §1): the route template, never
+                # the path itself (it may hold an identifier) nor the query string.
+                status_code = response.status_code
+                emit = log.error if status_code >= 500 else log.warning if status_code >= 400 else log.info
+                emit(
+                    "http.request",
+                    method=request.method,
+                    route=_route_of(request),
+                    status=status_code,
+                    duration_ms=round((time.perf_counter() - started) * 1000, 1),
+                )
         response.headers["X-Request-ID"] = request_id
         response.headers.update(headers)
         # Answers carry personal data: no browser or proxy keeps them unless an endpoint says otherwise (ASVS V8.2.1).
@@ -331,6 +355,8 @@ def create_app() -> FastAPI:
         camera_events_router,
         camera_events_staff_router,
         audit_router,
+        journal_router,
+        syslogs_router,
         privacy_router,
         weather_router,
         weather_staff_router,

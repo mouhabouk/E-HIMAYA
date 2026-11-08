@@ -22,10 +22,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.db import get_session
+from app.core.db import as_system, get_session
 from app.core.events import emit
 from app.core.security import CurrentPrincipal, Principal, Realm
 from app.modules.identity.email import confirmed_email
+from app.modules.identity.models import Account
 from app.modules.identity.service import Reporter, resolve_reporter
 from app.modules.notify import outbox, templates
 from app.modules.notify.org_target import ORG_TARGET
@@ -627,6 +628,19 @@ def member_out(member: Member) -> schemas.MemberOut:
         safety_officer=member.safety_officer,
         joined_at=member.joined_at,
     )
+
+
+async def member_actor_names(session: AsyncSession, org_id: uuid.UUID) -> dict[str, str]:
+    """The members of an institution by the actor id the change journal records (``realm:keycloak subject``)."""
+    async with as_system(session):
+        rows = (
+            await session.execute(
+                select(Account.keycloak_sub, Member.display_name, Member.email)
+                .join(Account, Account.user_id == Member.user_id)
+                .where(Member.org_id == org_id, Account.keycloak_sub.is_not(None))
+            )
+        ).all()
+    return {f"{Realm.PUBLIC.value}:{sub}": (name or email or "") for sub, name, email in rows}
 
 
 async def _admins(session: AsyncSession, org_id: uuid.UUID) -> int:

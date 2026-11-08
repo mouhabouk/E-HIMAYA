@@ -234,7 +234,8 @@
       "reports": "Reports",
       "certificate": "Certificate",
       "activities": "Drills and events",
-      "prevention": "Prevention and reports"
+      "prevention": "Prevention and reports",
+      "changes": "Change journal"
     }
   },
   "overview": {
@@ -1040,6 +1041,84 @@
       "certificates": "Certificates issued",
       "stamps": "Stamps at regional offices",
       "reports": "Reports by the institution"
+    }
+  },
+  "changes": {
+    "title": "Change journal",
+    "intro": "Every addition, update and deletion to the institution's records, and who made it. Names, phone numbers, addresses and notes are not kept here: only the fact that they changed. The journal cannot be changed or erased.",
+    "adminsOnly": "This section is for the institution's administrator only.",
+    "section": "Section",
+    "op": "Operation",
+    "ops": {
+      "I": "Addition",
+      "U": "Update",
+      "D": "Deletion"
+    },
+    "by": "Made by",
+    "byKinds": {
+      "civil_protection": "Civil protection",
+      "system": "Platform"
+    },
+    "aMember": "A member",
+    "what": "What changed",
+    "notKept": "value not kept",
+    "all": "All",
+    "from": "From",
+    "to": "To",
+    "at": "Time",
+    "empty": "No changes for these criteria.",
+    "more": "More",
+    "tables": {
+      "organization": "Institution card",
+      "member": "Members",
+      "invitation": "Invitations",
+      "team_member": "Safety team",
+      "document": "Documents",
+      "document_version": "Document versions",
+      "equipment": "Equipment",
+      "maintenance": "Maintenance",
+      "hazmat": "Hazardous materials",
+      "map_feature": "Map",
+      "activity": "Drills and events",
+      "certificate": "Certificate",
+      "prevention_visit": "Prevention visits",
+      "prevention_reservation": "Prevention reservations",
+      "prealert": "Pre-alerts",
+      "certificate_stamp": "Certificate stamps",
+      "prevention_photo": "Prevention photos",
+      "digest": "Digests",
+      "org_ack": "Read notices"
+    },
+    "columns": {
+      "activity_sector": "Activity sector",
+      "address": "Address",
+      "capacity": "Capacity",
+      "created_at": "Created",
+      "description": "Description",
+      "email": "Email",
+      "ends_on": "End",
+      "floors": "Floors",
+      "full_name": "Name",
+      "gouvernorat_code": "Gouvernorat",
+      "height_m": "Height",
+      "kind": "Kind",
+      "location": "Location",
+      "manager": "Manager",
+      "name": "Name",
+      "notes": "Notes",
+      "phone": "Phone",
+      "quantity": "Quantity",
+      "readiness": "Readiness",
+      "receives_public": "Receives the public",
+      "role": "Role",
+      "safety_officer": "Safety officer",
+      "starts_on": "Start",
+      "status": "Status",
+      "title": "Title",
+      "un_number": "UN number",
+      "updated_at": "Updated",
+      "valid_until": "Valid until",
+      "version": "Version"
     }
   }
 }

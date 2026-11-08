@@ -65,6 +65,20 @@ export function portalApi(api: ApiClient) {
       api.request<Organization>(orgPath(id), { method: "PUT", body: { ...card, version } }),
     resubmit: (id: string) => api.request<Organization>(`${orgPath(id)}/resubmit`, { method: "POST" }),
 
+    // The institution's change journal (administrators, Yamen 2026-11-08)
+    orgChanges: (id: string, f: OrgChangeFilters, cursor: string | null, signal?: AbortSignal) =>
+      api.request<OrgChangePage>(`${orgPath(id)}/changes`, {
+        query: {
+          table: f.table || undefined,
+          op: f.op || undefined,
+          from: f.from || undefined,
+          to: f.to || undefined,
+          cursor: cursor ?? undefined,
+          limit: 50,
+        },
+        signal,
+      }),
+
     // §2 members and invitations
     members: (id: string, signal?: AbortSignal) => api.request<Member[]>(`${orgPath(id)}/members`, { signal }),
     setMemberRole: (id: string, userId: string, role: OrgRole) =>
@@ -192,6 +206,7 @@ export const queryKeys = {
   org: (id: string) => ["org", id] as const,
   register: (id: string, register: RegisterName) => ["org", id, register] as const,
   members: (id: string) => ["org", id, "members"] as const,
+  changes: (id: string, f: OrgChangeFilters) => ["org", id, "changes", f] as const,
   invitations: (id: string) => ["org", id, "invitations"] as const,
   documents: (id: string) => ["org", id, "documents"] as const,
   versions: (id: string, docId: string) => ["org", id, "documents", docId, "versions"] as const,
@@ -207,3 +222,29 @@ export const queryKeys = {
   liveView: (token: string) => ["live-view", token] as const,
   gouvernorats: ["gouvernorats"] as const,
 };
+
+export interface OrgChange {
+  id: number;
+  at: string;
+  op: "I" | "U" | "D";
+  table_name: string;
+  row_key: Record<string, unknown>;
+  columns: string[];
+  hidden: string[];
+  old_values: Record<string, unknown> | null;
+  new_values: Record<string, unknown> | null;
+  by: "member" | "civil_protection" | "system";
+  by_name: string | null;
+}
+
+export interface OrgChangePage {
+  items: OrgChange[];
+  next_cursor: string | null;
+}
+
+export interface OrgChangeFilters {
+  table: string;
+  op: string;
+  from: string;
+  to: string;
+}
