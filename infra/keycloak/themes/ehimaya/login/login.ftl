@@ -10,7 +10,8 @@
 <!-- template: login.ftl -->
 
     <#if section = "header">
-        ${msg("loginAccountTitle")}
+        <#-- Yamen, 2026-11-08: آلو - حماية for citizens, volunteers and institutions; ء-حماية for Civil Protection. -->
+        <#if realm.name == "ehimaya-public">${msg("ehimayaAppLoginTitle")}<#else>${msg("loginAccountTitle")}</#if>
     <#elseif section = "form">
         <div id="kc-form">
           <div id="kc-form-wrapper">
