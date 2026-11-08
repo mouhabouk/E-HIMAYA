@@ -12207,6 +12207,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Silence the alarm'**
   String get prealertMute;
+
+  /// No description provided for @staffStageMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Field update'**
+  String get staffStageMessage;
+
+  /// No description provided for @staffStageMessageSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what you see at this step: transcribed, tidied, then checked before sending'**
+  String get staffStageMessageSub;
+
+  /// No description provided for @staffStageNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Current step: {stage}'**
+  String staffStageNow(String stage);
+
+  /// No description provided for @staffStageSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a voice message'**
+  String get staffStageSpeak;
+
+  /// No description provided for @staffStageHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'What was heard'**
+  String get staffStageHeard;
+
+  /// No description provided for @staffStageByModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tidied automatically (spelling, terms, punctuation) without changing any fact. Check it, then send.'**
+  String get staffStageByModel;
+
+  /// No description provided for @staffStageByRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleaned by simple rules (the correction model is unavailable). Check it, then send.'**
+  String get staffStageByRules;
+
+  /// No description provided for @staffStageText.
+  ///
+  /// In en, this message translates to:
+  /// **'Message text'**
+  String get staffStageText;
+
+  /// No description provided for @staffStageSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to the room'**
+  String get staffStageSend;
+
+  /// No description provided for @staffStageSentList.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages sent on this mission'**
+  String get staffStageSentList;
+
+  /// No description provided for @staffStageSpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'Spoken, corrected'**
+  String get staffStageSpoken;
 }
 
 class _AppLocalizationsDelegate

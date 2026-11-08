@@ -132,3 +132,20 @@ def test_staff_second_factor_is_required_in_production() -> None:
 def test_evidence_signing_key_is_checked() -> None:
     with pytest.raises(ValidationError, match="EVIDENCE_SIGNING_KEY must decode to 32 bytes"):
         production(evidence_signing_key="c2hvcnQ=")
+
+
+def test_encryption_key_mistakes_are_named_without_the_value() -> None:
+    # Yamen, 2026-11-08: the key in .env was refused as "not base64". Each usual cause gets its own message.
+    good = base64.b64encode(os.urandom(32)).decode()
+    # A .env saved on Windows (CRLF) or a trailing space: accepted, and stored without them.
+    assert production(field_encryption_key=good + "\r").field_encryption_key.get_secret_value() == good
+    assert production(certificate_signing_key=f" {good} ").certificate_signing_key.get_secret_value() == good
+    with pytest.raises(ValidationError, match=r"example text from \.env\.example") as error:
+        production(field_encryption_key="change-me-generate-with-openssl-rand-base64-32")
+    assert "openssl rand -base64 32" in str(error.value)
+    with pytest.raises(ValidationError, match="between quotes"):
+        production(field_encryption_key=f'"{good}"')
+    hex_key = secrets.token_hex(32)  # openssl rand -hex 32: 64 characters, valid base64 but 48 bytes
+    with pytest.raises(ValidationError, match="must decode to 32 bytes, not 48") as error:
+        production(field_encryption_key=hex_key)
+    assert hex_key not in str(error.value)

@@ -406,6 +406,20 @@ class FakeCrewServer {
         positions.putIfAbsent(m.group(1)!, () => []).addAll(points);
         return FakeResponse(200, json: {'accepted': points.length});
       }
+      if (m.group(2) == 'stage-voice') {
+        return const FakeResponse(
+          200,
+          json: {
+            'voice_id': 'v-2',
+            'transcript': 'امم الدخان كثيف كثيف',
+            'text': 'الدخان كثيف.',
+            'tidied_by': 'model',
+            'stage': 'en_route',
+            'language': 'ar',
+            'duration_s': 3.0,
+          },
+        );
+      }
       if (m.group(2) == 'voice') {
         return const FakeResponse(
           200,
@@ -545,6 +559,18 @@ class FakeCrewServer {
               'kind': 'text',
               'body': body['body'],
               'created_at': now,
+            },
+          ];
+        case 'stage-message':
+          x['attachments'] = [
+            ...x['attachments'] as List,
+            {
+              'id': 'a-${writes.length}',
+              'kind': 'text',
+              'body': body['text'],
+              'created_at': now,
+              'stage': 'en_route',
+              'spoken': body['voice_id'] != null,
             },
           ];
         case 'detailed-report':

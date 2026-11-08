@@ -112,6 +112,9 @@ export interface FieldAttachment {
   device_at: string | null;
   created_at: string;
   url?: string | null;
+  /** A message of the scene: the step the mission had reached, and whether it was spoken then corrected. */
+  stage?: string | null;
+  spoken?: boolean;
 }
 
 export type Lang = "ar" | "fr" | "en";

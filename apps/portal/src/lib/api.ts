@@ -65,6 +65,8 @@ export const ERROR_CODES = [
   "visit_open",
   "reservation_lifted",
   "invalid_year",
+  // 2026-11-08: visit records stay with the safety officer, the editors and the administrators.
+  "prevention_only",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

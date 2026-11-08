@@ -16,17 +16,18 @@ from app.core.storage import get_store
 from app.modules.audit import service as audit
 from app.modules.audit.service import actor_of
 from app.modules.orgs import certificate, prevention, schemas, service
-from app.modules.orgs.domain import OrgRole
-from app.modules.orgs.models import PreventionReservation, PreventionVisit
+from app.modules.orgs.domain import OrgRole, role_allows
+from app.modules.orgs.models import Organization, PreventionReservation, PreventionVisit
 from app.modules.orgs.router import delete_objects
-from app.modules.orgs.service import CurrentUser
-from app.modules.orgs.staff_router import ORG_READ_ROLES, _org_in_scope
+from app.modules.orgs.service import CurrentUser, PortalUser
+from app.modules.orgs.staff_router import PREVENTION_ROLES, _org_in_scope
 
 router = APIRouter(prefix="/api/v1", tags=["institutions"])
 staff_router = APIRouter(prefix="/api/v1/staff", tags=["staff-institutions"])
 
 Session = Annotated[AsyncSession, Depends(get_session)]
-OrgReader = Annotated[Principal, Depends(require_roles(*ORG_READ_ROLES))]
+# Visits, their reports and the recommendations stay with the prevention service; the room does not read them.
+PreventionReader = Annotated[Principal, Depends(require_roles(*PREVENTION_ROLES))]
 Auditor = Annotated[Principal, Depends(require_roles(Role.ORG_AUDITOR))]
 VisitState = Literal["requested", "scheduled", "inspected", "decided", "cancelled"]
 
@@ -51,9 +52,18 @@ def _report_url(visit: PreventionVisit) -> schemas.DownloadOut:
 # ---------------------------------------------------------------- portal and app
 
 
+async def _prevention_member(session: AsyncSession, user: PortalUser, org_id: uuid.UUID) -> Organization:
+    """Visits, their reports and the recommendations: the institution's administrators and editors and its safety
+    officers; a plain member (the guard post, the institution's own control room) does not read them (2026-11-08)."""
+    org, member = await service.membership(session, user, org_id)
+    if not (member.safety_officer or role_allows(OrgRole(member.role), OrgRole.EDITOR)):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "prevention_only")
+    return org
+
+
 @router.get("/orgs/{org_id}/prevention/visits", response_model=list[schemas.VisitOut])
 async def list_visits(org_id: uuid.UUID, user: CurrentUser, session: Session) -> list[schemas.VisitOut]:
-    org, _ = await service.membership(session, user, org_id)
+    org = await _prevention_member(session, user, org_id)
     out = await prevention.org_visits(session, org)
     await session.commit()
     return out
@@ -99,7 +109,7 @@ async def withdraw_request(
 async def visit_report(
     org_id: uuid.UUID, visit_id: uuid.UUID, user: CurrentUser, session: Session
 ) -> schemas.DownloadOut:
-    await service.membership(session, user, org_id)
+    await _prevention_member(session, user, org_id)
     visit = await _member_visit(session, org_id, visit_id)
     await session.commit()
     return _report_url(visit)
@@ -135,7 +145,7 @@ async def respond_reservation(
 async def annual_report(
     org_id: uuid.UUID, user: CurrentUser, session: Session, year: Annotated[int, Query(ge=2000, le=2100)]
 ) -> schemas.AnnualReport:
-    org, _ = await service.membership(session, user, org_id)
+    org = await _prevention_member(session, user, org_id)
     out = await prevention.annual_report(session, org, year)
     await session.commit()
     return out
@@ -146,7 +156,7 @@ async def annual_report(
 
 @staff_router.get("/prevention/visits", response_model=schemas.StaffVisitPage)
 async def visit_queue(
-    principal: OrgReader,
+    principal: PreventionReader,
     session: Session,
     status_: Annotated[str | None, Query(alias="status")] = None,
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
@@ -161,7 +171,7 @@ async def visit_queue(
 
 
 @staff_router.get("/orgs/{org_id}/prevention/visits", response_model=list[schemas.VisitOut])
-async def org_visits(principal: OrgReader, session: Session, org_id: uuid.UUID) -> list[schemas.VisitOut]:
+async def org_visits(principal: PreventionReader, session: Session, org_id: uuid.UUID) -> list[schemas.VisitOut]:
     org = await _org_in_scope(session, principal, org_id)
     return await prevention.org_visits(session, org)
 
@@ -190,7 +200,7 @@ async def schedule_visit(
 
 
 @staff_router.get("/prevention/visits/{visit_id}", response_model=schemas.StaffVisit)
-async def get_visit(principal: OrgReader, session: Session, visit_id: uuid.UUID) -> schemas.StaffVisit:
+async def get_visit(principal: PreventionReader, session: Session, visit_id: uuid.UUID) -> schemas.StaffVisit:
     visit, org = await prevention.scoped_visit(session, principal, visit_id)
     return await prevention.staff_view(session, visit, org)
 
@@ -292,7 +302,7 @@ async def cancel_visit(
 
 
 @staff_router.get("/prevention/visits/{visit_id}/report", response_model=schemas.DownloadOut)
-async def staff_visit_report(principal: OrgReader, session: Session, visit_id: uuid.UUID) -> schemas.DownloadOut:
+async def staff_visit_report(principal: PreventionReader, session: Session, visit_id: uuid.UUID) -> schemas.DownloadOut:
     visit, _ = await prevention.scoped_visit(session, principal, visit_id)
     return _report_url(visit)
 

@@ -193,7 +193,10 @@ https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_C
 $ sudo apt update
 $ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 $ sudo usermod -aG docker $USER
-$ echo '{ "log-driver": "json-file", "log-opts": { "max-size": "50m", "max-file": "3" } }' | sudo tee /etc/docker/daemon.json
+$ [ -f /etc/docker/daemon.json ] || echo '{ "log-driver": "json-file", "log-opts": { "max-size": "50m", "max-file": "3" } }' | sudo tee /etc/docker/daemon.json
+$ # ملف موجود؟ لا يُكتب من جديد: يُدمج فيه DNS دون حذف شيء (install-guide.md §5)، مثلا:
+$ sudo python3 scripts/install/docker-daemon-merge.py /etc/docker/daemon.json --dns 10.0.0.1,1.1.1.1 > /tmp/daemon.json \
+    && sudo dockerd --validate --config-file /tmp/daemon.json && sudo install -m 0644 /tmp/daemon.json /etc/docker/daemon.json
 $ sudo systemctl enable --now docker && sudo systemctl restart docker
 ```
 

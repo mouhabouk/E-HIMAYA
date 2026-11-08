@@ -1353,7 +1353,8 @@
       "maintenancePhotoChecking": "En vérification",
       "activities": "Exercices et événements",
       "noActivities": "Aucun exercice ni événement déclaré.",
-      "maintenanceLog": "Journal de maintenance"
+      "maintenanceLog": "Journal de maintenance",
+      "restricted": "Vue de la salle des opérations : seulement ce qu'exige une intervention (fiche, équipe de sécurité et ses numéros, matières dangereuses, équipements, plans et FDS). Les procès-verbaux de visite, recommandations, certificats, dossier de sécurité et membres du portail relèvent du service de prévention."
     },
     "review": {
       "title": "Validation de l’enregistrement",
@@ -5002,7 +5003,8 @@
     "attachment": {
       "photo": "Photo",
       "voice": "Note vocale",
-      "text": "Texte"
+      "text": "Texte",
+      "stage": "Point de situation"
     },
     "seconds": "{{count}} s",
     "contactPhone": "Numéro à appeler sur place",
@@ -5059,6 +5061,14 @@
       "moveTarget": "Changer le point",
       "pickHint": "Cliquez sur la carte pour fixer le point que l'équipe {{who}} doit atteindre. Il part aussitôt sur le téléphone du chef.",
       "targetNote": "Note pour l'équipe (facultative)"
+    },
+    "stage": {
+      "en_route": "En route",
+      "on_scene": "Sur place",
+      "left_scene": "A quitté les lieux",
+      "at_hospital": "À l'hôpital",
+      "available": "Disponible au retour",
+      "back_at_unit": "Rentré à l'unité"
     }
   },
   "templates": {

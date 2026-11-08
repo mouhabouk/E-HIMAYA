@@ -2017,5 +2017,16 @@
   "prealertNoMedia": "لا صورة لهذا التنبيه",
   "prealertStageOfficer": "دور مسؤول السلامة: {seconds} ثانية، ثم يُنبَّه صاحب المؤسسة",
   "prealertStageOwner": "دور صاحب المؤسسة: {seconds} ثانية، ثم تُبلَّغ القاعة آليا",
-  "prealertMute": "إسكات المنبه"
+  "prealertMute": "إسكات المنبه",
+  "staffStageMessage": "رسالة الوضع الميداني",
+  "staffStageMessageSub": "قل ما تراه في هذه المرحلة؛ يُفرَّغ ويُصلَّح ثم تراجعه قبل الإرسال",
+  "staffStageNow": "المرحلة الحالية: {stage}",
+  "staffStageSpeak": "تسجيل رسالة صوتية",
+  "staffStageHeard": "ما سُمع حرفيا",
+  "staffStageByModel": "صُحّح النص آليا (الإملاء، المصطلحات، التنقيط) دون تغيير أي معلومة. راجعه ثم أرسله.",
+  "staffStageByRules": "نُظّف النص بقواعد بسيطة لأن نموذج التصحيح غير متاح الآن. راجعه ثم أرسله.",
+  "staffStageText": "نص الرسالة",
+  "staffStageSend": "إرسال للقاعة",
+  "staffStageSentList": "الرسائل المرسلة في هذه المهمة",
+  "staffStageSpoken": "صوتية مصحّحة"
 }

@@ -2280,6 +2280,14 @@ input[aria-invalid="true"] {
   scrollbar-width: thin;
 }
 
+/* Wide screens: every section stays visible (the 13th tab, prevention, was cut off at 1440 px). */
+@media (min-width: 64rem) {
+  .tabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
 .tabs a {
   flex: none;
   padding: 0.5rem 0.85rem;

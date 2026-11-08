@@ -6983,4 +6983,42 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get prealertMute => 'Couper l\'alarme';
+
+  @override
+  String get staffStageMessage => 'Point de situation vocal';
+
+  @override
+  String get staffStageMessageSub =>
+      'Dites ce que vous voyez à cette étape : transcrit, corrigé, puis relu avant l\'envoi';
+
+  @override
+  String staffStageNow(String stage) {
+    return 'Étape actuelle : $stage';
+  }
+
+  @override
+  String get staffStageSpeak => 'Enregistrer un message vocal';
+
+  @override
+  String get staffStageHeard => 'Ce qui a été entendu';
+
+  @override
+  String get staffStageByModel =>
+      'Texte corrigé automatiquement (orthographe, termes, ponctuation) sans changer aucun fait. Relisez puis envoyez.';
+
+  @override
+  String get staffStageByRules =>
+      'Texte nettoyé par des règles simples (le modèle de correction est indisponible). Relisez puis envoyez.';
+
+  @override
+  String get staffStageText => 'Texte du message';
+
+  @override
+  String get staffStageSend => 'Envoyer à la salle';
+
+  @override
+  String get staffStageSentList => 'Messages envoyés pour cette mission';
+
+  @override
+  String get staffStageSpoken => 'Vocal corrigé';
 }

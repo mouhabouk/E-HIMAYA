@@ -73,7 +73,7 @@ class FieldCipher:
 
 def decode_key(encoded: str) -> bytes:
     try:
-        return base64.b64decode(encoded, validate=True)
+        return base64.b64decode(encoded.strip(), validate=True)
     except binascii.Error as exc:
         raise ValueError("field encryption key must be base64") from exc
 

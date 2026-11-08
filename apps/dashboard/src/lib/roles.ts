@@ -154,6 +154,8 @@ export function hasDashboardAccess(roles: readonly string[]): boolean {
     canReadResources(roles) ||
     canUseNotifications(roles) ||
     canOpenCommand(roles) ||
+    // The regional medical coordinator reviews doctors only (2026-11-08: was locked out of the dashboard).
+    canReviewDoctors(roles) ||
     PHASE9_TECHNICAL_ROLES.some((r) => roles.includes(r))
   );
 }

@@ -2017,5 +2017,16 @@
   "prealertNoMedia": "Pas d'image pour cette alerte",
   "prealertStageOfficer": "Tour du responsable sécurité : {seconds} s, puis le propriétaire est alerté",
   "prealertStageOwner": "Tour du propriétaire : {seconds} s, puis la salle est prévenue automatiquement",
-  "prealertMute": "Couper l'alarme"
+  "prealertMute": "Couper l'alarme",
+  "staffStageMessage": "Point de situation vocal",
+  "staffStageMessageSub": "Dites ce que vous voyez à cette étape : transcrit, corrigé, puis relu avant l'envoi",
+  "staffStageNow": "Étape actuelle : {stage}",
+  "staffStageSpeak": "Enregistrer un message vocal",
+  "staffStageHeard": "Ce qui a été entendu",
+  "staffStageByModel": "Texte corrigé automatiquement (orthographe, termes, ponctuation) sans changer aucun fait. Relisez puis envoyez.",
+  "staffStageByRules": "Texte nettoyé par des règles simples (le modèle de correction est indisponible). Relisez puis envoyez.",
+  "staffStageText": "Texte du message",
+  "staffStageSend": "Envoyer à la salle",
+  "staffStageSentList": "Messages envoyés pour cette mission",
+  "staffStageSpoken": "Vocal corrigé"
 }

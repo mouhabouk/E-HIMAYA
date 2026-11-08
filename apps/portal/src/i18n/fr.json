@@ -772,6 +772,7 @@
     "realm_not_allowed": "Ce type de compte ne peut pas utiliser le portail.",
     "org_not_found": "Établissement introuvable, ou vous n’en êtes pas membre.",
     "org_role_required": "Votre rôle dans l’établissement ne permet pas cette action.",
+    "prevention_only": "Les procès-verbaux de visite et leurs recommandations sont réservés au responsable sécurité, aux administrateurs et aux éditeurs de l’établissement. Demandez à un administrateur de vous désigner responsable sécurité si c’est votre rôle.",
     "org_not_active": "Cette action exige un établissement approuvé (actif).",
     "version_conflict": "La fiche a été modifiée par quelqu’un d’autre entre-temps.",
     "email_not_verified": "Vérifiez votre adresse e-mail (lien envoyé par e-mail) avant d’inscrire un établissement.",

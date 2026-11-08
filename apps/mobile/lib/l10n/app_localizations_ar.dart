@@ -6838,4 +6838,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get prealertMute => 'إسكات المنبه';
+
+  @override
+  String get staffStageMessage => 'رسالة الوضع الميداني';
+
+  @override
+  String get staffStageMessageSub =>
+      'قل ما تراه في هذه المرحلة؛ يُفرَّغ ويُصلَّح ثم تراجعه قبل الإرسال';
+
+  @override
+  String staffStageNow(String stage) {
+    return 'المرحلة الحالية: $stage';
+  }
+
+  @override
+  String get staffStageSpeak => 'تسجيل رسالة صوتية';
+
+  @override
+  String get staffStageHeard => 'ما سُمع حرفيا';
+
+  @override
+  String get staffStageByModel =>
+      'صُحّح النص آليا (الإملاء، المصطلحات، التنقيط) دون تغيير أي معلومة. راجعه ثم أرسله.';
+
+  @override
+  String get staffStageByRules =>
+      'نُظّف النص بقواعد بسيطة لأن نموذج التصحيح غير متاح الآن. راجعه ثم أرسله.';
+
+  @override
+  String get staffStageText => 'نص الرسالة';
+
+  @override
+  String get staffStageSend => 'إرسال للقاعة';
+
+  @override
+  String get staffStageSentList => 'الرسائل المرسلة في هذه المهمة';
+
+  @override
+  String get staffStageSpoken => 'صوتية مصحّحة';
 }

@@ -258,6 +258,49 @@ void main() {
     expect(server.missions.single['intervention_report'], isNotNull);
   });
 
+  testWidgets(
+    'a spoken word at every step: heard, tidied, corrected, sent under the step',
+    (tester) async {
+      final server = await onMission(status: 'en_route');
+      await openMission(tester, server);
+      await reveal(tester, 'open-stage-message');
+      await tester.tap(find.byKey(const Key('open-stage-message')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('stage-mic')));
+      await tester.pumpAndSettle();
+      expect(server.writes.last.path, '/api/v1/crew/missions/m-1/stage-voice');
+      expect(find.text('امم الدخان كثيف كثيف'), findsOneWidget);
+      expect(find.text('الدخان كثيف.'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('stage-text')),
+        'الدخان كثيف. الطريق مغلقة، نسلك الطريق الثانوية.',
+      );
+      await reveal(tester, 'stage-send');
+      await tester.tap(find.byKey(const Key('stage-send')));
+      await tester.pumpAndSettle();
+      final sent = server.writes.last;
+      expect(sent.path, '/api/v1/crew/missions/m-1/stage-message');
+      expect(sent.json, containsPair('voice_id', 'v-2'));
+      expect(
+        sent.json,
+        containsPair(
+          'text',
+          'الدخان كثيف. الطريق مغلقة، نسلك الطريق الثانوية.',
+        ),
+      );
+      expect(server.missions.single['attachments'], hasLength(1));
+    },
+  );
+
+  testWidgets('no spoken word before leaving the unit', (tester) async {
+    final server = await onMission(
+      status: 'ordered',
+      extra: {'en_route_at': null},
+    );
+    await openMission(tester, server);
+    expect(find.byKey(const Key('open-stage-message')), findsNothing);
+  });
+
   testWidgets('the point the room picked on the map is shown and copied', (
     tester,
   ) async {

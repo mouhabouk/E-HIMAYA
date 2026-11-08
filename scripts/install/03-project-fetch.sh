@@ -77,6 +77,19 @@ fresh FIELD_ENCRYPTION_KEY && set_env FIELD_ENCRYPTION_KEY "$(openssl rand -base
 fresh CERTIFICATE_SIGNING_KEY && set_env CERTIFICATE_SIGNING_KEY "$(openssl rand -base64 32)" && generated=$((generated + 1))
 fresh SMS_INBOUND_SECRET && set_env SMS_INBOUND_SECRET "$(openssl rand -hex 32)" && generated=$((generated + 1))
 ok "$generated سرًا جديدًا (الأسرار الموجودة لم تتغير)"
+# المفتاحان بصيغة base64 لـ 32 بايت بالضبط، وإلا ترفض الواجهة البرمجية الإقلاع. قيمة غير صالحة لم تشفّر شيئا قط
+# (الخادم لا يقلع بها)، فاستبدالها آمن. نهاية سطر Windows (\r) تُحذف من الملف كله أولا.
+if grep -q $'\r' "$ENV_FILE"; then
+  sed -i 's/\r$//' "$ENV_FILE"
+  warn "حُذفت نهايات أسطر Windows (CRLF) من $ENV_FILE"
+fi
+key_ok() { python3 -c 'import base64,sys; sys.exit(0 if len(base64.b64decode(sys.argv[1].strip().strip(chr(34)+chr(39)), validate=True)) == 32 else 1)' "$1" 2>/dev/null; }
+for v in FIELD_ENCRYPTION_KEY CERTIFICATE_SIGNING_KEY; do
+  if ! key_ok "$(env_value "$v")"; then
+    set_env "$v" "$(openssl rand -base64 32)"
+    warn "$v لم يكن base64 لـ 32 بايت (نص المثال، أو قيمة من openssl rand -hex، أو لصق ناقص): وُلّد مفتاح جديد"
+  fi
+done
 
 step "4/6 الأسرار الحرجة"
 warn "انسخ هذه الأسرار الثلاثة إلى خزنة خارج الخادم قبل أي بيانات حقيقية (مظروف مختوم أو مدير أسرار):"

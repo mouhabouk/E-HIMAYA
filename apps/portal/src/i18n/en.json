@@ -772,6 +772,7 @@
     "realm_not_allowed": "This account type cannot use the portal.",
     "org_not_found": "Institution not found, or you are not a member.",
     "org_role_required": "Your role in the institution does not allow this action.",
+    "prevention_only": "Visit records and their recommendations are for the safety officer, the administrators and the editors of the institution. Ask an administrator to name you safety officer if that is your role.",
     "org_not_active": "This action needs an approved (active) institution.",
     "version_conflict": "The card was modified by someone else meanwhile.",
     "email_not_verified": "Verify your e-mail address (link sent by e-mail) before registering an institution.",

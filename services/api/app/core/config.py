@@ -13,6 +13,27 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 from app.core.secrets_policy import production_problems
 
 
+def _base64_key(name: str, value: str) -> str:
+    """A 32-byte key written as base64, tolerant of a trailing carriage return or spaces (a .env saved on Windows).
+
+    The messages say what is wrong without printing the value: the example text left in place, quotes, or a key of
+    the wrong length (a hex value from `openssl rand -hex`, or a truncated paste).
+    """
+    text = value.strip()
+    hint = "generate it with: openssl rand -base64 32"
+    if text.startswith("change-me"):
+        raise ValueError(f"{name} still holds the example text from .env.example; {hint}")
+    if len(text) >= 2 and text[0] in "\"'" and text[-1] == text[0]:
+        raise ValueError(f"{name} is written between quotes in .env; remove them")
+    try:
+        raw = base64.b64decode(text, validate=True)
+    except binascii.Error as exc:
+        raise ValueError(f"{name} must be base64 ({len(text)} characters, not base64); {hint}") from exc
+    if len(raw) != 32:
+        raise ValueError(f"{name} must decode to 32 bytes, not {len(raw)}; {hint}")
+    return text
+
+
 class Settings(BaseSettings):
     # hide_input_in_errors: a start-up error must never print the secrets it was given.
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True)
@@ -420,13 +441,7 @@ class Settings(BaseSettings):
     @classmethod
     def _check_key(cls, value: SecretStr) -> SecretStr:
         # Fail at start-up rather than on the first encrypted write.
-        try:
-            raw = base64.b64decode(value.get_secret_value(), validate=True)
-        except binascii.Error as exc:
-            raise ValueError("FIELD_ENCRYPTION_KEY must be base64 (openssl rand -base64 32)") from exc
-        if len(raw) != 32:
-            raise ValueError("FIELD_ENCRYPTION_KEY must decode to 32 bytes (openssl rand -base64 32)")
-        return value
+        return SecretStr(_base64_key("FIELD_ENCRYPTION_KEY", value.get_secret_value()))
 
     @field_validator("field_encryption_keys")
     @classmethod
@@ -475,14 +490,7 @@ class Settings(BaseSettings):
     def _check_signing_key(cls, value: SecretStr | None, info: ValidationInfo) -> SecretStr | None:
         if value is None:
             return None
-        name = (info.field_name or "").upper()
-        try:
-            raw = base64.b64decode(value.get_secret_value(), validate=True)
-        except binascii.Error as exc:
-            raise ValueError(f"{name} must be base64 (openssl rand -base64 32)") from exc
-        if len(raw) != 32:
-            raise ValueError(f"{name} must decode to 32 bytes (openssl rand -base64 32)")
-        return value
+        return SecretStr(_base64_key((info.field_name or "").upper(), value.get_secret_value()))
 
     @field_validator(
         "basemap_open_attribution",

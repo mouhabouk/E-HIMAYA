@@ -1,13 +1,31 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { i18n } from "i18next";
-import { lazy, Suspense, useState, type ComponentType, type ReactNode } from "react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 import { I18nextProvider } from "react-i18next";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router";
 import { RequireAuth } from "./auth/RequireAuth";
 import { Loading } from "./components/Feedback";
 import { Layout } from "./components/Layout";
 import { AuthProvider, LendRoles, useAuth } from "./context/auth";
-import { allowed, featureOfPath, lentRoles, pageOf, useMyFeatures } from "./lib/features";
+import {
+  allowed,
+  featureOfPath,
+  lentRoles,
+  pageOf,
+  useMyFeatures,
+} from "./lib/features";
 import { FiltersProvider } from "./context/filters";
 import { LiveProvider } from "./context/live";
 import { ServicesProvider, type Services } from "./context/services";
@@ -46,6 +64,7 @@ import {
   canRunScenarios,
   canSeeRewardActivity,
   canReadOrgs,
+  canReviewOrgs,
   canReadResources,
   canManageMedicalCommittee,
   canReviewDoctors,
@@ -103,57 +122,146 @@ import { WeatherSuggestionsPage } from "./pages/WeatherSuggestionsPage";
 import { MenuOrderPage } from "./pages/MenuOrderPage";
 
 // Phase 8 screens are loaded on demand: they bring the chart (uPlot) and Markdown (markdown-it, DOMPurify) code.
-const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) =>
-  lazy(() => load().then((m) => ({ default: m[name] })));
-const AnalyticsPage = page(() => import("./pages/AnalyticsPage"), "AnalyticsPage");
-const ScenariosPage = page(() => import("./pages/ScenariosPage"), "ScenariosPage");
-const ScenarioDetailPage = page(() => import("./pages/ScenariosPage"), "ScenarioDetailPage");
-const ReportsLibraryPage = page(() => import("./pages/ReportsLibraryPage"), "ReportsLibraryPage");
-const ReportSchedulesPage = page(() => import("./pages/ReportSchedulesPage"), "ReportSchedulesPage");
+const page = <K extends string>(
+  load: () => Promise<Record<K, ComponentType>>,
+  name: K,
+) => lazy(() => load().then((m) => ({ default: m[name] })));
+const AnalyticsPage = page(
+  () => import("./pages/AnalyticsPage"),
+  "AnalyticsPage",
+);
+const ScenariosPage = page(
+  () => import("./pages/ScenariosPage"),
+  "ScenariosPage",
+);
+const ScenarioDetailPage = page(
+  () => import("./pages/ScenariosPage"),
+  "ScenarioDetailPage",
+);
+const ReportsLibraryPage = page(
+  () => import("./pages/ReportsLibraryPage"),
+  "ReportsLibraryPage",
+);
+const ReportSchedulesPage = page(
+  () => import("./pages/ReportSchedulesPage"),
+  "ReportSchedulesPage",
+);
 const CommandPage = page(() => import("./pages/CommandPage"), "CommandPage");
 const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
-const RoomReportPage = page(() => import("./pages/RoomReportPage"), "RoomReportPage");
-const DisastersPage = page(() => import("./pages/DisastersPage"), "DisastersPage");
+const RoomReportPage = page(
+  () => import("./pages/RoomReportPage"),
+  "RoomReportPage",
+);
+const DisastersPage = page(
+  () => import("./pages/DisastersPage"),
+  "DisastersPage",
+);
 const AxisPage = page(() => import("./pages/AxisPage"), "AxisPage");
 // Phase L3b: register of plans, decisions and instructions.
 const RegisterPage = page(() => import("./pages/RegisterPage"), "RegisterPage");
-const RegisterDocumentPage = page(() => import("./pages/RegisterDocumentPage"), "RegisterDocumentPage");
+const RegisterDocumentPage = page(
+  () => import("./pages/RegisterDocumentPage"),
+  "RegisterDocumentPage",
+);
 // Phase PL1: intervention plans by hazard, read on the screen.
 const PlansPage = page(() => import("./pages/PlansPage"), "PlansPage");
-const PlanViewerPage = page(() => import("./pages/PlansPage"), "PlanViewerPage");
+const PlanViewerPage = page(
+  () => import("./pages/PlansPage"),
+  "PlanViewerPage",
+);
 // Phase PL2: daily, weekly and monthly programmes of every gouvernorat.
 const SchedulePage = page(() => import("./pages/SchedulePage"), "SchedulePage");
-const DispatchesPage = page(() => import("./pages/DispatchPages"), "DispatchesPage");
-const DispatchPage = page(() => import("./pages/DispatchPages"), "DispatchPage");
-const MemoryListPage = page(() => import("./pages/MemoryListPage"), "MemoryListPage");
-const MemoryEntryPage = page(() => import("./pages/MemoryEntryPage"), "MemoryEntryPage");
-const EventsLibraryPage = page(() => import("./pages/EventsLibraryPage"), "EventsLibraryPage");
-const LibraryItemPage = page(() => import("./pages/EventsLibraryPage"), "LibraryItemPage");
-const RewardRulesPage = page(() => import("./pages/RewardsPages"), "RewardRulesPage");
-const RewardConfirmationsPage = page(() => import("./pages/RewardsPages"), "RewardConfirmationsPage");
-const RewardNominationsPage = page(() => import("./pages/RewardsPages"), "RewardNominationsPage");
-const RewardCertificatesPage = page(() => import("./pages/RewardsPages"), "RewardCertificatesPage");
-const RewardLeaderboardPage = page(() => import("./pages/RewardsPages"), "RewardLeaderboardPage");
+const DispatchesPage = page(
+  () => import("./pages/DispatchPages"),
+  "DispatchesPage",
+);
+const DispatchPage = page(
+  () => import("./pages/DispatchPages"),
+  "DispatchPage",
+);
+const MemoryListPage = page(
+  () => import("./pages/MemoryListPage"),
+  "MemoryListPage",
+);
+const MemoryEntryPage = page(
+  () => import("./pages/MemoryEntryPage"),
+  "MemoryEntryPage",
+);
+const EventsLibraryPage = page(
+  () => import("./pages/EventsLibraryPage"),
+  "EventsLibraryPage",
+);
+const LibraryItemPage = page(
+  () => import("./pages/EventsLibraryPage"),
+  "LibraryItemPage",
+);
+const RewardRulesPage = page(
+  () => import("./pages/RewardsPages"),
+  "RewardRulesPage",
+);
+const RewardConfirmationsPage = page(
+  () => import("./pages/RewardsPages"),
+  "RewardConfirmationsPage",
+);
+const RewardNominationsPage = page(
+  () => import("./pages/RewardsPages"),
+  "RewardNominationsPage",
+);
+const RewardCertificatesPage = page(
+  () => import("./pages/RewardsPages"),
+  "RewardCertificatesPage",
+);
+const RewardLeaderboardPage = page(
+  () => import("./pages/RewardsPages"),
+  "RewardLeaderboardPage",
+);
 // Phase B1: map data layers (file import, preview map).
 const LayersPage = page(() => import("./pages/LayersPage"), "LayersPage");
 const CoastalPage = page(() => import("./pages/CoastalPage"), "CoastalPage");
 // Phase L2: seasonal programmes.
-const ProgrammesPage = page(() => import("./pages/ProgrammesPage"), "ProgrammesPage");
-const ProgrammeDetailPage = page(() => import("./pages/ProgrammeDetailPage"), "ProgrammeDetailPage");
+const ProgrammesPage = page(
+  () => import("./pages/ProgrammesPage"),
+  "ProgrammesPage",
+);
+const ProgrammeDetailPage = page(
+  () => import("./pages/ProgrammeDetailPage"),
+  "ProgrammeDetailPage",
+);
 // Phase R1: resources register of every gouvernorat.
-const InventoryPage = page(() => import("./pages/InventoryPage"), "InventoryPage");
-const EmergencyGuidePage = page(() => import("./pages/EmergencyGuidePage"), "EmergencyGuidePage");
-const ContactInboxPage = page(() => import("./pages/ContactInboxPage"), "ContactInboxPage");
+const InventoryPage = page(
+  () => import("./pages/InventoryPage"),
+  "InventoryPage",
+);
+const EmergencyGuidePage = page(
+  () => import("./pages/EmergencyGuidePage"),
+  "EmergencyGuidePage",
+);
+const ContactInboxPage = page(
+  () => import("./pages/ContactInboxPage"),
+  "ContactInboxPage",
+);
 // Phase L4: what the system administrator grants and hides.
-const PermissionsPage = page(() => import("./pages/PermissionsPage"), "PermissionsPage");
+const PermissionsPage = page(
+  () => import("./pages/PermissionsPage"),
+  "PermissionsPage",
+);
 const WindowPage = page(() => import("./pages/WindowPage"), "WindowPage");
 const DrillsPage = page(() => import("./pages/DrillsPage"), "DrillsPage");
 // Phase S: the strategies menu and SNACR.
-const StrategiesPage = page(() => import("./pages/StrategiesPage"), "StrategiesPage");
-const StrategyItemPage = page(() => import("./pages/StrategiesPage"), "StrategyItemPage");
+const StrategiesPage = page(
+  () => import("./pages/StrategiesPage"),
+  "StrategiesPage",
+);
+const StrategyItemPage = page(
+  () => import("./pages/StrategiesPage"),
+  "StrategyItemPage",
+);
 const SnacrPage = page(() => import("./pages/SnacrPage"), "SnacrPage");
 // Phase 2: the Office's reference lists.
-const ReferencesPage = page(() => import("./pages/ReferencesPage"), "ReferencesPage");
+const ReferencesPage = page(
+  () => import("./pages/ReferencesPage"),
+  "ReferencesPage",
+);
 const DrillPage = page(() => import("./pages/DrillPage"), "DrillPage");
 // Phase L5b: sensors of the local network.
 const SensorsPage = page(() => import("./pages/SensorsPage"), "SensorsPage");
@@ -166,17 +274,27 @@ export function createQueryClient(): QueryClient {
       queries: {
         staleTime: 30_000,
         // Client errors (4xx) are not transient: do not hammer the API with retries.
-        retry: (count, error) => !(isApiError(error) && error.status >= 400 && error.status < 500) && count < 2,
+        retry: (count, error) =>
+          !(isApiError(error) && error.status >= 400 && error.status < 500) &&
+          count < 2,
       },
     },
   });
 }
 
 /** Screens of one area (reports or institutions) for the roles that can use it; the API checks again. */
-export function Gate({ allow, children }: { allow: (roles: readonly string[]) => boolean; children: ReactNode }) {
+export function Gate({
+  allow,
+  children,
+}: {
+  allow: (roles: readonly string[]) => boolean;
+  children: ReactNode;
+}) {
   const { user } = useAuth();
   return (
-    <FeatureGate byRole={!!user && allow(user.identity.roles)}>{children}</FeatureGate>
+    <FeatureGate byRole={!!user && allow(user.identity.roles)}>
+      {children}
+    </FeatureGate>
   );
 }
 
@@ -184,19 +302,40 @@ export function Gate({ allow, children }: { allow: (roles: readonly string[]) =>
  * The administrator's rules on the page at this path (L4 §8): a hidden page is refused, a granted one opens, and the
  * roles its grants lend show the granted buttons inside it. The API enforces the same rules.
  */
-function FeatureGate({ byRole, children }: { byRole: boolean; children: ReactNode }) {
+function FeatureGate({
+  byRole,
+  children,
+}: {
+  byRole: boolean;
+  children: ReactNode;
+}) {
   const { user } = useAuth();
   const { pathname } = useLocation();
   const access = useMyFeatures();
   const key = featureOfPath(pathname);
-  if (!user || !allowed(access, key, byRole)) return <NoAccessPage reason="noRole" embedded />;
-  return <LendRoles roles={key ? lentRoles(access, pageOf(key)) : []}>{children}</LendRoles>;
+  if (!user || !allowed(access, key, byRole))
+    return <NoAccessPage reason="noRole" embedded />;
+  return (
+    <LendRoles roles={key ? lentRoles(access, pageOf(key)) : []}>
+      {children}
+    </LendRoles>
+  );
 }
 
 /** A screen whose access depends on the scope (national or regional room) as well as the roles (phase 9). */
-export function ScopeGate({ allow, children }: { allow: (identity: StaffIdentity) => boolean; children: ReactNode }) {
+export function ScopeGate({
+  allow,
+  children,
+}: {
+  allow: (identity: StaffIdentity) => boolean;
+  children: ReactNode;
+}) {
   const { user } = useAuth();
-  return <FeatureGate byRole={!!user && allow(user.identity)}>{children}</FeatureGate>;
+  return (
+    <FeatureGate byRole={!!user && allow(user.identity)}>
+      {children}
+    </FeatureGate>
+  );
 }
 
 /** The KPIs need a report read role; other staff start on the first area their roles open. */
@@ -211,19 +350,30 @@ function Home() {
 
 const reports = (page: ReactNode) => <Gate allow={hasReadAccess}>{page}</Gate>;
 const orgs = (page: ReactNode) => <Gate allow={canReadOrgs}>{page}</Gate>;
-const resources = (page: ReactNode) => <Gate allow={canReadResources}>{page}</Gate>;
-const notifications = (page: ReactNode) => <Gate allow={canUseNotifications}>{page}</Gate>;
+const resources = (page: ReactNode) => (
+  <Gate allow={canReadResources}>{page}</Gate>
+);
+const notifications = (page: ReactNode) => (
+  <Gate allow={canUseNotifications}>{page}</Gate>
+);
 const tips = (page: ReactNode) => <Gate allow={canEditTips}>{page}</Gate>;
-const weather = (page: ReactNode) => <Gate allow={canReviewWeatherSuggestions}>{page}</Gate>;
+const weather = (page: ReactNode) => (
+  <Gate allow={canReviewWeatherSuggestions}>{page}</Gate>
+);
 /** A lazily loaded screen behind its role gate. */
 const gated = (allow: (roles: readonly string[]) => boolean, el: ReactNode) => (
   <Gate allow={allow}>
     <Suspense fallback={<Loading />}>{el}</Suspense>
   </Gate>
 );
-const scoped = (allow: (identity: StaffIdentity) => boolean, page: ReactNode) => <ScopeGate allow={allow}>{page}</ScopeGate>;
+const scoped = (
+  allow: (identity: StaffIdentity) => boolean,
+  page: ReactNode,
+) => <ScopeGate allow={allow}>{page}</ScopeGate>;
 const committee = (page: ReactNode) => (
-  <Gate allow={(roles) => isCommittee(roles) || canMonitorPerformance(roles)}>{page}</Gate>
+  <Gate allow={(roles) => isCommittee(roles) || canMonitorPerformance(roles)}>
+    {page}
+  </Gate>
 );
 
 export function AppRoutes() {
@@ -239,101 +389,338 @@ export function AppRoutes() {
       >
         <Route index element={<Home />} />
         <Route path="reports" element={reports(<ReportsPage />)} />
-        <Route path="reports/late" element={scoped(canSeeNationalQueues, <LateReportsPage />)} />
-        <Route path="reports/geo-queue" element={scoped(canSeeNationalQueues, <GeoQueuePage />)} />
-        <Route path="reports/new" element={gated(canEnterReports, <RoomReportPage />)} />
+        <Route
+          path="reports/late"
+          element={scoped(canSeeNationalQueues, <LateReportsPage />)}
+        />
+        <Route
+          path="reports/geo-queue"
+          element={scoped(canSeeNationalQueues, <GeoQueuePage />)}
+        />
+        <Route
+          path="reports/new"
+          element={gated(canEnterReports, <RoomReportPage />)}
+        />
         <Route path="reports/:id" element={reports(<ReportDetailPage />)} />
         <Route path="incidents" element={reports(<IncidentsPage />)} />
         <Route path="incidents/:id" element={reports(<IncidentDetailPage />)} />
         <Route path="map" element={reports(<MapPage />)} />
         <Route path="streams" element={reports(<StreamsPage />)} />
         <Route path="streams/wall" element={reports(<StreamWallPage />)} />
-        <Route path="streams/archive" element={reports(<StreamArchivePage />)} />
+        <Route
+          path="streams/archive"
+          element={reports(<StreamArchivePage />)}
+        />
         <Route path="streams/cameras" element={reports(<CamerasPage />)} />
         <Route path="streams/:id" element={reports(<StreamDetailPage />)} />
-        <Route path="settings" element={<Gate allow={canReadPlatformSettings}><SettingsPage /></Gate>} />
+        <Route
+          path="settings"
+          element={
+            <Gate allow={canReadPlatformSettings}>
+              <SettingsPage />
+            </Gate>
+          }
+        />
         <Route
           path="settings/ai"
-          element={scoped((id) => hasReadAccess(id.roles) || canEditAiSettings(id), <AiSettingsPage />)}
+          element={scoped(
+            (id) => hasReadAccess(id.roles) || canEditAiSettings(id),
+            <AiSettingsPage />,
+          )}
         />
-        <Route path="settings/menu" element={<Gate allow={canReadPlatformSettings}><MenuOrderPage /></Gate>} />
-        <Route path="settings/ai/models" element={scoped(canReadModelCards, <ModelCardsPage />)} />
-        <Route path="settings/ai/learning" element={scoped(canOpenLearning, <LearningPage />)} />
-        <Route path="resource-requests" element={reports(<ResourceRequestsPage />)} />
-        <Route path="crew" element={<Gate allow={canOpenCrew}><CrewPage /></Gate>} />
-        <Route path="crew/agents" element={<Gate allow={canManageFieldAgents}><FieldAgentsPage /></Gate>} />
-        <Route path="report-templates" element={reports(<ReportTemplatesPage />)} />
-        <Route path="accounts" element={scoped(canManageAccounts, <AccountsPage />)} />
-        <Route path="audit" element={scoped(canReadScopedAudit, <AuditPage />)} />
-        <Route path="break-glass" element={scoped(canOpenBreakGlass, <BreakGlassPage />)} />
+        <Route
+          path="settings/menu"
+          element={
+            <Gate allow={canReadPlatformSettings}>
+              <MenuOrderPage />
+            </Gate>
+          }
+        />
+        <Route
+          path="settings/ai/models"
+          element={scoped(canReadModelCards, <ModelCardsPage />)}
+        />
+        <Route
+          path="settings/ai/learning"
+          element={scoped(canOpenLearning, <LearningPage />)}
+        />
+        <Route
+          path="resource-requests"
+          element={reports(<ResourceRequestsPage />)}
+        />
+        <Route
+          path="crew"
+          element={
+            <Gate allow={canOpenCrew}>
+              <CrewPage />
+            </Gate>
+          }
+        />
+        <Route
+          path="crew/agents"
+          element={
+            <Gate allow={canManageFieldAgents}>
+              <FieldAgentsPage />
+            </Gate>
+          }
+        />
+        <Route
+          path="report-templates"
+          element={reports(<ReportTemplatesPage />)}
+        />
+        <Route
+          path="accounts"
+          element={scoped(canManageAccounts, <AccountsPage />)}
+        />
+        <Route
+          path="audit"
+          element={scoped(canReadScopedAudit, <AuditPage />)}
+        />
+        <Route
+          path="break-glass"
+          element={scoped(canOpenBreakGlass, <BreakGlassPage />)}
+        />
         <Route
           path="permissions"
-          element={scoped(canManagePermissions, <Suspense fallback={<Loading />}><PermissionsPage /></Suspense>)}
+          element={scoped(
+            canManagePermissions,
+            <Suspense fallback={<Loading />}>
+              <PermissionsPage />
+            </Suspense>,
+          )}
         />
         {/* Opened in full by the rooms, through a delegation by others: the page and the API decide (L4 §5). */}
-        <Route path="window" element={scoped(() => true, <Suspense fallback={<Loading />}><WindowPage /></Suspense>)} />
+        <Route
+          path="window"
+          element={scoped(
+            () => true,
+            <Suspense fallback={<Loading />}>
+              <WindowPage />
+            </Suspense>,
+          )}
+        />
         {/* Dormant (L5a): no role opens the dry run; only the administrator's grant does (design-l5.md §2.1). */}
-        <Route path="drills" element={scoped(() => false, <Suspense fallback={<Loading />}><DrillsPage /></Suspense>)} />
-        <Route path="drills/:id" element={scoped(() => false, <Suspense fallback={<Loading />}><DrillPage /></Suspense>)} />
+        <Route
+          path="drills"
+          element={scoped(
+            () => false,
+            <Suspense fallback={<Loading />}>
+              <DrillsPage />
+            </Suspense>,
+          )}
+        />
+        <Route
+          path="drills/:id"
+          element={scoped(
+            () => false,
+            <Suspense fallback={<Loading />}>
+              <DrillPage />
+            </Suspense>,
+          )}
+        />
         <Route path="calls" element={reports(<CallsPage />)} />
         <Route path="sensors" element={reports(<SensorsPage />)} />
         <Route path="towers" element={reports(<TowersPage />)} />
         <Route path="drones" element={reports(<DronesPage />)} />
-        <Route path="weather/suggestions" element={weather(<WeatherSuggestionsPage />)} />
+        <Route
+          path="weather/suggestions"
+          element={weather(<WeatherSuggestionsPage />)}
+        />
         <Route path="orgs" element={orgs(<OrgsPage />)} />
-        <Route path="orgs/certificates" element={orgs(<CertificatesPage />)} />
-        <Route path="orgs/certificates/counter" element={orgs(<CounterPage />)} />
-        <Route path="orgs/prevention" element={orgs(<PreventionPage />)} />
-        <Route path="orgs/prevention/:id" element={orgs(<VisitPage />)} />
+        <Route
+          path="orgs/certificates"
+          element={
+            <Gate allow={canReviewOrgs}>
+              <CertificatesPage />
+            </Gate>
+          }
+        />
+        <Route
+          path="orgs/certificates/counter"
+          element={orgs(<CounterPage />)}
+        />
+        <Route
+          path="orgs/prevention"
+          element={
+            <Gate allow={canReviewOrgs}>
+              <PreventionPage />
+            </Gate>
+          }
+        />
+        <Route
+          path="orgs/prevention/:id"
+          element={
+            <Gate allow={canReviewOrgs}>
+              <VisitPage />
+            </Gate>
+          }
+        />
         <Route path="orgs/:id" element={orgs(<OrgDetailPage />)} />
         <Route path="resources" element={resources(<ResourcesPage />)} />
         <Route path="volunteers" element={reports(<VolunteersPage />)} />
-        <Route path="volunteers/:id" element={reports(<VolunteerDetailPage />)} />
-        <Route path="doctors" element={gated(canReviewDoctors, <DoctorsPage />)} />
-        <Route path="doctors/:id" element={gated(canReviewDoctors, <DoctorDetailPage />)} />
-        <Route path="medical-committee" element={scoped(canManageMedicalCommittee, <MedicalCommitteePage />)} />
-        <Route path="notifications" element={notifications(<NotificationsPage />)} />
-        <Route path="notifications/new" element={notifications(<NotificationEditorPage />)} />
-        <Route path="notifications/:id" element={notifications(<NotificationEditorPage />)} />
+        <Route
+          path="volunteers/:id"
+          element={reports(<VolunteerDetailPage />)}
+        />
+        <Route
+          path="doctors"
+          element={gated(canReviewDoctors, <DoctorsPage />)}
+        />
+        <Route
+          path="doctors/:id"
+          element={gated(canReviewDoctors, <DoctorDetailPage />)}
+        />
+        <Route
+          path="medical-committee"
+          element={scoped(canManageMedicalCommittee, <MedicalCommitteePage />)}
+        />
+        <Route
+          path="notifications"
+          element={notifications(<NotificationsPage />)}
+        />
+        <Route
+          path="notifications/new"
+          element={notifications(<NotificationEditorPage />)}
+        />
+        <Route
+          path="notifications/:id"
+          element={notifications(<NotificationEditorPage />)}
+        />
         <Route path="safety-tips" element={tips(<SafetyTipsPage />)} />
         <Route path="layers" element={gated(canOpenLayers, <LayersPage />)} />
-        <Route path="references" element={gated(hasReadAccess, <ReferencesPage />)} />
-        <Route path="coastal" element={gated(canOpenCoastal, <CoastalPage />)} />
-        <Route path="programmes" element={gated(canOpenProgrammes, <ProgrammesPage />)} />
-        <Route path="strategies" element={gated(() => true, <StrategiesPage />)} />
-        <Route path="strategies/:key" element={gated(() => true, <StrategyItemPage />)} />
+        <Route
+          path="references"
+          element={gated(hasReadAccess, <ReferencesPage />)}
+        />
+        <Route
+          path="coastal"
+          element={gated(canOpenCoastal, <CoastalPage />)}
+        />
+        <Route
+          path="programmes"
+          element={gated(canOpenProgrammes, <ProgrammesPage />)}
+        />
+        <Route
+          path="strategies"
+          element={gated(() => true, <StrategiesPage />)}
+        />
+        <Route
+          path="strategies/:key"
+          element={gated(() => true, <StrategyItemPage />)}
+        />
         <Route path="snacr" element={gated(canOpenSnacr, <SnacrPage />)} />
-        <Route path="programmes/:id" element={gated(canOpenProgrammes, <ProgrammeDetailPage />)} />
-        <Route path="inventory" element={gated(canOpenInventory, <InventoryPage />)} />
-        <Route path="disasters" element={gated(canOpenDisasters, <DisastersPage />)} />
+        <Route
+          path="programmes/:id"
+          element={gated(canOpenProgrammes, <ProgrammeDetailPage />)}
+        />
+        <Route
+          path="inventory"
+          element={gated(canOpenInventory, <InventoryPage />)}
+        />
+        <Route
+          path="disasters"
+          element={gated(canOpenDisasters, <DisastersPage />)}
+        />
         <Route path="axes" element={gated(canOpenAxes, <AxesPage />)} />
         <Route path="axes/:id" element={gated(canOpenAxes, <AxisPage />)} />
-        <Route path="register" element={gated(canOpenRegister, <RegisterPage />)} />
-        <Route path="register/dispatches" element={gated(canOpenRegister, <DispatchesPage />)} />
-        <Route path="register/dispatches/:id" element={gated(canOpenRegister, <DispatchPage />)} />
-        <Route path="register/:id" element={gated(canOpenRegister, <RegisterDocumentPage />)} />
+        <Route
+          path="register"
+          element={gated(canOpenRegister, <RegisterPage />)}
+        />
+        <Route
+          path="register/dispatches"
+          element={gated(canOpenRegister, <DispatchesPage />)}
+        />
+        <Route
+          path="register/dispatches/:id"
+          element={gated(canOpenRegister, <DispatchPage />)}
+        />
+        <Route
+          path="register/:id"
+          element={gated(canOpenRegister, <RegisterDocumentPage />)}
+        />
         <Route path="plans" element={gated(canOpenRegister, <PlansPage />)} />
-        <Route path="plans/:id" element={gated(canOpenRegister, <PlanViewerPage />)} />
-        <Route path="schedule" element={gated(canOpenSchedule, <SchedulePage />)} />
-        <Route path="command" element={gated(canOpenCommand, <CommandPage />)} />
-        <Route path="emergency-guide" element={gated(canEditTips, <EmergencyGuidePage />)} />
-        <Route path="contact" element={gated(canHandleContact, <ContactInboxPage />)} />
+        <Route
+          path="plans/:id"
+          element={gated(canOpenRegister, <PlanViewerPage />)}
+        />
+        <Route
+          path="schedule"
+          element={gated(canOpenSchedule, <SchedulePage />)}
+        />
+        <Route
+          path="command"
+          element={gated(canOpenCommand, <CommandPage />)}
+        />
+        <Route
+          path="emergency-guide"
+          element={gated(canEditTips, <EmergencyGuidePage />)}
+        />
+        <Route
+          path="contact"
+          element={gated(canHandleContact, <ContactInboxPage />)}
+        />
         <Route path="committee" element={committee(<CommitteePage />)} />
-        <Route path="analytics" element={gated(canReadAnalytics, <AnalyticsPage />)} />
-        <Route path="analytics/scenarios" element={gated(canRunScenarios, <ScenariosPage />)} />
-        <Route path="analytics/scenarios/:id" element={gated(canRunScenarios, <ScenarioDetailPage />)} />
-        <Route path="reports-library" element={gated(canReadAnalytics, <ReportsLibraryPage />)} />
-        <Route path="reports-library/schedules" element={gated(canManageSchedules, <ReportSchedulesPage />)} />
-        <Route path="memory" element={gated(canReadKnowledge, <MemoryListPage />)} />
-        <Route path="memory/new" element={gated(canReadKnowledge, <MemoryEntryPage />)} />
-        <Route path="memory/:id" element={gated(canReadKnowledge, <MemoryEntryPage />)} />
-        <Route path="library" element={gated(canReadKnowledge, <EventsLibraryPage />)} />
-        <Route path="library/items/:kind/:id" element={gated(canReadKnowledge, <LibraryItemPage />)} />
-        <Route path="rewards" element={gated(canReadRewards, <RewardRulesPage />)} />
-        <Route path="rewards/confirmations" element={gated(canSeeRewardActivity, <RewardConfirmationsPage />)} />
-        <Route path="rewards/nominations" element={gated(canSeeRewardActivity, <RewardNominationsPage />)} />
-        <Route path="rewards/certificates" element={gated(canSeeRewardActivity, <RewardCertificatesPage />)} />
-        <Route path="rewards/leaderboard" element={gated(canSeeRewardActivity, <RewardLeaderboardPage />)} />
+        <Route
+          path="analytics"
+          element={gated(canReadAnalytics, <AnalyticsPage />)}
+        />
+        <Route
+          path="analytics/scenarios"
+          element={gated(canRunScenarios, <ScenariosPage />)}
+        />
+        <Route
+          path="analytics/scenarios/:id"
+          element={gated(canRunScenarios, <ScenarioDetailPage />)}
+        />
+        <Route
+          path="reports-library"
+          element={gated(canReadAnalytics, <ReportsLibraryPage />)}
+        />
+        <Route
+          path="reports-library/schedules"
+          element={gated(canManageSchedules, <ReportSchedulesPage />)}
+        />
+        <Route
+          path="memory"
+          element={gated(canReadKnowledge, <MemoryListPage />)}
+        />
+        <Route
+          path="memory/new"
+          element={gated(canReadKnowledge, <MemoryEntryPage />)}
+        />
+        <Route
+          path="memory/:id"
+          element={gated(canReadKnowledge, <MemoryEntryPage />)}
+        />
+        <Route
+          path="library"
+          element={gated(canReadKnowledge, <EventsLibraryPage />)}
+        />
+        <Route
+          path="library/items/:kind/:id"
+          element={gated(canReadKnowledge, <LibraryItemPage />)}
+        />
+        <Route
+          path="rewards"
+          element={gated(canReadRewards, <RewardRulesPage />)}
+        />
+        <Route
+          path="rewards/confirmations"
+          element={gated(canSeeRewardActivity, <RewardConfirmationsPage />)}
+        />
+        <Route
+          path="rewards/nominations"
+          element={gated(canSeeRewardActivity, <RewardNominationsPage />)}
+        />
+        <Route
+          path="rewards/certificates"
+          element={gated(canSeeRewardActivity, <RewardCertificatesPage />)}
+        />
+        <Route
+          path="rewards/leaderboard"
+          element={gated(canSeeRewardActivity, <RewardLeaderboardPage />)}
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

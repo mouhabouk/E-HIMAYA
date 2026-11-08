@@ -23,6 +23,21 @@ from app.modules.reports.staff_router import READ_ROLES, _bbox
 router = APIRouter(prefix="/api/v1/staff", tags=["staff-institutions"])
 
 ORG_READ_ROLES = (*READ_ROLES, Role.ORG_AUDITOR)
+# Yamen, 2026-11-08: the prevention service (the institutions auditor) sees everything of an institution, visits,
+# reports, recommendations and certificates included; the operations room sees what an intervention needs: the card,
+# the safety team and its phones, the hazardous materials, the equipment, the plans and the safety data sheets. The
+# system administrator can grant the prevention pages to anyone else (feature catalogue, acting as the auditor).
+PREVENTION_ROLES = (Role.ORG_AUDITOR,)
+PreventionReader = Annotated[Principal, Depends(require_roles(*PREVENTION_ROLES))]
+#: The documents the room opens during an intervention; the others (the safety file, maintenance photos, the rest)
+#: belong to the prevention service.
+INTERVENTION_DOCUMENTS = frozenset({"safety_plan", "sds"})
+
+
+def prevention_reader(principal: Principal) -> bool:
+    return bool(principal.roles & set(PREVENTION_ROLES))
+
+
 OrgReader = Annotated[Principal, Depends(require_roles(*ORG_READ_ROLES))]
 Auditor = Annotated[Principal, Depends(require_roles(Role.ORG_AUDITOR))]
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -80,9 +95,22 @@ async def orgs_map(principal: OrgReader, session: Session, bbox: str | None = No
     return await service.staff_map(session, principal, _bbox(bbox))
 
 
-async def detail_of(session: AsyncSession, org: Organization) -> schemas.StaffOrgDetail:
+async def detail_of(session: AsyncSession, org: Organization, *, full: bool = True) -> schemas.StaffOrgDetail:
+    """The institution as the prevention service sees it, or (``full=False``) as the operations room does."""
     regs = await service.load_registers(session, org.id)
     on = service.today()
+    if not full:
+        return schemas.StaffOrgDetail(
+            **(await service.card(session, org, regs, reader="auditor")),
+            team=[service.team_out(m, on) for m in regs.team],
+            hazmat=[service.hazmat_out(h) for h in regs.hazmat],
+            equipment=[service.equipment_out(e, on) for e in regs.equipment],
+            features=[service.feature_out(f, la, lo) for f, la, lo in regs.features],
+            documents=[service.document_out(d, c, n) for d, c, n in regs.documents if d.kind in INTERVENTION_DOCUMENTS],
+            members=[],
+            certificates=[],
+            restricted=True,
+        )
     return schemas.StaffOrgDetail(
         **(await service.card(session, org, regs, reader="auditor")),
         team=[service.team_out(m, on) for m in regs.team],
@@ -111,11 +139,21 @@ async def org_events(
 @router.get("/orgs/{org_id}", response_model=schemas.StaffOrgDetail)
 async def get_org(principal: OrgReader, session: Session, org_id: uuid.UUID) -> schemas.StaffOrgDetail:
     org = await _org_in_scope(session, principal, org_id)
-    detail = await detail_of(session, org)
+    detail = await detail_of(session, org, full=prevention_reader(principal))
     # NFR-06: the detail shows personal data (members, safety team) and is audited.
     await audit.record(session, actor=actor_of(principal), action="org.view", target=f"org:{org_id}")
     await session.commit()
     return detail
+
+
+async def _document(session: AsyncSession, principal: Principal, org_id: uuid.UUID, doc_id: uuid.UUID) -> Document:
+    """A document of the institution; the room reaches only the plans and the safety data sheets."""
+    doc = await session.get(Document, doc_id)
+    if doc is None or doc.org_id != org_id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "document_not_found")
+    if not prevention_reader(principal) and doc.kind not in INTERVENTION_DOCUMENTS:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "prevention_only")
+    return doc
 
 
 @router.get("/orgs/{org_id}/documents/{doc_id}/versions", response_model=list[schemas.DocumentVersionOut])
@@ -123,10 +161,8 @@ async def list_versions(
     principal: OrgReader, session: Session, org_id: uuid.UUID, doc_id: uuid.UUID
 ) -> list[schemas.DocumentVersionOut]:
     await _org_in_scope(session, principal, org_id)
-    doc = await session.get(Document, doc_id)
-    if doc is None or doc.org_id != org_id:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "document_not_found")
-    return [service.version_out(v) for v in await service.versions(session, doc_id)]
+    doc = await _document(session, principal, org_id, doc_id)
+    return [service.version_out(v) for v in await service.versions(session, doc.id)]
 
 
 @router.get("/orgs/{org_id}/documents/{doc_id}/versions/{version}/download", response_model=schemas.DownloadOut)
@@ -138,6 +174,7 @@ async def download_version(
     version: Annotated[int, Path(ge=1)],
 ) -> schemas.DownloadOut:
     await _org_in_scope(session, principal, org_id)
+    await _document(session, principal, org_id, doc_id)
     url = await download_url(session, org_id, doc_id, version)
     await audit.record(
         session,
@@ -152,7 +189,7 @@ async def download_version(
 
 @router.get("/orgs/{org_id}/certificates/{cert_id}/pdf", response_model=schemas.DownloadOut)
 async def certificate_pdf(
-    principal: OrgReader, session: Session, org_id: uuid.UUID, cert_id: uuid.UUID
+    principal: PreventionReader, session: Session, org_id: uuid.UUID, cert_id: uuid.UUID
 ) -> schemas.DownloadOut:
     await _org_in_scope(session, principal, org_id)
     cert = await certificate.owned_certificate(session, org_id, cert_id)
@@ -207,7 +244,7 @@ async def review_org(
 
 @router.get("/certificates", response_model=schemas.CertificateQueuePage)
 async def certificate_queue(
-    principal: OrgReader,
+    principal: PreventionReader,
     session: Session,
     status_: Annotated[Literal["submitted", "approved", "rejected", "revoked"], Query(alias="status")] = "submitted",
     limit: Annotated[int, Query(ge=1, le=200)] = 50,

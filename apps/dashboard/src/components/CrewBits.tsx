@@ -27,7 +27,9 @@ export function CrewLine({ crew }: { crew: CrewRef }) {
   const fmt = useFormat();
   return (
     <div className="cell-sub crew-line">
-      <span dir="auto">{t("crew.leader", { name: crew.leader_name ?? "—" })}</span>
+      <span dir="auto">
+        {t("crew.leader", { name: crew.leader_name ?? "—" })}
+      </span>
       {" · "}
       <span>{t("crew.size", { count: crew.crew_size })}</span>
       {" · "}
@@ -36,12 +38,16 @@ export function CrewLine({ crew }: { crew: CrewRef }) {
           {t("crew.acknowledged", { time: fmt.time(crew.acknowledged_at) })}
         </span>
       ) : (
-        <span className="chip chip--crew-waiting">{t("crew.notAcknowledged")}</span>
+        <span className="chip chip--crew-waiting">
+          {t("crew.notAcknowledged")}
+        </span>
       )}
       {(crew.unseen_alerts ?? 0) > 0 && (
         <>
           {" · "}
-          <span className="chip chip--crew-waiting">{t("crew.unseenAlerts", { count: crew.unseen_alerts })}</span>
+          <span className="chip chip--crew-waiting">
+            {t("crew.unseenAlerts", { count: crew.unseen_alerts })}
+          </span>
         </>
       )}
     </div>
@@ -59,13 +65,18 @@ export function PositionLine({ position }: { position: VehiclePosition }) {
     return () => clearInterval(id);
   }, []);
   const seconds = Math.max(0, (now - new Date(position.at).getTime()) / 1000);
-  const ago = fmt.duration(seconds < 60 ? seconds : Math.round(seconds / 60) * 60);
+  const ago = fmt.duration(
+    seconds < 60 ? seconds : Math.round(seconds / 60) * 60,
+  );
   return (
     <div className="cell-sub crew-position">
       <time dateTime={position.at}>
         {position.distance_m == null
           ? t("crew.lastPosition", { ago })
-          : t("crew.lastPositionDistance", { ago, km: fmt.decimal(position.distance_m / 1000) })}
+          : t("crew.lastPositionDistance", {
+              ago,
+              km: fmt.decimal(position.distance_m / 1000),
+            })}
       </time>
     </div>
   );
@@ -77,8 +88,20 @@ export function FieldFlowLine({ assignment }: { assignment: Assignment }) {
   const { t } = useTranslation();
   const skipped = Object.entries(assignment.skipped ?? {});
   const parts: ReactNode[] = [];
-  if (assignment.field_initiated) parts.push(<span className="chip chip--crew-waiting">{t("crew.flow.fieldInitiated")}</span>);
-  if (assignment.crew_nature) parts.push(<span>{t("crew.flow.nature", { nature: t(`crew.nature.${assignment.crew_nature}`) })}</span>);
+  if (assignment.field_initiated)
+    parts.push(
+      <span className="chip chip--crew-waiting">
+        {t("crew.flow.fieldInitiated")}
+      </span>,
+    );
+  if (assignment.crew_nature)
+    parts.push(
+      <span>
+        {t("crew.flow.nature", {
+          nature: t(`crew.nature.${assignment.crew_nature}`),
+        })}
+      </span>,
+    );
   if (assignment.target)
     parts.push(
       <span>
@@ -86,19 +109,28 @@ export function FieldFlowLine({ assignment }: { assignment: Assignment }) {
         <bdi dir="ltr">
           {assignment.target.lat.toFixed(5)}, {assignment.target.lon.toFixed(5)}
         </bdi>
-        {assignment.target_note && <span dir="auto"> ({assignment.target_note})</span>}
+        {assignment.target_note && (
+          <span dir="auto"> ({assignment.target_note})</span>
+        )}
       </span>,
     );
   for (const [step, reason] of skipped)
     parts.push(
       <span>
-        {t("crew.flow.skipped", { step: t(`record.step.${step}_at`), reason: t(`crew.skipReason.${reason}`) })}
+        {t("crew.flow.skipped", {
+          step: t(`record.step.${step}_at`),
+          reason: t(`crew.skipReason.${reason}`),
+        })}
       </span>,
     );
   if (assignment.no_intervention_reason)
     parts.push(
       <span className="chip chip--crew-revoked">
-        {t("crew.flow.noIntervention", { reason: t(`crew.noInterventionReason.${assignment.no_intervention_reason}`) })}
+        {t("crew.flow.noIntervention", {
+          reason: t(
+            `crew.noInterventionReason.${assignment.no_intervention_reason}`,
+          ),
+        })}
       </span>,
     );
   if (parts.length === 0) return null;
@@ -114,10 +146,17 @@ export function FieldFlowLine({ assignment }: { assignment: Assignment }) {
   );
 }
 
-function TransportsTable({ rows, assignments }: { rows: Transport[]; assignments: Assignment[] }) {
+function TransportsTable({
+  rows,
+  assignments,
+}: {
+  rows: Transport[];
+  assignments: Assignment[];
+}) {
   const { t } = useTranslation();
   const fmt = useFormat();
-  const vehicle = (id: string) => assignments.find((a) => a.id === id)?.resource?.label ?? "—";
+  const vehicle = (id: string) =>
+    assignments.find((a) => a.id === id)?.resource?.label ?? "—";
   return (
     <div className="table-wrap">
       <table className="table">
@@ -135,7 +174,9 @@ function TransportsTable({ rows, assignments }: { rows: Transport[]; assignments
           {rows.map((r) => (
             <tr key={r.id}>
               <td>
-                <span className={`chip chip--triage-${r.triage}`}>{t(`crew.triageName.${r.triage}`)}</span>
+                <span className={`chip chip--triage-${r.triage}`}>
+                  {t(`crew.triageName.${r.triage}`)}
+                </span>
               </td>
               <td>
                 {t(`crew.age.${r.age_band}`)} · {t(`crew.sex.${r.sex}`)}
@@ -154,7 +195,15 @@ function TransportsTable({ rows, assignments }: { rows: Transport[]; assignments
 }
 
 /** A backup or danger alert: red until an operator marks it as seen, which the leader's phone then shows. */
-function AlertRow({ alert, incidentId, canMark }: { alert: CrewAlert; incidentId: string; canMark: boolean }) {
+function AlertRow({
+  alert,
+  incidentId,
+  canMark,
+}: {
+  alert: CrewAlert;
+  incidentId: string;
+  canMark: boolean;
+}) {
   const { t } = useTranslation();
   const fmt = useFormat();
   const { api } = useServices();
@@ -166,29 +215,41 @@ function AlertRow({ alert, incidentId, canMark }: { alert: CrewAlert; incidentId
       void qc.invalidateQueries({ queryKey: crewKeys.shifts });
     },
   });
-  const items = alert.items.map((k) => t(`crew.${alert.kind}Kind.${k}`)).join(t("common.listSeparator"));
+  const items = alert.items
+    .map((k) => t(`crew.${alert.kind}Kind.${k}`))
+    .join(t("common.listSeparator"));
   const what = alert.kind === "backup" ? t("crew.backup") : t("crew.danger");
   const seen = alert.seen_at;
   return (
-    <li className={`crew-alert crew-alert--${alert.kind}${seen ? " crew-alert--seen" : ""}`} role={seen ? undefined : "alert"}>
+    <li
+      className={`crew-alert crew-alert--${alert.kind}${seen ? " crew-alert--seen" : ""}`}
+      role={seen ? undefined : "alert"}
+    >
       <div>
         <strong dir="auto">{alert.resource_label ?? t("crew.vehicle")}</strong>
         {": "}
         {what}
         {items && <span> — {items}</span>}
         <div className="cell-sub">
-          {alert.created_by_name && <span dir="auto">{alert.created_by_name} · </span>}
+          {alert.created_by_name && (
+            <span dir="auto">{alert.created_by_name} · </span>
+          )}
           <time dateTime={alert.created_at}>{fmt.time(alert.created_at)}</time>
           {alert.via === "sms" && (
             <>
               {" · "}
-              <span className="chip chip--crew-waiting">{t("crew.viaSms")}</span>
+              <span className="chip chip--crew-waiting">
+                {t("crew.viaSms")}
+              </span>
             </>
           )}
           {seen && (
             <>
               {" · "}
-              {t("crew.seenBy", { name: alert.seen_by_name ?? "—", time: fmt.time(seen) })}
+              {t("crew.seenBy", {
+                name: alert.seen_by_name ?? "—",
+                time: fmt.time(seen),
+              })}
             </>
           )}
         </div>
@@ -204,7 +265,10 @@ function AlertRow({ alert, incidentId, canMark }: { alert: CrewAlert; incidentId
           className="btn btn--small btn--primary"
           disabled={mutation.isPending}
           onClick={() => mutation.mutate()}
-          aria-label={t("crew.markSeenLabel", { what, vehicle: alert.resource_label ?? "" })}
+          aria-label={t("crew.markSeenLabel", {
+            what,
+            vehicle: alert.resource_label ?? "",
+          })}
         >
           {t("crew.markSeen")}
         </button>
@@ -214,7 +278,13 @@ function AlertRow({ alert, incidentId, canMark }: { alert: CrewAlert; incidentId
 }
 
 /** A detailed report with the template's question labels (the version it answered). */
-function DetailedReport({ report, templates }: { report: FieldReport; templates: ReportTemplate[] }) {
+function DetailedReport({
+  report,
+  templates,
+}: {
+  report: FieldReport;
+  templates: ReportTemplate[];
+}) {
   const { t } = useTranslation();
   const lang = useLanguage();
   const fmt = useFormat();
@@ -232,7 +302,8 @@ function DetailedReport({ report, templates }: { report: FieldReport; templates:
     };
     if (typeof v === "boolean") return v ? t("common.yes") : t("common.no");
     if (Array.isArray(v)) return v.map(option).join(t("common.listSeparator"));
-    if (typeof v === "number") return `${fmt.number(v)}${field?.unit ? ` ${localized(field.unit, lang)}` : ""}`;
+    if (typeof v === "number")
+      return `${fmt.number(v)}${field?.unit ? ` ${localized(field.unit, lang)}` : ""}`;
     return option(v);
   };
   return (
@@ -249,7 +320,9 @@ function DetailedReport({ report, templates }: { report: FieldReport; templates:
         {Object.entries(answers).map(([k, v]) => (
           <div key={k}>
             <dt>{label(k)}</dt>
-            <dd dir={typeof v === "number" ? undefined : "auto"}>{value(k, v)}</dd>
+            <dd dir={typeof v === "number" ? undefined : "auto"}>
+              {value(k, v)}
+            </dd>
           </div>
         ))}
       </dl>
@@ -273,23 +346,45 @@ function Attachments({ items }: { items: FieldAttachment[] }) {
           {a.kind === "photo" &&
             (a.url ? (
               <a href={a.url} target="_blank" rel="noreferrer">
-                <img src={a.url} alt={t("crew.photoAlt", { time: fmt.time(a.created_at) })} loading="lazy" />
+                <img
+                  src={a.url}
+                  alt={t("crew.photoAlt", { time: fmt.time(a.created_at) })}
+                  loading="lazy"
+                />
               </a>
             ) : (
               <span className="muted">{t("crew.photo")}</span>
             ))}
           {a.kind === "voice" &&
             (a.url ? (
-              <audio controls preload="none" src={a.url} aria-label={t("crew.voice")} />
+              <audio
+                controls
+                preload="none"
+                src={a.url}
+                aria-label={t("crew.voice")}
+              />
             ) : (
               <span className="muted">{t("crew.voice")}</span>
             ))}
           {a.kind === "text" && <p dir="auto">{a.body}</p>}
           <div className="cell-sub">
-            {t(`crew.attachment.${a.kind}`)}
-            {a.duration_s ? ` · ${t("crew.seconds", { count: Math.round(a.duration_s) })}` : ""}
+            {a.stage ? (
+              <>
+                <span className="tag">{t(`crew.stage.${a.stage}`)}</span>{" "}
+                {a.spoken && (
+                  <span className="tag">{t("crew.spoken")}</span>
+                )}{" "}
+              </>
+            ) : (
+              t(`crew.attachment.${a.kind}`)
+            )}
+            {a.duration_s
+              ? ` · ${t("crew.seconds", { count: Math.round(a.duration_s) })}`
+              : ""}
             {" · "}
-            {a.created_by_name && <span dir="auto">{a.created_by_name} · </span>}
+            {a.created_by_name && (
+              <span dir="auto">{a.created_by_name} · </span>
+            )}
             <time dateTime={a.created_at}>{fmt.time(a.created_at)}</time>
           </div>
         </li>
@@ -314,9 +409,13 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
   const transports = incident.transports ?? [];
   const alerts = incident.alerts ?? [];
   const attachments = incident.attachments ?? [];
-  const situations = reports.filter((r) => r.kind !== "detailed" && r.kind !== "toll" && r.kind !== "report");
+  const situations = reports.filter(
+    (r) => r.kind !== "detailed" && r.kind !== "toll" && r.kind !== "report",
+  );
   // Phase F: the toll and the intervention report the team writes at the end (typed, or spoken and corrected).
-  const closing = reports.filter((r) => r.kind === "toll" || r.kind === "report");
+  const closing = reports.filter(
+    (r) => r.kind === "toll" || r.kind === "report",
+  );
   const detailed = reports.filter((r) => r.kind === "detailed");
   const templates = useQuery({
     queryKey: crewKeys.templates(true),
@@ -349,7 +448,12 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
       {alerts.length > 0 && (
         <ul className="crew-alerts" aria-label={t("crew.alerts")}>
           {[...unseen, ...seen].map((a) => (
-            <AlertRow key={a.id} alert={a} incidentId={incident.id} canMark={canMark} />
+            <AlertRow
+              key={a.id}
+              alert={a}
+              incidentId={incident.id}
+              canMark={canMark}
+            />
           ))}
         </ul>
       )}
@@ -373,14 +477,19 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
           <ul className="crew-reports">
             {[...latest.values()].map((r) => (
               <li key={r.id}>
-                <strong dir="auto">{r.resource_label ?? "—"}</strong> · {t(`category.${r.category}`)} ·{" "}
+                <strong dir="auto">{r.resource_label ?? "—"}</strong> ·{" "}
+                {t(`category.${r.category}`)} ·{" "}
                 {r.severity != null && (
-                  <span className={`chip chip--severity-${r.severity}`}>{t(`crew.severity.${r.severity}`)}</span>
+                  <span className={`chip chip--severity-${r.severity}`}>
+                    {t(`crew.severity.${r.severity}`)}
+                  </span>
                 )}{" "}
                 {(r.backup_kinds ?? []).length > 0 && (
                   <span>
                     {t("crew.backup")}:{" "}
-                    {(r.backup_kinds ?? []).map((k) => t(`crew.backupKind.${k}`)).join(t("common.listSeparator"))}{" "}
+                    {(r.backup_kinds ?? [])
+                      .map((k) => t(`crew.backupKind.${k}`))
+                      .join(t("common.listSeparator"))}{" "}
                   </span>
                 )}
                 <span className="muted">
@@ -396,14 +505,21 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
       {transports.length > 0 && (
         <>
           <h3>{t("crew.transports")}</h3>
-          <TransportsTable rows={transports} assignments={incident.assignments ?? []} />
+          <TransportsTable
+            rows={transports}
+            assignments={incident.assignments ?? []}
+          />
         </>
       )}
       {detailed.length > 0 && (
         <>
           <h3>{t("crew.detailed")}</h3>
           {detailed.map((r) => (
-            <DetailedReport key={r.id} report={r} templates={templates.data ?? []} />
+            <DetailedReport
+              key={r.id}
+              report={r}
+              templates={templates.data ?? []}
+            />
           ))}
         </>
       )}
@@ -414,11 +530,24 @@ export function FieldSection({ incident }: { incident: IncidentDetail }) {
             {closing.map((r) => (
               <li key={r.id}>
                 <strong dir="auto">{r.resource_label ?? "—"}</strong> ·{" "}
-                {r.kind === "toll" ? t("crew.toll") : t("crew.interventionReport")}
+                {r.kind === "toll"
+                  ? t("crew.toll")
+                  : t("crew.interventionReport")}
                 {r.kind === "toll" && typeof r.answers?.damage === "string" && (
-                  <> · {t("crew.damage.label")}: {t(`crew.damage.${r.answers.damage}`)}</>
+                  <>
+                    {" "}
+                    · {t("crew.damage.label")}:{" "}
+                    {t(`crew.damage.${r.answers.damage}`)}
+                  </>
                 )}
-                {r.answers?.voice != null && <> <span className="chip chip--crew-ack">{t("crew.spoken")}</span></>}
+                {r.answers?.voice != null && (
+                  <>
+                    {" "}
+                    <span className="chip chip--crew-ack">
+                      {t("crew.spoken")}
+                    </span>
+                  </>
+                )}
                 {r.note && (
                   <p className="report-text" dir="auto">
                     {r.note}
@@ -452,27 +581,38 @@ export function crewTimelineParts(
   const parts: string[] = [];
   if (kind === "field_report") {
     if (payload.report === "update") parts.push(t("crew.update"));
-    if (typeof payload.severity === "number") parts.push(t(`crew.severity.${payload.severity}`));
+    if (typeof payload.severity === "number")
+      parts.push(t(`crew.severity.${payload.severity}`));
     if (payload.backup_needed === true) parts.push(t("crew.backup"));
     if (payload.crew_danger === true) parts.push(t("crew.danger"));
   } else if (kind === "casualties") {
     for (const c of COUNTERS) {
-      if (typeof payload[c] === "number") parts.push(`${t(`crew.counter.${c}`)} ${payload[c]}`);
+      if (typeof payload[c] === "number")
+        parts.push(`${t(`crew.counter.${c}`)} ${payload[c]}`);
     }
   } else if (kind === "transport") {
-    if (typeof payload.triage === "string") parts.push(t(`crew.triageName.${payload.triage}`));
+    if (typeof payload.triage === "string")
+      parts.push(t(`crew.triageName.${payload.triage}`));
     if (typeof payload.hospital === "string") parts.push(payload.hospital);
   } else if (kind === "crew_alert" || kind === "crew_alert_seen") {
     const alert = payload.alert === "danger" ? "danger" : "backup";
     parts.push(alert === "danger" ? t("crew.danger") : t("crew.backup"));
     if (Array.isArray(payload.items)) {
-      parts.push(...payload.items.map((k) => t(`crew.${alert}Kind.${String(k)}`)));
+      parts.push(
+        ...payload.items.map((k) => t(`crew.${alert}Kind.${String(k)}`)),
+      );
     }
   } else if (kind === "field_attachment") {
-    if (typeof payload.media === "string") parts.push(t(`crew.attachment.${payload.media}`));
+    if (typeof payload.media === "string")
+      parts.push(t(`crew.attachment.${payload.media}`));
+    if (typeof payload.stage === "string")
+      parts.push(t(`crew.stage.${payload.stage}`));
+    if (payload.spoken === true) parts.push(t("crew.spoken"));
   } else if (kind === "detailed_report") {
     if (typeof payload.template_version === "number")
-      parts.push(t("crew.templateVersion", { version: payload.template_version }));
+      parts.push(
+        t("crew.templateVersion", { version: payload.template_version }),
+      );
   }
   return parts;
 }

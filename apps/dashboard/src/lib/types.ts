@@ -956,6 +956,8 @@ export interface StaffOrgDetail {
   activities?: OrgActivity[];
   /** Phase P2b: maintenance log of the equipment, with its photos. */
   maintenance?: OrgMaintenance[];
+  /** The operations room's view: no visits, certificates, members or prevention documents (2026-11-08). */
+  restricted?: boolean;
 }
 
 /** Phase P2b: a drill held or a public event declared by an institution. */

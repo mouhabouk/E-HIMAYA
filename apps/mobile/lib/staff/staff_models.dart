@@ -100,6 +100,31 @@ class SpokenText {
   final String text;
 }
 
+/// A spoken word of the scene: what the platform heard, and the same text tidied for the room.
+class StageVoice {
+  const StageVoice({
+    required this.voiceId,
+    required this.transcript,
+    required this.text,
+    required this.byModel,
+    required this.stage,
+  });
+
+  factory StageVoice.fromJson(Map<String, dynamic> j) => StageVoice(
+    voiceId: j['voice_id'] as String,
+    transcript: j['transcript'] as String,
+    text: j['text'] as String,
+    byModel: j['tidied_by'] == 'model',
+    stage: j['stage'] as String,
+  );
+
+  final String voiceId;
+  final String transcript;
+  final String text;
+  final bool byModel;
+  final String stage;
+}
+
 class CrewMe {
   const CrewMe({
     required this.name,
@@ -410,6 +435,8 @@ class FieldAttachment {
     required this.createdAt,
     this.body,
     this.durationS,
+    this.stage,
+    this.spoken = false,
   });
 
   factory FieldAttachment.fromJson(Map<String, dynamic> j) => FieldAttachment(
@@ -418,7 +445,15 @@ class FieldAttachment {
     body: j['body'] as String?,
     durationS: (j['duration_s'] as num?)?.toDouble(),
     createdAt: DateTime.parse(j['created_at'] as String),
+    stage: j['stage'] as String?,
+    spoken: j['spoken'] as bool? ?? false,
   );
+
+  /// A message of the scene: the step the mission had reached (`en_route` … `back_at_unit`).
+  final String? stage;
+
+  /// Spoken, transcribed, tidied and corrected before it was sent.
+  final bool spoken;
 
   /// `photo`, `voice` or `text`.
   final String kind;
