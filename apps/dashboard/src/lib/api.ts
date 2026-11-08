@@ -446,6 +446,9 @@ export const ERROR_CODES = [
   "correction_reason_required",
   "year_has_dataset",
   "no_records",
+  "logs_not_configured",
+  "logs_unreachable",
+  "logs_query_refused",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

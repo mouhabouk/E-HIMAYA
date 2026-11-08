@@ -377,6 +377,13 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
         { code: 61, iso_code: "TN-61", name: "صفاقس", name_ar: "صفاقس", name_fr: "Sfax", delegation_count: 16 },
       ]),
     ),
+    // Phase H5: system logs and the change journal.
+    systemLogs: vi.fn(() => Promise.resolve({ items: [], query: "" })),
+    systemLogSummary: vi.fn(() => Promise.resolve({ hours: 24, services: [] })),
+    changes: vi.fn(() => Promise.resolve({ items: [], next_cursor: null })),
+    changeSummary: vi.fn(() =>
+      Promise.resolve({ hours: 24, total: 0, by_op: [], by_schema: [], by_actor_kind: [], tables: [] }),
+    ),
     ...overrides,
   };
 }
