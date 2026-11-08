@@ -16,7 +16,7 @@ cd "$(dirname "$0")/.."
 ENV_FILE=${DEMO_ENV_FILE:-.env.demo}
 [ -f "$ENV_FILE" ] || { echo "demo: $ENV_FILE is missing (cp .env.demo.example .env.demo, then fill it)" >&2; exit 1; }
 COMPOSE=(docker compose --env-file "$ENV_FILE" -f infra/compose.yml -f infra/compose.prod.yml -f infra/compose.demo.yml
-  --profile sim)
+  --profile sim --profile logs)
 # The camera relay only when a real camera is configured (Tapo or any RTSP camera, docs/demo.md §4).
 if grep -Eq '^CAMERA_RTSP_URL=.+' "$ENV_FILE"; then COMPOSE+=(--profile camera); fi
 

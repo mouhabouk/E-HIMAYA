@@ -29,6 +29,7 @@ import { OverviewTab } from "./pages/org/OverviewTab";
 import { NewReportPage, ReportsTab } from "./pages/org/ReportsTab";
 import { TeamTab } from "./pages/org/TeamTab";
 import { PreventionTab } from "./pages/org/PreventionTab";
+import { ChangesTab } from "./pages/org/ChangesTab";
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -96,6 +97,7 @@ export function AppRoutes() {
           <Route path="reports/new" element={<NewReportPage />} />
           <Route path="certificate" element={<CertificatesTab />} />
           <Route path="prevention" element={<PreventionTab />} />
+          <Route path="changes" element={<ChangesTab />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>

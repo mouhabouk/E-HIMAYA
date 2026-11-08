@@ -4,7 +4,7 @@ from app.modules.ai.models import AiSettingsRow, Analysis, Anomaly, ModelDecisio
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
 from app.modules.appinfo.models import AppRating
-from app.modules.audit.models import AuditLog
+from app.modules.audit.models import AuditLog, Change
 from app.modules.availability.models import AvailabilitySlot
 from app.modules.basemap.models import Basemap
 from app.modules.checklist.models import Checklist, ChecklistTask
@@ -163,6 +163,7 @@ __all__ = [
     "CasualtyTransport",
     "Category",
     "Certificate",
+    "Change",
     "Checklist",
     "ChecklistTask",
     "CoastalAlert",

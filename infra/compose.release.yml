@@ -1,0 +1,84 @@
+# Release overlay (CI/CD, docs/cicd.md): the server runs the images the release workflow built, scanned, signed and
+# pushed to the registry, instead of building them. Use on top of compose.yml and compose.prod.yml:
+#
+#   EHIMAYA_VERSION=v1.2.0 docker compose -f infra/compose.yml -f infra/compose.prod.yml -f infra/compose.release.yml ...
+#
+# scripts/deploy.sh does it for you. The dashboard and the portal stay built on the server: their addresses and
+# content security policy are baked in at build time from the server's own .env.
+services:
+  postgres:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-postgres:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  db-roles:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-postgres:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  backup:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-postgres:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  keycloak:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-keycloak:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  keycloak-sync:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-keycloak:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  api:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-api:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  worker:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-api:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  migrate:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-api:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  terrain:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-api:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  notify-sim:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-notify-sim:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  sensor-gateway:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-sensor-gateway:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  telrecordings-init:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-telephony:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  telephony:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-telephony:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  call-sim:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-call-sim:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  vision-models:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-vision-models:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  vision:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-vision:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  drone-telemetry:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-vision:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  ai-models:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-ai-models:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing
+  ai:
+    image: ${EHIMAYA_REGISTRY:-ghcr.io/mouhabouk}/ehimaya-ai:${EHIMAYA_VERSION:?set EHIMAYA_VERSION}
+    build: !reset null
+    pull_policy: missing

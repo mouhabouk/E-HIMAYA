@@ -1,6 +1,7 @@
 """Institution endpoints for the portal and the app (realm ``ehimaya-public``), contract phase 4 §1–§8."""
 
 import uuid
+from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Any
 
@@ -11,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_session
 from app.core.ratelimit import enforce, opaque
 from app.core.storage import get_store
+from app.modules.audit import journal
 from app.modules.audit import service as audit
 from app.modules.orgs import certificate, domain, schemas, service
 from app.modules.orgs.domain import OrgRole, OrgStatus
@@ -109,6 +111,36 @@ async def list_members(org_id: OrgId, user: CurrentUser, session: Session) -> li
     await service.membership(session, user, org_id)
     await session.commit()
     return [service.member_out(m) for m in await service.members(session, org_id)]
+
+
+@router.get("/orgs/{org_id}/changes", response_model=journal.OrgChangePage)
+async def list_changes(
+    org_id: OrgId,
+    user: CurrentUser,
+    session: Session,
+    table: Annotated[str | None, Query(max_length=63, pattern=r"^[a-z_][a-z0-9_]*$")] = None,
+    op: journal.Op | None = None,
+    from_: Annotated[datetime | None, Query(alias="from")] = None,
+    to: datetime | None = None,
+    cursor: str | None = None,
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+) -> journal.OrgChangePage:
+    """The change journal of the institution (Yamen, 2026-11-08): every addition, update and deletion to its records,
+    and which member made it. Administrators only."""
+    await service.membership(session, user, org_id, OrgRole.ADMIN)
+    names = await service.member_actor_names(session, org_id)
+    page = await journal.org_changes(
+        session, org_id, names, table=table, op=op, from_=from_, to=to, cursor=cursor, limit=limit
+    )
+    await audit.record(
+        session,
+        actor=user.actor,
+        action="org.changes_read",
+        target=f"org:{org_id}",
+        details={"count": len(page.items)},
+    )
+    await session.commit()
+    return page
 
 
 @router.put("/orgs/{org_id}/members/{user_id}", response_model=schemas.MemberOut)

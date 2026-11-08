@@ -1,0 +1,230 @@
+# Release and deployment (CD), docs/cicd.md (Yamen, 2026-11-08).
+#
+# A tag vX.Y.Z (or a manual run naming one) builds every server image once, scans it (a CRITICAL vulnerability with a
+# fix fails the release), pushes it to GitHub Container Registry with its SBOM and build provenance, signs it with
+# Sigstore cosign (keyless, the workflow's own identity), then publishes a GitHub release with the deployment bundle.
+#
+# Deployment follows, only when the repository says where (variables DEPLOY_STAGING_HOST / DEPLOY_PRODUCTION_HOST and
+# the secret DEPLOY_SSH_KEY): staging first, then production through the "production" environment, whose required
+# reviewer (the owner) approves each deployment in GitHub. Without those settings the release stops after publishing.
+# The server runs scripts/deploy.sh: it checks the signatures, pulls the images, migrates, starts, checks health, and
+# goes back to the previous version if the new one does not become healthy.
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Tag to release (vX.Y.Z), already pushed"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.inputs.version || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  VERSION: ${{ github.event.inputs.version || github.ref_name }}
+  REGISTRY: ghcr.io
+
+jobs:
+  # The same checks as CI on the tagged commit are required by the branch rules; this only refuses a malformed tag.
+  prepare:
+    name: Release · version
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      owner: ${{ steps.v.outputs.owner }}
+    steps:
+      - id: v
+        run: |
+          echo "$VERSION" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$' || { echo "not a version tag: $VERSION"; exit 1; }
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+
+  images:
+    name: Release · image ${{ matrix.name }}
+    needs: prepare
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: api, context: services/api, target: "" }
+          - { name: postgres, context: infra/postgres, target: "" }
+          - { name: keycloak, context: infra/keycloak, target: "" }
+          - { name: notify-sim, context: services/notify-sim, target: "" }
+          - { name: sensor-gateway, context: services/sensor-gateway, target: "" }
+          - { name: camera-bridge, context: services/camera-bridge, target: "" }
+          - { name: ai, context: services/ai, target: runtime }
+          - { name: ai-models, context: services/ai, target: models }
+          - { name: vision, context: services/vision, target: runtime }
+          - { name: vision-models, context: services/vision, target: models }
+          - { name: telephony, context: services/telephony, target: runtime }
+          - { name: call-sim, context: services/telephony, target: call-sim }
+    env:
+      IMAGE: ghcr.io/${{ needs.prepare.outputs.owner }}/ehimaya-${{ matrix.name }}
+      TRIVY_SECRET_CONFIG: .github/trivy-secret.yaml
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.version }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build (local, for the scan)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          target: ${{ matrix.target }}
+          load: true
+          tags: ehimaya/${{ matrix.name }}:scan
+      - name: Trivy (fail on CRITICAL with a fix)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # 0.36.0
+        with:
+          image-ref: ehimaya/${{ matrix.name }}:scan
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
+      - name: Push with SBOM and provenance
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          target: ${{ matrix.target }}
+          push: true
+          sbom: true
+          provenance: mode=max
+          tags: |
+            ${{ env.IMAGE }}:${{ needs.prepare.outputs.version }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.title=ehimaya-${{ matrix.name }}
+      - uses: sigstore/cosign-installer@v3
+      - name: Sign (keyless, this workflow's identity)
+        run: cosign sign --yes "$IMAGE@${{ steps.push.outputs.digest }}"
+      - name: Build provenance attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+      - name: Record the digest
+        run: |
+          mkdir -p digests
+          echo "${{ matrix.name }}=$IMAGE@${{ steps.push.outputs.digest }}" > "digests/${{ matrix.name }}.txt"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: digest-${{ matrix.name }}
+          path: digests/${{ matrix.name }}.txt
+
+  publish:
+    name: Release · bundle and notes
+    needs: [prepare, images]
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.version }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: digest-*
+          merge-multiple: true
+          path: digests
+      - name: Bundle (compose files, configuration examples, deployment script, digests)
+        run: |
+          V=${{ needs.prepare.outputs.version }}
+          cat digests/*.txt | sort > images.txt
+          mkdir -p "bundle/ehimaya-$V"
+          cp -r infra scripts docs/deploy-production.md docs/cicd.md .env.example images.txt "bundle/ehimaya-$V/"
+          rm -rf "bundle/ehimaya-$V/infra/monitoring/secrets"
+          tar -C bundle -czf "ehimaya-$V-deploy.tar.gz" "ehimaya-$V"
+          sha256sum "ehimaya-$V-deploy.tar.gz" images.txt > SHA256SUMS
+      - name: Release notes (commits since the previous tag, migrations, images)
+        run: |
+          V=${{ needs.prepare.outputs.version }}
+          PREV=$(git describe --tags --abbrev=0 "$V^" 2>/dev/null || true)
+          {
+            echo "## e-Himaya $V"
+            echo
+            echo "### Changes"
+            if [ -n "$PREV" ]; then git log --no-merges --format='- %s' "$PREV..$V"; else git log --no-merges --format='- %s' -n 50 "$V"; fi
+            echo
+            echo "### Database migrations"
+            if [ -n "$PREV" ]; then git diff --name-only "$PREV..$V" -- services/api/migrations/versions | sed 's/^/- /'; fi
+            echo
+            echo "### Images (signed, with SBOM and provenance)"
+            sed 's/^/- /' images.txt
+            echo
+            echo "Deploy: \`scripts/deploy.sh $V\` on the server (docs/cicd.md)."
+          } > notes.md
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V=${{ needs.prepare.outputs.version }}
+          gh release view "$V" >/dev/null 2>&1 && gh release upload "$V" --clobber ehimaya-"$V"-deploy.tar.gz images.txt SHA256SUMS \
+            || gh release create "$V" --title "e-Himaya $V" --notes-file notes.md --verify-tag \
+                 ehimaya-"$V"-deploy.tar.gz images.txt SHA256SUMS
+
+  deploy-staging:
+    name: Deploy · staging
+    needs: [prepare, publish]
+    if: vars.DEPLOY_STAGING_HOST != ''
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ vars.DEPLOY_STAGING_HOST }}
+          USER_: ${{ vars.DEPLOY_USER || 'ehimaya' }}
+          DIR: ${{ vars.DEPLOY_DIR || '/opt/ehimaya' }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_deploy "$USER_@$HOST" "cd '$DIR' && git fetch --tags origin && git checkout -q '${{ needs.prepare.outputs.version }}' && scripts/deploy.sh '${{ needs.prepare.outputs.version }}'"
+
+  deploy-production:
+    name: Deploy · production (approved by the owner)
+    needs: [prepare, publish, deploy-staging]
+    if: always() && needs.publish.result == 'success' && vars.DEPLOY_PRODUCTION_HOST != '' && (needs.deploy-staging.result == 'success' || needs.deploy-staging.result == 'skipped')
+    runs-on: ${{ vars.RUNNER || 'ubuntu-24.04' }}
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ vars.DEPLOY_PRODUCTION_HOST }}
+          USER_: ${{ vars.DEPLOY_USER || 'ehimaya' }}
+          DIR: ${{ vars.DEPLOY_DIR || '/opt/ehimaya' }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_deploy "$USER_@$HOST" "cd '$DIR' && git fetch --tags origin && git checkout -q '${{ needs.prepare.outputs.version }}' && scripts/deploy.sh '${{ needs.prepare.outputs.version }}'"

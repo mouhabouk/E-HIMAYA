@@ -7,6 +7,7 @@ import { matchPath, NavLink, useLocation } from "react-router";
 import type { TFunction } from "i18next";
 import { Icon, IconTile, type IconName, type Tone } from "./Icon";
 import type { StaffIdentity as Identity } from "../auth/identity";
+import { canReadSystemTrail } from "../lib/systemApi";
 import {
   canEditAiSettings,
   canReadModelCards,
@@ -433,6 +434,20 @@ export function navGroups(
           "policy",
           "slate",
           "audit",
+        ),
+        ...e(
+          canReadSystemTrail(identity),
+          "/system-logs",
+          "monitoring",
+          "slate",
+          "systemLogs",
+        ),
+        ...e(
+          canReadSystemTrail(identity),
+          "/changes",
+          "historyEdu",
+          "slate",
+          "changes",
         ),
         ...e(
           canOpenBreakGlass(identity),

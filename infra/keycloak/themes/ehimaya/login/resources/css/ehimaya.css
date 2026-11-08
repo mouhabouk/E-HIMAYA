@@ -1,41 +1,143 @@
-/* e-Himaya colours, taken from the Office's logo and darkened to reach WCAG AA on white (addition 1). */
+/* e-Himaya sign-in (Yamen, 2026-11-08: "colours with gravitas, command and professionalism"): the night navy and the
+   gold of the Office's emblem (brand/logo-final), a white card, the navy of the design system for actions
+   (docs/design-system.md: #1F3FA0) and its orange only for focus. Same look in the three realms (master included). */
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/ibm-plex-sans-arabic-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  --ehimaya-blue: #1f3d99;
-  --ehimaya-blue-dark: #142a6e;
-  --ehimaya-orange: #e07b00;
-  --ehimaya-green: #1b7f2a;
+  --ehimaya-night: #0b1a3f;
+  --ehimaya-night-deep: #060f27;
+  --ehimaya-navy: #1f3fa0;
+  --ehimaya-navy-dark: #152d78;
+  --ehimaya-gold: #c9a24a;
+  --ehimaya-gold-light: #e8cf8a;
+  --ehimaya-orange: #f08c00;
   --ehimaya-red: #c62828;
-  --pf-v5-global--primary-color--100: var(--ehimaya-blue);
-  --pf-v5-global--primary-color--200: var(--ehimaya-blue-dark);
-  --pf-v5-global--link--Color: var(--ehimaya-blue);
-  --pf-v5-global--link--Color--hover: var(--ehimaya-blue-dark);
+  --ehimaya-ink: #182038;
+  --pf-v5-global--FontFamily--text: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --pf-v5-global--FontFamily--heading: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --pf-v5-global--primary-color--100: var(--ehimaya-navy);
+  --pf-v5-global--primary-color--200: var(--ehimaya-navy-dark);
+  --pf-v5-global--link--Color: var(--ehimaya-navy);
+  --pf-v5-global--link--Color--hover: var(--ehimaya-navy-dark);
   --pf-v5-global--danger-color--100: var(--ehimaya-red);
+  --pf-v5-c-login__main--BackgroundColor: #ffffff;
+  --keycloak-card-top-color: var(--ehimaya-gold);
 }
 
-.pf-v5-theme-dark {
-  --pf-v5-global--primary-color--100: #8fa8ff;
-  --pf-v5-global--link--Color: #8fa8ff;
+html,
+body {
+  min-height: 100%;
+  font-family: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
 }
 
-/* Logo above the realm name, and a thin band in the logo's colours. */
+/* The night of the emblem: a deep navy with a soft light behind the card, a fine gold frame and a faint guilloche. */
+body,
+.pf-v5-c-login,
+.login-pf body {
+  background-color: var(--ehimaya-night) !important;
+  background-image:
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgb(31 63 160 / 45%), transparent 70%),
+    repeating-radial-gradient(circle at 50% 38%, rgb(201 162 74 / 5%) 0 1px, transparent 1px 28px),
+    linear-gradient(180deg, var(--ehimaya-night) 0%, var(--ehimaya-night-deep) 100%) !important;
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 14px;
+  border: 1px solid rgb(201 162 74 / 35%);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* The emblem and name in full (horizontal mark on night navy), in place of the realm's name. */
 #kc-header-wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 700;
+  justify-content: center;
+  font-size: 0 !important;
+  color: transparent !important;
+  padding: 0 !important;
 }
 
 #kc-header-wrapper::before {
   content: "";
-  width: 96px;
-  height: 96px;
-  background: url("../img/logo.png") center / contain no-repeat;
+  width: min(400px, 84vw);
+  aspect-ratio: 1000 / 388;
+  filter: drop-shadow(0 6px 18px rgb(0 0 0 / 35%));
+  background: url("../img/logo-horizontal.png") center / contain no-repeat;
 }
 
+.pf-v5-c-login__header {
+  margin-block: 0.5rem 1.5rem;
+}
+
+/* The card: white, a gold rule on top, a navy title, a quiet shadow. */
 .pf-v5-c-login__main {
-  border-top: 6px solid transparent;
-  border-image: linear-gradient(90deg, var(--ehimaya-red) 0 33%, var(--ehimaya-orange) 33% 66%, var(--ehimaya-green) 66%) 1;
+  background: #ffffff;
+  border-radius: 12px;
+  border-top: 4px solid var(--ehimaya-gold);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%), 0 0 0 1px rgb(201 162 74 / 25%);
+  overflow: hidden;
+}
+
+.pf-v5-c-login__main-header {
+  border-top: 0 !important;
+  border-bottom: 1px solid #e3e7ef;
+  padding-block-end: 1rem;
+}
+
+.pf-v5-c-login__main-header .pf-v5-c-title,
+#kc-page-title {
+  color: var(--ehimaya-night);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.pf-v5-c-form__label-text {
+  color: var(--ehimaya-ink);
+  font-weight: 600;
 }
 
 /* Rule 2: a required field shows a red asterisk. */
@@ -47,4 +149,57 @@
 .pf-v5-c-button,
 .pf-v5-c-form-control > input {
   min-height: 48px;
+}
+
+.pf-v5-c-form-control {
+  border-radius: 8px;
+}
+
+.pf-v5-c-button.pf-m-primary {
+  background: linear-gradient(180deg, var(--ehimaya-navy) 0%, var(--ehimaya-navy-dark) 100%);
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: inset 0 -2px 0 rgb(201 162 74 / 65%);
+}
+
+.pf-v5-c-button.pf-m-primary:hover {
+  background: var(--ehimaya-navy-dark);
+}
+
+/* Focus: the orange of the design system, visible on white and on navy. */
+.pf-v5-c-button:focus-visible,
+.pf-v5-c-form-control:focus-within,
+a:focus-visible {
+  outline: 3px solid var(--ehimaya-orange);
+  outline-offset: 2px;
+}
+
+/* The Office's line under the card. */
+.pf-v5-c-login__container::after {
+  content: "الديوان الوطني للحماية المدنية";
+  display: block;
+  margin-block-start: 1.5rem;
+  text-align: center;
+  color: var(--ehimaya-gold-light);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+.pf-v5-c-login__main-footer-band,
+.pf-v5-c-login__footer {
+  color: #c9d2ea;
+}
+
+.pf-v5-c-login__footer a,
+#kc-locale-dropdown button {
+  color: var(--ehimaya-gold-light);
+}
+
+/* On a phone the card takes the width: no frame across it. */
+@media (max-width: 600px) {
+  body::before {
+    display: none;
+  }
 }

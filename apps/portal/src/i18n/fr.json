@@ -234,7 +234,8 @@
       "reports": "Signalements",
       "certificate": "Certificat",
       "activities": "Exercices et événements",
-      "prevention": "Prévention et rapports"
+      "prevention": "Prévention et rapports",
+      "changes": "Journal des modifications"
     }
   },
   "overview": {
@@ -1040,6 +1041,69 @@
       "certificates": "Certificats délivrés",
       "stamps": "Cachets en direction régionale",
       "reports": "Signalements de l’établissement"
+    }
+  },
+  "changes": {
+    "title": "Journal des modifications",
+    "intro": "Chaque ajout, mise à jour et suppression dans les dossiers de l'institution, et qui l'a fait. Les noms, téléphones, adresses et notes ne sont pas conservés ici : seul le fait qu'ils ont changé apparaît. Ce journal ne peut être ni modifié ni effacé.",
+    "adminsOnly": "Cette section est réservée à l'administrateur de l'institution.",
+    "section": "Section",
+    "op": "Opération",
+    "ops": {
+      "I": "Ajout",
+      "U": "Mise à jour",
+      "D": "Suppression"
+    },
+    "by": "Auteur",
+    "byKinds": {
+      "civil_protection": "Protection civile",
+      "system": "Plateforme"
+    },
+    "aMember": "Un membre",
+    "what": "Ce qui a changé",
+    "notKept": "valeur non conservée",
+    "all": "Tout",
+    "from": "Du",
+    "to": "Au",
+    "at": "Heure",
+    "empty": "Aucune modification pour ces critères.",
+    "more": "Plus",
+    "tables": {
+      "organization": "Fiche de l'institution",
+      "member": "Membres",
+      "invitation": "Invitations",
+      "team_member": "Équipe de sécurité",
+      "document": "Documents",
+      "document_version": "Versions des documents",
+      "equipment": "Équipements",
+      "maintenance": "Maintenance",
+      "hazmat": "Matières dangereuses",
+      "map_feature": "Carte",
+      "activity": "Exercices et manifestations",
+      "certificate": "Certificat",
+      "prevention_visit": "Visites de prévention",
+      "prevention_reservation": "Réserves de prévention",
+      "prealert": "Préalertes",
+      "certificate_stamp": "Cachets du certificat",
+      "prevention_photo": "Photos de prévention",
+      "digest": "Synthèses",
+      "org_ack": "Notifications lues"
+    },
+    "columns": {
+      "status": "Statut",
+      "version": "Version",
+      "capacity": "Capacité",
+      "floors": "Étages",
+      "height_m": "Hauteur",
+      "receives_public": "Reçoit du public",
+      "kind": "Type",
+      "role": "Rôle",
+      "safety_officer": "Responsable sécurité",
+      "updated_at": "Mis à jour le",
+      "created_at": "Créé le",
+      "quantity": "Quantité",
+      "activity_sector": "Secteur d'activité",
+      "gouvernorat_code": "Gouvernorat"
     }
   }
 }

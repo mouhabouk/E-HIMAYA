@@ -1502,6 +1502,22 @@ CATALOGUE: tuple[Spec, ...] = (
         flags="personal fixed",
     ),
     page("audit", "system", "/audit", ("التدقيق", "Audit", "Audit"), ("* /audit",), flags="personal fixed"),
+    # The technical administrators' windows (Yamen, 2026-11-08): their routes are under /api/v1/admin, outside the
+    # staff surface this catalogue guards; the pages are listed so that the administrator can hide them.
+    page(
+        "system_logs",
+        "system",
+        "/system-logs",
+        ("سجلات المنظومة", "Journaux système", "System logs"),
+        flags="national fixed",
+    ),
+    page(
+        "changes",
+        "system",
+        "/changes",
+        ("سجل التغييرات", "Journal des modifications", "Change journal"),
+        flags="national fixed",
+    ),
     page(
         "break_glass",
         "system",

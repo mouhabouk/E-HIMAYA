@@ -80,7 +80,10 @@ import { AccountsPage } from "./pages/AccountsPage";
 import { AiSettingsPage } from "./pages/AiSettingsPage";
 import { ModelCardsPage } from "./pages/ModelCardsPage";
 import { LearningPage } from "./pages/LearningPage";
+import { canReadSystemTrail } from "./lib/systemApi";
 import { AuditPage } from "./pages/AuditPage";
+import { ChangesPage } from "./pages/ChangesPage";
+import { SystemLogsPage } from "./pages/SystemLogsPage";
 import { BreakGlassPage } from "./pages/BreakGlassPage";
 import { GeoQueuePage } from "./pages/GeoQueuePage";
 import { LateReportsPage } from "./pages/LateReportsPage";
@@ -477,6 +480,14 @@ export function AppRoutes() {
         <Route
           path="audit"
           element={scoped(canReadScopedAudit, <AuditPage />)}
+        />
+        <Route
+          path="system-logs"
+          element={scoped(canReadSystemTrail, <SystemLogsPage />)}
+        />
+        <Route
+          path="changes"
+          element={scoped(canReadSystemTrail, <ChangesPage />)}
         />
         <Route
           path="break-glass"

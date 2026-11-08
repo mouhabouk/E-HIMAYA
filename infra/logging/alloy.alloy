@@ -1,0 +1,66 @@
+// Grafana Alloy (profile "logs" of compose.prod.yml; docs/phase-h/design-h5.md §1): reads the standard output of every
+// container of the project and sends it to Loki. Labels: service (the compose service), container, and level when
+// the line is the JSON of the API, the worker or another of the platform's Python services.
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.project=" + sys.env("COMPOSE_PROJECT_NAME")]
+  }
+}
+
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/?(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.relabel.containers.output
+  relabel_rules = discovery.relabel.containers.rules
+  forward_to    = [loki.process.levels.receiver]
+}
+
+loki.process "levels" {
+  // The platform's own services write one JSON object per line (services/api/app/core/logging.py).
+  stage.json {
+    expressions = { level = "level" }
+  }
+  // Others: a level word near the start of the line (Keycloak, Caddy, Postgres...).
+  stage.regex {
+    expression = "(?i)^.{0,60}?\\b(?P<word>debug|info|warn|warning|error|fatal|panic|critical)\\b"
+  }
+  stage.template {
+    source   = "level"
+    template = "{{ if .level }}{{ ToLower .level }}{{ else if .word }}{{ ToLower .word }}{{ end }}"
+  }
+  stage.replace {
+    source     = "level"
+    expression = "^(warn)$"
+    replace    = "warning"
+  }
+  stage.replace {
+    source     = "level"
+    expression = "^(fatal|panic)$"
+    replace    = "critical"
+  }
+  stage.labels {
+    values = { level = "" }
+  }
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

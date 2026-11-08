@@ -31,6 +31,8 @@ x-api-prod-env: &api-prod-env
   # QR code of reward certificates (phase 8): public verification on the API host.
   API_PUBLIC_URL: https://${API_HOST}
   API_CORS_ORIGINS: https://${DASHBOARD_HOST:?set DASHBOARD_HOST},https://${PORTAL_HOST}
+  # The logs window (profile "logs"): http://loki:3100 once Loki runs; empty, the window says it is off.
+  LOKI_URL: ${LOKI_URL:-}
   DATABASE_URL: postgresql+asyncpg://${EHIMAYA_DB_RUNTIME_USER:-ehimaya_app}:${EHIMAYA_DB_RUNTIME_PASSWORD:?set EHIMAYA_DB_RUNTIME_PASSWORD}@postgres:5432/${EHIMAYA_DB_NAME:-ehimaya}
   # Only the edge proxy (fixed address below) may set X-Forwarded-For: per-address limits see real clients.
   FORWARDED_ALLOW_IPS: ${EDGE_PROXY_IP:-172.31.250.10}
@@ -337,6 +339,36 @@ services:
     volumes:
       - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - ./monitoring/render-alertmanager.sh:/etc/alertmanager/render.sh:ro
+  # Logs (profile "logs", docs/phase-h/design-h5.md §1): Alloy reads the standard output of every container of the
+  # project and sends it to Loki (30 days); the API serves them to the system administrator (LOKI_URL). Internal
+  # network only, nothing published. Alloy reads the Docker socket read-only to find the containers.
+  loki:
+    image: grafana/loki:3.5.7@sha256:0eaee7bf39cc83aaef46914fb58f287d4f4c4be6ec96b86c2ed55719a75e49c8
+    profiles: ["logs"]
+    restart: unless-stopped
+    command: ["-config.file=/etc/loki/loki.yml"]
+    volumes:
+      - ./logging/loki.yml:/etc/loki/loki.yml:ro
+      - lokidata:/loki
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3100/ready | grep -q ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+  alloy:
+    image: grafana/alloy:v1.11.3@sha256:8c7256f412feb9f5f48f9f6f9394dc97ca887f63dea9304f347970ecc1787669
+    profiles: ["logs"]
+    restart: unless-stopped
+    command: ["run", "--storage.path=/var/lib/alloy/data", "--disable-reporting", "/etc/alloy/config.alloy"]
+    environment:
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-ehimaya}
+    volumes:
+      - ./logging/alloy.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloydata:/var/lib/alloy/data
+    depends_on:
+      loki:
+        condition: service_healthy
   # Exposes only the backup textfile metrics (archive lag, last base backup).
   backup-metrics:
     image: prom/node-exporter:v1.9.1@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a
@@ -399,3 +431,5 @@ volumes:
   pgarchive:
   backupmetrics:
   prometheusdata:
+  lokidata:
+  alloydata:
