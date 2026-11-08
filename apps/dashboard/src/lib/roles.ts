@@ -25,6 +25,12 @@ export const CLOSE_ROLES = ["ops_manager", "field_commander"] as const;
 export const VOLUNTEER_REVIEW_ROLES = ["ops_manager", "local_committee", "central_committee"] as const;
 /** Phase C1-a: who checks the doctors' registrations (the medical coordinator, and the volunteer reviewers). */
 export const DOCTOR_REVIEW_ROLES = ["medical_coordinator", ...VOLUNTEER_REVIEW_ROLES] as const;
+/**
+ * Phase H1: the personnel department keeps the staff's administrative file and absences; the operations rooms read
+ * the staff with the kind of their absence and the general strength, and record nothing.
+ */
+export const PERSONNEL_ROLES = ["personnel_officer"] as const;
+export const PERSONNEL_READ_ROLES = ["personnel_officer", "operator", "ops_manager"] as const;
 export const COMMITTEE_ROLES = ["local_committee", "central_committee"] as const;
 /** Committee performance: the committees and the operations manager. */
 export const MONITOR_ROLES = [...COMMITTEE_ROLES, "ops_manager"] as const;
@@ -75,7 +81,7 @@ export const FUNCTION_ROLES = {
   command: ["central_committee", "local_committee", "field_commander", "governor", "minister"],
   operations: ["operator", "ops_manager"],
   technical: TECHNICAL_ROLES,
-  support: ["content_editor", "org_auditor", "medical_coordinator"],
+  support: ["content_editor", "org_auditor", "medical_coordinator", "personnel_officer"],
   /** Phase P4a: team leaders use the staff app only, never the dashboard. */
   field: ["team_leader"],
 } as const;
@@ -106,6 +112,7 @@ export const REGIONAL_GRANTABLE_ROLES = [
   "local_committee",
   "content_editor",
   "medical_coordinator",
+  "personnel_officer",
   "team_leader",
   "governor",
 ] as const;
@@ -122,6 +129,7 @@ export const STAFF_ROLES = [
   ...ORG_READ_ROLES,
   "content_editor",
   "medical_coordinator",
+  "personnel_officer",
   ...TECHNICAL_ROLES,
   "team_leader",
   "governor",
@@ -156,8 +164,20 @@ export function hasDashboardAccess(roles: readonly string[]): boolean {
     canOpenCommand(roles) ||
     // The regional medical coordinator reviews doctors only (2026-11-08: was locked out of the dashboard).
     canReviewDoctors(roles) ||
+    // Phase H1: the personnel department sees its own space only.
+    canManagePersonnel(roles) ||
     PHASE9_TECHNICAL_ROLES.some((r) => roles.includes(r))
   );
+}
+
+/** Phase H1: records the staff, their administrative file and their absences. */
+export function canManagePersonnel(roles: readonly string[]): boolean {
+  return PERSONNEL_ROLES.some((r) => roles.includes(r));
+}
+
+/** Phase H1: reads the staff with the kind of their absence, and the general strength. */
+export function canReadPersonnel(roles: readonly string[]): boolean {
+  return PERSONNEL_READ_ROLES.some((r) => roles.includes(r));
 }
 
 export function canChangeStatus(roles: readonly string[]): boolean {
@@ -355,6 +375,7 @@ export function landingPath(roles: readonly string[]): string {
   if (roles.includes("security_admin")) return "/break-glass";
   if (roles.includes("ai_admin")) return "/settings/ai";
   if (roles.includes("medical_coordinator")) return "/doctors";
+  if (canManagePersonnel(roles)) return "/personnel";
   if (canReadOrgs(roles)) return "/orgs";
   if (canUseNotifications(roles)) return "/notifications";
   if (canEditTips(roles)) return "/safety-tips";

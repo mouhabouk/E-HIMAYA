@@ -1,6 +1,317 @@
 {
   "components": {
     "schemas": {
+      "AbsenceBrief": {
+        "description": "What the operations rooms see of an absence: its kind and dates, never its reference or note.",
+        "properties": {
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "sick",
+              "rest",
+              "annual",
+              "compensatory",
+              "paternity",
+              "maternity",
+              "mission",
+              "training",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "starts_on",
+          "ends_on"
+        ],
+        "title": "AbsenceBrief",
+        "type": "object"
+      },
+      "AbsenceIn": {
+        "properties": {
+          "agent_id": {
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "sick",
+              "rest",
+              "annual",
+              "compensatory",
+              "paternity",
+              "maternity",
+              "mission",
+              "training",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "agent_id",
+          "kind",
+          "starts_on",
+          "ends_on"
+        ],
+        "title": "AbsenceIn",
+        "type": "object"
+      },
+      "AbsenceOut": {
+        "properties": {
+          "agent_id": {
+            "format": "uuid",
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "ends_on": {
+            "format": "date",
+            "title": "Ends On",
+            "type": "string"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "sick",
+              "rest",
+              "annual",
+              "compensatory",
+              "paternity",
+              "maternity",
+              "mission",
+              "training",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "matricule": {
+            "title": "Matricule",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "starts_on": {
+            "format": "date",
+            "title": "Starts On",
+            "type": "string"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "agent_id",
+          "matricule",
+          "full_name",
+          "unit_id",
+          "unit_name",
+          "gouvernorat_code",
+          "kind",
+          "starts_on",
+          "ends_on",
+          "days",
+          "reference",
+          "note",
+          "created_by_name",
+          "created_at",
+          "cancelled_at",
+          "cancel_reason",
+          "version"
+        ],
+        "title": "AbsenceOut",
+        "type": "object"
+      },
+      "AbsencesOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AbsenceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "items",
+          "can_edit"
+        ],
+        "title": "AbsencesOut",
+        "type": "object"
+      },
       "AcceptOut": {
         "description": "The suggestion, now accepted, and the phase 5 alert form prefilled with it. Nothing has been sent: the editor\nreviews the form and creates and publishes the alert through POST /api/v1/staff/notifications.",
         "properties": {
@@ -727,19 +1038,16 @@
         "title": "AdminAddressOut",
         "type": "object"
       },
-      "AgentIn": {
+      "AgentEdit": {
+        "description": "The identity of a member of staff; the rank, the function and the unit change through the file's events.",
         "properties": {
-          "availability": {
-            "default": "on_duty",
+          "category": {
             "enum": [
-              "on_duty",
-              "rest",
-              "leave",
-              "sick",
-              "training",
-              "mission"
+              "intervention",
+              "room",
+              "admin"
             ],
-            "title": "Availability",
+            "title": "Category",
             "type": "string"
           },
           "full_name": {
@@ -754,18 +1062,6 @@
             "title": "Matricule",
             "type": "string"
           },
-          "notes": {
-            "anyOf": [
-              {
-                "maxLength": 500,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Notes"
-          },
           "phone": {
             "anyOf": [
               {
@@ -778,55 +1074,46 @@
             ],
             "title": "Phone"
           },
-          "rank": {
-            "anyOf": [
-              {
-                "maxLength": 60,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rank"
-          },
-          "reason": {
-            "default": "",
-            "maxLength": 500,
-            "title": "Reason",
-            "type": "string"
-          },
-          "skills": {
-            "items": {
-              "$ref": "#/components/schemas/SkillIn"
-            },
-            "maxItems": 20,
-            "title": "Skills",
-            "type": "array"
-          },
-          "unit_id": {
-            "format": "uuid",
-            "title": "Unit Id",
-            "type": "string"
-          },
           "version": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Version"
+            "title": "Version",
+            "type": "integer"
           }
         },
         "required": [
-          "unit_id",
           "matricule",
-          "full_name"
+          "full_name",
+          "category",
+          "version"
         ],
-        "title": "AgentIn",
+        "title": "AgentEdit",
+        "type": "object"
+      },
+      "AgentFile": {
+        "properties": {
+          "absences": {
+            "items": {
+              "$ref": "#/components/schemas/AbsenceOut"
+            },
+            "title": "Absences",
+            "type": "array"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/AgentRow"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__personnel__schemas__EventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          }
+        },
+        "required": [
+          "agent",
+          "events",
+          "absences"
+        ],
+        "title": "AgentFile",
         "type": "object"
       },
       "AgentOut": {
@@ -951,35 +1238,106 @@
         "title": "AgentOut",
         "type": "object"
       },
-      "AgentsOut": {
+      "AgentRow": {
         "properties": {
-          "can_edit": {
-            "title": "Can Edit",
-            "type": "boolean"
+          "absence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AbsenceBrief"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "can_export_names": {
-            "title": "Can Export Names",
-            "type": "boolean"
+          "category": {
+            "enum": [
+              "intervention",
+              "room",
+              "admin"
+            ],
+            "title": "Category",
+            "type": "string"
           },
-          "can_see_names": {
-            "title": "Can See Names",
-            "type": "boolean"
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
           },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/AgentOut"
-            },
-            "title": "Items",
-            "type": "array"
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "matricule": {
+            "title": "Matricule",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "post": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
           }
         },
         "required": [
-          "items",
-          "can_edit",
-          "can_see_names",
-          "can_export_names"
+          "id",
+          "matricule",
+          "full_name",
+          "rank",
+          "post",
+          "category",
+          "unit_id",
+          "unit_name",
+          "gouvernorat_code",
+          "phone",
+          "absence",
+          "version"
         ],
-        "title": "AgentsOut",
+        "title": "AgentRow",
         "type": "object"
       },
       "AiSettings": {
@@ -7582,6 +7940,37 @@
         "title": "CorrectionRow",
         "type": "object"
       },
+      "Count": {
+        "properties": {
+          "absent": {
+            "title": "Absent",
+            "type": "integer"
+          },
+          "by_kind": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Kind",
+            "type": "object"
+          },
+          "present": {
+            "title": "Present",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "absent",
+          "present",
+          "by_kind"
+        ],
+        "title": "Count",
+        "type": "object"
+      },
       "CounterView": {
         "description": "What the agent at the counter of a regional administration sees after scanning a certificate (phase P3a).",
         "properties": {
@@ -12559,78 +12948,6 @@
           "evaluated_at"
         ],
         "title": "EvaluationOut",
-        "type": "object"
-      },
-      "EventIn": {
-        "properties": {
-          "at": {
-            "maxLength": 40,
-            "title": "At",
-            "type": "string"
-          },
-          "camera": {
-            "format": "uuid",
-            "title": "Camera",
-            "type": "string"
-          },
-          "confidence": {
-            "maxLength": 8,
-            "title": "Confidence",
-            "type": "string"
-          },
-          "frame_jpeg_b64": {
-            "anyOf": [
-              {
-                "maxLength": 3000000,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Frame Jpeg B64"
-          },
-          "label": {
-            "enum": [
-              "fire",
-              "smoke"
-            ],
-            "title": "Label",
-            "type": "string"
-          },
-          "sig": {
-            "maxLength": 64,
-            "title": "Sig",
-            "type": "string"
-          },
-          "temperature": {
-            "default": "",
-            "maxLength": 10,
-            "title": "Temperature",
-            "type": "string"
-          },
-          "vendor_event": {
-            "anyOf": [
-              {
-                "maxLength": 64,
-                "pattern": "^[A-Za-z0-9_.:-]*$",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Vendor Event"
-          }
-        },
-        "required": [
-          "camera",
-          "at",
-          "label",
-          "confidence",
-          "sig"
-        ],
-        "title": "EventIn",
         "type": "object"
       },
       "EventKeyOut": {
@@ -34214,7 +34531,8 @@
           "team_leader",
           "governor",
           "minister",
-          "field_agent"
+          "field_agent",
+          "personnel_officer"
         ],
         "title": "Role",
         "type": "string"
@@ -40940,6 +41258,82 @@
         "title": "StreamSummary",
         "type": "object"
       },
+      "StrengthOut": {
+        "properties": {
+          "on": {
+            "format": "date",
+            "title": "On",
+            "type": "string"
+          },
+          "total": {
+            "$ref": "#/components/schemas/StrengthRow"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/StrengthRow"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "on",
+          "units",
+          "total"
+        ],
+        "title": "StrengthOut",
+        "type": "object"
+      },
+      "StrengthRow": {
+        "properties": {
+          "admin": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "intervention": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_id",
+          "unit_name",
+          "gouvernorat_code",
+          "intervention",
+          "room",
+          "admin"
+        ],
+        "title": "StrengthRow",
+        "type": "object"
+      },
       "StressIn": {
         "additionalProperties": false,
         "description": "What a load run against the isolated copy measured (infra/loadtest/drill.js prints it).",
@@ -44866,71 +45260,6 @@
           "name"
         ],
         "title": "UnitOption",
-        "type": "object"
-      },
-      "UnitOut": {
-        "properties": {
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "directorate",
-              "unit",
-              "advanced_post"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "location": {
-            "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
-          },
-          "name_ar": {
-            "title": "Name Ar",
-            "type": "string"
-          },
-          "name_fr": {
-            "title": "Name Fr",
-            "type": "string"
-          },
-          "phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Phone"
-          },
-          "resources": {
-            "title": "Resources",
-            "type": "integer"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "id",
-          "name_ar",
-          "name_fr",
-          "kind",
-          "gouvernorat_code",
-          "location",
-          "phone",
-          "resources",
-          "version"
-        ],
-        "title": "UnitOut",
         "type": "object"
       },
       "UnitRow": {
@@ -49683,6 +50012,139 @@
         "title": "DelegationOut",
         "type": "object"
       },
+      "app__modules__inventory__schemas__AgentIn": {
+        "properties": {
+          "availability": {
+            "default": "on_duty",
+            "enum": [
+              "on_duty",
+              "rest",
+              "leave",
+              "sick",
+              "training",
+              "mission"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "full_name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "matricule": {
+            "maxLength": 30,
+            "minLength": 2,
+            "title": "Matricule",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Reason",
+            "type": "string"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SkillIn"
+            },
+            "maxItems": 20,
+            "title": "Skills",
+            "type": "array"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "unit_id",
+          "matricule",
+          "full_name"
+        ],
+        "title": "AgentIn",
+        "type": "object"
+      },
+      "app__modules__inventory__schemas__AgentsOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "can_export_names": {
+            "title": "Can Export Names",
+            "type": "boolean"
+          },
+          "can_see_names": {
+            "title": "Can See Names",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AgentOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_edit",
+          "can_see_names",
+          "can_export_names"
+        ],
+        "title": "AgentsOut",
+        "type": "object"
+      },
       "app__modules__inventory__schemas__CategoryOut": {
         "properties": {
           "active": {
@@ -52125,6 +52587,71 @@
         "title": "TemplateOut",
         "type": "object"
       },
+      "app__modules__ops__schemas__UnitOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "directorate",
+              "unit",
+              "advanced_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "resources": {
+            "title": "Resources",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr",
+          "kind",
+          "gouvernorat_code",
+          "location",
+          "phone",
+          "resources",
+          "version"
+        ],
+        "title": "UnitOut",
+        "type": "object"
+      },
       "app__modules__orgs__prealert_router__DecisionIn": {
         "properties": {
           "action": {
@@ -52788,6 +53315,393 @@
           "at"
         ],
         "title": "Review",
+        "type": "object"
+      },
+      "app__modules__personnel__schemas__AgentIn": {
+        "properties": {
+          "category": {
+            "default": "intervention",
+            "enum": [
+              "intervention",
+              "room",
+              "admin"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "full_name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "matricule": {
+            "maxLength": 30,
+            "minLength": 2,
+            "title": "Matricule",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "post": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_id",
+          "matricule",
+          "full_name"
+        ],
+        "title": "AgentIn",
+        "type": "object"
+      },
+      "app__modules__personnel__schemas__AgentsOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AgentRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "on": {
+            "format": "date",
+            "title": "On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "on",
+          "items",
+          "can_edit"
+        ],
+        "title": "AgentsOut",
+        "type": "object"
+      },
+      "app__modules__personnel__schemas__EventIn": {
+        "properties": {
+          "effective_on": {
+            "format": "date",
+            "title": "Effective On",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "rank",
+              "appointment",
+              "transfer",
+              "sanction",
+              "reward"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          }
+        },
+        "required": [
+          "kind",
+          "effective_on"
+        ],
+        "title": "EventIn",
+        "type": "object"
+      },
+      "app__modules__personnel__schemas__EventOut": {
+        "properties": {
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "cancelled_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled By Name"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "effective_on": {
+            "format": "date",
+            "title": "Effective On",
+            "type": "string"
+          },
+          "from_unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Unit Id"
+          },
+          "from_unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Unit Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "rank",
+              "appointment",
+              "transfer",
+              "sanction",
+              "reward"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          },
+          "unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Name"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "effective_on",
+          "title",
+          "unit_id",
+          "unit_name",
+          "from_unit_id",
+          "from_unit_name",
+          "reference",
+          "note",
+          "created_by_name",
+          "created_at",
+          "cancelled_at",
+          "cancelled_by_name",
+          "cancel_reason"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
+      "app__modules__personnel__schemas__ReasonIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReasonIn",
+        "type": "object"
+      },
+      "app__modules__personnel__schemas__UnitOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "gouvernorat_code"
+        ],
+        "title": "UnitOut",
         "type": "object"
       },
       "app__modules__programmes__schemas__Figures": {
@@ -56955,6 +57869,78 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "app__modules__streams__camera_events__EventIn": {
+        "properties": {
+          "at": {
+            "maxLength": 40,
+            "title": "At",
+            "type": "string"
+          },
+          "camera": {
+            "format": "uuid",
+            "title": "Camera",
+            "type": "string"
+          },
+          "confidence": {
+            "maxLength": 8,
+            "title": "Confidence",
+            "type": "string"
+          },
+          "frame_jpeg_b64": {
+            "anyOf": [
+              {
+                "maxLength": 3000000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Jpeg B64"
+          },
+          "label": {
+            "enum": [
+              "fire",
+              "smoke"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "sig": {
+            "maxLength": 64,
+            "title": "Sig",
+            "type": "string"
+          },
+          "temperature": {
+            "default": "",
+            "maxLength": 10,
+            "title": "Temperature",
+            "type": "string"
+          },
+          "vendor_event": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "pattern": "^[A-Za-z0-9_.:-]*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Event"
+          }
+        },
+        "required": [
+          "camera",
+          "at",
+          "label",
+          "confidence",
+          "sig"
+        ],
+        "title": "EventIn",
+        "type": "object"
+      },
       "app__modules__streams__camera_events__EventOut": {
         "properties": {
           "accepted": {
@@ -58385,7 +59371,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EventIn"
+                "$ref": "#/components/schemas/app__modules__streams__camera_events__EventIn"
               }
             }
           },
@@ -82679,7 +83665,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentsOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__AgentsOut"
                 }
               }
             },
@@ -82713,7 +83699,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AgentIn"
+                "$ref": "#/components/schemas/app__modules__inventory__schemas__AgentIn"
               }
             }
           },
@@ -82823,7 +83809,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AgentIn"
+                "$ref": "#/components/schemas/app__modules__inventory__schemas__AgentIn"
               }
             }
           },
@@ -89488,6 +90474,867 @@
         "summary": "Review Org",
         "tags": [
           "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/absences": {
+      "get": {
+        "operationId": "list_absences_api_v1_staff_personnel_absences_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unit_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unit Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "agent_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "sick",
+                    "rest",
+                    "annual",
+                    "compensatory",
+                    "paternity",
+                    "maternity",
+                    "mission",
+                    "training",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cancelled",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Cancelled",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbsencesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Absences",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      },
+      "post": {
+        "operationId": "create_absence_api_v1_staff_personnel_absences_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbsenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbsenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Absence",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/absences/{absence_id}": {
+      "patch": {
+        "description": "Shorten, extend or correct an absence (a return before its end, a leave extended).",
+        "operationId": "update_absence_api_v1_staff_personnel_absences__absence_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "absence_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Absence Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbsenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbsenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Absence",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/absences/{absence_id}/cancel": {
+      "post": {
+        "operationId": "cancel_absence_api_v1_staff_personnel_absences__absence_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "absence_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Absence Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__personnel__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbsenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel Absence",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/agents": {
+      "get": {
+        "operationId": "list_agents_api_v1_staff_personnel_agents_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "on",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "On"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unit_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unit Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "intervention",
+                    "room",
+                    "admin"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 60,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__personnel__schemas__AgentsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Agents",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      },
+      "post": {
+        "operationId": "create_agent_api_v1_staff_personnel_agents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__personnel__schemas__AgentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Agent",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/agents/{agent_id}": {
+      "get": {
+        "operationId": "agent_file_api_v1_staff_personnel_agents__agent_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentFile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Agent File",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      },
+      "patch": {
+        "operationId": "update_agent_api_v1_staff_personnel_agents__agent_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentEdit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Agent",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/agents/{agent_id}/events": {
+      "post": {
+        "operationId": "add_event_api_v1_staff_personnel_agents__agent_id__events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__personnel__schemas__EventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__personnel__schemas__EventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Event",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/events/{event_id}/cancel": {
+      "post": {
+        "operationId": "cancel_event_api_v1_staff_personnel_events__event_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__personnel__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__personnel__schemas__EventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel Event",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/strength": {
+      "get": {
+        "description": "The general strength of a day, unit by unit: every member of staff, the absent ones by kind, the present ones.\nRoom (logistics) and administrative staff are counted on their own lines, never among those ready to intervene.",
+        "operationId": "strength_api_v1_staff_personnel_strength_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "on",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "On"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StrengthOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Strength",
+        "tags": [
+          "staff",
+          "personnel"
+        ]
+      }
+    },
+    "/api/v1/staff/personnel/units": {
+      "get": {
+        "description": "The units a department or a room may choose from (theirs; the central ones: every gouvernorat).",
+        "operationId": "list_units_api_v1_staff_personnel_units_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__personnel__schemas__UnitOut"
+                  },
+                  "title": "Response List Units Api V1 Staff Personnel Units Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Units",
+        "tags": [
+          "staff",
+          "personnel"
         ]
       }
     },
@@ -101605,7 +103452,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/UnitOut"
+                    "$ref": "#/components/schemas/app__modules__ops__schemas__UnitOut"
                   },
                   "title": "Response List Units Api V1 Staff Units Get",
                   "type": "array"
@@ -101642,7 +103489,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UnitOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__UnitOut"
                 }
               }
             },
@@ -101739,7 +103586,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UnitOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__UnitOut"
                 }
               }
             },

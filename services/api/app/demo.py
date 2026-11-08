@@ -5,7 +5,9 @@
     python -m app.demo status
 
 ``seed`` is idempotent: it adds, once, the [SIM] institution of the scenario (owned by the public-realm user
-``demo-owner``), the team leader of the staff app with a fresh activation code, and links the simulated camera of
+``demo-owner``), the team leader of the staff app with a fresh activation code, a unit with four members of
+staff for the personnel department (``demo-personnel``), the operations picture of ``app.demo_ops`` (every kind
+of intervention at a different stage, the fleet, four rotation teams), and links the simulated camera of
 ``stream-sim`` to the institution. ``prealert`` makes that camera «see» a fire, as the detector would, so the
 owner's phone rings and the 90 s countdown starts. Everything it writes carries [SIM].
 
@@ -24,10 +26,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.db import get_system_sessionmaker
+from app.demo_ops import seed_operations
 from app.modules.identity.models import AccountKind
 from app.modules.identity.service import _upsert_account
+from app.modules.inventory.models import Agent
 from app.modules.ops import field_agents
-from app.modules.ops.models import FieldAgent
+from app.modules.ops.models import FieldAgent, Unit
 from app.modules.orgs import prealert
 from app.modules.orgs.models import Member, Organization
 from app.modules.streams.domain import Source
@@ -36,6 +40,14 @@ from app.modules.streams.models import LiveStream
 ORG_NAME = "[SIM] مستودع الشركة التونسية للدهن"
 ORG_IDENTIFIER = "9990016Z"
 LEADER_MATRICULE = "SIM001"
+UNIT_NAME = "[SIM] وحدة العرض"
+# The personnel department's scene (phase H1): three ready to intervene and one in the room.
+STAFF: tuple[tuple[str, str, str, str, str], ...] = (
+    ("SIMP01", "[SIM] عون التدخل الأول", "عريف", "سائق", "intervention"),
+    ("SIMP02", "[SIM] عون التدخل الثاني", "رقيب", "منقذ", "intervention"),
+    ("SIMP03", "[SIM] عون التدخل الثالث", "عون", "منقذ", "intervention"),
+    ("SIMP04", "[SIM] عون القاعة", "رقيب أول", "مشغّل قاعة", "room"),
+)
 # Nabeul (21) by default: the scenario's address, Route de Hammamet, near the regional room.
 PLACES: dict[int, tuple[float, float, str]] = {
     21: (36.4561, 10.7376, "طريق الحمامات، نابل"),
@@ -103,6 +115,32 @@ async def seed(owner_sub: str, gouvernorat: int) -> dict[str, Any]:
             code = await field_agents._give_code(session, leader)
         elif leader.status == "pending":
             code = await field_agents._give_code(session, leader)
+        unit = await session.scalar(select(Unit).where(Unit.name_ar == UNIT_NAME, Unit.gouvernorat_code == gouvernorat))
+        if unit is None:
+            unit = Unit(
+                name_ar=UNIT_NAME,
+                name_fr="[SIM] Unité de démonstration",
+                kind="unit",
+                gouvernorat_code=gouvernorat,
+                location=cast(func.ST_SetSRID(func.ST_MakePoint(lon, lat), 4326), Geography),
+            )
+            session.add(unit)
+            await session.flush()
+        for matricule, name, rank, post, category in STAFF:
+            if await session.scalar(select(Agent.id).where(Agent.matricule == matricule)) is None:
+                session.add(
+                    Agent(
+                        unit_id=unit.id,
+                        gouvernorat_code=gouvernorat,
+                        matricule=matricule,
+                        full_name=name,
+                        rank=rank,
+                        post=post,
+                        category=category,
+                        updated_by="system:demo",
+                    )
+                )
+        operations = await seed_operations(session, unit, gouvernorat, lat, lon)
         camera = await _link_camera(session, org)
         await session.flush()
         return {
@@ -110,6 +148,8 @@ async def seed(owner_sub: str, gouvernorat: int) -> dict[str, Any]:
             "owner_user_id": str(owner.user_id),
             "leader_matricule": LEADER_MATRICULE,
             "leader_code": code,
+            "unit_id": str(unit.id),
+            "operations": operations,
             "camera": str(camera.id) if camera else None,
         }
 

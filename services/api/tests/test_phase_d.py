@@ -8,7 +8,7 @@ from typing import Any
 
 import httpx
 import pytest
-from sqlalchemy import text
+from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_system_sessionmaker
@@ -331,12 +331,56 @@ def test_every_push_in_the_code_uses_allowed_keys_only() -> None:
 
 async def test_demo_seed_is_idempotent_and_raises_a_simulated_prealert(session: AsyncSession) -> None:
     from app import demo
+    from app.modules.reports.domain import Category
 
     sub = str(uuid.uuid4())
     first = await demo.seed(sub, 21)
     assert first["leader_code"] and first["org_id"]
     again = await demo.seed(sub, 21)
     assert again["org_id"] == first["org_id"]
+    # The personnel department's scene (phase H1): one [SIM] unit with its four members of staff, added once.
+    assert again["unit_id"] == first["unit_id"]
+    staff = (
+        await session.execute(
+            text("SELECT category, count(*) FROM inv.agent WHERE unit_id = :u GROUP BY category ORDER BY category"),
+            {"u": first["unit_id"]},
+        )
+    ).all()
+    assert [tuple(r) for r in staff] == [("intervention", 3), ("room", 1)]
+    # The operations picture: every category of report, at the stage its scenario gives, entered once.
+    from app.demo_ops import SCENARIOS, room_principal
+    from app.modules.audit.service import actor_of
+    from app.modules.ops.models import Assignment, Incident
+    from app.modules.reports.models import Report
+
+    texts = {sc.text for sc in SCENARIOS}
+    seeded = [
+        r
+        for r in await session.scalars(
+            select(Report).where(Report.entered_by == actor_of(room_principal(21)), Report.gouvernorat_code == 21)
+        )
+        if r.text_original in texts
+    ]
+    assert len(seeded) == len(SCENARIOS)
+    assert {r.category for r in seeded} == {c.value for c in Category}
+    outcomes = set()
+    orders = 0
+    for r in seeded:
+        incident = await session.get(Incident, r.incident_id) if r.incident_id else None
+        outcomes.add((r.category, r.status, (incident.evaluation or {}).get("outcome") if incident else None))
+        if incident is not None:
+            orders += await session.scalar(select(func.count()).where(Assignment.incident_id == incident.id)) or 0
+    assert ("medical", "closed", "resolved") in outcomes and ("other", "closed", "false_alarm") in outcomes
+    assert ("sos", "received", None) in outcomes
+    assert {o[1] for o in outcomes} >= {"received", "in_progress", "intervened", "closed"}
+    assert orders == 13
+    teams = await session.scalar(
+        text(
+            "SELECT count(DISTINCT shift_label) FROM ops.field_agent"
+            " WHERE matricule LIKE 'SIMT%' AND gouvernorat_code = 21"
+        )
+    )
+    assert teams == 4
     raised = await demo.raise_prealert("smoke")
     row = (
         await session.execute(

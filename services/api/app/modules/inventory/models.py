@@ -74,6 +74,9 @@ class Agent(Base):
     rank: Mapped[str | None] = mapped_column(Text)
     phone: Mapped[str | None] = mapped_column(Text)
     availability: Mapped[str] = mapped_column(Text, server_default="on_duty")
+    # Phase H1: intervention, room (logistics) or administrative staff, and the function held (kept by personnel).
+    category: Mapped[str] = mapped_column(Text, server_default="intervention")
+    post: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

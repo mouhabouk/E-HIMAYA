@@ -82,6 +82,8 @@ from app.modules.orgs.models import (
     Organization,
     TeamMember,
 )
+from app.modules.personnel.models import Absence as PersonnelAbsence
+from app.modules.personnel.models import Event as PersonnelEvent
 from app.modules.places.models import SavedPlace
 from app.modules.programmes.models import Programme, ProgrammePoint, ProgrammeRevision
 from app.modules.references.models import RefItem, RefList
@@ -249,6 +251,8 @@ __all__ = [
     "Organization",
     "Outbox",
     "PendingAward",
+    "PersonnelAbsence",
+    "PersonnelEvent",
     "Presence",
     "ProcedureChunk",
     "Profile",

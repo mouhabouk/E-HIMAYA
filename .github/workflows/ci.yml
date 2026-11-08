@@ -756,7 +756,7 @@ jobs:
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload, integrity check, notify-sim health
         run: python3 infra/smoke/smoke_test.py
-      - name: Account administration client follows .env, and a stale placeholder secret is corrected (keycloak-sync)
+      - name: Account administration client follows .env, a stale placeholder secret is corrected, new realm roles are created (keycloak-sync)
         run: |
           C="docker compose --env-file .env -f infra/compose.yml"
           secret=$(grep '^KEYCLOAK_ADMIN_CLIENT_SECRET=' .env | cut -d= -f2-)
@@ -775,6 +775,12 @@ jobs:
           grep -q 'secret updated from .env' sync.log
           test "$(token '${KEYCLOAK_ADMIN_CLIENT_SECRET}')" = 401
           test "$(token "$secret")" = 200
+          # A realm imported before a role was added (personnel_officer, phase H1): keycloak-sync creates it.
+          $C exec -T keycloak bash -c 'export HOME=/tmp; k=/opt/keycloak/bin/kcadm.sh
+            $k config credentials --server http://localhost:8080 --realm master --user "$KC_BOOTSTRAP_ADMIN_USERNAME" --password "$KC_BOOTSTRAP_ADMIN_PASSWORD" >/dev/null
+            $k delete roles/personnel_officer -r ehimaya-staff'
+          $C run --rm keycloak-sync | tee sync.log
+          grep -q 'realm role personnel_officer created' sync.log
       - name: Certificate PDFs render in the API image (Arabic shaping, fonts)
         run: |
           docker compose --env-file .env -f infra/compose.yml exec -T api python -c "

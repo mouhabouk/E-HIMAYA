@@ -110,6 +110,10 @@
         "description": "منسّق طبي جهوي (توثيق الأطباء)"
       },
       {
+        "name": "personnel_officer",
+        "description": "قسم التصرف في الأفراد (جهوي أو مركزي)"
+      },
+      {
         "name": "default-roles-ehimaya-staff",
         "description": "Default roles",
         "composite": true,

@@ -34,6 +34,7 @@ import {
   canReadAnalytics,
   canReadKnowledge,
   canReadOrgs,
+  canReadPersonnel,
   canReviewOrgs,
   canReadPlatformSettings,
   canReadResources,
@@ -301,6 +302,7 @@ export function navGroups(
       tone: "green",
       label: t("nav.group.people"),
       items: [
+        ...e(canReadPersonnel(roles), "/personnel", "manageAccounts", "navy", "personnel"),
         ...e(reads, "/volunteers", "volunteerActivism", "green", "volunteers"),
         ...e(
           canReviewDoctors(roles),

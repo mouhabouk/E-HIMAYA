@@ -9877,3 +9877,133 @@ button.nav-card:hover {
 .record-damages > .btn {
   margin-block-start: 0.5rem;
 }
+
+/* ---------------------------------------------------------------- phase H1: personnel management */
+.absence-tag--leave {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+.absence-tag--sick {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.absence-tag--duty {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.absence-tag--other {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.absence-tag .cell-sub {
+  display: inline;
+  margin-inline-start: 0.4em;
+}
+.inline-reason {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.inline-reason input {
+  min-width: 12rem;
+}
+.personnel-form__hint {
+  grid-column: 1 / -1;
+}
+.personnel-calendar table {
+  font-size: 0.8rem;
+}
+.personnel-calendar th[scope="row"] {
+  white-space: nowrap;
+  font-weight: 600;
+}
+.personnel-calendar__day {
+  min-width: 1.6rem;
+  text-align: center;
+  padding-inline: 0.15rem;
+}
+.personnel-calendar__cell {
+  padding: 0;
+  border-inline-start: 1px solid var(--border);
+  height: 1.6rem;
+}
+.personnel-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0.6rem 0 0;
+  margin: 0;
+  font-size: 0.85rem;
+}
+.personnel-legend__swatch {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 4px;
+  margin-inline-end: 0.4rem;
+  vertical-align: -2px;
+}
+.personnel-strength__present {
+  font-weight: 700;
+  color: var(--primary);
+}
+.personnel-identity .facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1.2rem;
+  margin: 0 0 0.8rem;
+}
+.personnel-identity .facts dt {
+  color: var(--muted);
+}
+.personnel-identity .facts dd {
+  margin: 0;
+}
+.personnel-timeline {
+  list-style: none;
+  padding: 1rem 1.2rem;
+  margin: 0 0 1.2rem;
+  display: grid;
+  gap: 0.8rem;
+}
+.personnel-timeline li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  align-items: center;
+  padding-block-end: 0.8rem;
+  border-block-end: 1px solid var(--border);
+}
+.personnel-timeline li:last-child {
+  border-block-end: 0;
+  padding-block-end: 0;
+}
+.personnel-timeline time {
+  font-weight: 600;
+  min-width: 6.5rem;
+}
+.personnel-timeline__item--cancelled > :not(.tag--level-bad) {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.personnel-event--rank,
+.personnel-event--appointment,
+.personnel-event--transfer {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+.personnel-event--sanction {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+.personnel-event--reward {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+@media (max-width: 640px) {
+  .personnel-identity .facts {
+    grid-template-columns: 1fr;
+  }
+}
