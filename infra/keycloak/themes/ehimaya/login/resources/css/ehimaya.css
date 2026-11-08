@@ -102,13 +102,15 @@ body::before {
   content: "";
   position: fixed;
   inset: 14px;
-  border: 1px solid rgb(201 162 74 / 35%);
+  border: 1px solid rgb(201 162 74 / 60%);
   border-radius: 6px;
+  box-shadow: inset 0 0 0 3px rgb(11 26 63 / 60%), inset 0 0 0 4px rgb(201 162 74 / 25%);
   pointer-events: none;
 }
 
 /* Above the card, centred: the Office's original emblem in a gold ring, on the right of the name «ء-حماية»
-   (Yamen, 2026-11-08), then the line «سلامتكم أولويتنا» in the page's language. The realm's name is hidden. */
+   (Yamen, 2026-11-08), then the line «تطبيق ذكي في خدمة المواطن والمؤسسة، سلامتكم أولويتنا» in the page's language.
+   The system is ء-حماية; the card signs in to its phone application, آلو - حماية (messages_*.properties). */
 #kc-header {
   display: flex;
   flex-direction: column;
@@ -148,7 +150,11 @@ body::before {
 }
 
 #kc-header::after {
-  content: "سلامتكم أولويتنا";
+  content: "تطبيق ذكي في خدمة المواطن والمؤسسة،\A سلامتكم أولويتنا";
+  white-space: pre-line;
+  text-align: center;
+  line-height: 1.7;
+  max-width: 34rem;
   margin-block-start: 0.6rem;
   color: var(--ehimaya-gold-light);
   font-size: 1.05rem;
@@ -158,11 +164,11 @@ body::before {
 }
 
 html:lang(fr) #kc-header::after {
-  content: "Votre sécurité, notre priorité";
+  content: "Une application intelligente au service du citoyen et de l’entreprise.\A Votre sécurité, notre priorité";
 }
 
 html:lang(en) #kc-header::after {
-  content: "Your safety, our priority";
+  content: "A smart application serving citizens and organisations.\A Your safety, our priority";
 }
 
 .pf-v5-c-login__header {
@@ -271,10 +277,15 @@ a:focus-visible {
   color: var(--ehimaya-gold-light);
 }
 
-/* On a phone: no frame, a smaller mark, and the card in the middle with the same margin left and right. */
+/* On a phone: a closer gold frame, a smaller mark, and the card in the middle with the same margin left and right. */
 @media (max-width: 600px) {
   body::before {
-    display: none;
+    inset: 6px;
+  }
+
+  #kc-header::after {
+    font-size: 0.95rem;
+    padding-inline: 20px;
   }
 
   #kc-header-wrapper {
