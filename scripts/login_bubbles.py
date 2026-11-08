@@ -1,6 +1,7 @@
 """Sign-in background and name (Yamen, 2026-11-08): the e-Himaya emblem as translucent bubbles of every size.
 
-Cuts the round emblem and the name out of the horizontal mark, then writes img/bubbles.svg and img/wordmark.png:
+Cuts the round emblem and the name out of the horizontal mark, then writes img/wordmark.png, img/bubbles.svg (royal
+blue) and img/bubbles-red.svg (royal red, Yamen's second colour; loaded only when a visitor picks it):
 
     python3 scripts/login_bubbles.py
 """
@@ -11,7 +12,10 @@ from pathlib import Path
 
 from PIL import Image
 
-IMG = Path(__file__).resolve().parents[1] / "infra/keycloak/themes/ehimaya/login/resources/img"
+IMG = (
+    Path(__file__).resolve().parents[1]
+    / "infra/keycloak/themes/ehimaya/login/resources/img"
+)
 
 # (cx, cy, radius, opacity of the emblem, float period in s, phase in s) on a 1600 x 1000 canvas.
 BUBBLES = [
@@ -37,8 +41,8 @@ HEAD = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preser
 </style>
 <defs>
 <radialGradient id="glass" cx="50%" cy="50%" r="50%">
-<stop offset="0" stop-color="#1f3fa0" stop-opacity=".10"/>
-<stop offset=".78" stop-color="#1f3fa0" stop-opacity=".16"/>
+<stop offset="0" stop-color="GLASS" stop-opacity=".10"/>
+<stop offset=".78" stop-color="GLASS" stop-opacity=".16"/>
 <stop offset="1" stop-color="#e8cf8a" stop-opacity=".16"/>
 </radialGradient>
 <radialGradient id="shine" cx="35%" cy="28%" r="40%">
@@ -54,7 +58,9 @@ def main() -> None:
     name = name.crop(name.getbbox())
     # The name and E-HIMAYA only: the line under them is set as text by the theme, in the page's language.
     name = name.crop((0, 0, name.width, 206))
-    solid = name.getchannel("A").point(lambda a: 255 if a > 60 else 0)  # faint glow pixels do not count
+    solid = name.getchannel("A").point(
+        lambda a: 255 if a > 60 else 0
+    )  # faint glow pixels do not count
     name.crop(solid.getbbox()).save(IMG / "wordmark.png", optimize=True)
     emblem = mark.crop((611, 0, mark.width, mark.height))
     emblem = emblem.crop(emblem.getbbox()).resize((240, 240), Image.Resampling.LANCZOS)
@@ -62,7 +68,15 @@ def main() -> None:
     emblem.save(buf, "PNG", optimize=True)
     b64 = base64.b64encode(buf.getvalue()).decode()
 
-    out = [HEAD, f'<image id="e" width="1" height="1" href="data:image/png;base64,{b64}"/>\n</defs>']
+    for file, glass in (("bubbles.svg", "#1f3fa0"), ("bubbles-red.svg", "#a3182c")):
+        write(file, glass, b64)
+
+
+def write(file: str, glass: str, b64: str) -> None:
+    out = [
+        HEAD.replace("GLASS", glass),
+        f'<image id="e" width="1" height="1" href="data:image/png;base64,{b64}"/>\n</defs>',
+    ]
     for cx, cy, r, opacity, period, phase in BUBBLES:
         x, y, size = cx - r * 0.86, cy - r * 0.86, r * 1.72
         out.append(
@@ -75,7 +89,7 @@ def main() -> None:
             "</g>"
         )
     out.append("</svg>")
-    (IMG / "bubbles.svg").write_text("\n".join(out) + "\n")
+    (IMG / file).write_text("\n".join(out) + "\n")
 
 
 if __name__ == "__main__":

@@ -109,7 +109,7 @@ body::before {
 }
 
 /* Above the card, centred: the Office's original emblem in a gold ring, on the right of the name «ء-حماية»
-   (Yamen, 2026-11-08), then the line «تطبيق ذكي في خدمة المواطن والمؤسسة، سلامتكم أولويتنا» in the page's language.
+   (Yamen, 2026-11-08), then the line «تطبيق ذكي في خدمة المواطن والمؤسسات، سلامتكم أولويتنا» in the page's language.
    The system is ء-حماية; the card signs in to its phone application, آلو - حماية (messages_*.properties). */
 #kc-header {
   display: flex;
@@ -172,7 +172,7 @@ html:lang(en) #kc-header::before {
 }
 
 #kc-header::after {
-  content: "تطبيق ذكي في خدمة المواطن والمؤسسة،\A سلامتكم أولويتنا";
+  content: "تطبيق ذكي في خدمة المواطن والمؤسسات،\A سلامتكم أولويتنا";
   white-space: pre-line;
   text-align: center;
   line-height: 1.7;
@@ -186,7 +186,7 @@ html:lang(en) #kc-header::before {
 }
 
 html:lang(fr) #kc-header::after {
-  content: "Une application intelligente au service du citoyen et de l’entreprise.\A Votre sécurité, notre priorité";
+  content: "Une application intelligente au service du citoyen et des entreprises.\A Votre sécurité, notre priorité";
 }
 
 html:lang(en) #kc-header::after {
@@ -399,8 +399,8 @@ a:focus-visible {
   }
 
   #kc-header::after {
-    font-size: 1.12rem;
-    padding-inline: 20px;
+    font-size: 1.02rem;
+    padding-inline: 12px;
   }
 
   .pf-v5-c-login__main-header {
@@ -561,6 +561,90 @@ html:lang(en) #kc-header::before {
   #kc-header::after {
     font-size: 1.45rem;
     margin-block-start: 1.5rem;
+  }
+}
+
+/* The second colour, royal red (Yamen, 2026-11-08): chosen with the circle under the language circle
+   (resources/js/languages.js), kept on this device. Same gold, same white card; only the night and the actions change. */
+html.ehimaya-red {
+  --ehimaya-night: #3a0910;
+  --ehimaya-night-deep: #1f0408;
+  --ehimaya-navy: #9b1b2c;
+  --ehimaya-navy-dark: #761420;
+  --ehimaya-ink: #2a1418;
+  --pf-v5-global--primary-color--100: #9b1b2c;
+  --pf-v5-global--primary-color--200: #761420;
+  --pf-v5-global--link--Color: #9b1b2c;
+  --pf-v5-global--link--Color--hover: #761420;
+}
+
+html.ehimaya-red body {
+  background-color: var(--ehimaya-night) !important;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgb(163 24 44 / 42%), transparent 70%),
+    linear-gradient(180deg, var(--ehimaya-night) 0%, var(--ehimaya-night-deep) 100%) !important;
+}
+
+html.ehimaya-red body::after {
+  background-image: url("../img/bubbles-red.svg");
+}
+
+html.ehimaya-red #kc-header-wrapper::before {
+  box-shadow: 0 0 0 4px rgb(58 9 16 / 85%), 0 0 0 5px rgb(201 162 74 / 55%), 0 8px 22px rgb(0 0 0 / 45%);
+}
+
+html.ehimaya-red .pf-v5-c-button.pf-m-primary {
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 12%), transparent 60%),
+    linear-gradient(180deg, #a81d30 0%, #7d1422 55%, #4a0b14 100%);
+  box-shadow: inset 0 0 0 3px #6e1220, inset 0 0 0 4px rgb(232 207 138 / 75%), 0 6px 18px rgb(58 9 16 / 35%);
+}
+
+html.ehimaya-red .pf-v5-c-button.pf-m-primary:hover {
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 16%), transparent 60%),
+    linear-gradient(180deg, #b82236 0%, #8c1726 55%, #561019 100%);
+  box-shadow: inset 0 0 0 3px #7d1524, inset 0 0 0 4px rgb(232 207 138 / 92%), 0 8px 22px rgb(58 9 16 / 45%);
+}
+
+/* The colour circle: a coin of the other colour, gold-rimmed like the language coins, under them. */
+.ehimaya-theme {
+  display: block;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  align-self: center;
+  box-sizing: border-box;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--ehimaya-gold);
+  background:
+    radial-gradient(ellipse 70% 55% at 35% 25%, rgb(255 255 255 / 35%), transparent 60%),
+    linear-gradient(160deg, #a81d30 0%, #7d1422 55%, #4a0b14 100%);
+  box-shadow: inset 0 0 0 2px rgb(255 244 210 / 35%), 0 3px 10px rgb(0 0 0 / 25%);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+html.ehimaya-red .ehimaya-theme {
+  background:
+    radial-gradient(ellipse 70% 55% at 35% 25%, rgb(255 255 255 / 35%), transparent 60%),
+    linear-gradient(160deg, #1f3fa0 0%, #10245c 55%, #0b1a3f 100%);
+}
+
+.ehimaya-theme:hover {
+  transform: scale(1.08);
+}
+
+.ehimaya-theme:focus-visible {
+  outline: 3px solid var(--ehimaya-orange);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ehimaya-theme {
+    transition: none;
   }
 }
 

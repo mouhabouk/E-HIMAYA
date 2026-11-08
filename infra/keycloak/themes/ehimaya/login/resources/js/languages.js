@@ -1,7 +1,52 @@
 // e-Himaya sign-in (Yamen, 2026-11-08): the language as a gold circle; a press drops the other languages as gold
 // circles. Built from Keycloak's own <select id="login-select-toggle">, which stays as it is without JavaScript.
+// Under it, a circle of the other colour switches the page between royal blue and royal red, kept on this device.
 (function () {
   "use strict";
+  var THEME_KEY = "ehimaya-login-colour";
+  var root = document.documentElement;
+
+  function storedRed() {
+    try {
+      return window.localStorage.getItem(THEME_KEY) === "red";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Before the first paint (this file loads in <head>), so the page never flashes the other colour.
+  if (storedRed()) root.classList.add("ehimaya-red");
+
+  var THEME_LABELS = {
+    ar: ["اللون الأحمر الملكي", "اللون الأزرق الملكي"],
+    fr: ["Rouge royal", "Bleu royal"],
+    en: ["Royal red", "Royal blue"],
+  };
+
+  function themeButton() {
+    var lang = (root.lang || "ar").slice(0, 2);
+    var labels = THEME_LABELS[lang] || THEME_LABELS.ar;
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "ehimaya-theme";
+    function label() {
+      var red = root.classList.contains("ehimaya-red");
+      var text = red ? labels[1] : labels[0];
+      button.setAttribute("aria-label", text);
+      button.setAttribute("title", text);
+    }
+    label();
+    button.addEventListener("click", function () {
+      var red = root.classList.toggle("ehimaya-red");
+      try {
+        window.localStorage.setItem(THEME_KEY, red ? "red" : "blue");
+      } catch (e) {
+        /* private window: the choice lasts for this page only */
+      }
+      label();
+    });
+    return button;
+  }
   var SHORT = { ar: "ع", fr: "FR", en: "EN" };
   var ORDER = ["ar", "fr", "en"]; // Yamen, 2026-11-08: Arabic, then French, then English
 
@@ -74,6 +119,7 @@
 
     box.appendChild(toggle);
     box.appendChild(list);
+    box.appendChild(themeButton());
     wrapper.style.display = "none";
     wrapper.parentNode.insertBefore(box, wrapper);
   }
