@@ -211,16 +211,34 @@ html:lang(en) #kc-header::after {
   border-radius: 8px;
 }
 
+/* The sign-in button (Yamen, 2026-11-08): the royal navy of the background, edged with a fine double gold thread. */
 .pf-v5-c-button.pf-m-primary {
-  background: linear-gradient(180deg, var(--ehimaya-navy) 0%, var(--ehimaya-navy-dark) 100%);
-  border-radius: 8px;
+  position: relative;
+  --pf-v5-c-button--BorderRadius: 10px;
+  --pf-v5-c-button--after--BorderRadius: 10px;
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 10%), transparent 60%),
+    linear-gradient(180deg, #1a3684 0%, #10245c 55%, var(--ehimaya-night) 100%);
+  color: #f6ecd0 !important;
+  border: 1px solid var(--ehimaya-gold);
+  border-radius: 10px;
   font-weight: 700;
-  letter-spacing: 0.01em;
-  box-shadow: inset 0 -2px 0 rgb(201 162 74 / 65%);
+  letter-spacing: 0.03em;
+  box-shadow:
+    inset 0 0 0 3px #142b6c,
+    inset 0 0 0 4px rgb(232 207 138 / 70%),
+    0 6px 18px rgb(11 26 63 / 35%);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .pf-v5-c-button.pf-m-primary:hover {
-  background: var(--ehimaya-navy-dark);
+  background:
+    radial-gradient(ellipse 80% 120% at 50% 0%, rgb(255 255 255 / 14%), transparent 60%),
+    linear-gradient(180deg, #1f3fa0 0%, #142c70 55%, #0e1f4d 100%);
+  box-shadow:
+    inset 0 0 0 3px #183383,
+    inset 0 0 0 4px rgb(232 207 138 / 90%),
+    0 8px 22px rgb(11 26 63 / 45%);
 }
 
 /* Focus: the orange of the design system, visible on white and on navy. */
@@ -281,4 +299,9 @@ a:focus-visible {
     width: 100%;
     border-radius: 12px;
   }
+}
+
+/* PatternFly draws its own button outline: the gold thread replaces it. */
+.pf-v5-c-button.pf-m-primary::after {
+  display: none !important;
 }
