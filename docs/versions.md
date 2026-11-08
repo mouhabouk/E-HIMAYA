@@ -776,3 +776,8 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     ووقت آخر نبض، والجدول `reports.camera_event`. مسار عام جديد `POST /api/v1/camera-events` (و `/heartbeat`) يمر عبر Caddy
     كباقي `/api/v1`، محمي بتوقيع كل كاميرا. برنامج جديد على حاسوب المؤسسة: `services/camera-bridge` (Python وحده، و ffmpeg
     للفيديو بعد الإنذار)، بالدليل `docs/guides/camera-bridge.md`. لا متغير ولا خدمة جديدة في الخادم.
+45. رسالة صوتية في كل مرحلة من المهمة (طلب يامن 2026-11-01): `alembic upgrade head` (0095) يضيف لنصوص الميدان المرحلة
+    (`ops.field_attachment.stage`) وهل كانت صوتية (`spoken`). خدمة الذكاء الاصطناعي: مسار جديد `POST /v1/tidy` يصلح النص
+    المفرَّغ بالنموذج المحلي نفسه (`LLM_MODEL`، qwen3:8b) دون نموذج جديد؛ إن غاب النموذج تنظّفه قواعد بسيطة. مساران جديدان
+    في تطبيق الأعوان: `/crew/missions/{id}/stage-voice` و `/stage-message` (زر «الصور والصوت والملاحظات»). الدليل
+    `docs/guides/stage-voice.md`.

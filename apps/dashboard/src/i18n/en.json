@@ -5002,7 +5002,8 @@
     "attachment": {
       "photo": "Photo",
       "voice": "Voice note",
-      "text": "Text"
+      "text": "Text",
+      "stage": "Field update"
     },
     "seconds": "{{count}} s",
     "contactPhone": "Number to call on the scene",
@@ -5059,6 +5060,14 @@
       "moveTarget": "Change the point",
       "pickHint": "Click the map to set the point team {{who}} must reach. It goes to the leader's phone at once.",
       "targetNote": "Note for the team (optional)"
+    },
+    "stage": {
+      "en_route": "On the way",
+      "on_scene": "On scene",
+      "left_scene": "Left the scene",
+      "at_hospital": "At hospital",
+      "available": "Available on the way back",
+      "back_at_unit": "Back at the unit"
     }
   },
   "templates": {

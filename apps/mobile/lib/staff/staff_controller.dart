@@ -944,6 +944,14 @@ class StaffController extends Notifier<StaffState> {
   Future<bool> interventionReport(String id, String text, {String? voiceId}) =>
       _write(id, 'report', {'text': text.trim(), 'voice_id': ?voiceId});
 
+  /// A spoken word of the scene sent to be transcribed and tidied (needs network).
+  Future<StageVoice?> stageVoice(String id, CapturedMedia media, String lang) =>
+      _guard(() => _api.stageVoice(id, media, lang: lang));
+
+  /// The corrected message of the scene; kept on the phone while out of coverage.
+  Future<bool> stageMessage(String id, String text, {String? voiceId}) =>
+      _write(id, 'stage-message', {'text': text.trim(), 'voice_id': ?voiceId});
+
   /// A spoken toll or report sent to be transcribed (needs network; the audio is not kept).
   Future<SpokenText?> transcribe(String id, CapturedMedia media, String lang) =>
       _guard(() => _api.transcribe(id, media, lang: lang));

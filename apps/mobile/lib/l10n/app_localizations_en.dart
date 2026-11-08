@@ -6920,4 +6920,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prealertMute => 'Silence the alarm';
+
+  @override
+  String get staffStageMessage => 'Field update';
+
+  @override
+  String get staffStageMessageSub =>
+      'Say what you see at this step: transcribed, tidied, then checked before sending';
+
+  @override
+  String staffStageNow(String stage) {
+    return 'Current step: $stage';
+  }
+
+  @override
+  String get staffStageSpeak => 'Record a voice message';
+
+  @override
+  String get staffStageHeard => 'What was heard';
+
+  @override
+  String get staffStageByModel =>
+      'Tidied automatically (spelling, terms, punctuation) without changing any fact. Check it, then send.';
+
+  @override
+  String get staffStageByRules =>
+      'Cleaned by simple rules (the correction model is unavailable). Check it, then send.';
+
+  @override
+  String get staffStageText => 'Message text';
+
+  @override
+  String get staffStageSend => 'Send to the room';
+
+  @override
+  String get staffStageSentList => 'Messages sent on this mission';
+
+  @override
+  String get staffStageSpoken => 'Spoken, corrected';
 }

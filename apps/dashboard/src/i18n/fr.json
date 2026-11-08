@@ -5002,7 +5002,8 @@
     "attachment": {
       "photo": "Photo",
       "voice": "Note vocale",
-      "text": "Texte"
+      "text": "Texte",
+      "stage": "Point de situation"
     },
     "seconds": "{{count}} s",
     "contactPhone": "Numéro à appeler sur place",
@@ -5059,6 +5060,14 @@
       "moveTarget": "Changer le point",
       "pickHint": "Cliquez sur la carte pour fixer le point que l'équipe {{who}} doit atteindre. Il part aussitôt sur le téléphone du chef.",
       "targetNote": "Note pour l'équipe (facultative)"
+    },
+    "stage": {
+      "en_route": "En route",
+      "on_scene": "Sur place",
+      "left_scene": "A quitté les lieux",
+      "at_hospital": "À l'hôpital",
+      "available": "Disponible au retour",
+      "back_at_unit": "Rentré à l'unité"
     }
   },
   "templates": {

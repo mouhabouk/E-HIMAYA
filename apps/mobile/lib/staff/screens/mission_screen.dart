@@ -22,6 +22,7 @@ import 'field_widgets.dart';
 import 'record_screen.dart';
 import 'situation_screen.dart';
 import 'staff_live_screen.dart';
+import 'stage_message_screen.dart';
 import 'transport_screen.dart';
 
 /// One mission (phase P4b, design §5.3): the card, the path of the five steps, one big button for
@@ -118,6 +119,21 @@ class MissionScreen extends ConsumerWidget {
                       context,
                       InterventionReportScreen(missionId: m.id),
                     ),
+                  ),
+                // Yamen, 2026-11-01: a spoken word at every step, from «انطلقنا» on.
+                if (!readOnly &&
+                    shows('field_missions.media') &&
+                    missionStage(m) != null)
+                  NavCard(
+                    key: const Key('open-stage-message'),
+                    icon: Icons.mic,
+                    tone: Tone.red,
+                    title: l10n.staffStageMessage,
+                    subtitle: l10n.staffStageNow(
+                      stageLabel(l10n, missionStage(m)!),
+                    ),
+                    onTap: () =>
+                        push(context, StageMessageScreen(missionId: m.id)),
                   ),
                 // Phase D, review point 17: the room sees the scene live.
                 if (!readOnly && !m.over && shows('field_missions.stream'))

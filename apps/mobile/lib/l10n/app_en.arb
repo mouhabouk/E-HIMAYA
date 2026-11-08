@@ -3587,5 +3587,23 @@
       }
     }
   },
-  "prealertMute": "Silence the alarm"
+  "prealertMute": "Silence the alarm",
+  "staffStageMessage": "Field update",
+  "staffStageMessageSub": "Say what you see at this step: transcribed, tidied, then checked before sending",
+  "staffStageNow": "Current step: {stage}",
+  "@staffStageNow": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "staffStageSpeak": "Record a voice message",
+  "staffStageHeard": "What was heard",
+  "staffStageByModel": "Tidied automatically (spelling, terms, punctuation) without changing any fact. Check it, then send.",
+  "staffStageByRules": "Cleaned by simple rules (the correction model is unavailable). Check it, then send.",
+  "staffStageText": "Message text",
+  "staffStageSend": "Send to the room",
+  "staffStageSentList": "Messages sent on this mission",
+  "staffStageSpoken": "Spoken, corrected"
 }

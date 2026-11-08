@@ -222,6 +222,22 @@ class StaffApi {
     );
   }
 
+  /// A spoken word of the scene, from «انطلقنا» on: transcribed (the audio deleted there), then
+  /// tidied; nothing reaches the room until the leader sends the corrected text.
+  Future<StageVoice> stageVoice(
+    String missionId,
+    CapturedMedia media, {
+    String lang = 'ar',
+  }) async => StageVoice.fromJson(
+    await _call(
+      'POST',
+      '/missions/$missionId/stage-voice',
+      body: media.bytes,
+      contentType: media.contentType,
+      query: {'lang': lang},
+    ),
+  );
+
   Future<void> endShift() => _call('POST', '/shifts/current/end');
 
   Future<List<Mission>> missions() async {
