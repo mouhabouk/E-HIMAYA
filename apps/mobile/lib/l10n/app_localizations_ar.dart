@@ -2432,10 +2432,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get colorOffice => 'الحماية المدنية (الشعار)';
 
   @override
-  String get colorRed => 'أحمر';
+  String get colorRed => 'أحمر ملكي';
 
   @override
-  String get colorBlue => 'أزرق';
+  String get colorBlue => 'أزرق ملكي';
 
   @override
   String get colorGreen => 'أخضر';

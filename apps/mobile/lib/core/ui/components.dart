@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
+import 'theme.dart';
 import 'tokens.dart';
 
 /// Shared components of the design system (docs/design-system.md §3). Screens build on these so
@@ -728,4 +729,66 @@ class _NumberStepperState extends State<NumberStepper> {
       ),
     ],
   );
+}
+
+/// Frame of the brand colour around the whole screen (docs/design-system.md §2.0): a thin band of
+/// royal blue or royal red with a gold hairline and rounded inner corners, like the sign-in page.
+/// It is painted over the edges and takes no touches, so the layout of every screen stays the
+/// same. White stays the base colour of everything inside it.
+class BrandFrame extends StatelessWidget {
+  const BrandFrame({super.key, required this.palette, required this.child});
+
+  final AppPalette palette;
+  final Widget child;
+
+  static const width = 4.0;
+  static const radius = 14.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      textDirection: TextDirection.ltr,
+      fit: StackFit.expand,
+      children: [
+        child,
+        IgnorePointer(
+          child: CustomPaint(
+            painter: _FramePainter(
+              brandFrameColor(palette, Theme.of(context).brightness),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FramePainter extends CustomPainter {
+  _FramePainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final outer = Offset.zero & size;
+    final inner = RRect.fromRectAndRadius(
+      outer.deflate(BrandFrame.width),
+      const Radius.circular(BrandFrame.radius),
+    );
+    final band = Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRect(outer)
+      ..addRRect(inner);
+    canvas.drawPath(band, Paint()..color = color);
+    canvas.drawRRect(
+      inner,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = BrandColors.gold.withValues(alpha: 0.75),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_FramePainter old) => old.color != color;
 }

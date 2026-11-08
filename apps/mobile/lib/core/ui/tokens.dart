@@ -37,7 +37,7 @@ class Neutrals {
   static const light = Neutrals._(
     ink: Color(0xFF182038),
     muted: Color(0xFF5B6478),
-    page: Color(0xFFF3F5FA),
+    page: Color(0xFFFFFFFF),
     card: Color(0xFFFFFFFF),
     line: Color(0xFFE3E7EF),
   );

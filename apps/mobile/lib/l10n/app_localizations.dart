@@ -4315,13 +4315,13 @@ abstract class AppLocalizations {
   /// No description provided for @colorRed.
   ///
   /// In en, this message translates to:
-  /// **'Red'**
+  /// **'Royal red'**
   String get colorRed;
 
   /// No description provided for @colorBlue.
   ///
   /// In en, this message translates to:
-  /// **'Blue'**
+  /// **'Royal blue'**
   String get colorBlue;
 
   /// No description provided for @colorGreen.

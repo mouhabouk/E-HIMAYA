@@ -28,16 +28,51 @@ A visual reference with every colour code, icon, shape, font and framework, with
 All values below are checked for WCAG 2.2 AA: text ≥ 4.5:1 (≥ 3:1 for bold text of 18.66 px and above), icons and
 borders that carry meaning ≥ 3:1 against what they sit on.
 
+### 2.0 Brand colours: white base, royal blue or royal red frame (Yamen, 2026-11-08)
+
+White is the base colour of every surface: the page, the cards, the forms and the tables stay white (in the dark
+mode, the dark page). The user picks one of two royal colours, **royal blue** (default) or **royal red**, and the
+choice changes three things only, so the face of the system stays the same:
+
+1. **The frame:** a band of the royal colour around the screen, with a gold hairline on its inner edge and rounded
+   inner corners, like the sign-in page. It fills the side spaces and never covers content: 10 px on screens of
+   721 px and more, 5 px on narrow screens; 4 dp in the app.
+2. **The primary colour:** primary buttons, links, the selected menu entry, the selected segment and language, the
+   focus ring of the frame's own controls.
+3. **The primary tint:** pills and soft tiles that show "selected" or "primary" use the tint of the royal colour.
+
+Nothing else changes: the category colours (§2.3), the status colours, the priority bands, the [SIM] amber and the
+emergency red stay the same in both choices, so an icon keeps its colour wherever it appears. The emergency red
+(`#D7141A`) is brighter than royal red and is only used for 198, SOS, alerts and destructive actions, each with its
+word and icon, never colour alone.
+
+| Token | Royal blue | Royal red | Use | Contrast |
+|---|---|---|---|---|
+| `brand` | `#1F3FA0` | `#9B1B2C` | Frame, primary buttons, links, selected states | white 9.2:1 / 8.1:1 |
+| `brand-deep` | `#152D78` | `#761420` | Hover and pressed, frame gradient | white 11:1 |
+| `brand-night` | `#0B1A3F` | `#3A0910` | Frame in the dark mode, sign-in background | gold 7.1:1 |
+| `brand-tint` | `#E8EDFA` | `#FBE9EC` | Selected pills and soft tiles | |
+| `brand-ink` | `#1F3FA0` | `#8E1426` | Text on the tint | 7.9:1 on the tint |
+| `brand` (dark mode) | `#8FA8FF` | `#FF8A95` | Primary on dark cards, with `#0E1426` text | 8.0:1 / 8.1:1 |
+| `gold` | `#C9A24A` | `#C9A24A` | Hairline inside the frame, the switch coins (decorative) | |
+
+**The switch:** on the web, a 32 px coin of the *other* colour, ringed in gold, sits with the tools of the top bar of
+the dashboard and the portal, and under the language coin on the sign-in page; one press changes the colour, and it
+is named for screen readers («اللون الأحمر الملكي» / «اللون الأزرق الملكي»). In the app, Settings › Colours offers the
+two choices («أزرق ملكي» / «أحمر ملكي»), each with its gold-ringed coin. The choice is kept on the device
+(`localStorage` key `ehimaya.brand` on the web, the app settings on the phone), applied before the first paint,
+and never sent to the server.
+
 ### 2.1 Colours (light)
 
 | Token | Value | Use | Contrast |
 |---|---|---|---|
 | `ink` | `#182038` | Titles and body text | 16.1:1 on white |
 | `muted` | `#5B6478` | Subtitles, captions | 5.9:1 on white |
-| `page` | `#F3F5FA` | Page background | |
+| `page` | `#FFFFFF` | Page background: white is the base colour (§2.0); cards keep their `line` border | |
 | `card` | `#FFFFFF` | Cards, sheets, app bar | |
 | `line` | `#E3E7EF` | Card borders, dividers | decorative |
-| `navy` (primary) | `#1F3FA0` | Primary buttons, selected tab, selected language, links | white 9.2:1 |
+| `navy` | `#1F3FA0` | Category colour; the primary colour is `brand` (§2.0) | white 9.2:1 |
 | `red` (emergency) | `#D7141A` | 198, SOS, alert headers, destructive | white 5.2:1 |
 | `orange` (accent) | `#F08C00` | Step bars, selection borders, highlights; never text, never the only sign (2.5:1 on white) | ink 6.5:1 |
 | `orangeStrong` | `#C25E00` | Orange buttons and orange text | white 4.3:1 (bold large only) |
@@ -139,5 +174,9 @@ colour alone (every pill has its word, every tile its label), text scaling to 20
 * **Web** `apps/dashboard/src/styles/global.css` and `apps/portal/src/styles/global.css`: the same tokens as CSS
   custom properties, component classes (`.icon-tile`, `.nav-card`, `.pill`, `.segmented`, …), and an `Icon`
   component with the Material Symbols paths in use. Font self-hosted from `@fontsource/ibm-plex-sans-arabic`.
-* The colour palettes of phase A (office, red, blue, green) stay as a user choice for the primary colour only; the
-  category colours never change.
+* The colour palettes of phase A (office, red, blue, green) are replaced by the two brand colours of §2.0. A stored
+  `red` becomes royal red; `office`, `blue` and `green` become royal blue. The category colours never change.
+* Brand frame: `apps/dashboard/src/lib/brand.ts` and `apps/portal/src/lib/brand.ts` (choice and switch), the
+  "Brand frame" block at the end of each `global.css`; `apps/mobile/lib/core/ui/theme.dart` (`AppPalette.blue`,
+  `AppPalette.red`) and `BrandFrame` in `components.dart`; the sign-in page in
+  `infra/keycloak/themes/ehimaya/login/resources/css/ehimaya.css` (`html.ehimaya-red`).

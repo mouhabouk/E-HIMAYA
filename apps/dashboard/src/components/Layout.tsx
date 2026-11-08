@@ -14,6 +14,7 @@ import { useGouvernorats, useLanguage } from "../lib/hooks";
 import { canDraftMessage, canRequestBreakGlass, hasReadAccess, staffRoles } from "../lib/roles";
 import { MENU_POSITIONS, MENU_SHAPES, type MenuPrefs, saveMenu, storedMenu } from "../lib/menu";
 import { applyTheme, nextTheme, storedTheme, THEMES, type Theme } from "../lib/theme";
+import { applyBrand, otherBrand, storedBrand, type Brand } from "../lib/brand";
 import { NoAccessPage } from "../pages/NoAccessPage";
 import { AlertFollowUpToasts } from "./AlertFollowUpToasts";
 import { ActiveGrantBanner } from "./BreakGlass";
@@ -57,6 +58,29 @@ export function LanguageMenu() {
         </button>
       ))}
     </div>
+  );
+}
+
+/**
+ * Brand switch (docs/design-system.md §2.0): a coin of the other royal colour; one press swaps royal blue and royal
+ * red for the frame and the primary colour. White stays the base colour.
+ */
+export function BrandToggle() {
+  const { t } = useTranslation();
+  const [brand, setBrand] = useState<Brand>(storedBrand);
+  const next = otherBrand(brand);
+  const label = t(`header.brand.${next}`);
+  return (
+    <button
+      type="button"
+      className={`brand-coin brand-coin--${next}`}
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        applyBrand(next);
+        setBrand(next);
+      }}
+    />
   );
 }
 
@@ -314,6 +338,7 @@ export function Layout() {
         </div>
         <MainNav groups={groups} shape={menu.shape} position={menu.position} />
         <div className="header__tools">
+          <BrandToggle />
           <LiveIndicator />
           <AccountMenu
             name={identity.name}

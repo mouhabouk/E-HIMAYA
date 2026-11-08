@@ -243,17 +243,17 @@ void main() {
     await tester.tap(find.text('Paramètres').last);
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.byKey(const Key('palette-green')),
+      find.byKey(const Key('palette-red')),
       200,
       scrollable: find.byType(Scrollable).first,
     );
     // Fully on screen: the taller design-system cards can leave it at the edge.
-    await tester.ensureVisible(find.byKey(const Key('palette-green')));
+    await tester.ensureVisible(find.byKey(const Key('palette-red')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('palette-green')));
+    await tester.tap(find.byKey(const Key('palette-red')));
     await tester.pumpAndSettle();
     final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getString('settings.palette'), 'green');
+    expect(prefs.getString('settings.palette'), 'red');
     await unmountApp(tester);
   });
 

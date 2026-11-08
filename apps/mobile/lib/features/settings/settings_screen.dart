@@ -142,7 +142,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          // Phase A: colour palette (the logo's colours by default).
+          // Brand colour (docs/design-system.md §2.0): royal blue or royal red for the frame.
           SectionTitle(l10n.settingsColors),
           AppCard(
             child: Wrap(
@@ -150,14 +150,18 @@ class SettingsScreen extends ConsumerWidget {
               runSpacing: 8,
               children: [
                 for (final (palette, label, color) in [
-                  (AppPalette.office, l10n.colorOffice, BrandColors.blue),
-                  (AppPalette.red, l10n.colorRed, const Color(0xFFB3261E)),
-                  (AppPalette.blue, l10n.colorBlue, const Color(0xFF1565C0)),
-                  (AppPalette.green, l10n.colorGreen, const Color(0xFF2E7D32)),
+                  (AppPalette.blue, l10n.colorBlue, BrandColors.royalBlue),
+                  (AppPalette.red, l10n.colorRed, BrandColors.royalRed),
                 ])
                   ChoiceChip(
                     key: Key('palette-${palette.name}'),
-                    avatar: CircleAvatar(backgroundColor: color, radius: 8),
+                    avatar: Container(
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: BrandColors.gold, width: 2),
+                      ),
+                    ),
                     label: Text(label),
                     selected: settings.palette == palette,
                     onSelected: (_) =>

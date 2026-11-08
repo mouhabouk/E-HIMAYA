@@ -3111,3 +3111,135 @@ button.nav-card:hover {
   color: var(--tone-green-ink);
   text-decoration: none;
 }
+
+/* ---------- Brand frame (docs/design-system.md §2.0, Yamen 2026-11-08) ----------
+   White is the base colour. The chosen royal colour, blue by default or red with html[data-brand="red"], fills a
+   frame around the screen (with a gold hairline and rounded inner corners, like the sign-in page) and gives the
+   primary colour. Category, status, [SIM] and emergency colours never change. */
+:root {
+  --brand: #1f3fa0;
+  --brand-deep: #152d78;
+  --brand-night: #0b1a3f;
+  --brand-tint: #e8edfa;
+  --brand-ink: #1f3fa0;
+  --brand-gold: #c9a24a;
+  --brand-frame: var(--brand);
+  --frame: 10px;
+  --bg: #ffffff;
+  --primary: var(--brand);
+  --link: var(--brand-ink);
+}
+
+:root[data-brand="red"] {
+  --brand: #9b1b2c;
+  --brand-deep: #761420;
+  --brand-night: #3a0910;
+  --brand-tint: #fbe9ec;
+  --brand-ink: #8e1426;
+}
+
+/* Dark mode: the page stays dark, the frame takes the night shade, the primary is lifted for contrast (8:1). */
+:root[data-theme="dark"] {
+  --brand-frame: var(--brand-night);
+  --brand-tint: rgb(143 168 255 / 18%);
+  --brand-ink: #8fa8ff;
+}
+
+:root[data-theme="dark"][data-brand="red"] {
+  --primary: #ff8a95;
+  --link: #ff8a95;
+  --brand-tint: rgb(255 138 149 / 18%);
+  --brand-ink: #ff8a95;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand-frame: var(--brand-night);
+    --brand-tint: rgb(143 168 255 / 18%);
+    --brand-ink: #8fa8ff;
+  }
+
+  :root:not([data-theme="light"])[data-brand="red"] {
+    --primary: #ff8a95;
+    --link: #ff8a95;
+    --brand-tint: rgb(255 138 149 / 18%);
+    --brand-ink: #ff8a95;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --frame: 5px;
+  }
+}
+
+body {
+  padding: var(--frame);
+  background: var(--bg);
+}
+
+/* The frame: a fixed ring whose spread shadow fills the side spaces; it never takes clicks. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: var(--frame);
+  z-index: 2147483000;
+  border-radius: 14px;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 1px rgb(201 162 74 / 75%),
+    0 0 0 100vmax var(--brand-frame);
+}
+
+/* Sticky and fixed chrome sits inside the frame. */
+.header {
+  inset-block-start: var(--frame);
+}
+
+/* Brand switch: a coin of the other royal colour, ringed in gold. */
+.brand-coin {
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 0 2px rgb(255 255 255 / 30%),
+    0 0 0 2px var(--brand-gold),
+    0 2px 6px rgb(16 24 48 / 25%);
+}
+
+.brand-coin--red {
+  background: radial-gradient(circle at 35% 30%, #c8394c 0%, #9b1b2c 55%, #5e0f1a 100%);
+}
+
+.brand-coin--blue {
+  background: radial-gradient(circle at 35% 30%, #4a6ad0 0%, #1f3fa0 55%, #0e2160 100%);
+}
+
+.brand-coin:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brand-coin {
+    transition: transform 0.15s ease;
+  }
+
+  .brand-coin:hover {
+    transform: scale(1.08);
+  }
+}
+
+@media print {
+  body {
+    padding: 0;
+  }
+
+  body::after {
+    display: none;
+  }
+}

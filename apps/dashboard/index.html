@@ -7,13 +7,14 @@
     <meta name="color-scheme" content="light dark" />
     <title>ء-حماية · لوحة التحكم</title>
     <script>
-      // Apply persisted language/theme before first paint (no flash of wrong direction or theme).
+      // Apply persisted language/theme/brand colour before first paint (no flash of wrong direction or theme).
       (function () {
         try {
           var lang = localStorage.getItem("ehimaya.lang");
           if (lang === "fr") { document.documentElement.lang = "fr"; document.documentElement.dir = "ltr"; }
           var theme = localStorage.getItem("ehimaya.theme");
           if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+          if (localStorage.getItem("ehimaya.brand") === "red") document.documentElement.dataset.brand = "red";
         } catch (e) {}
       })();
     </script>
