@@ -117,6 +117,28 @@ body::before {
   align-items: center;
 }
 
+/* At the very top, the State's heading (Yamen, 2026-11-08): the Republic, the Ministry, then the Office. */
+#kc-header::before {
+  content: "الجمهورية التونسية\A وزارة الداخلية\A الديوان الوطني للحماية المدنية";
+  white-space: pre-line;
+  text-align: center;
+  margin-block-end: 1rem;
+  color: var(--ehimaya-gold-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html:lang(fr) #kc-header::before {
+  content: "République tunisienne\A Ministère de l’Intérieur\A Office national de la protection civile";
+}
+
+html:lang(en) #kc-header::before {
+  content: "Republic of Tunisia\A Ministry of the Interior\A National Office of Civil Protection";
+}
+
 #kc-header-wrapper {
   display: flex;
   flex-direction: row;
@@ -154,10 +176,10 @@ body::before {
   white-space: pre-line;
   text-align: center;
   line-height: 1.7;
-  max-width: 34rem;
-  margin-block-start: 0.6rem;
+  max-width: 36rem;
+  margin-block-start: 0.75rem;
   color: var(--ehimaya-gold-light);
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
@@ -184,7 +206,12 @@ html:lang(en) #kc-header::after {
   overflow: hidden;
 }
 
+/* The title in the middle at the top of the card; the language circle in its corner (Yamen, 2026-11-08). */
 .pf-v5-c-login__main-header {
+  position: relative;
+  display: block !important;
+  text-align: center;
+  padding-inline: 4.25rem !important;
   border-top: 0 !important;
   border-bottom: 1px solid #e3e7ef;
   padding-block-end: 1rem;
@@ -195,6 +222,88 @@ html:lang(en) #kc-header::after {
   color: var(--ehimaya-night);
   font-weight: 700;
   letter-spacing: 0;
+}
+
+.pf-v5-c-login__main-header-utilities {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 2;
+}
+
+.ehimaya-lang {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ehimaya-lang__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ehimaya-lang__list[hidden] {
+  display: none;
+}
+
+.ehimaya-lang.is-open .ehimaya-lang__list li {
+  animation: ehimaya-drop 0.18s ease-out both;
+}
+
+.ehimaya-lang.is-open .ehimaya-lang__list li:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+@keyframes ehimaya-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ehimaya-lang.is-open .ehimaya-lang__list li {
+    animation: none;
+  }
+}
+
+.ehimaya-lang__circle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--ehimaya-gold);
+  background:
+    radial-gradient(ellipse 80% 80% at 35% 25%, rgb(255 255 255 / 18%), transparent 60%),
+    linear-gradient(180deg, #1a3684 0%, #10245c 55%, var(--ehimaya-night) 100%);
+  box-shadow: inset 0 0 0 2px #142b6c, inset 0 0 0 3px rgb(232 207 138 / 70%), 0 4px 12px rgb(11 26 63 / 35%);
+  color: #f6ecd0 !important;
+  font: 700 0.85rem/1 "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ehimaya-lang__circle[lang="ar"] {
+  font-size: 1.1rem;
+}
+
+.ehimaya-lang__circle:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 2px #183383, inset 0 0 0 3px rgb(232 207 138 / 95%), 0 6px 16px rgb(11 26 63 / 45%);
+}
+
+.ehimaya-lang__circle:focus-visible {
+  outline: 3px solid var(--ehimaya-orange);
+  outline-offset: 2px;
 }
 
 .pf-v5-c-form__label-text {
@@ -255,18 +364,6 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-/* The Office's line under the card. */
-.pf-v5-c-login__container::after {
-  content: "الديوان الوطني للحماية المدنية";
-  display: block;
-  margin-block-start: 1.5rem;
-  text-align: center;
-  color: var(--ehimaya-gold-light);
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
-}
-
 .pf-v5-c-login__main-footer-band,
 .pf-v5-c-login__footer {
   color: #c9d2ea;
@@ -283,12 +380,54 @@ a:focus-visible {
     inset: 6px;
   }
 
+  #kc-header::before {
+    font-size: 0.85rem;
+    margin-block-start: 0.75rem;
+  }
+
   #kc-header::after {
-    font-size: 0.95rem;
+    font-size: 1.12rem;
     padding-inline: 20px;
   }
 
-  #kc-header-wrapper {
+  .pf-v5-c-login__main-header {
+    padding-inline: 3.75rem !important;
+  }
+
+  .pf-v5-c-login__main-header .pf-v5-c-title,
+  #kc-page-title {
+    font-size: 1.55rem;
+    line-height: 1.5;
+  }
+
+  .pf-v5-c-login__main-header-utilities {
+    inset-block-start: 0.85rem;
+    inset-inline-end: 0.75rem;
+  }
+
+  /* At the very top, the State's heading (Yamen, 2026-11-08): the Republic, the Ministry, then the Office. */
+#kc-header::before {
+  content: "الجمهورية التونسية\A وزارة الداخلية\A الديوان الوطني للحماية المدنية";
+  white-space: pre-line;
+  text-align: center;
+  margin-block-end: 1rem;
+  color: var(--ehimaya-gold-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+html:lang(fr) #kc-header::before {
+  content: "République tunisienne\A Ministère de l’Intérieur\A Office national de la protection civile";
+}
+
+html:lang(en) #kc-header::before {
+  content: "Republic of Tunisia\A Ministry of the Interior\A National Office of Civil Protection";
+}
+
+#kc-header-wrapper {
     gap: 0.85rem;
   }
 
