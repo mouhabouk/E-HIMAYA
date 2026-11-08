@@ -60,6 +60,10 @@ class Role(StrEnum):
     # Phase F (docs/phase-f/design-f.md §1): a crew member other than the leader, on the staff app; reads the mission
     # of their shift and never changes it.
     FIELD_AGENT = "field_agent"
+    # Phase H1 (docs/phase-h/design-h.md): the personnel department of a gouvernorat (or the central one) keeps the
+    # administrative file of the staff (ranks, appointments, transfers, leave, absences, sanctions, rewards); no
+    # operational rights, and the operations rooms never see its sanctions, rewards or references.
+    PERSONNEL_OFFICER = "personnel_officer"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -78,6 +82,7 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.AI_ADMIN,
             Role.REGIONAL_ACCOUNT_ADMIN,
             Role.MEDICAL_COORDINATOR,
+            Role.PERSONNEL_OFFICER,
             Role.TEAM_LEADER,
             Role.GOVERNOR,
             Role.MINISTER,
@@ -103,7 +108,9 @@ FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
     ),
     Function.OPERATIONS: frozenset({Role.OPERATOR, Role.OPS_MANAGER}),
     Function.TECHNICAL: frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN}),
-    Function.SUPPORT: frozenset({Role.CONTENT_EDITOR, Role.ORG_AUDITOR, Role.MEDICAL_COORDINATOR}),
+    Function.SUPPORT: frozenset(
+        {Role.CONTENT_EDITOR, Role.ORG_AUDITOR, Role.MEDICAL_COORDINATOR, Role.PERSONNEL_OFFICER}
+    ),
     Function.FIELD: frozenset({Role.TEAM_LEADER}),
 }
 

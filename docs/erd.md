@@ -1326,6 +1326,8 @@ erDiagram
         text rank
         text phone
         text availability
+        text category
+        text post
         text notes
         integer version
         datetime created_at
@@ -2408,6 +2410,56 @@ erDiagram
     reports__live_stream ||--o{ org__prealert : "stream_id"
     reports__media ||--o{ org__prealert : "media_id"
     reports__report ||--o{ org__prealert : "report_id"
+```
+
+## personnel
+
+```mermaid
+erDiagram
+    personnel__absence {
+        uuid id PK
+        uuid agent_id FK
+        smallint gouvernorat_code FK
+        text kind
+        date starts_on
+        date ends_on
+        text reference
+        text note
+        integer version
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime updated_at
+        text updated_by_name
+        datetime cancelled_at
+        text cancelled_by_name
+        text cancel_reason
+    }
+    personnel__event {
+        uuid id PK
+        uuid agent_id FK
+        smallint gouvernorat_code FK
+        text kind
+        date effective_on
+        text title
+        uuid unit_id FK
+        uuid from_unit_id FK
+        jsonb previous
+        text reference
+        text note
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime cancelled_at
+        text cancelled_by_name
+        text cancel_reason
+    }
+    geo__gouvernorat ||--o{ personnel__absence : "gouvernorat_code"
+    geo__gouvernorat ||--o{ personnel__event : "gouvernorat_code"
+    inv__agent ||--o{ personnel__absence : "agent_id"
+    inv__agent ||--o{ personnel__event : "agent_id"
+    ops__unit ||--o{ personnel__event : "from_unit_id"
+    ops__unit ||--o{ personnel__event : "unit_id"
 ```
 
 ## programme

@@ -67,6 +67,7 @@ import {
   canReviewOrgs,
   canReadResources,
   canManageMedicalCommittee,
+  canReadPersonnel,
   canReviewDoctors,
   canReviewWeatherSuggestions,
   canUseNotifications,
@@ -96,6 +97,7 @@ import { CounterPage } from "./pages/CounterPage";
 import { CommitteePage } from "./pages/CommitteePage";
 import { DoctorDetailPage } from "./pages/DoctorDetailPage";
 import { DoctorsPage } from "./pages/DoctorsPage";
+import { PersonnelFilePage, PersonnelPage } from "./pages/PersonnelPage";
 import { MedicalCommitteePage } from "./pages/MedicalCommitteePage";
 import { HomePage } from "./pages/HomePage";
 import { IncidentDetailPage } from "./pages/IncidentDetailPage";
@@ -562,6 +564,10 @@ export function AppRoutes() {
           path="volunteers/:id"
           element={reports(<VolunteerDetailPage />)}
         />
+        <Route path="personnel" element={gated(canReadPersonnel, <PersonnelPage tab="agents" />)} />
+        <Route path="personnel/absences" element={gated(canReadPersonnel, <PersonnelPage tab="absences" />)} />
+        <Route path="personnel/strength" element={gated(canReadPersonnel, <PersonnelPage tab="strength" />)} />
+        <Route path="personnel/agents/:id" element={gated(canReadPersonnel, <PersonnelFilePage />)} />
         <Route
           path="doctors"
           element={gated(canReviewDoctors, <DoctorsPage />)}

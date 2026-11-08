@@ -10,6 +10,9 @@
 #
 # Uses kcadm with the master admin of .env (KEYCLOAK_ADMIN / KEYCLOAK_ADMIN_PASSWORD). If that password was changed
 # in Keycloak, put the new one in .env too, otherwise this service stops with a message saying so.
+# It also creates the staff realm roles added after a realm was imported (STAFF_ROLES below): --import-realm leaves
+# an existing realm as it is, so a new role of the realm file would otherwise never reach an installed system.
+#
 # Never prints a secret. Exit 0 = in sync.
 set -uo pipefail
 
@@ -63,13 +66,27 @@ fi
 current=$("$KCADM" get "clients/$id/client-secret" -r "$REALM" --fields value --format csv --noquotes 2>/dev/null)
 if [ "$current" = "$KEYCLOAK_ADMIN_CLIENT_SECRET" ]; then
   say "$CLIENT secret already in sync"
-  exit 0
-fi
-
 # The secret goes through stdin, never the command line (visible in the process list).
-if printf '{"secret":"%s"}' "$KEYCLOAK_ADMIN_CLIENT_SECRET" | "$KCADM" update "clients/$id" -r "$REALM" -f - >/dev/null; then
+elif printf '{"secret":"%s"}' "$KEYCLOAK_ADMIN_CLIENT_SECRET" | "$KCADM" update "clients/$id" -r "$REALM" -f - >/dev/null; then
   say "$CLIENT secret updated from .env"
 else
   say "could not update the secret of $CLIENT"
   exit 1
 fi
+
+# Realm roles added after the first import: name|description.
+STAFF_ROLES=(
+  "personnel_officer|قسم التصرف في الأفراد (جهوي أو مركزي)"
+)
+for entry in "${STAFF_ROLES[@]}"; do
+  role=${entry%%|*}
+  if "$KCADM" get "roles/$role" -r "$REALM" >/dev/null 2>&1; then
+    continue
+  fi
+  if "$KCADM" create roles -r "$REALM" -s "name=$role" -s "description=${entry#*|}" >/dev/null; then
+    say "realm role $role created"
+  else
+    say "could not create the realm role $role"
+    exit 1
+  fi
+done

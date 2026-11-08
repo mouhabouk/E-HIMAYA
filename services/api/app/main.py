@@ -100,6 +100,7 @@ from app.modules.orgs.prevention_router import staff_router as orgs_prevention_s
 from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.space import router as orgs_space_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
+from app.modules.personnel.router import router as personnel_router
 from app.modules.places.router import router as places_router
 from app.modules.privacy.retention import retention_forever
 from app.modules.privacy.router import router as privacy_router
@@ -363,6 +364,7 @@ def create_app() -> FastAPI:
         register_router,
         schedule_router,
         inventory_router,
+        personnel_router,
         basemap_router,
         basemap_tiles_router,
         appdownload_router,
