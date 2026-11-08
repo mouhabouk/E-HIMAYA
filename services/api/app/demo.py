@@ -5,9 +5,10 @@
     python -m app.demo status
 
 ``seed`` is idempotent: it adds, once, the [SIM] institution of the scenario (owned by the public-realm user
-``demo-owner``), the team leader of the staff app with a fresh activation code, a unit with four members of staff
-for the personnel department (``demo-personnel``), and links the simulated camera of ``stream-sim`` to the
-institution. ``prealert`` makes that camera «see» a fire, as the detector would, so the
+``demo-owner``), the team leader of the staff app with a fresh activation code, a unit with four members of
+staff for the personnel department (``demo-personnel``), the operations picture of ``app.demo_ops`` (every kind
+of intervention at a different stage, the fleet, four rotation teams), and links the simulated camera of
+``stream-sim`` to the institution. ``prealert`` makes that camera «see» a fire, as the detector would, so the
 owner's phone rings and the 90 s countdown starts. Everything it writes carries [SIM].
 
 Refused when ``APP_ENV=production``: the demonstration stack runs ``APP_ENV=development`` with the training strip.
@@ -25,6 +26,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.db import get_system_sessionmaker
+from app.demo_ops import seed_operations
 from app.modules.identity.models import AccountKind
 from app.modules.identity.service import _upsert_account
 from app.modules.inventory.models import Agent
@@ -138,6 +140,7 @@ async def seed(owner_sub: str, gouvernorat: int) -> dict[str, Any]:
                         updated_by="system:demo",
                     )
                 )
+        operations = await seed_operations(session, unit, gouvernorat, lat, lon)
         camera = await _link_camera(session, org)
         await session.flush()
         return {
@@ -146,6 +149,7 @@ async def seed(owner_sub: str, gouvernorat: int) -> dict[str, Any]:
             "leader_matricule": LEADER_MATRICULE,
             "leader_code": code,
             "unit_id": str(unit.id),
+            "operations": operations,
             "camera": str(camera.id) if camera else None,
         }
 
