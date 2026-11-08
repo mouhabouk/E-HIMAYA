@@ -337,6 +337,15 @@ async def test_demo_seed_is_idempotent_and_raises_a_simulated_prealert(session: 
     assert first["leader_code"] and first["org_id"]
     again = await demo.seed(sub, 21)
     assert again["org_id"] == first["org_id"]
+    # The personnel department's scene (phase H1): one [SIM] unit with its four members of staff, added once.
+    assert again["unit_id"] == first["unit_id"]
+    staff = (
+        await session.execute(
+            text("SELECT category, count(*) FROM inv.agent WHERE unit_id = :u GROUP BY category ORDER BY category"),
+            {"u": first["unit_id"]},
+        )
+    ).all()
+    assert [tuple(r) for r in staff] == [("intervention", 3), ("room", 1)]
     raised = await demo.raise_prealert("smoke")
     row = (
         await session.execute(

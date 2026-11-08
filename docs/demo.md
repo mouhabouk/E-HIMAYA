@@ -50,6 +50,7 @@ flutter build apk --flavor staff -t lib/main_staff.dart \
 | اللوحة (القاعة الجهوية) | `https://room.ehimaya.demo` | `demo-room` |
 | اللوحة (القاعة المركزية) | `https://room.ehimaya.demo` في نافذة خاصة | `demo-central` |
 | نافذة اللجنة الجهوية | `https://room.ehimaya.demo/window` | `demo-committee` |
+| فضاء التصرف في الأفراد | `https://room.ehimaya.demo/personnel` في نافذة خاصة | `demo-personnel` |
 | بوابة المؤسسات | `https://portal.ehimaya.demo` | `demo-owner` |
 
 المنافذ المفتوحة على الحاسوب: 443 وحده (HTTPS و HTTP/3)، و8189/udp للفيديو المباشر من الهاتف (WebRTC لا يمرّ عبر 443).
@@ -76,6 +77,7 @@ flutter build apk --flavor staff -t lib/main_staff.dart \
 | 7 | نداء استغاثة لجهة اتصال | الهاتف 1 | الشاشة المستلمة: واتساب، مشاركة الموقع، نسخ الإحداثيات |
 | 8 | اللجنة الجهوية | `demo-committee` | نافذة اللجنة: الحوادث الجارية والخريطة |
 | 9 | الوقاية والتغطية | `demo-central` | SNACR: مؤشرات ثلاث سنوات [SIM] والتغطية |
+| 10 | مصلحة الأفراد | `demo-personnel` | إضافة عون [SIM] وتسجيل مهمة له؛ القاعة (`demo-room`) ترى «في مهمة» دون الملف الإداري، و«الموجود العام» يعدّ أعوان القاعة خارج المستعدين للتدخل |
 
 قبل المشهد 5، يُفتح تطبيق المواطن بحساب `demo-owner` (الحساب الذي يملك المؤسسة). لإعادة المشهد يكفي إعادة الأمر.
 
