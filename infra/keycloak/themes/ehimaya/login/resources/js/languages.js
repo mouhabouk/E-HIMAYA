@@ -3,6 +3,7 @@
 (function () {
   "use strict";
   var SHORT = { ar: "ع", fr: "FR", en: "EN" };
+  var ORDER = ["ar", "fr", "en"]; // Yamen, 2026-11-08: Arabic, then French, then English
 
   function code(url) {
     var m = /[?&]kc_locale=([a-zA-Z-]+)/.exec(url);
@@ -31,6 +32,9 @@
       else others.push(item);
     });
     if (!current) current = { url: "", lang: document.documentElement.lang || "ar", label: "" };
+    others.sort(function (a, b) {
+      return ORDER.indexOf(a.lang) - ORDER.indexOf(b.lang);
+    });
 
     var box = document.createElement("div");
     box.className = "ehimaya-lang";

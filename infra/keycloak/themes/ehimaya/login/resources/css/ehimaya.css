@@ -364,7 +364,11 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-.pf-v5-c-login__main-footer-band,
+/* «مستخدم جديد؟ تسجيل جديد» sits inside the white card: dark enough to read. */
+.pf-v5-c-login__main-footer-band {
+  color: #4a5470;
+}
+
 .pf-v5-c-login__footer {
   color: #c9d2ea;
 }
