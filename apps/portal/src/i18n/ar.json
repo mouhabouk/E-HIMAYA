@@ -1090,20 +1090,35 @@
       "org_ack": "الإشعارات المقروءة"
     },
     "columns": {
-      "status": "الحالة",
-      "version": "النسخة",
+      "activity_sector": "قطاع النشاط",
+      "address": "العنوان",
       "capacity": "طاقة الاستيعاب",
+      "created_at": "تاريخ الإنشاء",
+      "description": "الوصف",
+      "email": "البريد",
+      "ends_on": "النهاية",
       "floors": "عدد الطوابق",
+      "full_name": "الاسم",
+      "gouvernorat_code": "الولاية",
       "height_m": "الارتفاع",
-      "receives_public": "يستقبل العموم",
       "kind": "الصنف",
+      "location": "الموقع",
+      "manager": "المسؤول",
+      "name": "الاسم",
+      "notes": "الملاحظات",
+      "phone": "الهاتف",
+      "quantity": "الكمية",
+      "readiness": "الجاهزية",
+      "receives_public": "يستقبل العموم",
       "role": "الدور",
       "safety_officer": "مسؤول السلامة",
+      "starts_on": "البداية",
+      "status": "الحالة",
+      "title": "العنوان",
+      "un_number": "رقم الأمم المتحدة",
       "updated_at": "تاريخ التحيين",
-      "created_at": "تاريخ الإنشاء",
-      "quantity": "الكمية",
-      "activity_sector": "قطاع النشاط",
-      "gouvernorat_code": "الولاية"
+      "valid_until": "صالحة إلى",
+      "version": "النسخة"
     }
   }
 }

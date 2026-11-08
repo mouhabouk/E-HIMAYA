@@ -1090,20 +1090,35 @@
       "org_ack": "Read notices"
     },
     "columns": {
-      "status": "Status",
-      "version": "Version",
+      "activity_sector": "Activity sector",
+      "address": "Address",
       "capacity": "Capacity",
+      "created_at": "Created",
+      "description": "Description",
+      "email": "Email",
+      "ends_on": "End",
       "floors": "Floors",
+      "full_name": "Name",
+      "gouvernorat_code": "Gouvernorat",
       "height_m": "Height",
-      "receives_public": "Receives the public",
       "kind": "Kind",
+      "location": "Location",
+      "manager": "Manager",
+      "name": "Name",
+      "notes": "Notes",
+      "phone": "Phone",
+      "quantity": "Quantity",
+      "readiness": "Readiness",
+      "receives_public": "Receives the public",
       "role": "Role",
       "safety_officer": "Safety officer",
+      "starts_on": "Start",
+      "status": "Status",
+      "title": "Title",
+      "un_number": "UN number",
       "updated_at": "Updated",
-      "created_at": "Created",
-      "quantity": "Quantity",
-      "activity_sector": "Activity sector",
-      "gouvernorat_code": "Gouvernorat"
+      "valid_until": "Valid until",
+      "version": "Version"
     }
   }
 }

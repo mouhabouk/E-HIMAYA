@@ -1090,20 +1090,35 @@
       "org_ack": "Notifications lues"
     },
     "columns": {
-      "status": "Statut",
-      "version": "Version",
+      "activity_sector": "Secteur d'activité",
+      "address": "Adresse",
       "capacity": "Capacité",
+      "created_at": "Créé le",
+      "description": "Description",
+      "email": "E-mail",
+      "ends_on": "Fin",
       "floors": "Étages",
+      "full_name": "Nom",
+      "gouvernorat_code": "Gouvernorat",
       "height_m": "Hauteur",
-      "receives_public": "Reçoit du public",
       "kind": "Type",
+      "location": "Emplacement",
+      "manager": "Responsable",
+      "name": "Nom",
+      "notes": "Notes",
+      "phone": "Téléphone",
+      "quantity": "Quantité",
+      "readiness": "Préparation",
+      "receives_public": "Reçoit du public",
       "role": "Rôle",
       "safety_officer": "Responsable sécurité",
+      "starts_on": "Début",
+      "status": "Statut",
+      "title": "Titre",
+      "un_number": "Numéro ONU",
       "updated_at": "Mis à jour le",
-      "created_at": "Créé le",
-      "quantity": "Quantité",
-      "activity_sector": "Secteur d'activité",
-      "gouvernorat_code": "Gouvernorat"
+      "valid_until": "Valable jusqu'au",
+      "version": "Version"
     }
   }
 }

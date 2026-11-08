@@ -127,7 +127,7 @@ export function SystemLogsPage() {
         </section>
       )}
 
-      <div className="filters__row">
+      <div className="filters__row trail-filters">
         <div className="field">
           <label htmlFor={`${base}-service`}>{t("systemLogs.service")}</label>
           <select

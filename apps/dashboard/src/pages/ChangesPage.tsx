@@ -27,15 +27,14 @@ function ChangeCells({ entry }: { entry: ChangeEntry }) {
   return (
     <ul className="change-columns" role="list">
       {entry.columns.map((c) => (
-        <li key={c}>
-          <span className="code" dir="ltr">
-            {c}
-          </span>
+        <li key={c} dir="ltr">
+          <span className="change-columns__name code">{c}</span>
           {hidden.has(c) ? (
-            <span className="muted"> · {t("changes.hidden")}</span>
+            <span className="muted" dir="rtl">
+              {t("changes.hidden")}
+            </span>
           ) : (
-            <span dir="ltr" className="code">
-              {" "}
+            <span className="code">
               {entry.op !== "I" && (
                 <del>{valueText(entry.old_values?.[c])}</del>
               )}
@@ -149,7 +148,7 @@ export function ChangesPage() {
         </ul>
       )}
 
-      <div className="filters__row">
+      <div className="filters__row trail-filters">
         <div className="field">
           <label htmlFor={`${base}-schema`}>{t("changes.schema")}</label>
           <select

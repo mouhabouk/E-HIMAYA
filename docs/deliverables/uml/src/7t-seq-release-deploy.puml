@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Séquence : publication et déploiement (CI/CD)
+actor "Propriétaire (Yamen)" as Y
+participant "GitHub Actions\nrelease.yml" as R
+database "GHCR" as G
+participant "Sigstore" as SG
+participant "Serveur\nscripts/deploy.sh" as SV
+database "PostgreSQL" as DB
+Y -> R : tag vX.Y.Z
+R -> R : build une fois, Trivy\n(CRITICAL corrigeable = échec)
+R -> G : push image + SBOM + provenance
+R -> SG : cosign sign (sans clé, identité du workflow)
+R -> R : release GitHub (bundle, images.txt, SHA256SUMS)
+R -> SV : staging (si configuré)
+R -> Y : environnement production : approbation ?
+Y --> R : approuve
+R -> SV : ssh deploy.sh vX.Y.Z
+SV -> SG : cosign verify (chaque image)
+SV -> DB : pg_dump predeploy-vX.Y.Z
+SV -> G : pull
+SV -> DB : migrate
+SV -> SV : up --wait (10 min)
+alt services sains
+  SV -> SV : .deployed-version = vX.Y.Z
+else échec
+  SV -> SV : relance la version précédente
+end
+@enduml

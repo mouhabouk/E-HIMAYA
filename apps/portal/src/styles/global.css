@@ -3091,6 +3091,19 @@ button.nav-card:hover {
   padding: 0;
   font-size: 0.85rem;
 }
+.change-columns li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+.change-columns__name {
+  color: var(--muted, inherit);
+  font-weight: 600;
+}
+.change-columns__name::after {
+  content: ":";
+}
 .change-columns del {
   color: var(--tone-red-ink);
 }

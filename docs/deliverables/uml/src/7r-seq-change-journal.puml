@@ -1,0 +1,30 @@
+@startuml
+!include style.iuml
+title Séquence : journal des modifications (mouchard), H5
+actor "Membre de l'établissement" as U
+participant "Portail" as P
+participant "API" as API
+database "PostgreSQL\ntable métier" as T
+participant "Déclencheur\naudit.journal_row()" as TR
+database "audit.change\n(ajout seul)" as J
+actor "Administrateur système" as A
+participant "Tableau de bord" as D
+actor "Administrateur de l'établissement" as OA
+U -> P : modifie l'équipe de sécurité
+P -> API : PUT /orgs/{id}/... (X-Request-ID)
+API -> T : SET LOCAL ehimaya.actor, actor_name,\nrequest_id ; UPDATE
+T -> TR : AFTER ROW
+TR -> TR : colonnes modifiées ;\nvaleurs sensibles masquées (hidden)\nschémas personnels : aucune valeur
+TR -> J : INSERT (acteur, op U, clé, colonnes,\nanciennes / nouvelles valeurs permises)
+API --> P : 200
+A -> D : Journal des modifications\n(filtres : domaine, table, op, compte, période)
+D -> API : GET /admin/changes
+API -> J : SELECT (RLS : national seulement)
+API -> API : compte public -> pseudonyme public-...
+API --> D : lignes + « masqué »
+API -> API : audit journal.read
+OA -> P : section « Journal des modifications »
+P -> API : GET /orgs/{id}/changes
+API --> P : changes de son établissement\n(membre par son nom, « Protection civile », « Système »)
+API -> API : audit org.changes_read
+@enduml

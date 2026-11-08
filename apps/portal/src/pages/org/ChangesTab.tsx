@@ -51,12 +51,13 @@ function Row({ change }: { change: OrgChange }) {
         <ul className="change-columns" role="list">
           {change.columns.map((c) => (
             <li key={c}>
-              <span>{t(`changes.columns.${c}`, { defaultValue: c })}</span>
+              <span className="change-columns__name">
+                {t(`changes.columns.${c}`, { defaultValue: c })}
+              </span>
               {hidden.has(c) ? (
-                <span className="muted"> · {t("changes.notKept")}</span>
+                <span className="muted">{t("changes.notKept")}</span>
               ) : (
                 <span dir="ltr">
-                  {" "}
                   {change.op !== "I" && <del>{show(change.old_values?.[c])}</del>}
                   {change.op === "U" && " → "}
                   {change.op !== "D" && <ins>{show(change.new_values?.[c])}</ins>}
