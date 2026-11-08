@@ -112,7 +112,9 @@ services:
     ports:
       - "127.0.0.1:8333:8333"
 
-  # One-shot: create the media bucket (the API's S3 identity has no admin rights).
+  # One-shot: create the media bucket (the API's S3 identity has no admin rights). Idempotent: on every later start
+  # SeaweedFS answers "bucket <name> already exists" (weed/shell/command_s3_bucket_create.go), which is success too;
+  # the bucket and its data are never touched. Any other answer is retried, then printed and the start fails.
   seaweedfs-init:
     image: chrislusf/seaweedfs:4.48@sha256:4e61d15fd35994cb1e43e1e553dff106794841fd9a99ade2fc8c8bfce4d7872d
     restart: "no"
@@ -120,9 +122,11 @@ services:
     command:
       - >-
         for i in $$(seq 1 60); do
-        echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1 | grep -q "created bucket" && exit 0;
+        out=$$(echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1);
+        echo "$$out" | grep -qE "created bucket $${S3_BUCKET_MEDIA}$$|bucket $${S3_BUCKET_MEDIA} already exists" &&
+        { echo "bucket $${S3_BUCKET_MEDIA} ready"; exit 0; };
         sleep 2;
-        done; echo "bucket creation failed"; exit 1
+        done; echo "$$out"; echo "bucket creation failed"; exit 1
     environment:
       S3_BUCKET_MEDIA: ${S3_BUCKET_MEDIA:-ehimaya-media}
     depends_on:
