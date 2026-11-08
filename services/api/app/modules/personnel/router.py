@@ -88,6 +88,18 @@ async def _unit(session: AsyncSession, unit_id: uuid.UUID) -> Unit:
     return found
 
 
+async def _any_unit(unit_id: uuid.UUID) -> Unit:
+    """A unit of any gouvernorat (a transfer may name one the caller cannot see): read with the system scope, so a
+    regional department is told the transfer is the central department's rather than that the unit does not exist.
+    Units are not personal data."""
+    async with get_system_sessionmaker()() as system:
+        found = await system.get(Unit, unit_id)
+        if found is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "unit_not_found")
+        system.expunge(found)
+        return found
+
+
 async def _agent(session: AsyncSession, agent_id: uuid.UUID, *, lock: bool = False) -> tuple[Agent, Unit]:
     query = select(Agent, Unit).join(Unit, Unit.id == Agent.unit_id).where(Agent.id == agent_id)
     if lock:
@@ -351,7 +363,7 @@ async def add_event(
         event.previous = {"post": agent.post}
         agent.post = title
         if body.unit_id is not None and body.unit_id != agent.unit_id:
-            target = await _unit(session, body.unit_id)
+            target = await _any_unit(body.unit_id)
             if target.gouvernorat_code != agent.gouvernorat_code:
                 raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "use_transfer")
             event.previous["unit_id"] = str(agent.unit_id)
@@ -362,7 +374,7 @@ async def add_event(
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unit_required")
         if body.unit_id == agent.unit_id:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "same_unit")
-        target = await _unit(session, body.unit_id)
+        target = await _any_unit(body.unit_id)
         if target.gouvernorat_code != agent.gouvernorat_code:
             # Between gouvernorats: the central department only.
             if not principal.is_national:
@@ -375,7 +387,7 @@ async def add_event(
         # A late transfer that does not change the current unit still names the unit.
         if body.unit_id is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unit_required")
-        event.unit_id = (await _unit(session, body.unit_id)).id
+        event.unit_id = (await _any_unit(body.unit_id)).id
     if body.kind in STATE_KINDS:
         _touch(agent, principal)
     session.add(event)
