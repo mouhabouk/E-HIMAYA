@@ -259,6 +259,12 @@ sed -i "s|^SMS_INBOUND_SECRET=.*|SMS_INBOUND_SECRET=$(openssl rand -hex 32)|" .e
 grep -n 'change-me' .env | grep -v '_SIM_\|STREAM_SIM' || echo "لا قيمة مثال متبقية"
 ```
 
+**المفتاحان `FIELD_ENCRYPTION_KEY` و `CERTIFICATE_SIGNING_KEY`** صيغتهما base64 لـ 32 بايت بالضبط (`openssl rand -base64 32`،
+44 حرفا ينتهي بـ `=`). ترفض الواجهة البرمجية الإقلاع بغير ذلك، وتسمّي السبب دون طباعة القيمة: نص المثال باق، أو قيمة من
+`openssl rand -hex` (تُفكّ إلى 48 بايت)، أو لصق ناقص. نهاية سطر Windows (CRLF) أو مسافة زائدة تُقبلان وتُحذفان. السكربت
+`scripts/install/03-project-fetch.sh` يتحقق منهما ويولّد مفتاحا جديدا إن كانت القيمة غير صالحة. هذا آمن لأن الخادم لا يقلع
+بقيمة غير صالحة، فلا شيء مشفَّر بها. أما مفتاح صالح فلا يُغيَّر أبدا بعد أول بيانات (التدوير بـ `FIELD_ENCRYPTION_KEYS` كما في `.env.example`).
+
 تبقى ثلاث قيم مثال مقصودة لمحاكيات التطوير **[SIM]**: `STREAM_SIM_TOKEN` و `TELEPHONY_SIM_PASSWORD` و
 `TELEPHONY_SIM_TOKEN`. تُترك في جهاز التطوير، وتُفرَّغ على خادم التجربة والإنتاج (القسم 11.2).
 
