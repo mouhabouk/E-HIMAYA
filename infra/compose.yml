@@ -181,6 +181,9 @@ services:
       # Phase A sign-in by phone: the provider asks the API to send the SMS code (same secret as the API's).
       EHIMAYA_API_INTERNAL_URL: http://api:8000
       OTP_SMS_SECRET: ${OTP_SMS_SECRET:-}
+      # Resolves the ${KEYCLOAK_ADMIN_CLIENT_SECRET} placeholder of the staff realm when it is first imported.
+      # Keycloak keeps an unresolved placeholder as the literal secret, hence required here.
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?set KEYCLOAK_ADMIN_CLIENT_SECRET}
     volumes:
       - ./keycloak/realms:/opt/keycloak/data/import:ro
     ports:
@@ -188,6 +191,25 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  # One-shot, idempotent: writes KEYCLOAK_ADMIN_CLIENT_SECRET into the client ehimaya-account-admin at every start.
+  # The realm import sets the secret only when the realm is created, so this corrects realms imported earlier (where
+  # the secret was the unresolved placeholder text) and carries every later rotation (infra/keycloak/sync-secrets.sh).
+  keycloak-sync:
+    image: ehimaya/keycloak:dev
+    restart: "no"
+    entrypoint: ["/bin/bash", "/opt/ehimaya/sync-secrets.sh"]
+    environment:
+      KC_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?set KEYCLOAK_ADMIN_CLIENT_SECRET}
+    volumes:
+      - ./keycloak/sync-secrets.sh:/opt/ehimaya/sync-secrets.sh:ro
+    healthcheck:
+      disable: true
+    depends_on:
+      - keycloak
 
   api:
     <<: *restart
@@ -209,6 +231,10 @@ services:
       OIDC_ISSUERS: ${KEYCLOAK_HOSTNAME:-http://localhost:8080}/realms/ehimaya-public,${KEYCLOAK_HOSTNAME:-http://localhost:8080}/realms/ehimaya-staff
       OIDC_JWKS_BASE_URL: http://keycloak:8080
       OIDC_AUDIENCE: ehimaya-api
+      # Staff account administration (the dashboard's "Accounts" page): confidential client ehimaya-account-admin,
+      # whose secret the one-shot keycloak-sync service keeps equal to this one.
+      KEYCLOAK_ADMIN_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?set KEYCLOAK_ADMIN_CLIENT_SECRET}
       ANON_PSEUDONYM_SECRET: ${ANON_PSEUDONYM_SECRET:?set ANON_PSEUDONYM_SECRET}
       FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY:?set FIELD_ENCRYPTION_KEY}
       # Key rotation (A5): extra key versions "2:<base64>,…" and the version new values are written with.

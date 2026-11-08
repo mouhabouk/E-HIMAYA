@@ -256,6 +256,7 @@ sed -i "s|^ANON_PSEUDONYM_SECRET=.*|ANON_PSEUDONYM_SECRET=$(openssl rand -hex 32
 sed -i "s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
 sed -i "s|^CERTIFICATE_SIGNING_KEY=.*|CERTIFICATE_SIGNING_KEY=$(openssl rand -base64 32)|" .env
 sed -i "s|^SMS_INBOUND_SECRET=.*|SMS_INBOUND_SECRET=$(openssl rand -hex 32)|" .env
+sed -i "s|^KEYCLOAK_ADMIN_CLIENT_SECRET=.*|KEYCLOAK_ADMIN_CLIENT_SECRET=$(openssl rand -hex 32)|" .env
 grep -n 'change-me' .env | grep -v '_SIM_\|STREAM_SIM' || echo "لا قيمة مثال متبقية"
 ```
 
@@ -273,6 +274,12 @@ grep -n 'change-me' .env | grep -v '_SIM_\|STREAM_SIM' || echo "لا قيمة م
 | `FIELD_ENCRYPTION_KEY` | يفك تشفير الحقول الحساسة في قاعدة البيانات (الأسماء، الهواتف، الأرقام المهنية). ضياعه = بيانات غير قابلة للقراءة |
 | `CERTIFICATE_SIGNING_KEY` | يوقّع شهادات السلامة والمكافآت (Ed25519). تغييره يُبطل التحقق من الشهادات السابقة |
 | `ANON_PSEUDONYM_SECRET` | يولّد الأسماء المستعارة للمبلّغين المجهولين. تغييره يقطع الربط بين بلاغات المبلّغ نفسه |
+
+**`KEYCLOAK_ADMIN_CLIENT_SECRET`** سر العميل `ehimaya-account-admin` الذي تمرّ به صفحة «الحسابات» في اللوحة، وله صلاحية
+إدارة كل حسابات الموظفين. الخدمة الأحادية `keycloak-sync` تكتبه في Keycloak عند كل تشغيل، فتغييره هو: قيمة جديدة في
+`.env` ثم `up -d`. خادم نُصّب قبل هذا الإصلاح (2026-11-08) كان سرّه النص الحرفي `${KEYCLOAK_ADMIN_CLIENT_SECRET}` المنشور في
+المستودع: أضف المتغير إلى `.env` (أو أعد `03-project-fetch.sh`) ثم `up -d`، وتحقق من السطر
+`keycloak-sync: ehimaya-account-admin secret updated from .env` في `docker compose logs keycloak-sync`.
 
 انسخ هذه الأسرار الثلاثة إلى خزنة خارج الخادم (مظروف مختوم أو مدير أسرار) قبل أي بيانات حقيقية.
 

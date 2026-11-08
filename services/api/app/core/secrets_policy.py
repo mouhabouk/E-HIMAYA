@@ -33,6 +33,8 @@ _MARKERS = (
     "test-secret",
     "ci-only",
     "sim-sms-token",
+    # A ${...} placeholder that nothing resolved (Keycloak keeps it as the literal value).
+    "${",
 )
 _URL_SETTINGS = ("database_url", "migration_database_url", "valkey_url", "nats_url")
 _KEYRING_ENTRY = re.compile(r"^\s*\d{1,3}\s*:\s*(\S+)\s*$")
