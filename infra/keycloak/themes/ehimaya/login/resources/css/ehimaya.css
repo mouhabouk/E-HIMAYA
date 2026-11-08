@@ -71,16 +71,31 @@ body {
   font-family: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
 }
 
-/* The night of the emblem: a deep navy with a soft light behind the card, a fine gold frame and a faint guilloche. */
+/* The night of the emblem: a deep navy with a soft light behind the card and a fine gold frame. */
 body,
 .pf-v5-c-login,
 .login-pf body {
   background-color: var(--ehimaya-night) !important;
   background-image:
-    radial-gradient(ellipse 70% 55% at 50% 38%, rgb(31 63 160 / 45%), transparent 70%),
-    repeating-radial-gradient(circle at 50% 38%, rgb(201 162 74 / 5%) 0 1px, transparent 1px 28px),
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgb(31 63 160 / 40%), transparent 70%),
     linear-gradient(180deg, var(--ehimaya-night) 0%, var(--ehimaya-night-deep) 100%) !important;
   background-attachment: fixed;
+}
+
+/* The emblem as translucent bubbles of every size across the whole page (Yamen, 2026-11-08), behind everything. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("../img/bubbles.svg") center / cover no-repeat;
+  pointer-events: none;
+}
+
+.pf-v5-c-login {
+  position: relative;
+  z-index: 0;
+  background: transparent !important;
 }
 
 body::before {
@@ -92,7 +107,7 @@ body::before {
   pointer-events: none;
 }
 
-/* The emblem and name in full (horizontal mark on night navy), in place of the realm's name. */
+/* The name, centred above the card (the emblem itself is in the bubbles), in place of the realm's name. */
 #kc-header-wrapper {
   display: flex;
   justify-content: center;
@@ -103,10 +118,10 @@ body::before {
 
 #kc-header-wrapper::before {
   content: "";
-  width: min(400px, 84vw);
-  aspect-ratio: 1000 / 388;
-  filter: drop-shadow(0 6px 18px rgb(0 0 0 / 35%));
-  background: url("../img/logo-horizontal.png") center / contain no-repeat;
+  width: min(300px, 70vw);
+  aspect-ratio: 611 / 274;
+  filter: drop-shadow(0 6px 18px rgb(0 0 0 / 45%));
+  background: url("../img/wordmark.png") center / contain no-repeat;
 }
 
 .pf-v5-c-login__header {
