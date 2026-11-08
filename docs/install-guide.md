@@ -201,12 +201,34 @@ docker run --rm hello-world
 على جهاز تطوير يكفي السكربت المختصر `curl -fsSL https://get.docker.com | sh`. على Windows: Docker Desktop مع WSL2
 (<https://docs.docker.com/desktop/setup/install/windows-install/>)، وكل أوامر هذا الدليل تُنفَّذ داخل WSL2.
 
-حدود السجلات (حتى لا يمتلئ القرص):
+حدود السجلات وخادم الأسماء (DNS) للحاويات، في الملف `/etc/docker/daemon.json`. **لا يُكتب هذا الملف من جديد إن كان
+موجودا:** يُدمج فيه ما يلزم دون حذف أي إعداد، بالسكربت (نسخة احتياطية، ثم تحقق `dockerd --validate`، ثم إعادة تشغيل):
 
 ```bash
-echo '{ "log-driver": "json-file", "log-opts": { "max-size": "50m", "max-file": "5" } }' | sudo tee /etc/docker/daemon.json
-sudo systemctl restart docker
+# شبكة محلية للديوان: خادم الأسماء الداخلي أولا (هنا 10.0.0.1)، ثم خادم عام فقط إن كان للخادم مخرج إلى الإنترنت
+DOCKER_DNS=10.0.0.1,1.1.1.1 DOCKER_DNS_CHECK=api.ehimaya.lan scripts/install/02-docker-install.sh
+# دون DOCKER_DNS لا يُلمس المفتاح dns، وتأخذ الحاويات خوادم المضيف
 ```
+
+النتيجة مثلا، مع الإبقاء على ما كان في الملف:
+
+```json
+{
+  "log-driver": "json-file",
+  "log-opts": { "max-size": "50m", "max-file": "3" },
+  "dns": ["10.0.0.1", "1.1.1.1"]
+}
+```
+
+| القاعدة | السبب |
+|---|---|
+| الخادم الداخلي **أولا** | الخادم العام (1.1.1.1، 8.8.8.8) يجيب «الاسم غير موجود» عن الأسماء الداخلية مثل `api.ehimaya.lan`، ولا تُسأل الخوادم التالية بعد هذا الجواب. فيفشل الاتصال بين الخدمات وبـ Keycloak |
+| لا خادم عام دون إنترنت | كل طلب ينتظر مهلة الخادم غير الموصول قبل الانتقال، فيبطؤ البناء والتشغيل |
+| لا `127.0.0.53` | عنوان systemd-resolved على المضيف، لا تصله الحاويات |
+| `dns` لا يغيّر أسماء الحاويات | الأسماء بين الخدمات (`postgres`، `keycloak`...) يحلّها DNS المدمج في Docker (`127.0.0.11`)، و`dns` لا يُستعمل إلا للأسماء الخارجية |
+
+التحقق: `docker run --rm busybox:1.37 nslookup api.ehimaya.lan` (يحتاج صورة busybox، تُجلب مرة أو تُحمَّل من الأرشيف
+دون إنترنت).
 
 ## 6. جلب المشروع وإعداد `.env`
 

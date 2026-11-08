@@ -7,13 +7,15 @@
 # ما يفعله:
 #   1. يضيف مستودع Docker الرسمي بمفتاحه الموقّع (الطريقة الموصى بها للخوادم، بدل حزمة docker.io القديمة في Ubuntu)؛
 #   2. يثبّت docker-ce و docker-compose-plugin و buildx؛
-#   3. يحدّ حجم السجلات (50 م.ب × 5 ملفات لكل حاوية) حتى لا يمتلئ القرص؛
+#   3. يحدّ حجم السجلات (50 م.ب × 5 ملفات لكل حاوية) ويضبط DNS الحاويات (DOCKER_DNS)، بالدمج في daemon.json
+#      دون حذف أي إعداد موجود؛
 #   4. يضيف حسابك إلى المجموعة docker (لتشغيل docker دون sudo؛ يسري بعد الخروج والدخول من جديد)؛
 #   5. يتحقق من الإصدارين: Compose 2.24 ضروري لأن compose.prod.yml يستعمل !reset و !override؛
 #   6. يشغّل hello-world للتأكد من أن المحرك يعمل.
 # إعادة تشغيله آمنة: إن كان Docker مثبتًا بالإصدار المطلوب يتحقق فقط.
 #
 # الاستعمال: scripts/install/02-docker-install.sh
+#            DOCKER_DNS=10.0.0.1 DOCKER_DNS_CHECK=api.ehimaya.lan scripts/install/02-docker-install.sh   (شبكة محلية)
 # بعده: اخرج وادخل من جديد (المجموعة docker)، ثم 03-project-fetch.sh.
 source "$(dirname "$0")/00-common.sh"
 
@@ -36,14 +38,36 @@ else
     docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
 
-step "3/4 حدود السجلات"
-if [ ! -f /etc/docker/daemon.json ]; then
-  echo '{ "log-driver": "json-file", "log-opts": { "max-size": "50m", "max-file": "5" } }' |
-    as_root tee /etc/docker/daemon.json >/dev/null
-  as_root systemctl restart docker
-  ok "50m × 5 لكل حاوية"
+step "3/4 حدود السجلات وخادم الأسماء (DNS)"
+# يُدمج في /etc/docker/daemon.json دون حذف أي إعداد موجود (نسخة احتياطية قبل كل تغيير).
+# DOCKER_DNS: خوادم الأسماء التي تستعملها الحاويات، بالترتيب. في الشبكة المحلية للديوان: الخادم الداخلي أولا
+# (مثلا DOCKER_DNS=10.0.0.1)، ثم خادم عام فقط إن كان للخادم مخرج إلى الإنترنت (DOCKER_DNS=10.0.0.1,1.1.1.1).
+# دون DOCKER_DNS: لا يُلمس المفتاح dns، ويأخذ Docker خوادم المضيف (systemd-resolved).
+daemon=/etc/docker/daemon.json
+merged=$(mktemp)
+as_root cat "$daemon" 2>/dev/null >"$merged.in" || true
+python3 "$(dirname "$0")/docker-daemon-merge.py" "$merged.in" ${DOCKER_DNS:+--dns "$DOCKER_DNS"} >"$merged" ||
+  die "تعذّر دمج $daemon (انظر الرسالة أعلاه)"
+if as_root cmp -s "$merged" "$daemon"; then
+  ok "$daemon على حاله: $(tr -d '\n ' <"$merged")"
 else
-  ok "/etc/docker/daemon.json موجود؛ لم ألمسه"
+  if as_root test -f "$daemon"; then
+    as_root cp -p "$daemon" "$daemon.bak.$(date +%Y%m%d%H%M%S)"
+  fi
+  as_root dockerd --validate --config-file "$merged" >/dev/null || die "dockerd يرفض الإعداد المدمج؛ لم يُغيَّر $daemon"
+  as_root install -m 0644 "$merged" "$daemon"
+  as_root systemctl restart docker
+  ok "$daemon: $(tr -d '\n ' <"$merged")"
+fi
+rm -f "$merged" "$merged.in"
+# فحص: هل تحلّ الحاويات الأسماء؟ (اسم داخلي إن أُعطي DOCKER_DNS_CHECK، وإلا registry-1.docker.io عند وجود إنترنت)
+check_name=${DOCKER_DNS_CHECK:-}
+if [ -n "$check_name" ]; then
+  if as_root docker run --rm busybox:1.37 nslookup "$check_name" >/dev/null 2>&1; then
+    ok "الحاويات تحلّ $check_name"
+  else
+    warn "الحاويات لا تحلّ $check_name: راجع DOCKER_DNS (الخادم الداخلي أولا)، أو حمّل الصورة busybox:1.37"
+  fi
 fi
 if [ "$(id -u)" -ne 0 ] && ! id -nG "$USER" | grep -qw docker; then
   as_root usermod -aG docker "$USER"
