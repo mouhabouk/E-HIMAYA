@@ -732,6 +732,7 @@ jobs:
           sed -i "s|^TELEPHONY_SIM_PASSWORD=.*|TELEPHONY_SIM_PASSWORD=$(openssl rand -hex 24)|" .env
           sed -i "s|^TELEPHONY_SIM_TOKEN=.*|TELEPHONY_SIM_TOKEN=$(openssl rand -hex 24)|" .env
           sed -i "s|^SMS_INBOUND_SECRET=.*|SMS_INBOUND_SECRET=$(openssl rand -hex 32)|" .env
+          sed -i "s|^KEYCLOAK_ADMIN_CLIENT_SECRET=.*|KEYCLOAK_ADMIN_CLIENT_SECRET=$(openssl rand -hex 32)|" .env
       - name: Production overlay renders (Caddy, Keycloak start, no host ports but 80/443, streaming and telephony)
         run: |
           cat > prod.env <<EOF
@@ -755,6 +756,25 @@ jobs:
         run: docker compose --env-file .env -f infra/compose.yml up -d --build
       - name: Anonymous report, resumable upload, integrity check, notify-sim health
         run: python3 infra/smoke/smoke_test.py
+      - name: Account administration client follows .env, and a stale placeholder secret is corrected (keycloak-sync)
+        run: |
+          C="docker compose --env-file .env -f infra/compose.yml"
+          secret=$(grep '^KEYCLOAK_ADMIN_CLIENT_SECRET=' .env | cut -d= -f2-)
+          token() { curl -s -o /dev/null -w '%{http_code}' -d grant_type=client_credentials \
+            -d client_id=ehimaya-account-admin --data-urlencode "client_secret=$1" \
+            http://localhost:8080/realms/ehimaya-staff/protocol/openid-connect/token; }
+          $C run --rm keycloak-sync
+          test "$(token "$secret")" = 200
+          # A realm imported before the variable existed: the placeholder text was the secret.
+          $C exec -T keycloak bash -c 'export HOME=/tmp; k=/opt/keycloak/bin/kcadm.sh
+            $k config credentials --server http://localhost:8080 --realm master --user "$KC_BOOTSTRAP_ADMIN_USERNAME" --password "$KC_BOOTSTRAP_ADMIN_PASSWORD" >/dev/null
+            id=$($k get clients -r ehimaya-staff -q clientId=ehimaya-account-admin --fields id --format csv --noquotes)
+            printf "{\"secret\":\"%s\"}" "\${KEYCLOAK_ADMIN_CLIENT_SECRET}" | $k update "clients/$id" -r ehimaya-staff -f -'
+          test "$(token '${KEYCLOAK_ADMIN_CLIENT_SECRET}')" = 200
+          $C run --rm keycloak-sync | tee sync.log
+          grep -q 'secret updated from .env' sync.log
+          test "$(token '${KEYCLOAK_ADMIN_CLIENT_SECRET}')" = 401
+          test "$(token "$secret")" = 200
       - name: Certificate PDFs render in the API image (Arabic shaping, fonts)
         run: |
           docker compose --env-file .env -f infra/compose.yml exec -T api python -c "

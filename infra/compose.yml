@@ -112,7 +112,9 @@ services:
     ports:
       - "127.0.0.1:8333:8333"
 
-  # One-shot: create the media bucket (the API's S3 identity has no admin rights).
+  # One-shot: create the media bucket (the API's S3 identity has no admin rights). Idempotent: on every later start
+  # SeaweedFS answers "bucket <name> already exists" (weed/shell/command_s3_bucket_create.go), which is success too;
+  # the bucket and its data are never touched. Any other answer is retried, then printed and the start fails.
   seaweedfs-init:
     image: chrislusf/seaweedfs:4.48@sha256:4e61d15fd35994cb1e43e1e553dff106794841fd9a99ade2fc8c8bfce4d7872d
     restart: "no"
@@ -120,9 +122,11 @@ services:
     command:
       - >-
         for i in $$(seq 1 60); do
-        echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1 | grep -q "created bucket" && exit 0;
+        out=$$(echo "s3.bucket.create -name $${S3_BUCKET_MEDIA}" | weed shell -master=seaweedfs:9333 2>&1);
+        echo "$$out" | grep -qE "created bucket $${S3_BUCKET_MEDIA}$$|bucket $${S3_BUCKET_MEDIA} already exists" &&
+        { echo "bucket $${S3_BUCKET_MEDIA} ready"; exit 0; };
         sleep 2;
-        done; echo "bucket creation failed"; exit 1
+        done; echo "$$out"; echo "bucket creation failed"; exit 1
     environment:
       S3_BUCKET_MEDIA: ${S3_BUCKET_MEDIA:-ehimaya-media}
     depends_on:
@@ -177,6 +181,9 @@ services:
       # Phase A sign-in by phone: the provider asks the API to send the SMS code (same secret as the API's).
       EHIMAYA_API_INTERNAL_URL: http://api:8000
       OTP_SMS_SECRET: ${OTP_SMS_SECRET:-}
+      # Resolves the ${KEYCLOAK_ADMIN_CLIENT_SECRET} placeholder of the staff realm when it is first imported.
+      # Keycloak keeps an unresolved placeholder as the literal secret, hence required here.
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?set KEYCLOAK_ADMIN_CLIENT_SECRET}
     volumes:
       - ./keycloak/realms:/opt/keycloak/data/import:ro
     ports:
@@ -184,6 +191,25 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  # One-shot, idempotent: writes KEYCLOAK_ADMIN_CLIENT_SECRET into the client ehimaya-account-admin at every start.
+  # The realm import sets the secret only when the realm is created, so this corrects realms imported earlier (where
+  # the secret was the unresolved placeholder text) and carries every later rotation (infra/keycloak/sync-secrets.sh).
+  keycloak-sync:
+    image: ehimaya/keycloak:dev
+    restart: "no"
+    entrypoint: ["/bin/bash", "/opt/ehimaya/sync-secrets.sh"]
+    environment:
+      KC_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?set KEYCLOAK_ADMIN_CLIENT_SECRET}
+    volumes:
+      - ./keycloak/sync-secrets.sh:/opt/ehimaya/sync-secrets.sh:ro
+    healthcheck:
+      disable: true
+    depends_on:
+      - keycloak
 
   api:
     <<: *restart
@@ -205,6 +231,10 @@ services:
       OIDC_ISSUERS: ${KEYCLOAK_HOSTNAME:-http://localhost:8080}/realms/ehimaya-public,${KEYCLOAK_HOSTNAME:-http://localhost:8080}/realms/ehimaya-staff
       OIDC_JWKS_BASE_URL: http://keycloak:8080
       OIDC_AUDIENCE: ehimaya-api
+      # Staff account administration (the dashboard's "Accounts" page): confidential client ehimaya-account-admin,
+      # whose secret the one-shot keycloak-sync service keeps equal to this one.
+      KEYCLOAK_ADMIN_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET:?set KEYCLOAK_ADMIN_CLIENT_SECRET}
       ANON_PSEUDONYM_SECRET: ${ANON_PSEUDONYM_SECRET:?set ANON_PSEUDONYM_SECRET}
       FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY:?set FIELD_ENCRYPTION_KEY}
       # Key rotation (A5): extra key versions "2:<base64>,…" and the version new values are written with.

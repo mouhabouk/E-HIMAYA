@@ -76,6 +76,11 @@ fresh ANON_PSEUDONYM_SECRET && set_env ANON_PSEUDONYM_SECRET "$(openssl rand -he
 fresh FIELD_ENCRYPTION_KEY && set_env FIELD_ENCRYPTION_KEY "$(openssl rand -base64 32)" && generated=$((generated + 1))
 fresh CERTIFICATE_SIGNING_KEY && set_env CERTIFICATE_SIGNING_KEY "$(openssl rand -base64 32)" && generated=$((generated + 1))
 fresh SMS_INBOUND_SECRET && set_env SMS_INBOUND_SECRET "$(openssl rand -hex 32)" && generated=$((generated + 1))
+# سر عميل إدارة الحسابات في Keycloak: يُضاف حتى إلى ملف .env قديم لا يعرفه (keycloak-sync يكتبه في Keycloak).
+# shellcheck disable=SC2016 # نبحث عن ${ حرفيًا: مرجع لم يُحلّ
+if fresh KEYCLOAK_ADMIN_CLIENT_SECRET || [[ $(env_value KEYCLOAK_ADMIN_CLIENT_SECRET) == *'${'* ]]; then
+  set_env KEYCLOAK_ADMIN_CLIENT_SECRET "$(openssl rand -hex 32)" && generated=$((generated + 1))
+fi
 ok "$generated سرًا جديدًا (الأسرار الموجودة لم تتغير)"
 # المفتاحان بصيغة base64 لـ 32 بايت بالضبط، وإلا ترفض الواجهة البرمجية الإقلاع. قيمة غير صالحة لم تشفّر شيئا قط
 # (الخادم لا يقلع بها)، فاستبدالها آمن. نهاية سطر Windows (\r) تُحذف من الملف كله أولا.

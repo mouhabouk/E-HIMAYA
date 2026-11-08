@@ -60,6 +60,9 @@ def test_strong_secrets_start() -> None:
         ("vision_api_token", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
         ("telephony_ari_password", "change-me-generate-with-openssl-rand-hex-24", "change-me"),
         ("sms_inbound_secret", "change-me-generate-with-openssl-rand-hex-32", "change-me"),
+        ("keycloak_admin_client_secret", "change-me-generate-with-openssl-rand-hex-32", "change-me"),
+        # Keycloak keeps an unresolved realm-file placeholder as the literal secret (published in the repository).
+        ("keycloak_admin_client_secret", "${KEYCLOAK_ADMIN_CLIENT_SECRET}", "example marker"),
         ("telephony_sim_token", secrets.token_urlsafe(24), "TELEPHONY_SIM_TOKEN"),
         ("sms_phone_signing_key", secrets.token_urlsafe(12), "SMS_PHONE_SIGNING_KEY"),
     ],
