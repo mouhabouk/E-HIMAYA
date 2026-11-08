@@ -467,8 +467,17 @@ async def test_document_versions(client: httpx.AsyncClient, user: User, staff: S
         not in (await client.get(f"/api/v1/orgs/{org['id']}", headers=admin)).json()["completeness"]["missing"]
     )
 
-    staff_versions = await client.get(f"/api/v1/staff/orgs/{org['id']}/documents/{doc['id']}/versions", headers=staff())
+    staff_url = f"/api/v1/staff/orgs/{org['id']}/documents/{doc['id']}/versions"
+    # The safety file belongs to the prevention service; the operations room opens only the plans and the data sheets.
+    staff_versions = await client.get(staff_url, headers=staff(["org_auditor"]))
     assert [v["version"] for v in staff_versions.json()] == [2, 1]
+    room = await client.get(staff_url, headers=staff())
+    assert (room.status_code, room.json()["detail"]) == (403, "prevention_only")
+    detail = (await client.get(f"/api/v1/staff/orgs/{org['id']}", headers=staff())).json()
+    assert detail["restricted"] is True and detail["documents"] == [] and detail["members"] == []
+    assert (await client.get(f"/api/v1/staff/orgs/{org['id']}/prevention/visits", headers=staff())).status_code == 403
+    full = (await client.get(f"/api/v1/staff/orgs/{org['id']}", headers=staff(["org_auditor"]))).json()
+    assert full["restricted"] is False and [d["id"] for d in full["documents"]] == [doc["id"]]
     renamed = (await client.put(f"{base}/{doc['id']}", json={"title": "Dossier 2027"}, headers=admin)).json()
     assert renamed["title"] == "Dossier 2027" and renamed["versions_count"] == 2
     assert (await client.delete(f"{base}/{doc['id']}", headers=admin)).status_code == 204

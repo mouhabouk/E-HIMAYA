@@ -1,9 +1,17 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Suspense, useId, useMemo, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
 import { CategoryLabel } from "../components/CategoryIcon";
-import { CertificateChanges, CertificateStamps } from "../components/CertificateExtras";
+import {
+  CertificateChanges,
+  CertificateStamps,
+} from "../components/CertificateExtras";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
 import {
@@ -92,7 +100,11 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
   const key = queryKeys.org(org.id);
 
   const mutation = useMutation({
-    mutationFn: (v: { decision: OrgDecision; reason: string; kind?: OrgKind }) => api.reviewOrg(org.id, v),
+    mutationFn: (v: {
+      decision: OrgDecision;
+      reason: string;
+      kind?: OrgKind;
+    }) => api.reviewOrg(org.id, v),
     onSuccess: (updated) => {
       qc.setQueryData(key, updated);
       void qc.invalidateQueries({ queryKey: queryKeys.orgsAll });
@@ -104,16 +116,20 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
     },
     onError: (error) => {
       // Someone else decided first: load the current state (this detail is on screen).
-      if (isApiError(error) && error.status === 409) void qc.invalidateQueries({ queryKey: key, exact: true });
+      if (isApiError(error) && error.status === 409)
+        void qc.invalidateQueries({ queryKey: key, exact: true });
     },
   });
 
   const lastDecision =
-    (org.status === "rejected" || org.status === "suspended") && org.review?.reason ? (
+    (org.status === "rejected" || org.status === "suspended") &&
+    org.review?.reason ? (
       <p className="alert alert--warn">
         <strong>{t("orgs.detail.lastDecision")}: </strong>
         <span dir="auto">{org.review.reason}</span>
-        {org.review.at && <span className="muted"> · {fmt.dateTime(org.review.at)}</span>}
+        {org.review.at && (
+          <span className="muted"> · {fmt.dateTime(org.review.at)}</span>
+        )}
       </p>
     ) : null;
 
@@ -135,8 +151,13 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
       return;
     }
     // P2a: the auditor may set the right kind when approving (always sent when the kind is to review).
-    const withKind = decision === "approve" && (kind !== org.kind || org.kind_review);
-    mutation.mutate({ decision, reason: reason.trim(), ...(withKind ? { kind } : {}) });
+    const withKind =
+      decision === "approve" && (kind !== org.kind || org.kind_review);
+    mutation.mutate({
+      decision,
+      reason: reason.trim(),
+      ...(withKind ? { kind } : {}),
+    });
   };
   const errorText = mutation.isError
     ? isApiError(mutation.error) && mutation.error.code === "invalid_transition"
@@ -177,8 +198,15 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
           </p>
           {decision === "approve" && (
             <div className="field">
-              <label htmlFor={kindId}>{t("orgs.kindExtra.kindOnApproval")}</label>
-              <select id={kindId} value={kind} disabled={mutation.isPending} onChange={(e) => setKind(e.target.value as OrgKind)}>
+              <label htmlFor={kindId}>
+                {t("orgs.kindExtra.kindOnApproval")}
+              </label>
+              <select
+                id={kindId}
+                value={kind}
+                disabled={mutation.isPending}
+                onChange={(e) => setKind(e.target.value as OrgKind)}
+              >
                 {ORG_KINDS.map((k) => (
                   <option key={k} value={k}>
                     {t(`orgs.kind.${k}`)}
@@ -188,7 +216,11 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
             </div>
           )}
           <div className={`field${reasonError ? " field--invalid" : ""}`}>
-            <label htmlFor={reasonId}>{needsReason ? t("orgs.review.reason") : t("orgs.review.reasonOptional")}</label>
+            <label htmlFor={reasonId}>
+              {needsReason
+                ? t("orgs.review.reason")
+                : t("orgs.review.reasonOptional")}
+            </label>
             <textarea
               id={reasonId}
               value={reason}
@@ -211,17 +243,30 @@ function OrgReviewSection({ org }: { org: StaffOrgDetail }) {
             )}
           </div>
           <div className="actions">
-            <button type="submit" className="btn btn--primary" disabled={mutation.isPending}>
-              {mutation.isPending ? t("orgs.review.working") : t("orgs.review.confirm")}
+            <button
+              type="submit"
+              className="btn btn--primary"
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending
+                ? t("orgs.review.working")
+                : t("orgs.review.confirm")}
             </button>
-            <button type="button" className="btn" disabled={mutation.isPending} onClick={() => setDecision(null)}>
+            <button
+              type="button"
+              className="btn"
+              disabled={mutation.isPending}
+              onClick={() => setDecision(null)}
+            >
               {t("common.cancel")}
             </button>
           </div>
         </form>
       )}
       <div aria-live="polite" role="status">
-        {done && !mutation.isPending && <p className="alert alert--ok">{t("orgs.review.done")}</p>}
+        {done && !mutation.isPending && (
+          <p className="alert alert--ok">{t("orgs.review.done")}</p>
+        )}
       </div>
       {errorText && (
         <p className="alert alert--error" role="alert">
@@ -244,13 +289,18 @@ function VersionMeta({ v }: { v: DocumentVersion }) {
       <dt>{t("orgs.detail.fileStatus")}</dt>
       <dd>
         <span className={`tag tag--media-${v.status}`}>
-          {isOneOf(["uploading", "verifying", "stored", "rejected"] as const, v.status)
+          {isOneOf(
+            ["uploading", "verifying", "stored", "rejected"] as const,
+            v.status,
+          )
             ? t(`detail.mediaStatus.${v.status}`)
             : v.status}
         </span>
       </dd>
       <dt>{t("orgs.detail.uploadedAt")}</dt>
-      <dd>{v.uploaded_at ? fmt.dateTime(v.uploaded_at) : t("common.notAvailable")}</dd>
+      <dd>
+        {v.uploaded_at ? fmt.dateTime(v.uploaded_at) : t("common.notAvailable")}
+      </dd>
       <dt>{t("orgs.detail.uploadedBy")}</dt>
       <dd dir="auto">{v.uploaded_by ?? t("common.notAvailable")}</dd>
       {v.note && (
@@ -260,7 +310,9 @@ function VersionMeta({ v }: { v: DocumentVersion }) {
         </>
       )}
       <dt>{t("orgs.detail.size")}</dt>
-      <dd>{v.bytes === null ? t("common.notAvailable") : fmt.bytes(v.bytes)}</dd>
+      <dd>
+        {v.bytes === null ? t("common.notAvailable") : fmt.bytes(v.bytes)}
+      </dd>
       <dt>{t("orgs.detail.sha256")}</dt>
       <dd className="hash" dir="ltr">
         {v.sha256 ?? "—"}
@@ -290,7 +342,9 @@ function DocumentHistory({ orgId, doc }: { orgId: string; doc: OrgDocument }) {
             {v.status === "stored" && (
               <DownloadButton
                 label={`${doc.title} — ${t("orgs.detail.version", { version: v.version })}`}
-                fetchLink={() => api.orgDocumentDownload(orgId, doc.id, v.version)}
+                fetchLink={() =>
+                  api.orgDocumentDownload(orgId, doc.id, v.version)
+                }
               />
             )}
           </li>
@@ -327,14 +381,26 @@ function DocumentItem({ orgId, doc }: { orgId: string; doc: OrgDocument }) {
     <li className="card doc">
       <h3 dir="auto">{doc.title}</h3>
       <p className="muted">
-        {isOneOf(DOCUMENT_KINDS, doc.kind) ? t(`orgs.docKind.${doc.kind}`) : t("orgs.docKind.other")}
-        {current && <> · {t("orgs.detail.currentVersion", { version: current.version })}</>}
+        {isOneOf(DOCUMENT_KINDS, doc.kind)
+          ? t(`orgs.docKind.${doc.kind}`)
+          : t("orgs.docKind.other")}
+        {current && (
+          <>
+            {" "}
+            · {t("orgs.detail.currentVersion", { version: current.version })}
+          </>
+        )}
       </p>
       {current ? (
         <>
           <VersionMeta v={current} />
           {current.status === "stored" && (
-            <DownloadButton label={doc.title} fetchLink={() => api.orgDocumentDownload(orgId, doc.id, current.version)} />
+            <DownloadButton
+              label={doc.title}
+              fetchLink={() =>
+                api.orgDocumentDownload(orgId, doc.id, current.version)
+              }
+            />
           )}
         </>
       ) : (
@@ -342,7 +408,9 @@ function DocumentItem({ orgId, doc }: { orgId: string; doc: OrgDocument }) {
       )}
       {doc.versions_count > 0 && (
         <details onToggle={(e) => setOpen(e.currentTarget.open)}>
-          <summary>{t("orgs.detail.history", { count: doc.versions_count })}</summary>
+          <summary>
+            {t("orgs.detail.history", { count: doc.versions_count })}
+          </summary>
           {open && <DocumentHistory orgId={orgId} doc={doc} />}
         </details>
       )}
@@ -358,7 +426,8 @@ function OrgReports({ orgId }: { orgId: string }) {
   const fmt = useFormat();
   const query = useInfiniteQuery({
     queryKey: queryKeys.orgReports(orgId),
-    queryFn: ({ pageParam, signal }) => api.orgReports(orgId, { cursor: pageParam, signal }),
+    queryFn: ({ pageParam, signal }) =>
+      api.orgReports(orgId, { cursor: pageParam, signal }),
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.next_cursor,
   });
@@ -366,12 +435,18 @@ function OrgReports({ orgId }: { orgId: string }) {
   return (
     <>
       {query.isPending && <Loading />}
-      {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
-      {query.isSuccess && items.length === 0 && <p className="muted">{t("orgs.detail.noReports")}</p>}
+      {query.isError && (
+        <ErrorBox error={query.error} onRetry={() => void query.refetch()} />
+      )}
+      {query.isSuccess && items.length === 0 && (
+        <p className="muted">{t("orgs.detail.noReports")}</p>
+      )}
       {items.length > 0 && (
         <div className="table-wrap">
           <table className="table">
-            <caption className="visually-hidden">{t("orgs.detail.reports")}</caption>
+            <caption className="visually-hidden">
+              {t("orgs.detail.reports")}
+            </caption>
             <thead>
               <tr>
                 <th scope="col">{t("reports.columns.receivedAt")}</th>
@@ -384,10 +459,16 @@ function OrgReports({ orgId }: { orgId: string }) {
               {items.map((r) => (
                 <tr key={r.id}>
                   <td>
-                    <time dateTime={r.received_at}>{fmt.dateTime(r.received_at)}</time>
+                    <time dateTime={r.received_at}>
+                      {fmt.dateTime(r.received_at)}
+                    </time>
                   </td>
                   <td>
-                    <Link to={`/reports/${encodeURIComponent(r.id)}`} className="code" dir="ltr">
+                    <Link
+                      to={`/reports/${encodeURIComponent(r.id)}`}
+                      className="code"
+                      dir="ltr"
+                    >
                       {r.tracking_code}
                     </Link>
                   </td>
@@ -411,7 +492,9 @@ function OrgReports({ orgId }: { orgId: string }) {
             onClick={() => void query.fetchNextPage()}
             disabled={query.isFetchingNextPage}
           >
-            {query.isFetchingNextPage ? t("common.loading") : t("reports.loadMore")}
+            {query.isFetchingNextPage
+              ? t("common.loading")
+              : t("reports.loadMore")}
           </button>
         </div>
       )}
@@ -438,14 +521,21 @@ export function OrgDetailPage() {
     // Each fetch writes an audit entry: no background refetch; live events refetch it while it is on screen.
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
-    retry: (count, error) => !(isApiError(error) && [403, 404].includes(error.status)) && count < 2,
+    retry: (count, error) =>
+      !(isApiError(error) && [403, 404].includes(error.status)) && count < 2,
   });
 
   const org = query.data;
   const pois = useMemo(
     () =>
       org
-        ? orgPois(org, org.hazmat.length > 0, org.features, (f) => f.label ?? featureKindLabel(t, f.kind), orgKindLabel(t, org.kind))
+        ? orgPois(
+            org,
+            org.hazmat.length > 0,
+            org.features,
+            (f) => f.label ?? featureKindLabel(t, f.kind),
+            orgKindLabel(t, org.kind),
+          )
         : [],
     [org, t],
   );
@@ -463,7 +553,10 @@ export function OrgDetailPage() {
   const c = org.classification;
   const required = c?.required ?? [];
   const missing = org.completeness?.missing ?? [];
-  const checklist = [...required, ...missing.filter((m) => !required.includes(m))];
+  const checklist = [
+    ...required,
+    ...missing.filter((m) => !required.includes(m)),
+  ];
   const bounds = pointsBounds(pois);
   const sds = new Map(org.documents.map((d) => [d.id, d]));
   const refName = (ref: string | null) =>
@@ -486,7 +579,9 @@ export function OrgDetailPage() {
         </PageTitle>
         <OrgStatusChip status={org.status} />
         <span className="tag">{orgKindLabel(t, org.kind)}</span>
-        {org.kind_review && <Pill tone="amber">{t("orgs.kindExtra.kindReview")}</Pill>}
+        {org.kind_review && (
+          <Pill tone="amber">{t("orgs.kindExtra.kindReview")}</Pill>
+        )}
       </div>
 
       <div className="detail__grid">
@@ -506,23 +601,44 @@ export function OrgDetailPage() {
             <dt>{t("orgs.columns.kind")}</dt>
             <dd>{orgKindLabel(t, org.kind)}</dd>
             <dt>{t("orgs.detail.activitySector")}</dt>
-            <dd dir="auto">{org.activity_sector ?? t("common.notAvailable")}</dd>
+            <dd dir="auto">
+              {org.activity_sector ?? t("common.notAvailable")}
+            </dd>
             <dt>{t("orgs.detail.activityType")}</dt>
             <dd dir="auto">{org.activity_type ?? t("common.notAvailable")}</dd>
             <dt>{t("orgs.detail.capacity")}</dt>
-            <dd>{org.capacity === null ? t("common.notAvailable") : fmt.number(org.capacity)}</dd>
+            <dd>
+              {org.capacity === null
+                ? t("common.notAvailable")
+                : fmt.number(org.capacity)}
+            </dd>
             <dt>{t("orgs.detail.floors")}</dt>
-            <dd>{org.floors === null ? t("common.notAvailable") : fmt.number(org.floors)}</dd>
+            <dd>
+              {org.floors === null
+                ? t("common.notAvailable")
+                : fmt.number(org.floors)}
+            </dd>
             <dt>{t("orgs.detail.height")}</dt>
-            <dd>{org.height_m === null ? t("common.notAvailable") : fmt.meters(org.height_m)}</dd>
+            <dd>
+              {org.height_m === null
+                ? t("common.notAvailable")
+                : fmt.meters(org.height_m)}
+            </dd>
             <dt>{t("orgs.detail.receivesPublic")}</dt>
             <dd>
-              {org.receives_public === null ? t("common.notAvailable") : org.receives_public ? t("common.yes") : t("common.no")}
+              {org.receives_public === null
+                ? t("common.notAvailable")
+                : org.receives_public
+                  ? t("common.yes")
+                  : t("common.no")}
             </dd>
             <dt>{t("orgs.detail.address")}</dt>
             <dd dir="auto">{org.address ?? t("common.notAvailable")}</dd>
             <dt>{t("orgs.detail.gouvernorat")}</dt>
-            <dd>{gouvernorats.nameOf(org.gouvernorat_code) ?? t("common.notAvailable")}</dd>
+            <dd>
+              {gouvernorats.nameOf(org.gouvernorat_code) ??
+                t("common.notAvailable")}
+            </dd>
             {org.location && (
               <>
                 <dt>{t("orgs.detail.coordinates")}</dt>
@@ -540,7 +656,8 @@ export function OrgDetailPage() {
 
         <section className="card" aria-labelledby="sec-org-kind-fields">
           <h2 id="sec-org-kind-fields">
-            {t("orgs.kindExtra.kindFieldsTitle")} <SimTag label={t("orgs.kindExtra.sim")} />
+            {t("orgs.kindExtra.kindFieldsTitle")}{" "}
+            <SimTag label={t("orgs.kindExtra.sim")} />
           </h2>
           <KindFieldsList kind={org.kind} values={org.kind_fields} />
         </section>
@@ -550,7 +667,9 @@ export function OrgDetailPage() {
           <h3 className="subhead">{t("orgs.detail.manager")}</h3>
           <dl className="fields">
             <dt>{t("orgs.detail.name")}</dt>
-            <dd dir="auto">{org.manager?.full_name ?? t("common.notAvailable")}</dd>
+            <dd dir="auto">
+              {org.manager?.full_name ?? t("common.notAvailable")}
+            </dd>
             <dt>{t("orgs.detail.phone")}</dt>
             <dd>
               <Phone phone={org.manager?.phone} />
@@ -598,8 +717,12 @@ export function OrgDetailPage() {
           )}
           <h3 className="subhead">
             {t("orgs.detail.completeness")}:{" "}
-            <span className={`tag ${org.completeness?.ok ? "tag--level-ok" : "tag--level-bad"}`}>
-              {org.completeness?.ok ? t("orgs.detail.complete") : t("orgs.detail.incomplete")}
+            <span
+              className={`tag ${org.completeness?.ok ? "tag--level-ok" : "tag--level-bad"}`}
+            >
+              {org.completeness?.ok
+                ? t("orgs.detail.complete")
+                : t("orgs.detail.incomplete")}
             </span>
             {typeof org.readiness === "number" && (
               <>
@@ -614,11 +737,19 @@ export function OrgDetailPage() {
             {checklist.map((code) => {
               const isMissing = missing.includes(code);
               return (
-                <li key={code} className={isMissing ? "checklist__missing" : "checklist__ok"}>
-                  <span aria-hidden="true">{isMissing ? "✗" : "✓"}</span> {requirementLabel(t, code)}
+                <li
+                  key={code}
+                  className={isMissing ? "checklist__missing" : "checklist__ok"}
+                >
+                  <span aria-hidden="true">{isMissing ? "✗" : "✓"}</span>{" "}
+                  {requirementLabel(t, code)}
                   <span className="visually-hidden">
                     {" "}
-                    ({isMissing ? t("orgs.detail.itemMissing") : t("orgs.detail.itemPresent")})
+                    (
+                    {isMissing
+                      ? t("orgs.detail.itemMissing")
+                      : t("orgs.detail.itemPresent")}
+                    )
                   </span>
                 </li>
               );
@@ -643,9 +774,19 @@ export function OrgDetailPage() {
                 const name = refName(a.ref);
                 return (
                   <li key={`${a.kind}-${a.ref ?? i}`}>
-                    <span className="tag tag--level-bad">{alertLabel(t, a.kind)}</span>
+                    <span className="tag tag--level-bad">
+                      {alertLabel(t, a.kind)}
+                    </span>
                     {name && <span dir="auto"> {name}</span>}
-                    {a.since && <span className="muted"> · {t("orgs.detail.alertSince", { date: fmt.date(a.since) })}</span>}
+                    {a.since && (
+                      <span className="muted">
+                        {" "}
+                        ·{" "}
+                        {t("orgs.detail.alertSince", {
+                          date: fmt.date(a.since),
+                        })}
+                      </span>
+                    )}
                   </li>
                 );
               })}
@@ -700,7 +841,9 @@ export function OrgDetailPage() {
         ) : (
           <div className="table-wrap">
             <table className="table">
-              <caption className="visually-hidden">{t("orgs.detail.team")}</caption>
+              <caption className="visually-hidden">
+                {t("orgs.detail.team")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("orgs.detail.name")}</th>
@@ -718,7 +861,11 @@ export function OrgDetailPage() {
                     <th scope="row" dir="auto">
                       {m.full_name}
                     </th>
-                    <td>{isOneOf(TEAM_ROLES, m.team_role) ? t(`orgs.teamRole.${m.team_role}`) : m.team_role}</td>
+                    <td>
+                      {isOneOf(TEAM_ROLES, m.team_role)
+                        ? t(`orgs.teamRole.${m.team_role}`)
+                        : m.team_role}
+                    </td>
                     <td dir="auto">{m.position ?? "—"}</td>
                     <td>
                       <Phone phone={m.phone} />
@@ -736,7 +883,10 @@ export function OrgDetailPage() {
         )}
       </section>
 
-      <section className={`card${org.hazmat.length > 0 ? " hazard" : ""}`} aria-labelledby="sec-org-hazmat">
+      <section
+        className={`card${org.hazmat.length > 0 ? " hazard" : ""}`}
+        aria-labelledby="sec-org-hazmat"
+      >
         <h2 id="sec-org-hazmat">
           {t("orgs.detail.hazmat")} ({fmt.number(org.hazmat.length)})
         </h2>
@@ -745,7 +895,9 @@ export function OrgDetailPage() {
         ) : (
           <div className="table-wrap">
             <table className="table">
-              <caption className="visually-hidden">{t("orgs.detail.hazmat")}</caption>
+              <caption className="visually-hidden">
+                {t("orgs.detail.hazmat")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("orgs.detail.hazmatName")}</th>
@@ -760,7 +912,9 @@ export function OrgDetailPage() {
               </thead>
               <tbody>
                 {org.hazmat.map((h, i) => {
-                  const doc = h.sds_document_id ? sds.get(h.sds_document_id) : undefined;
+                  const doc = h.sds_document_id
+                    ? sds.get(h.sds_document_id)
+                    : undefined;
                   const current = doc?.current_version;
                   return (
                     <tr key={h.id ?? i}>
@@ -777,10 +931,18 @@ export function OrgDetailPage() {
                         {doc && current?.status === "stored" ? (
                           <DownloadButton
                             label={`${t("orgs.detail.sds")} — ${h.name}`}
-                            fetchLink={() => api.orgDocumentDownload(org.id, doc.id, current.version)}
+                            fetchLink={() =>
+                              api.orgDocumentDownload(
+                                org.id,
+                                doc.id,
+                                current.version,
+                              )
+                            }
                           />
                         ) : (
-                          <span className="tag tag--level-bad">{t("orgs.detail.sdsMissing")}</span>
+                          <span className="tag tag--level-bad">
+                            {t("orgs.detail.sdsMissing")}
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -801,7 +963,9 @@ export function OrgDetailPage() {
         ) : (
           <div className="table-wrap">
             <table className="table">
-              <caption className="visually-hidden">{t("orgs.detail.equipment")}</caption>
+              <caption className="visually-hidden">
+                {t("orgs.detail.equipment")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("orgs.detail.equipmentKindLabel")}</th>
@@ -818,7 +982,9 @@ export function OrgDetailPage() {
                 {org.equipment.map((e) => (
                   <tr key={e.id}>
                     <th scope="row">{equipmentKindLabel(t, e.kind)}</th>
-                    <td className="num">{e.count === null ? "—" : fmt.number(e.count)}</td>
+                    <td className="num">
+                      {e.count === null ? "—" : fmt.number(e.count)}
+                    </td>
                     <td dir="auto">{e.location ?? "—"}</td>
                     <td>
                       <MaintenanceBadge status={e.maintenance_status} />
@@ -835,14 +1001,17 @@ export function OrgDetailPage() {
 
       <section className="card" aria-labelledby="sec-org-maintenance">
         <h2 id="sec-org-maintenance">
-          {t("orgs.detail.maintenanceLog")} ({fmt.number(org.maintenance?.length ?? 0)})
+          {t("orgs.detail.maintenanceLog")} (
+          {fmt.number(org.maintenance?.length ?? 0)})
         </h2>
         {(org.maintenance?.length ?? 0) === 0 ? (
           <p className="muted">{t("orgs.detail.noMaintenance")}</p>
         ) : (
           <div className="table-wrap">
             <table className="table">
-              <caption className="visually-hidden">{t("orgs.detail.maintenanceLog")}</caption>
+              <caption className="visually-hidden">
+                {t("orgs.detail.maintenanceLog")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("orgs.detail.maintenanceDone")}</th>
@@ -854,7 +1023,9 @@ export function OrgDetailPage() {
               </thead>
               <tbody>
                 {org.maintenance?.map((m) => {
-                  const item = org.equipment.find((e) => e.id === m.equipment_id);
+                  const item = org.equipment.find(
+                    (e) => e.id === m.equipment_id,
+                  );
                   const version = m.photo_version;
                   return (
                     <tr key={m.id}>
@@ -865,11 +1036,21 @@ export function OrgDetailPage() {
                       <td>
                         {m.document_id && version !== null ? (
                           <DownloadButton
-                            label={t("orgs.detail.maintenancePhotoOf", { day: formatDay(fmt, m.done_on, "—") })}
-                            fetchLink={() => api.orgDocumentDownload(org.id, m.document_id ?? "", version)}
+                            label={t("orgs.detail.maintenancePhotoOf", {
+                              day: formatDay(fmt, m.done_on, "—"),
+                            })}
+                            fetchLink={() =>
+                              api.orgDocumentDownload(
+                                org.id,
+                                m.document_id ?? "",
+                                version,
+                              )
+                            }
                           />
                         ) : m.document_id ? (
-                          <span className="tag tag--level-warn">{t("orgs.detail.maintenancePhotoChecking")}</span>
+                          <span className="tag tag--level-warn">
+                            {t("orgs.detail.maintenancePhotoChecking")}
+                          </span>
                         ) : (
                           "—"
                         )}
@@ -885,7 +1066,8 @@ export function OrgDetailPage() {
 
       <section className="card" aria-labelledby="sec-org-activities">
         <h2 id="sec-org-activities">
-          {t("orgs.detail.activities")} ({fmt.number(org.activities?.length ?? 0)})
+          {t("orgs.detail.activities")} (
+          {fmt.number(org.activities?.length ?? 0)})
         </h2>
         {(org.activities?.length ?? 0) === 0 ? (
           <p className="muted">{t("orgs.detail.noActivities")}</p>
@@ -893,13 +1075,16 @@ export function OrgDetailPage() {
           <ul className="org-activities">
             {org.activities?.map((a) => (
               <li key={a.id}>
-                <span className={`tag tag--activity-${a.kind}`}>{t(`orgs.activity.${a.kind}`)}</span>{" "}
+                <span className={`tag tag--activity-${a.kind}`}>
+                  {t(`orgs.activity.${a.kind}`)}
+                </span>{" "}
                 <strong dir="auto">{a.title}</strong>
                 <span className="muted">
                   {" · "}
                   {formatDay(fmt, a.starts_on, "—")}
                   {a.ends_on && ` – ${formatDay(fmt, a.ends_on, "—")}`}
-                  {a.participants !== null && ` · ${t("orgs.activity.participants", { count: a.participants })}`}
+                  {a.participants !== null &&
+                    ` · ${t("orgs.activity.participants", { count: a.participants })}`}
                   {a.created_by && ` · ${a.created_by}`}
                 </span>
                 {a.notes && (
@@ -930,7 +1115,8 @@ export function OrgDetailPage() {
 
       <section className="card" aria-labelledby="sec-org-certs">
         <h2 id="sec-org-certs">
-          {t("orgs.detail.certificates")} ({fmt.number(org.certificates.length)})
+          {t("orgs.detail.certificates")} ({fmt.number(org.certificates.length)}
+          )
         </h2>
         {org.certificates.length === 0 ? (
           <p className="muted">{t("orgs.detail.noCertificates")}</p>
@@ -943,15 +1129,21 @@ export function OrgDetailPage() {
                     {cert.code}
                   </span>
                   <CertificateChip status={cert.status} />
-                  {cert.superseded && <span className="tag">{t("orgs.detail.superseded")}</span>}
+                  {cert.superseded && (
+                    <span className="tag">{t("orgs.detail.superseded")}</span>
+                  )}
                 </p>
                 <dl className="fields">
                   <dt>{t("orgs.detail.validUntilLabel")}</dt>
                   <dd>{formatDay(fmt, cert.valid_until, "—")}</dd>
                   <dt>{t("orgs.detail.submittedAt")}</dt>
-                  <dd>{cert.submitted_at ? fmt.dateTime(cert.submitted_at) : "—"}</dd>
+                  <dd>
+                    {cert.submitted_at ? fmt.dateTime(cert.submitted_at) : "—"}
+                  </dd>
                   <dt>{t("orgs.detail.reviewedAt")}</dt>
-                  <dd>{cert.reviewed_at ? fmt.dateTime(cert.reviewed_at) : "—"}</dd>
+                  <dd>
+                    {cert.reviewed_at ? fmt.dateTime(cert.reviewed_at) : "—"}
+                  </dd>
                   {cert.review_reason && (
                     <>
                       <dt>{t("orgs.detail.reviewReason")}</dt>
@@ -970,7 +1162,12 @@ export function OrgDetailPage() {
                     <>
                       <dt>{t("orgs.detail.verify")}</dt>
                       <dd>
-                        <a href={cert.verify_url} target="_blank" rel="noopener noreferrer" dir="ltr">
+                        <a
+                          href={cert.verify_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          dir="ltr"
+                        >
                           {cert.verify_url}
                         </a>
                       </dd>
@@ -981,11 +1178,16 @@ export function OrgDetailPage() {
                   label={`${t("orgs.detail.pdf")} ${cert.code}`}
                   fetchLink={() => api.certificatePdf(org.id, cert.id)}
                 />
-                {cert.needs_update != null && <CertificateChanges changes={cert.changes ?? []} />}
+                {cert.needs_update != null && (
+                  <CertificateChanges changes={cert.changes ?? []} />
+                )}
                 {(cert.stamps?.length ?? 0) > 0 && (
                   <>
                     <h3>{t("orgs.counter.stampsTitle")}</h3>
-                    <CertificateStamps certId={cert.id} stamps={cert.stamps ?? []} />
+                    <CertificateStamps
+                      certId={cert.id}
+                      stamps={cert.stamps ?? []}
+                    />
                   </>
                 )}
               </li>
@@ -994,7 +1196,22 @@ export function OrgDetailPage() {
         )}
       </section>
 
-      <OrgVisits orgId={org.id} canAct={canReviewOrgs(user?.identity.roles ?? []) && org.status === "active"} />
+      {org.restricted ? (
+        <p
+          className="alert alert--info"
+          role="note"
+          data-testid="org-restricted"
+        >
+          {t("orgs.detail.restricted")}
+        </p>
+      ) : (
+        <OrgVisits
+          orgId={org.id}
+          canAct={
+            canReviewOrgs(user?.identity.roles ?? []) && org.status === "active"
+          }
+        />
+      )}
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-org-members">
@@ -1005,7 +1222,9 @@ export function OrgDetailPage() {
             <p className="muted">{t("orgs.detail.noMembers")}</p>
           ) : (
             <table className="table">
-              <caption className="visually-hidden">{t("orgs.detail.members")}</caption>
+              <caption className="visually-hidden">
+                {t("orgs.detail.members")}
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">{t("orgs.detail.name")}</th>
@@ -1016,11 +1235,17 @@ export function OrgDetailPage() {
               <tbody>
                 {org.members.map((m, i) => (
                   <tr key={`${m.email ?? ""}-${i}`}>
-                    <td dir="auto">{m.display_name ?? t("common.notAvailable")}</td>
+                    <td dir="auto">
+                      {m.display_name ?? t("common.notAvailable")}
+                    </td>
                     <td>
                       <Email email={m.email} />
                     </td>
-                    <td>{isOneOf(MEMBER_ROLES, m.role) ? t(`orgs.memberRole.${m.role}`) : m.role}</td>
+                    <td>
+                      {isOneOf(MEMBER_ROLES, m.role)
+                        ? t(`orgs.memberRole.${m.role}`)
+                        : m.role}
+                    </td>
                   </tr>
                 ))}
               </tbody>

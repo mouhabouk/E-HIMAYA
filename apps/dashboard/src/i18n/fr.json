@@ -1353,7 +1353,8 @@
       "maintenancePhotoChecking": "En vérification",
       "activities": "Exercices et événements",
       "noActivities": "Aucun exercice ni événement déclaré.",
-      "maintenanceLog": "Journal de maintenance"
+      "maintenanceLog": "Journal de maintenance",
+      "restricted": "Vue de la salle des opérations : seulement ce qu'exige une intervention (fiche, équipe de sécurité et ses numéros, matières dangereuses, équipements, plans et FDS). Les procès-verbaux de visite, recommandations, certificats, dossier de sécurité et membres du portail relèvent du service de prévention."
     },
     "review": {
       "title": "Validation de l’enregistrement",

@@ -38117,6 +38117,11 @@
             "title": "Receives Public",
             "type": "boolean"
           },
+          "restricted": {
+            "default": false,
+            "title": "Restricted",
+            "type": "boolean"
+          },
           "review": {
             "$ref": "#/components/schemas/app__modules__orgs__schemas__Review"
           },

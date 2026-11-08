@@ -594,3 +594,23 @@ async def test_team_voice_messages_suggest_mission_times(
     gallery = (await client.get(f"/api/v1/staff/incidents/{incident_id}/media", headers=operator)).json()
     voice = next(i for i in gallery["items"] if i["kind"] == "voice")
     assert voice["transcript"].startswith("وصلنا") and voice["url"]
+
+
+async def test_visits_stay_with_the_safety_officer_not_the_plain_members(
+    client: httpx.AsyncClient, staff: Staff, user: User
+) -> None:
+    """Yamen, 2026-11-08: the visits, their reports and the annual report go to the administrators and the safety
+    officers; a plain member (the institution's guard post) does not read them."""
+    admin = user()
+    org_id = await active_org(client, staff, admin, location=TUNIS)
+    guard = await add_member(client, admin, org_id, user, "member")
+    visits = f"/api/v1/orgs/{org_id}/prevention/visits"
+    assert (await client.get(visits, headers=admin)).status_code == 200
+    r = await client.get(visits, headers=guard)
+    assert (r.status_code, r.json()["detail"]) == (403, "prevention_only")
+    assert (await client.get(f"/api/v1/orgs/{org_id}/annual-report?year=2026", headers=guard)).status_code == 403
+    members = (await client.get(f"/api/v1/orgs/{org_id}/members", headers=admin)).json()
+    guard_id = next(m["user_id"] for m in members if m["role"] == "member")
+    url = f"/api/v1/orgs/{org_id}/members/{guard_id}/safety-officer"
+    assert (await client.put(url, json={"safety_officer": True}, headers=admin)).status_code == 200
+    assert (await client.get(visits, headers=guard)).status_code == 200

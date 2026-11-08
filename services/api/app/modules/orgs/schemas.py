@@ -559,6 +559,8 @@ class StaffOrgDetail(OrgCard):
     # Phase P2b.
     activities: list[ActivityOut] = Field(default_factory=list)
     maintenance: list[MaintenanceOut] = Field(default_factory=list)
+    #: The operations room's view (2026-11-08): no visits, certificates, members, maintenance or prevention documents.
+    restricted: bool = False
 
 
 class OrgReviewIn(BaseModel):

@@ -34,6 +34,7 @@ import {
   canReadAnalytics,
   canReadKnowledge,
   canReadOrgs,
+  canReviewOrgs,
   canReadPlatformSettings,
   canReadResources,
   canReadRewards,
@@ -79,8 +80,17 @@ export function navGroups(
   const editsTips = canEditTips(roles);
   const orgs = canReadOrgs(roles);
   // The administrator's rules (L4 §8): a hidden page leaves the menu, a granted one joins it.
-  const e = (show: boolean, to: string, icon: IconName, tone: Tone, key: string, end?: boolean): NavEntry[] =>
-    (access ? allowed(access, featureOfPath(to), show) : show) ? [{ to, end, icon, tone, label: t(`nav.${key}`) }] : [];
+  const e = (
+    show: boolean,
+    to: string,
+    icon: IconName,
+    tone: Tone,
+    key: string,
+    end?: boolean,
+  ): NavEntry[] =>
+    (access ? allowed(access, featureOfPath(to), show) : show)
+      ? [{ to, end, icon, tone, label: t(`nav.${key}`) }]
+      : [];
   const groups: NavGroup[] = [
     {
       key: "ops",
@@ -97,14 +107,56 @@ export function navGroups(
         ...e(reads, "/sensors", "water", "sky", "sensors"),
         ...e(reads, "/towers", "videocam", "orange", "towers"),
         ...e(reads, "/drones", "drone", "purple", "drones"),
-        ...e(reads, "/resource-requests", "inventory2", "amber", "resourceRequests"),
-        ...e(canSeeNationalQueues(identity), "/reports/late", "schedule", "orange", "late"),
-        ...e(canSeeNationalQueues(identity), "/reports/geo-queue", "wrongLocation", "orange", "geoQueue"),
-        ...e(canReadResources(roles), "/resources", "localShipping", "amber", "resources"),
-        ...e(canOpenInventory(roles), "/inventory", "inventory2", "teal", "inventory"),
+        ...e(
+          reads,
+          "/resource-requests",
+          "inventory2",
+          "amber",
+          "resourceRequests",
+        ),
+        ...e(
+          canSeeNationalQueues(identity),
+          "/reports/late",
+          "schedule",
+          "orange",
+          "late",
+        ),
+        ...e(
+          canSeeNationalQueues(identity),
+          "/reports/geo-queue",
+          "wrongLocation",
+          "orange",
+          "geoQueue",
+        ),
+        ...e(
+          canReadResources(roles),
+          "/resources",
+          "localShipping",
+          "amber",
+          "resources",
+        ),
+        ...e(
+          canOpenInventory(roles),
+          "/inventory",
+          "inventory2",
+          "teal",
+          "inventory",
+        ),
         ...e(canOpenCrew(roles), "/crew", "groups", "green", "crew"),
-        ...e(canManageFieldAgents(roles), "/crew/agents", "manageAccounts", "green", "fieldAgents"),
-        ...e(canOpenSchedule(roles), "/schedule", "calendarMonth", "teal", "schedule"),
+        ...e(
+          canManageFieldAgents(roles),
+          "/crew/agents",
+          "manageAccounts",
+          "green",
+          "fieldAgents",
+        ),
+        ...e(
+          canOpenSchedule(roles),
+          "/schedule",
+          "calendarMonth",
+          "teal",
+          "schedule",
+        ),
       ],
     },
     {
@@ -113,13 +165,50 @@ export function navGroups(
       tone: "navy",
       label: t("nav.group.crisis"),
       items: [
-        ...e(windowOpen ?? canOpenWindowFull(identity), "/window", "insights", "navy", "window"),
-        ...e(canOpenCommand(roles), "/command", "militaryTech", "navy", "command"),
+        ...e(
+          windowOpen ?? canOpenWindowFull(identity),
+          "/window",
+          "insights",
+          "navy",
+          "window",
+        ),
+        ...e(
+          canOpenCommand(roles),
+          "/command",
+          "militaryTech",
+          "navy",
+          "command",
+        ),
         ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
-        ...e(canOpenRegister(roles), "/register", "folderOpen", "navy", "register", true),
-        ...e(canOpenRegister(roles), "/register/dispatches", "campaign", "red", "dispatches"),
-        ...e(isCommittee(roles) || canMonitorPerformance(roles), "/committee", "monitoring", "navy", "committee"),
-        ...e(canOpenProgrammes(roles), "/programmes", "schedule", "orange", "programmes"),
+        ...e(
+          canOpenRegister(roles),
+          "/register",
+          "folderOpen",
+          "navy",
+          "register",
+          true,
+        ),
+        ...e(
+          canOpenRegister(roles),
+          "/register/dispatches",
+          "campaign",
+          "red",
+          "dispatches",
+        ),
+        ...e(
+          isCommittee(roles) || canMonitorPerformance(roles),
+          "/committee",
+          "monitoring",
+          "navy",
+          "committee",
+        ),
+        ...e(
+          canOpenProgrammes(roles),
+          "/programmes",
+          "schedule",
+          "orange",
+          "programmes",
+        ),
       ],
     },
     {
@@ -133,7 +222,13 @@ export function navGroups(
         ...e(true, "/strategies", "insights", "purple", "strategies", true),
         ...e(canOpenSnacr(roles), "/snacr", "analytics", "purple", "snacr"),
         ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
-        ...e(canOpenProgrammes(roles), "/programmes", "schedule", "orange", "programmes"),
+        ...e(
+          canOpenProgrammes(roles),
+          "/programmes",
+          "schedule",
+          "orange",
+          "programmes",
+        ),
         ...e(false, "/drills", "militaryTech", "amber", "drills"),
         ...e(knowledge, "/memory", "historyEdu", "purple", "lessons"),
       ],
@@ -145,9 +240,21 @@ export function navGroups(
       tone: "red",
       label: t("nav.group.disasters"),
       items: [
-        ...e(canOpenDisasters(roles), "/disasters", "warning", "red", "disasters"),
+        ...e(
+          canOpenDisasters(roles),
+          "/disasters",
+          "warning",
+          "red",
+          "disasters",
+        ),
         ...e(canOpenAxes(roles), "/axes", "crisisAlert", "red", "axes"),
-        ...e(canOpenCoastal(roles), "/coastal", "healthAndSafety", "sky", "coastal"),
+        ...e(
+          canOpenCoastal(roles),
+          "/coastal",
+          "healthAndSafety",
+          "sky",
+          "coastal",
+        ),
         ...e(false, "/drills", "militaryTech", "amber", "drills"),
       ],
     },
@@ -157,10 +264,34 @@ export function navGroups(
       tone: "sky",
       label: t("nav.group.alerts"),
       items: [
-        ...e(canUseNotifications(roles), "/notifications", "campaign", "sky", "notifications"),
-        ...e(canReviewWeatherSuggestions(roles), "/weather/suggestions", "partlyCloudyDay", "sky", "weatherSuggestions"),
-        ...e(editsTips, "/safety-tips", "healthAndSafety", "green", "safetyTips"),
-        ...e(editsTips, "/emergency-guide", "medicalServices", "red", "emergencyGuide"),
+        ...e(
+          canUseNotifications(roles),
+          "/notifications",
+          "campaign",
+          "sky",
+          "notifications",
+        ),
+        ...e(
+          canReviewWeatherSuggestions(roles),
+          "/weather/suggestions",
+          "partlyCloudyDay",
+          "sky",
+          "weatherSuggestions",
+        ),
+        ...e(
+          editsTips,
+          "/safety-tips",
+          "healthAndSafety",
+          "green",
+          "safetyTips",
+        ),
+        ...e(
+          editsTips,
+          "/emergency-guide",
+          "medicalServices",
+          "red",
+          "emergencyGuide",
+        ),
         ...e(canHandleContact(roles), "/contact", "mail", "sky", "contact"),
       ],
     },
@@ -171,9 +302,27 @@ export function navGroups(
       label: t("nav.group.people"),
       items: [
         ...e(reads, "/volunteers", "volunteerActivism", "green", "volunteers"),
-        ...e(canReviewDoctors(roles), "/doctors", "stethoscope", "purple", "doctors"),
-        ...e(canManageMedicalCommittee(identity), "/medical-committee", "groups", "purple", "medicalCommittee"),
-        ...e(canReadRewards(roles), "/rewards", "militaryTech", "pink", "rewards"),
+        ...e(
+          canReviewDoctors(roles),
+          "/doctors",
+          "stethoscope",
+          "purple",
+          "doctors",
+        ),
+        ...e(
+          canManageMedicalCommittee(identity),
+          "/medical-committee",
+          "groups",
+          "purple",
+          "medicalCommittee",
+        ),
+        ...e(
+          canReadRewards(roles),
+          "/rewards",
+          "militaryTech",
+          "pink",
+          "rewards",
+        ),
       ],
     },
     {
@@ -183,9 +332,27 @@ export function navGroups(
       label: t("nav.group.orgs"),
       items: [
         ...e(orgs, "/orgs", "apartment", "navy", "orgs", true),
-        ...e(orgs, "/orgs/certificates", "workspacePremium", "amber", "certificates"),
-        ...e(orgs, "/orgs/certificates/counter", "verified", "green", "counter"),
-        ...e(orgs, "/orgs/prevention", "policy", "purple", "prevention"),
+        ...e(
+          canReviewOrgs(roles),
+          "/orgs/certificates",
+          "workspacePremium",
+          "amber",
+          "certificates",
+        ),
+        ...e(
+          orgs,
+          "/orgs/certificates/counter",
+          "verified",
+          "green",
+          "counter",
+        ),
+        ...e(
+          canReviewOrgs(roles),
+          "/orgs/prevention",
+          "policy",
+          "purple",
+          "prevention",
+        ),
       ],
     },
     {
@@ -195,8 +362,20 @@ export function navGroups(
       label: t("nav.group.knowledge"),
       items: [
         ...e(analytics, "/analytics", "analytics", "navy", "analytics"),
-        ...e(analytics, "/reports-library", "folderOpen", "slate", "reportsLibrary"),
-        ...e(reads, "/report-templates", "description", "purple", "reportTemplates"),
+        ...e(
+          analytics,
+          "/reports-library",
+          "folderOpen",
+          "slate",
+          "reportsLibrary",
+        ),
+        ...e(
+          reads,
+          "/report-templates",
+          "description",
+          "purple",
+          "reportTemplates",
+        ),
         ...e(knowledge, "/memory", "historyEdu", "purple", "memory"),
         ...e(knowledge, "/library", "menuBook", "purple", "library"),
       ],
@@ -209,23 +388,79 @@ export function navGroups(
       items: [
         ...e(canOpenLayers(roles), "/layers", "layers", "teal", "layers"),
         ...e(reads, "/references", "menuBook", "slate", "references"),
-        ...e(canReadPlatformSettings(roles), "/settings", "settings", "slate", "settings", true),
-        ...e(reads || canEditAiSettings(identity), "/settings/ai", "smartToy", "slate", "aiSettings", true),
-        ...e(canReadModelCards(identity), "/settings/ai/models", "science", "slate", "modelCards"),
-        ...e(canOpenLearning(identity), "/settings/ai/learning", "science", "slate", "learning"),
-        ...e(canManageAccounts(identity), "/accounts", "manageAccounts", "slate", "accounts"),
-        ...e(canReadScopedAudit(identity), "/audit", "policy", "slate", "audit"),
-        ...e(canOpenBreakGlass(identity), "/break-glass", "lockOpen", "red", "breakGlass"),
-        ...e(canManagePermissions(identity), "/permissions", "adminPanelSettings", "slate", "permissions"),
+        ...e(
+          canReadPlatformSettings(roles),
+          "/settings",
+          "settings",
+          "slate",
+          "settings",
+          true,
+        ),
+        ...e(
+          reads || canEditAiSettings(identity),
+          "/settings/ai",
+          "smartToy",
+          "slate",
+          "aiSettings",
+          true,
+        ),
+        ...e(
+          canReadModelCards(identity),
+          "/settings/ai/models",
+          "science",
+          "slate",
+          "modelCards",
+        ),
+        ...e(
+          canOpenLearning(identity),
+          "/settings/ai/learning",
+          "science",
+          "slate",
+          "learning",
+        ),
+        ...e(
+          canManageAccounts(identity),
+          "/accounts",
+          "manageAccounts",
+          "slate",
+          "accounts",
+        ),
+        ...e(
+          canReadScopedAudit(identity),
+          "/audit",
+          "policy",
+          "slate",
+          "audit",
+        ),
+        ...e(
+          canOpenBreakGlass(identity),
+          "/break-glass",
+          "lockOpen",
+          "red",
+          "breakGlass",
+        ),
+        ...e(
+          canManagePermissions(identity),
+          "/permissions",
+          "adminPanelSettings",
+          "slate",
+          "permissions",
+        ),
       ],
     },
   ];
   // The items the system administrator added (their own page, or a page of the platform not already listed).
   const own = groups.find((g) => g.key === "strategies");
   if (own) {
-    own.items.push(...strategies.filter((s) => !own.items.some((i) => i.to === s.to)));
+    own.items.push(
+      ...strategies.filter((s) => !own.items.some((i) => i.to === s.to)),
+    );
     // The overview alone is no menu, except for the administrator who adds the items.
-    if (own.items.length === 1 && !(identity.national && roles.includes("sysadmin"))) own.items = [];
+    if (
+      own.items.length === 1 &&
+      !(identity.national && roles.includes("sysadmin"))
+    )
+      own.items = [];
   }
   return groups.filter((g) => g.items.length > 0);
 }
@@ -240,7 +475,9 @@ function NavItem({ entry }: { entry: NavEntry }) {
 }
 
 function isActive(group: NavGroup, pathname: string): boolean {
-  return group.items.some((i) => matchPath({ path: i.to, end: i.end ?? false }, pathname) !== null);
+  return group.items.some(
+    (i) => matchPath({ path: i.to, end: i.end ?? false }, pathname) !== null,
+  );
 }
 
 const OPEN_DELAY = 90;
@@ -282,7 +519,8 @@ export function Disclosure({
   useEffect(() => {
     if (!open) return;
     const outside = (ev: PointerEvent) => {
-      if (root.current && !root.current.contains(ev.target as Node)) setOpen(false);
+      if (root.current && !root.current.contains(ev.target as Node))
+        setOpen(false);
     };
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
@@ -292,8 +530,16 @@ export function Disclosure({
       ref={root}
       className={className}
       data-open={open || undefined}
-      onPointerEnter={hover ? (ev) => ev.pointerType === "mouse" && later(true, OPEN_DELAY) : undefined}
-      onPointerLeave={hover ? (ev) => ev.pointerType === "mouse" && later(false, CLOSE_DELAY) : undefined}
+      onPointerEnter={
+        hover
+          ? (ev) => ev.pointerType === "mouse" && later(true, OPEN_DELAY)
+          : undefined
+      }
+      onPointerLeave={
+        hover
+          ? (ev) => ev.pointerType === "mouse" && later(false, CLOSE_DELAY)
+          : undefined
+      }
       onKeyDown={(ev) => {
         if (ev.key === "Escape" && open) {
           ev.stopPropagation();
@@ -372,8 +618,15 @@ function GroupMenu({ group, rail }: { group: NavGroup; rail: boolean }) {
 }
 
 /** In one flat row, a page the strategies gather from another group is shown once, under its own name and place. */
-function firstOf(groups: readonly NavGroup[], entry: NavEntry, group: NavGroup): boolean {
-  return group.key !== "strategies" || !groups.some((g) => g !== group && g.items.some((i) => i.to === entry.to));
+function firstOf(
+  groups: readonly NavGroup[],
+  entry: NavEntry,
+  group: NavGroup,
+): boolean {
+  return (
+    group.key !== "strategies" ||
+    !groups.some((g) => g !== group && g.items.some((i) => i.to === entry.to))
+  );
 }
 
 /** The main navigation in the chosen shape; the position only changes where the shell puts it. */
@@ -389,12 +642,19 @@ export function MainNav({
   const { t } = useTranslation();
   const side = position !== "top";
   return (
-    <nav aria-label={t("nav.main")} className={`main-nav main-nav--${shape} main-nav--${side ? "side" : "top"}`}>
+    <nav
+      aria-label={t("nav.main")}
+      className={`main-nav main-nav--${shape} main-nav--${side ? "side" : "top"}`}
+    >
       {shape === "grouped"
         ? groups.map((g) => <GroupMenu key={g.key} group={g} rail={side} />)
         : groups.map((g) =>
             side ? (
-              <section key={g.key} className="main-nav__section" aria-label={g.label}>
+              <section
+                key={g.key}
+                className="main-nav__section"
+                aria-label={g.label}
+              >
                 <p className="main-nav__heading" aria-hidden="true">
                   {g.label}
                 </p>
@@ -403,7 +663,9 @@ export function MainNav({
                 ))}
               </section>
             ) : (
-              g.items.filter((entry) => firstOf(groups, entry, g)).map((entry) => <NavItem key={entry.to} entry={entry} />)
+              g.items
+                .filter((entry) => firstOf(groups, entry, g))
+                .map((entry) => <NavItem key={entry.to} entry={entry} />)
             ),
           )}
     </nav>

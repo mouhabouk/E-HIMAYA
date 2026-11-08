@@ -1353,7 +1353,8 @@
       "maintenancePhotoChecking": "Being checked",
       "activities": "Drills and events",
       "noActivities": "No drill or event recorded.",
-      "maintenanceLog": "Maintenance log"
+      "maintenanceLog": "Maintenance log",
+      "restricted": "Operations room view: only what an intervention needs (card, safety team and its phones, hazardous materials, equipment, plans and safety data sheets). Visit reports, recommendations, certificates, the safety file and portal members belong to the prevention service."
     },
     "review": {
       "title": "Registration review",
