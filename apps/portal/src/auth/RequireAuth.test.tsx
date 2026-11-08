@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { LanguageSwitch, SignInButtons } from "../components/Layout";
 import { fakeAuth, renderApp } from "../test/render";
@@ -20,7 +20,8 @@ describe("RequireAuth", () => {
     const signIn = vi.fn(() => Promise.resolve());
     renderApp(<Protected />, { auth: { ...fakeAuth(null), signIn }, path: "/invite/tok?x=1", lang: "fr" });
     await screen.findByText("Redirection vers la page de connexion…");
-    expect(signIn).toHaveBeenCalledWith("/invite/tok?x=1", "fr", undefined);
+    // The redirect runs in an effect after the message is painted: wait for it rather than racing it.
+    await waitFor(() => expect(signIn).toHaveBeenCalledWith("/invite/tok?x=1", "fr", undefined));
   });
 });
 
