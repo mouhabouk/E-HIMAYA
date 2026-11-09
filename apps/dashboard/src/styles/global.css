@@ -7920,6 +7920,17 @@ button.nav-card:hover {
 .sched-panel {
   margin-bottom: 12px;
 }
+
+/* The follow-up reason is a text field like the others (a 24px touch target at least, WCAG 2.5.8). */
+.sched-panel__follow input {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+}
 .rate {
   display: inline-flex;
   align-items: center;
