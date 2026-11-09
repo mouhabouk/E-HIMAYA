@@ -1512,6 +1512,13 @@ CATALOGUE: tuple[Spec, ...] = (
         flags="national fixed",
     ),
     page(
+        "sql_console",
+        "system",
+        "/sql",
+        ("نافذة SQL", "Console SQL", "SQL console"),
+        flags="national fixed",
+    ),
+    page(
         "changes",
         "system",
         "/changes",

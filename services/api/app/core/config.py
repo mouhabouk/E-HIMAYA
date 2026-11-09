@@ -3,6 +3,7 @@
 import base64
 import binascii
 import ipaddress
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal
@@ -425,6 +426,15 @@ class Settings(BaseSettings):
     # Loki (profile "logs" of compose.prod.yml): the logs of every container, read by the system administrator's
     # window (/api/v1/admin/logs). Unset: the window says the collection is not running.
     loki_url: str | None = None
+    # The SQL window of the system administrator (Yamen, 2026-11-09; docs/sql/console.md): read-only queries on the
+    # databases named here, "name=postgresql://user:password@host:port/db" separated by commas (URL-encode a comma
+    # in a password as %2C). Empty: one target "main" on DATABASE_URL. Give it a role that may only SELECT
+    # (docs/sql/console.md §3); every query also runs in a READ ONLY transaction with the limits below.
+    sql_console_enabled: bool = True
+    sql_console_targets: Annotated[list[str], NoDecode] = Field(default_factory=list)
+    sql_console_timeout_s: int = Field(default=15, ge=1, le=300)
+    sql_console_max_rows: int = Field(default=1000, ge=10, le=10000)
+    sql_console_export_max_rows: int = Field(default=50000, ge=100, le=500000)
     db_pool_size: int = 10
     db_max_overflow: int = 20
 
@@ -622,6 +632,18 @@ class Settings(BaseSettings):
     def _split_csv(cls, value: object) -> object:
         if isinstance(value, str):
             return [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
+        return value
+
+    @field_validator("sql_console_targets", mode="before")
+    @classmethod
+    def _split_sql_targets(cls, value: object) -> object:
+        if isinstance(value, str):
+            value = [item.strip() for item in value.split(",") if item.strip()]
+        if isinstance(value, list):
+            for item in value:
+                name, sep, url = str(item).partition("=")
+                if not sep or not re.fullmatch(r"[a-z][a-z0-9_-]{0,31}", name.strip()) or "://" not in url:
+                    raise ValueError("SQL_CONSOLE_TARGETS: each entry is name=postgresql://user:password@host:port/db")
         return value
 
     @field_validator("certificate_previous_public_keys", mode="before")

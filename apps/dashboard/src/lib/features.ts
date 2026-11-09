@@ -81,6 +81,7 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/accounts", "accounts"],
   ["/audit", "audit"],
   ["/system-logs", "system_logs"],
+  ["/sql", "sql_console"],
   ["/changes", "changes"],
   ["/break-glass", "break_glass"],
   ["/permissions", "permissions"],
