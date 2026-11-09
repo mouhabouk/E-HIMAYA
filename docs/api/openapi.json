@@ -60230,6 +60230,35 @@
         ]
       }
     },
+    "/api/v1/admin/dev/repo-map": {
+      "get": {
+        "description": "Nodes (id, label, group, files, loc, deg), edges (s, t, k, w, via) and the number of API routes.",
+        "operationId": "repo_map_api_v1_admin_dev_repo_map_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Repo Map Api V1 Admin Dev Repo Map Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Repo Map",
+        "tags": [
+          "devtools"
+        ]
+      }
+    },
     "/api/v1/admin/logs": {
       "get": {
         "operationId": "read_logs_api_v1_admin_logs_get",

@@ -9,6 +9,7 @@ import { Icon, IconTile, type IconName, type Tone } from "./Icon";
 import type { StaffIdentity as Identity } from "../auth/identity";
 import { canReadSystemTrail } from "../lib/systemApi";
 import { canUseSqlConsole } from "../lib/sqlApi";
+import { canUseDevTools } from "../lib/repoMap";
 import {
   canEditAiSettings,
   canReadModelCards,
@@ -451,13 +452,6 @@ export function navGroups(
           "changes",
         ),
         ...e(
-          canUseSqlConsole(identity),
-          "/sql",
-          "database",
-          "slate",
-          "sqlConsole",
-        ),
-        ...e(
           canOpenBreakGlass(identity),
           "/break-glass",
           "lockOpen",
@@ -471,6 +465,17 @@ export function navGroups(
           "slate",
           "permissions",
         ),
+      ],
+    },
+    // The «تطوير النظام» menu (Yamen, 2026-11-09): the SQL window and the system map, for the national administrator.
+    {
+      key: "dev",
+      icon: "code",
+      tone: "slate",
+      label: t("nav.group.dev"),
+      items: [
+        ...e(canUseSqlConsole(identity), "/sql", "database", "slate", "sqlConsole"),
+        ...e(canUseDevTools(identity), "/dev/map", "hub", "navy", "repoMap"),
       ],
     },
   ];
