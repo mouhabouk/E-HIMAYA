@@ -104,6 +104,7 @@ export function navGroups(
         ...e(reads, "/reports", "description", "red", "reports"),
         ...e(reads, "/incidents", "localFireDepartment", "red", "incidents"),
         ...e(reads, "/map", "map", "teal", "map"),
+        ...e(reads, "/map/room", "monitoring", "red", "opsRoom"),
         ...e(reads, "/streams", "videocam", "red", "streams"),
         ...e(reads, "/calls", "call", "green", "calls"),
         ...e(reads, "/sensors", "water", "sky", "sensors"),

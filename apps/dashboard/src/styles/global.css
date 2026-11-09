@@ -10260,3 +10260,452 @@ body::after {
     display: none;
   }
 }
+
+/* ---------- Operations room wall view (map/room) ----------
+   Deliberately dark in every theme: a wall display read from across the room. Colours are the design system's
+   dark palette (docs/design-system.md, "Dark theme"). */
+.ops-room {
+  --or-page: #0b1122;
+  --or-card: #141c33;
+  --or-card-2: #18223d;
+  --or-line: #26304d;
+  --or-ink: #e8ecf5;
+  --or-muted: #a6afc4;
+  --or-faint: #6b7593;
+  --or-navy: #8fa8ff;
+  --or-green: #4cc772;
+  --or-orange: #ffa733;
+  color-scheme: dark;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--or-page);
+  color: var(--or-ink);
+  border-radius: var(--radius);
+  padding: 10px;
+  min-block-size: calc(100vh - 140px);
+}
+.ops-room .page-title h1 {
+  color: var(--or-ink);
+  font-size: 1.15rem;
+}
+.ops-room__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  background: var(--or-card);
+  border: 1px solid var(--or-line);
+  border-radius: 12px;
+  padding: 6px 12px;
+}
+.ops-room__head .page-title {
+  margin: 0;
+  flex: 1;
+}
+.ops-room__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--or-green);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.ops-room__live i {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--or-green);
+  animation: ops-room-pulse 2s infinite;
+}
+@keyframes ops-room-pulse {
+  0% { box-shadow: 0 0 0 0 rgb(76 199 114 / 60%); }
+  70% { box-shadow: 0 0 0 8px rgb(76 199 114 / 0%); }
+  100% { box-shadow: 0 0 0 0 rgb(76 199 114 / 0%); }
+}
+.ops-room__clock {
+  color: var(--or-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+.ops-room__back {
+  color: var(--or-navy);
+  font-size: 0.85rem;
+}
+.ops-room__grid {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 280px;
+  gap: 10px;
+  flex: 1;
+  min-block-size: 0;
+}
+.ops-room__col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-inline-size: 0;
+}
+.ops-room__panel {
+  background: var(--or-card);
+  border: 1px solid var(--or-line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ops-room__panel h2 {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--or-ink);
+}
+.ops-room__empty {
+  margin: 0;
+  color: var(--or-muted);
+  font-size: 0.85rem;
+}
+.ops-room__kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+.ops-room__kpis div {
+  background: var(--or-card-2);
+  border: 1px solid var(--or-line);
+  border-radius: 8px;
+  padding: 7px 9px;
+}
+.ops-room__kpis dt {
+  color: var(--or-muted);
+  font-size: 0.78rem;
+}
+.ops-room__kpis dd {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ops-room__chart {
+  margin: 0;
+}
+.ops-room__chart svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 104px;
+  /* The time axis runs left to right in every language, like the 24 h figures it shows. */
+  direction: ltr;
+}
+.ops-room__chart figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--or-faint);
+  direction: ltr;
+}
+.ops-room__chart figcaption span:nth-child(2) {
+  color: var(--or-orange);
+}
+.ops-room__bars,
+.ops-room__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ops-room__bars li {
+  display: grid;
+  grid-template-columns: 96px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+.ops-room__track {
+  block-size: 7px;
+  border-radius: 4px;
+  background: var(--or-card-2);
+  overflow: hidden;
+}
+.ops-room__track i {
+  display: block;
+  block-size: 100%;
+  border-radius: 4px;
+}
+.ops-room__n {
+  text-align: end;
+  color: var(--or-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ops-room__stage {
+  position: relative;
+  border: 1px solid var(--or-line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #070c19;
+  min-block-size: 560px;
+}
+/* Above MapLibre's own `.maplibregl-map { position: relative }`, which would leave the map without a height. */
+.ops-room__stage > .ops-room__map {
+  position: absolute;
+  inset: 0;
+}
+.ops-room__tags {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-start: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  z-index: 2;
+}
+.ops-room__tags span,
+.ops-room__tools button {
+  background: rgb(20 28 51 / 88%);
+  border: 1px solid var(--or-line);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: var(--or-ink);
+}
+.ops-room__tags b {
+  font-variant-numeric: tabular-nums;
+  color: var(--or-orange);
+}
+.ops-room__tools {
+  position: absolute;
+  inset-block-end: 28px;
+  inset-inline-start: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.ops-room__tools button {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+}
+.ops-room__tools button[aria-pressed="true"] {
+  background: rgb(143 168 255 / 22%);
+  color: var(--or-navy);
+  border-color: rgb(143 168 255 / 50%);
+}
+.ops-room__card {
+  position: absolute;
+  inset-block-start: 48px;
+  inset-inline-start: 10px;
+  inline-size: min(270px, calc(100% - 20px));
+  z-index: 3;
+  background: rgb(20 28 51 / 95%);
+  border: 1px solid rgb(255 107 107 / 45%);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 45%);
+}
+.ops-room__card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ops-room__card-head b {
+  flex: 1;
+}
+.ops-room__card-head button {
+  background: none;
+  border: 0;
+  color: var(--or-faint);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.ops-room__card dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  margin: 0;
+  font-size: 0.82rem;
+}
+.ops-room__card dt {
+  color: var(--or-muted);
+}
+.ops-room__card dd {
+  margin: 0;
+}
+.ops-room__card a {
+  color: var(--or-navy);
+  font-size: 0.82rem;
+}
+.ops-room__mono {
+  font-family: var(--mono);
+}
+.ops-room__pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: rgb(255 255 255 / 8%);
+}
+.ops-room__ring {
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: 50%;
+  border: 2px solid #ff6b6b;
+  box-shadow: 0 0 18px #ff6b6b;
+  animation: ops-room-pulse 2s infinite;
+  pointer-events: none;
+}
+.ops-room__layers {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ops-room__layers label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.ops-room__swatch {
+  inline-size: 11px;
+  block-size: 11px;
+  border-radius: 3px;
+  flex: none;
+}
+.ops-room__toggle {
+  appearance: none;
+  inline-size: 28px;
+  block-size: 16px;
+  border-radius: 999px;
+  background: #2a3456;
+  position: relative;
+  margin: 0;
+  flex: none;
+  cursor: pointer;
+}
+.ops-room__toggle::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: 50%;
+  background: var(--or-muted);
+  transition: inset-inline-start 0.15s;
+}
+.ops-room__toggle:checked {
+  background: rgb(143 168 255 / 35%);
+}
+.ops-room__toggle:checked::after {
+  inset-inline-start: 14px;
+  background: var(--or-navy);
+}
+.ops-room :focus-visible {
+  outline: 2px solid var(--or-orange);
+  outline-offset: 2px;
+}
+.ops-room__rings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.ops-room__ring-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--or-muted);
+}
+.ops-room__ring-tile svg {
+  inline-size: 68px;
+  block-size: 68px;
+}
+.ops-room__ring-value {
+  position: absolute;
+  inset-block-start: 24px;
+  inset-inline: 0;
+  color: var(--or-ink);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.ops-room__ring-tile b {
+  color: var(--or-ink);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.ops-room__list button,
+.ops-room__alert {
+  inline-size: 100%;
+  display: grid;
+  grid-template-columns: 4px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  text-align: start;
+  background: var(--or-card-2);
+  border: 1px solid var(--or-line);
+  border-radius: 8px;
+  padding: 6px 8px 6px 6px;
+  color: var(--or-ink);
+  font: inherit;
+}
+.ops-room__list button {
+  cursor: pointer;
+}
+.ops-room__list button[aria-pressed="true"] {
+  border-color: rgb(255 167 51 / 60%);
+}
+.ops-room__list i {
+  align-self: stretch;
+  border-radius: 2px;
+}
+.ops-room__list b {
+  display: block;
+  font-size: 0.82rem;
+}
+.ops-room__list small {
+  color: var(--or-muted);
+  font-size: 0.75rem;
+}
+.ops-room__list time {
+  color: var(--or-faint);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+.ops-room .maplibregl-ctrl-group {
+  background: rgb(20 28 51 / 92%);
+}
+.ops-room .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+.ops-room .maplibregl-ctrl-attrib {
+  background: rgb(11 17 34 / 75%);
+  color: var(--or-faint);
+}
+.ops-room .maplibregl-ctrl-attrib a {
+  color: var(--or-muted);
+}
+@media (max-width: 1100px) {
+  .ops-room__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ops-room__stage {
+    order: -1;
+    min-block-size: 60vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ops-room__live i,
+  .ops-room__ring {
+    animation: none;
+  }
+}

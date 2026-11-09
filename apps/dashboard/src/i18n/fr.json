@@ -9,6 +9,7 @@
     "home": "Indicateurs",
     "reports": "Signalements",
     "map": "Carte en direct",
+    "opsRoom": "Salle des opérations",
     "incidents": "Incidents",
     "aiSettings": "Réglages IA",
     "orgs": "Établissements",
@@ -8799,5 +8800,53 @@
       "feedback": "Avis sur l'application",
       "forecast": "Prévisions"
     }
+  },
+  "opsRoom": {
+    "title": "Salle des opérations",
+    "live": "En direct",
+    "back": "Carte en direct",
+    "today": "Aujourd'hui",
+    "kpi": {
+      "total": "Signalements du jour",
+      "open": "Signalements ouverts",
+      "highPriority": "Priorité élevée",
+      "firstResponse": "Première réponse moyenne"
+    },
+    "last24": "Signalements des dernières 24 heures",
+    "chart": {
+      "label": "Signalements heure par heure sur les dernières 24 heures, {{total}} au total",
+      "ago24": "Il y a 24 h",
+      "peak": "Pic de {{count}} en une heure",
+      "now": "Maintenant"
+    },
+    "byCategory": "Signalements du jour par catégorie",
+    "none": "Rien pour le moment",
+    "loading": "Chargement…",
+    "mapLabel": "Carte 3D de la salle des opérations : signalements, foyers et unités",
+    "tag": {
+      "open": "Signalements ouverts",
+      "units": "Unités sur la carte"
+    },
+    "home": "Ma zone",
+    "card": {
+      "label": "Signalement sélectionné",
+      "close": "Fermer la fiche",
+      "code": "Code de suivi",
+      "status": "Statut",
+      "time": "Signalé à",
+      "priority": "Priorité",
+      "open": "Ouvrir le signalement"
+    },
+    "layers": {
+      "title": "Couches de la carte",
+      "reports": "Signalements, dernières 24 heures",
+      "hotspots": "Foyers 3D ({{days}} derniers jours)",
+      "units": "Unités de la protection civile",
+      "buildings": "Bâtiments 3D"
+    },
+    "readiness": "Disponibilité des moyens",
+    "openReports": "Signalements ouverts par priorité",
+    "alerts": "Alertes actives",
+    "noAlerts": "Aucune alerte active"
   }
 }
