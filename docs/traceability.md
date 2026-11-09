@@ -66,7 +66,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | NFR-08 | اللغات والاتجاه | التطبيق والبوابة: العربية والفرنسية والإنجليزية؛ اللوحة: العربية والفرنسية. دعم كامل لـ RTL و LTR (التخطيط، ا… | `apps/mobile/test/widgets/app_flow_test.dart` |
 | NFR-09 | سهولة الاستخدام والنفاذ | بلوغ إرسال بلاغ SOS في 3 لمسات على الأكثر. احترام WCAG 2.2 المستوى AA. أحجام لمس 48 نقطة على الأقل. وضع داكن. | `apps/mobile/test/widgets/accessibility_test.dart`<br>`apps/mobile/test/widgets/app_flow_test.dart`<br>`apps/mobile/test/widgets/read_aloud_flow_test.dart`<br>`apps/mobile/test/widgets/simple_mode_flow_test.dart` |
 | NFR-12 | الاستعادة | RPO أقل من 5 دقائق و RTO أقل من ساعة لمسار البلاغات. اختبار استعادة فصلي. | `infra/backup/drill.sh`<br>`infra/monitoring/alerts.test.yml`<br>`services/api/tests/test_resilience.py` |
-| NFR-13 | المراقبة | مقاييس وسجلات وتتبع موزع لكل الخدمات، مع تنبيهات تشغيلية للفريق التقني. | `apps/dashboard/src/pages/SystemTrail.test.tsx`<br>`infra/monitoring/alerts.test.yml`<br>`services/api/tests/test_syslogs.py` |
+| NFR-13 | المراقبة | مقاييس وسجلات وتتبع موزع لكل الخدمات، مع تنبيهات تشغيلية للفريق التقني. | `apps/dashboard/src/pages/SqlConsole.test.tsx`<br>`apps/dashboard/src/pages/SystemTrail.test.tsx`<br>`infra/monitoring/alerts.test.yml`<br>`services/api/tests/test_sql_console.py`<br>`services/api/tests/test_syslogs.py` |
 | UC-01 | use case | بلاغ مواطن مسجّل عن حريق | `services/api/tests/test_reports.py`<br>`services/api/tests/test_scenarios_e2e.py` |
 | UC-02 | use case | بلاغ مجهول | `services/api/tests/test_reports.py` |
 | UC-04 | use case | تنبيه جغرافي عن أمطار غزيرة | `services/api/tests/test_weather.py` |
