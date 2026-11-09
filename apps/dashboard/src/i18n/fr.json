@@ -8766,7 +8766,7 @@
       "search": "Chercher une table ou une colonne",
       "view": "vue",
       "first100": "100 premières lignes",
-      "hint": "Un clic sur une table affiche ses colonnes, un double clic écrit une requête pour ses 100 premières lignes. Un clic sur une colonne insère son nom."
+      "hint": "Un clic sur une table affiche son contenu dans le résultat et ses colonnes dans l'arbre. Un clic sur une colonne insère son nom."
     },
     "editor": {
       "title": "Requête",
@@ -8825,6 +8825,17 @@
       "delete": "Supprimer",
       "confirmDelete": "Supprimer cette requête de votre historique ? Ses exécutions restent au journal d'audit.",
       "note": "L'historique est votre carnet : modifiez-le ou supprimez-le librement. Le journal d'audit scellé garde chaque exécution et son texte."
+    },
+    "view": {
+      "columnSearch": "Chercher une colonne par son nom",
+      "shown": "{{rows}} lignes affichées sur {{total}} · {{columns}} colonnes sur {{allColumns}}",
+      "clear": "Effacer les filtres",
+      "applyToTable": "Appliquer à toute la table",
+      "hint": "Saisissez sous le nom d'une colonne pour filtrer les lignes (NULL pour les cellules vides) ; cliquez sur le nom pour trier. Le filtre porte sur les lignes affichées.",
+      "hintTable": "Filtres et tri portent sur les lignes affichées ; « Appliquer à toute la table » les envoie à la base, qui cherche dans toute la table (jusqu'à {{limit}} lignes).",
+      "sort": "Cliquer pour trier (croissant, puis décroissant)",
+      "filter": "Filtrer la colonne {{column}}",
+      "filterShort": "Filtrer…"
     }
   },
   "changes": {

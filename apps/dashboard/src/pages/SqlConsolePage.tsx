@@ -10,6 +10,11 @@ import { useDebounced, useFormat } from "../lib/hooks";
 import { saveDownload } from "../lib/layersApi";
 import {
   resultAsTsv,
+  sqlIdent,
+  tableQuery,
+  viewRows,
+  type ColumnFilters,
+  type ResultSort,
   sqlCellText,
   sqlKeys,
   statementAt,
@@ -32,8 +37,6 @@ const EXPORTS: { format: SqlExportFormat; label: string; icon: IconName }[] = [
   { format: "md", label: "Markdown", icon: "description" },
 ];
 const VIEWS: SqlHistoryView[] = ["all", "pinned", "errors"];
-const ident = (name: string) =>
-  /^[a-z_][a-z0-9_]*$/.test(name) ? name : `"${name.replace(/"/g, '""')}"`;
 
 function problemOf(error: unknown): SqlProblem | null {
   if (!(error instanceof ApiError)) return null;
@@ -82,6 +85,12 @@ export function SqlConsolePage() {
   const [search, setSearch] = useState("");
   const [tableFilter, setTableFilter] = useState("");
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  // Browsing a table (a click in the tree): its rows in the result, filtered and sorted there or by the database.
+  const [browsing, setBrowsing] = useState<{ schema: string; table: string } | null>(null);
+  const [filters, setFilters] = useState<ColumnFilters>({});
+  const [sort, setSort] = useState<ResultSort | null>(null);
+  const [columnSearch, setColumnSearch] = useState("");
+  const keepView = useRef(false);
   const [editing, setEditing] = useState<{ id: string; title: string } | null>(
     null,
   );
@@ -124,6 +133,12 @@ export function SqlConsolePage() {
     onMutate: (body) => {
       setRan(body);
       setPage(0);
+      if (!keepView.current) {
+        setFilters({});
+        setSort(null);
+        setColumnSearch("");
+      }
+      keepView.current = false;
     },
     onSuccess: (r: SqlResult) =>
       setTab(r.notices.length && !r.columns.length ? "messages" : "result"),
@@ -162,7 +177,37 @@ export function SqlConsolePage() {
         ? sql.slice(area.selectionStart, area.selectionEnd)
         : statementAt(sql, area?.selectionStart ?? sql.length));
     const statement = chosen.trim().replace(/;\s*$/, "");
-    if (statement) run.mutate({ connection: current.name, sql: statement });
+    if (!statement) return;
+    setBrowsing(null);
+    run.mutate({ connection: current.name, sql: statement });
+  };
+  const browse = (schemaName: string, table: string) => {
+    if (!current) return;
+    const statement = tableQuery(schemaName, table, [], {}, null, 100);
+    setSql(`${statement};`);
+    setBrowsing({ schema: schemaName, table });
+    run.mutate({ connection: current.name, sql: statement });
+  };
+  /** The filters and order of the table sent to the database, over the whole table. */
+  const applyToTable = () => {
+    if (!current || !browsing || !run.data) return;
+    const statement = tableQuery(
+      browsing.schema,
+      browsing.table,
+      run.data.columns.map((c) => c.name),
+      filters,
+      sort,
+      current.max_rows,
+    );
+    setSql(`${statement};`);
+    keepView.current = true;
+    run.mutate({ connection: current.name, sql: statement });
+  };
+  const toggleSort = (column: number) => {
+    setPage(0);
+    setSort((s) =>
+      s?.column !== column ? { column, desc: false } : s.desc ? null : { column, desc: true },
+    );
   };
   const onKey = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -194,10 +239,19 @@ export function SqlConsolePage() {
   const problem = problemOf(run.error);
   const where =
     problem?.position && ran ? lineOf(ran.sql, problem.position) : null;
-  const pages = result ? Math.max(1, Math.ceil(result.rows.length / PAGE)) : 1;
-  const shown = result
-    ? result.rows.slice(page * PAGE, page * PAGE + PAGE)
-    : [];
+  const viewed = useMemo(
+    () => (result ? viewRows(result.rows, filters, sort) : []),
+    [result, filters, sort],
+  );
+  const visible = useMemo(() => {
+    const f = columnSearch.trim().toLowerCase();
+    return (result?.columns ?? [])
+      .map((c, i) => ({ ...c, i }))
+      .filter((c) => !f || c.name.toLowerCase().includes(f));
+  }, [result, columnSearch]);
+  const filtering = Object.values(filters).some((f) => f.trim()) || sort !== null;
+  const pages = Math.max(1, Math.ceil(viewed.length / PAGE));
+  const shown = viewed.slice(page * PAGE, page * PAGE + PAGE);
   const lines = sql.split("\n").length;
   const filteredSchema: SqlSchema[] = useMemo(() => {
     const f = tableFilter.trim().toLowerCase();
@@ -421,14 +475,17 @@ export function SqlConsolePage() {
                               className="sql-tree__table"
                               title={tb.comment ?? undefined}
                               aria-expanded={Boolean(open[key])}
-                              onClick={() =>
-                                setOpen((o) => ({ ...o, [key]: !o[key] }))
+                              aria-current={
+                                browsing?.schema === s.name &&
+                                browsing.table === tb.name
+                                  ? "true"
+                                  : undefined
                               }
-                              onDoubleClick={() =>
-                                load(
-                                  `SELECT *\nFROM ${ident(s.name)}.${ident(tb.name)}\nLIMIT 100`,
-                                )
-                              }
+                              onClick={() => {
+                                const opening = !open[key];
+                                setOpen((o) => ({ ...o, [key]: opening }));
+                                if (opening) browse(s.name, tb.name);
+                              }}
                             >
                               <span>{tb.name}</span>
                               <span className="muted">
@@ -443,11 +500,7 @@ export function SqlConsolePage() {
                                   <button
                                     type="button"
                                     className="link-button"
-                                    onClick={() =>
-                                      load(
-                                        `SELECT *\nFROM ${ident(s.name)}.${ident(tb.name)}\nLIMIT 100`,
-                                      )
-                                    }
+                                    onClick={() => browse(s.name, tb.name)}
                                   >
                                     {t("sqlConsole.tree.first100")}
                                   </button>
@@ -457,7 +510,7 @@ export function SqlConsolePage() {
                                     <button
                                       type="button"
                                       className="sql-tree__column"
-                                      onClick={() => insert(ident(c.name))}
+                                      onClick={() => insert(sqlIdent(c.name))}
                                     >
                                       <span>{c.name}</span>
                                       <span className="sql-type">{c.type}</span>
@@ -697,6 +750,65 @@ export function SqlConsolePage() {
                     })}
                   </p>
                 )}
+                {result.columns.length > 0 && (
+                  <div className="sql-view-bar">
+                    {browsing && (
+                      <Pill tone="purple">
+                        <span dir="ltr">{`${browsing.schema}.${browsing.table}`}</span>
+                      </Pill>
+                    )}
+                    <input
+                      type="search"
+                      className="sql-search sql-view-bar__search"
+                      dir="auto"
+                      aria-label={t("sqlConsole.view.columnSearch")}
+                      placeholder={t("sqlConsole.view.columnSearch")}
+                      value={columnSearch}
+                      onChange={(e) => setColumnSearch(e.target.value)}
+                    />
+                    <span className="muted">
+                      {t("sqlConsole.view.shown", {
+                        rows: viewed.length,
+                        total: result.rows.length,
+                        columns: visible.length,
+                        allColumns: result.columns.length,
+                      })}
+                    </span>
+                    {(filtering || columnSearch) && (
+                      <button
+                        type="button"
+                        className="btn btn--small"
+                        onClick={() => {
+                          setFilters({});
+                          setSort(null);
+                          setColumnSearch("");
+                          setPage(0);
+                        }}
+                      >
+                        <Icon name="close" size={16} />
+                        {t("sqlConsole.view.clear")}
+                      </button>
+                    )}
+                    {browsing && filtering && (
+                      <button
+                        type="button"
+                        className="btn btn--small btn--primary"
+                        disabled={run.isPending}
+                        onClick={applyToTable}
+                      >
+                        <Icon name="search" size={16} />
+                        {t("sqlConsole.view.applyToTable")}
+                      </button>
+                    )}
+                  </div>
+                )}
+                {result.columns.length > 0 && (
+                  <p className="muted sql-hint">
+                    {browsing
+                      ? t("sqlConsole.view.hintTable", { limit: current?.max_rows })
+                      : t("sqlConsole.view.hint")}
+                  </p>
+                )}
                 {result.columns.length === 0 ? (
                   <p className="muted sql-empty">
                     {t("sqlConsole.result.noColumns")}
@@ -712,11 +824,58 @@ export function SqlConsolePage() {
                           <th scope="col" className="sql-table__n">
                             #
                           </th>
-                          {result.columns.map((c, i) => (
-                            <th scope="col" key={`${c.name}-${i}`}>
-                              <span>{c.name}</span>
-                              <span className="sql-type">{c.type}</span>
+                          {visible.map((c) => (
+                            <th
+                              scope="col"
+                              key={`${c.name}-${c.i}`}
+                              aria-sort={
+                                sort?.column === c.i
+                                  ? sort.desc
+                                    ? "descending"
+                                    : "ascending"
+                                  : undefined
+                              }
+                            >
+                              <button
+                                type="button"
+                                className="sql-sort"
+                                title={t("sqlConsole.view.sort")}
+                                onClick={() => toggleSort(c.i)}
+                              >
+                                <span>
+                                  {c.name}
+                                  {sort?.column === c.i
+                                    ? sort.desc
+                                      ? " ▼"
+                                      : " ▲"
+                                    : ""}
+                                </span>
+                                <span className="sql-type">{c.type}</span>
+                              </button>
                             </th>
+                          ))}
+                        </tr>
+                        <tr className="sql-filters">
+                          <td />
+                          {visible.map((c) => (
+                            <td key={`f-${c.name}-${c.i}`}>
+                              <input
+                                type="search"
+                                dir="auto"
+                                aria-label={t("sqlConsole.view.filter", {
+                                  column: c.name,
+                                })}
+                                placeholder={t("sqlConsole.view.filterShort")}
+                                value={filters[c.i] ?? ""}
+                                onChange={(e) => {
+                                  setPage(0);
+                                  setFilters((f) => ({
+                                    ...f,
+                                    [c.i]: e.target.value,
+                                  }));
+                                }}
+                              />
+                            </td>
                           ))}
                         </tr>
                       </thead>
@@ -726,7 +885,9 @@ export function SqlConsolePage() {
                             <td className="sql-table__n">
                               {page * PAGE + r + 1}
                             </td>
-                            {row.map((v, i) => (
+                            {visible.map(({ i }) => {
+                              const v = row[i];
+                              return (
                               <td
                                 key={i}
                                 dir="auto"
@@ -740,13 +901,14 @@ export function SqlConsolePage() {
                               >
                                 {sqlCellText(v)}
                               </td>
-                            ))}
+                              );
+                            })}
                           </tr>
                         ))}
                         {shown.length === 0 && (
                           <tr>
                             <td
-                              colSpan={result.columns.length + 1}
+                              colSpan={visible.length + 1}
                               className="muted"
                             >
                               {t("sqlConsole.result.noRows")}
@@ -762,8 +924,8 @@ export function SqlConsolePage() {
                     <span className="muted">
                       {t("sqlConsole.result.range", {
                         from: page * PAGE + 1,
-                        to: Math.min((page + 1) * PAGE, result.rows.length),
-                        total: result.rows.length,
+                        to: Math.min((page + 1) * PAGE, viewed.length),
+                        total: viewed.length,
                       })}
                     </span>
                     <button

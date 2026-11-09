@@ -2,7 +2,14 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../lib/api";
-import { canUseSqlConsole, resultAsTsv, statementAt, type SqlHistoryEntry } from "../lib/sqlApi";
+import {
+  canUseSqlConsole,
+  resultAsTsv,
+  statementAt,
+  tableQuery,
+  viewRows,
+  type SqlHistoryEntry,
+} from "../lib/sqlApi";
 import { fakeApi, renderApp } from "../test/render";
 import { SqlConsolePage } from "./SqlConsolePage";
 
@@ -186,6 +193,62 @@ describe("SQL window", () => {
     fireEvent.click(row.getByRole("button", { name: "حذف" }));
     await waitFor(() => expect(sqlDeleteHistory).toHaveBeenCalledWith(ENTRY.id));
     vi.restoreAllMocks();
+  });
+
+  it("filters and sorts rows by column, and writes the same filters for the database", () => {
+    const rows = [
+      ["TN-11-12", "التحرير", 19679],
+      ["TN-11-06", "الحرايرية", null],
+      ["TN-11-13", "الزهور", 35484],
+    ];
+    expect(viewRows(rows, { 1: "الح" }, null)).toEqual([rows[1]]);
+    expect(viewRows(rows, { 2: "null" }, null)).toEqual([rows[1]]);
+    expect(viewRows(rows, {}, { column: 2, desc: true }).map((r) => r[0])).toEqual(["TN-11-13", "TN-11-12", "TN-11-06"]);
+    expect(tableQuery("geo", "delegation", ["code", "name_ar", "Pop"], { 1: "o'_%", 2: "NULL" }, { column: 0, desc: true }, 1000)).toBe(
+      "SELECT *\nFROM geo.delegation\nWHERE name_ar::text ILIKE '%o''\\_\\%%'\n  AND \"Pop\" IS NULL\nORDER BY code DESC NULLS LAST\nLIMIT 1000",
+    );
+  });
+
+  it("shows a table's rows when it is clicked, then filters them by column and applies the filter to the whole table", async () => {
+    const sqlQuery = vi.fn().mockResolvedValue({
+      command: "SELECT",
+      columns: [
+        { name: "code", type: "text" },
+        { name: "name_ar", type: "text" },
+      ],
+      rows: [
+        ["TN-11-12", "التحرير"],
+        ["TN-11-06", "الحرايرية"],
+      ],
+      row_count: 2,
+      truncated: false,
+      duration_ms: 3,
+      notices: [],
+      executed_at: "2026-11-09T10:00:00Z",
+    });
+    renderApp(<SqlConsolePage />, { api: api({ sqlQuery }), lang: "ar", path: "/sql" });
+    fireEvent.click(await screen.findByRole("button", { name: /^geo/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^delegation/ }));
+    await waitFor(() =>
+      expect(sqlQuery).toHaveBeenCalledWith({ connection: "main", sql: "SELECT *\nFROM geo.delegation\nLIMIT 100" }),
+    );
+    const table = await screen.findByRole("table", { name: "نتيجة الاستعلام" });
+    expect(within(table).getByText("الحرايرية")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("بحث عن عمود بالاسم"), { target: { value: "name" } });
+    expect(within(table).queryByText("TN-11-12")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("فلترة العمود name_ar"), { target: { value: "تحر" } });
+    expect(within(table).getByText("التحرير")).toBeInTheDocument();
+    expect(within(table).queryByText("الحرايرية")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "طبّق على كامل الجدول" }));
+    await waitFor(() =>
+      expect(sqlQuery).toHaveBeenLastCalledWith({
+        connection: "main",
+        sql: "SELECT *\nFROM geo.delegation\nWHERE name_ar::text ILIKE '%تحر%'\nLIMIT 1000",
+      }),
+    );
+    expect(screen.getByLabelText("فلترة العمود name_ar")).toHaveValue("تحر");
   });
 
   it("says when the window is turned off on the server", async () => {

@@ -253,3 +253,74 @@ export function statementAt(text: string, cursor: number): string {
     meaningful[meaningful.length - 1];
   return hit ? text.slice(hit.start, hit.end).trim() : text.trim();
 }
+
+/** A name as PostgreSQL reads it: bare when it is a plain lower-case name, quoted otherwise. */
+export function sqlIdent(name: string): string {
+  return /^[a-z_][a-z0-9_]*$/.test(name) ? name : `"${name.replace(/"/g, '""')}"`;
+}
+
+/** Filters of the result's columns, by column position: the text a cell must contain ("NULL" for an empty cell). */
+export type ColumnFilters = Record<number, string>;
+export interface ResultSort {
+  column: number;
+  desc: boolean;
+}
+
+function cellMatches(value: unknown, filter: string): boolean {
+  const f = filter.trim();
+  if (!f) return true;
+  if (f.toUpperCase() === "NULL") return value === null || value === undefined;
+  if (value === null || value === undefined) return false;
+  return sqlCellText(value).toLocaleLowerCase().includes(f.toLocaleLowerCase());
+}
+
+function compare(a: unknown, b: unknown): number {
+  if (a === b) return 0;
+  if (a === null || a === undefined) return 1;
+  if (b === null || b === undefined) return -1;
+  if (typeof a === "number" && typeof b === "number") return a - b;
+  return sqlCellText(a).localeCompare(sqlCellText(b), undefined, { numeric: true });
+}
+
+/** The rows the table shows: those every column filter keeps, in the chosen order (empty cells last). */
+export function viewRows(rows: unknown[][], filters: ColumnFilters, sort: ResultSort | null): unknown[][] {
+  const active = Object.entries(filters).filter(([, f]) => f.trim());
+  const kept = active.length ? rows.filter((r) => active.every(([i, f]) => cellMatches(r[Number(i)], f))) : rows;
+  if (!sort) return kept;
+  const sorted = [...kept].sort((a, b) => {
+    const nulls = a[sort.column] === null ? 1 : 0;
+    const nullsB = b[sort.column] === null ? 1 : 0;
+    if (nulls !== nullsB) return nulls - nullsB;
+    return compare(a[sort.column], b[sort.column]) * (sort.desc ? -1 : 1);
+  });
+  return sorted;
+}
+
+const likeLiteral = (text: string) =>
+  "'%" + text.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_").replace(/'/g, "''") + "%'";
+
+/**
+ * The same filters and order applied by the database to the whole table (not only the rows already read):
+ * `column::text ILIKE '%…%'` for each filter, `IS NULL` for "NULL".
+ */
+export function tableQuery(
+  schema: string,
+  table: string,
+  columns: string[],
+  filters: ColumnFilters,
+  sort: ResultSort | null,
+  limit: number,
+): string {
+  const where = Object.entries(filters)
+    .filter(([i, f]) => f.trim() && columns[Number(i)] !== undefined)
+    .map(([i, f]) => {
+      const col = sqlIdent(columns[Number(i)] ?? "");
+      return f.trim().toUpperCase() === "NULL" ? `${col} IS NULL` : `${col}::text ILIKE ${likeLiteral(f.trim())}`;
+    });
+  const lines = [`SELECT *`, `FROM ${sqlIdent(schema)}.${sqlIdent(table)}`];
+  if (where.length) lines.push(`WHERE ${where.join("\n  AND ")}`);
+  const sorted = sort ? columns[sort.column] : undefined;
+  if (sort && sorted !== undefined) lines.push(`ORDER BY ${sqlIdent(sorted)} ${sort.desc ? "DESC" : "ASC"} NULLS LAST`);
+  lines.push(`LIMIT ${limit}`);
+  return lines.join("\n");
+}

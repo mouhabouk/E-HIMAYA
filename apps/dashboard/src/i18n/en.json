@@ -8766,7 +8766,7 @@
       "search": "Search a table or column",
       "view": "view",
       "first100": "First 100 rows",
-      "hint": "Click a table to see its columns, double-click to write a query for its first 100 rows. Click a column to insert its name."
+      "hint": "Click a table to show its rows in the result and its columns in the tree. Click a column to insert its name."
     },
     "editor": {
       "title": "Query",
@@ -8825,6 +8825,17 @@
       "delete": "Delete",
       "confirmDelete": "Delete this query from your history? Its runs stay in the audit log.",
       "note": "The history is your own notebook: edit or delete it freely. The sealed audit log keeps every run and its text."
+    },
+    "view": {
+      "columnSearch": "Search a column by name",
+      "shown": "{{rows}} of {{total}} rows shown · {{columns}} of {{allColumns}} columns",
+      "clear": "Clear filters",
+      "applyToTable": "Apply to the whole table",
+      "hint": "Type under a column's name to filter the rows (NULL for empty cells); click the name to sort. Filters apply to the rows shown.",
+      "hintTable": "Filters and sorting apply to the rows shown; \"Apply to the whole table\" sends them to the database, which searches the whole table (up to {{limit}} rows).",
+      "sort": "Click to sort ascending, then descending",
+      "filter": "Filter column {{column}}",
+      "filterShort": "Filter…"
     }
   },
   "changes": {
