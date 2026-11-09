@@ -47,7 +47,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | FR-A-046 | M | يحصل المبلّغ فورا على رقم تتبع، حتى في الوضع غير المتصل (رقم مؤقت يُثبَّت عند المزامنة). | `services/api/tests/test_reports.py` |
 | FR-A-047 | M | العمل دون اتصال: يُحفظ البلاغ ووسائطه في قاعدة محلية مشفرة ويُعاد إرساله آليا عند عودة الشبكة، مع استئناف رفع… | `apps/mobile/test/core/sync_engine_test.dart` |
 | FR-A-048 | C | عند غياب الإنترنت كليا، يقترح التطبيق إرسال ملخص البلاغ (النوع والإحداثيات) برسالة SMS إلى رقم المنصة، أو الا… | `apps/mobile/test/features/sms_fallback_test.dart`<br>`apps/mobile/test/widgets/weather_flow_test.dart` |
-| FR-A-050 | S | فتح الكاميرا وبث صورة مباشرة للحادثة نحو خادم البث (WebRTC/WHIP نحو MediaMTX)، ويرتبط كل بث بالمستعمل وبالبلا… | `services/api/tests/test_streams.py` |
+| FR-A-050 | S | فتح الكاميرا وبث صورة مباشرة للحادثة نحو خادم البث (WebRTC/WHIP نحو MediaMTX)، ويرتبط كل بث بالمستعمل وبالبلا… | `services/api/tests/test_field_news_stream.py`<br>`services/api/tests/test_streams.py` |
 | FR-A-051 | M | في النموذج الأولي يكفي تسجيل مقطع ورفعه أو بث محاكى، مع بقاء الواجهة البرمجية جاهزة للبث الحقيقي. | `apps/mobile/test/features/live_attach_test.dart` |
 | FR-A-052 | S | مؤشر واضح بأن البث جارٍ، وإيقاف بلمسة واحدة، وإرسال الموقع طوال مدة البث. | `services/api/tests/test_streams.py` |
 | FR-A-060 | M | نوعان منفصلان بصريا: إشعارات إعلامية (أنشطة الديوان، اليوم العالمي للحماية المدنية، حملات التوعية والتكوين) و… | `services/api/tests/test_notifications.py` |
@@ -71,7 +71,7 @@ tests (`# covers: FR-…` comments, docstrings, names). Do not edit by hand. A r
 | UC-02 | use case | بلاغ مجهول | `services/api/tests/test_reports.py` |
 | UC-04 | use case | تنبيه جغرافي عن أمطار غزيرة | `services/api/tests/test_weather.py` |
 | UC-05 | use case | استدعاء متطوعين | `services/api/tests/test_operations.py`<br>`services/api/tests/test_scenarios_e2e.py` |
-| UC-06 | use case | بث مباشر مع تحليل | `services/api/tests/test_streams.py` |
+| UC-06 | use case | بث مباشر مع تحليل | `services/api/tests/test_field_news_stream.py`<br>`services/api/tests/test_streams.py` |
 
 ## Not cited by any test
 

@@ -6884,6 +6884,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffLiveBack => 'Back to the mission';
 
   @override
+  String get staffNews => 'Live news from the field';
+
+  @override
+  String get staffNewsSub => 'The room sees what you see, without a mission';
+
+  @override
+  String get staffNewsHint =>
+      'The room sees it on the video wall as news from the field';
+
+  @override
+  String get staffNewsEnded => 'Stream over. The room keeps the recording.';
+
+  @override
+  String get staffNewsBack => 'Back to home';
+
+  @override
   String get calloutBySms =>
       'No internet: your answer is ready in a signed SMS. Press Send in the messaging app.';
 

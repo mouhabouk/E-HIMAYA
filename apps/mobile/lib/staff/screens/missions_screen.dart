@@ -17,6 +17,7 @@ import '../staff_models.dart';
 import 'field_flow.dart';
 import 'field_widgets.dart' show push;
 import 'mission_screen.dart';
+import 'staff_live_screen.dart';
 
 /// Home of a shift: the vehicle, its missions, and the full-screen alert of a new order (F-STF-03).
 class MissionsScreen extends ConsumerWidget {
@@ -104,6 +105,22 @@ class MissionsScreen extends ConsumerWidget {
                       child: Text(l10n.staffNoMission),
                     ),
                   for (final m in active) _MissionTile(m),
+                  // Yamen 2026-11-09: any agent on shift, the crew included, streams news from the
+                  // field without a mission.
+                  if (shift != null &&
+                      (s.me?.shows('field_missions.news') ?? true))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: NavCard(
+                        key: const Key('open-news-live'),
+                        icon: Icons.videocam,
+                        tone: Tone.red,
+                        title: l10n.staffNews,
+                        subtitle: l10n.staffNewsSub,
+                        onTap: () =>
+                            push(context, const StaffLiveScreen.news()),
+                      ),
+                    ),
                   if (done.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     SectionTitle(l10n.staffRecentMissions),

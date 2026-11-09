@@ -2,7 +2,7 @@ import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
-import { ConfidenceBadges, SimTag, SimulationBand, streamTitle } from "../components/StreamBits";
+import { ConfidenceBadges, SimTag, SimulationBand, streamSourceLabel, streamTitle } from "../components/StreamBits";
 import { AlertSoundToggle } from "../components/StreamAlertToasts";
 import { useAuth } from "../context/auth";
 import { useFormat, useGouvernorats } from "../lib/hooks";
@@ -128,7 +128,7 @@ export function StreamsPage() {
                       </NavLink>
                       {s.simulated && <SimTag />}
                     </td>
-                    <td>{t(`streams.source.${s.source}`)}</td>
+                    <td>{streamSourceLabel(t, s)}</td>
                     <td>{gouvernorats.nameOf(s.gouvernorat_code) ?? t("common.notAvailable")}</td>
                     <td>{s.started_at ? <time dateTime={s.started_at}>{fmt.time(s.started_at)}</time> : "—"}</td>
                     <td>

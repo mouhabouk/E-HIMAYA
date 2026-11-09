@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
-import { ConfidenceBadges, SimTag, streamTitle } from "../components/StreamBits";
+import { ConfidenceBadges, SimTag, streamSourceLabel, streamTitle } from "../components/StreamBits";
 import { ALERT_CONFIDENCE } from "../lib/detections";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import type { StaffStream } from "../lib/streamTypes";
@@ -153,7 +153,7 @@ export function StreamArchivePage() {
                     </Link>
                     {s.simulated && <SimTag />}
                   </td>
-                  <td>{t(`streams.source.${s.source}`)}</td>
+                  <td>{streamSourceLabel(t, s)}</td>
                   <td>{gouvernorats.nameOf(s.gouvernorat_code) ?? t("common.notAvailable")}</td>
                   <td className="num">{s.duration_s === null ? "—" : fmt.duration(s.duration_s)}</td>
                   <td>

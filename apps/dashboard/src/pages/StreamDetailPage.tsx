@@ -12,6 +12,7 @@ import {
   SimTag,
   SimulationBand,
   StreamStatusChip,
+  streamSourceLabel,
   streamTitle,
 } from "../components/StreamBits";
 import { StreamPlayer } from "../components/StreamPlayer";
@@ -310,7 +311,7 @@ export function StreamDetailPage() {
           <h2 id="sec-stream-info">{t("streams.detail.info")}</h2>
           <dl className="fields">
             <dt>{t("streams.columns.source")}</dt>
-            <dd>{t(`streams.source.${s.source}`)}</dd>
+            <dd>{streamSourceLabel(t, s)}</dd>
             <dt>{t("streams.detail.report")}</dt>
             <dd>
               {s.report_id ? (

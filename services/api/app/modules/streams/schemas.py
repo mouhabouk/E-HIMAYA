@@ -62,6 +62,8 @@ class StaffStream(BaseModel):
     simulated: bool
     # A team's stream (phase D): its incident, for the incident page and the wall.
     incident_id: uuid.UUID | None = None
+    # News from the field (Yamen 2026-11-09): an agent's stream from the staff app, without a mission.
+    news: bool = False
 
 
 class StaffStreamPage(BaseModel):

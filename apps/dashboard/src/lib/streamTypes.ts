@@ -53,6 +53,8 @@ export interface StaffStream {
   simulated: boolean;
   /** A team's stream (phase D): its incident. */
   incident_id?: string | null;
+  /** An agent's stream from the staff app without a mission: «news from the field» (Yamen 2026-11-09). */
+  news?: boolean;
   /** Not in the §4 list row, but kept when the API sends it (stream detail of §1). */
   end_reason?: StreamEndReason | null;
 }

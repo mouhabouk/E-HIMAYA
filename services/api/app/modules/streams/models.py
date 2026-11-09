@@ -68,6 +68,8 @@ class LiveStream(Base):
     incident_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("ops.incident.id", ondelete="SET NULL")
     )
+    # News from the field (Yamen 2026-11-09): an agent streams from the staff app without a mission (migration 0099).
+    news: Mapped[bool] = mapped_column(Boolean, server_default="false")
 
 
 class StreamLocation(Base):

@@ -6946,6 +6946,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get staffLiveBack => 'Retour à la mission';
 
   @override
+  String get staffNews => 'Info en direct du terrain';
+
+  @override
+  String get staffNewsSub => 'La salle voit ce que vous voyez, sans mission';
+
+  @override
+  String get staffNewsHint =>
+      'La salle voit le direct sur le mur d\'écrans comme une info du terrain';
+
+  @override
+  String get staffNewsEnded =>
+      'Direct terminé. L\'enregistrement est gardé par la salle.';
+
+  @override
+  String get staffNewsBack => 'Retour à l\'accueil';
+
+  @override
   String get calloutBySms =>
       'Pas d\'internet : votre réponse est prête dans un SMS signé. Appuyez sur « Envoyer » dans l\'application Messages.';
 

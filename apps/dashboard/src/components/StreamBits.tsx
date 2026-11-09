@@ -14,6 +14,11 @@ export function streamTitle(
   return label?.trim() || stream.tracking_code || t(`streams.source.${stream.source}`);
 }
 
+/** The source of a stream on screen; an agent's stream without a mission is «news from the field» (Yamen 2026-11-09). */
+export function streamSourceLabel(t: TFunction, stream: Pick<StaffStream, "source" | "news">): string {
+  return stream.source === "crew" && stream.news ? t("streams.source.news") : t(`streams.source.${stream.source}`);
+}
+
 /**
  * ┏━━ SIMULATION ━━ The amber band "وضع المحاكاة" of simulated sources (phase 6 §6).
  * ┃ PRODUCTION: nothing to remove: it only shows while a stream with `simulated: true` (the `stream-sim` service of

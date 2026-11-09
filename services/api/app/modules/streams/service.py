@@ -94,6 +94,7 @@ def staff_stream(row: Any, now: datetime | None = None) -> schemas.StaffStream:
         recordings_count=int(recordings or 0),
         simulated=stream.source == Source.SIM,
         incident_id=stream.incident_id,
+        news=stream.news,
     )
 
 
@@ -294,6 +295,47 @@ async def create_for_crew(
         created_by=actor,
         assignment_id=assignment_id,
         incident_id=incident_id,
+    )
+    session.add(stream)
+    try:
+        await session.flush()
+    except IntegrityError:
+        await session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "stream_already_active") from None
+    return stream, token
+
+
+async def create_news(
+    session: AsyncSession, actor: str, gouvernorat: int | None, label: str | None
+) -> tuple[LiveStream, str]:
+    """News from the field (Yamen 2026-11-09): an agent streams what they see, without a mission. One active news
+    stream per agent; a pending one never published within its start window is expired first."""
+    settings = get_settings()
+    now = datetime.now(UTC)
+    active = await session.scalar(
+        select(LiveStream)
+        .where(LiveStream.news.is_(True), LiveStream.created_by == actor, LiveStream.status.in_(ACTIVE))
+        .with_for_update()
+    )
+    if active is not None:
+        if active.status == StreamStatus.PENDING and active.expires_at is not None and active.expires_at <= now:
+            await expire(session, active, now)
+        else:
+            raise HTTPException(status.HTTP_409_CONFLICT, "stream_already_active")
+    token = new_publish_token()
+    stream_id = uuid.uuid4()
+    stream = LiveStream(
+        id=stream_id,
+        source=Source.CREW.value,
+        label=label,
+        path=path_of(stream_id),
+        publish_token_hash=publish_token_hash(token),
+        status=StreamStatus.PENDING.value,
+        created_at=now,
+        expires_at=now + timedelta(seconds=settings.stream_start_window_s),
+        gouvernorat_code=gouvernorat,
+        created_by=actor,
+        news=True,
     )
     session.add(stream)
     try:
