@@ -84,6 +84,8 @@ import { canReadSystemTrail } from "./lib/systemApi";
 import { AuditPage } from "./pages/AuditPage";
 import { ChangesPage } from "./pages/ChangesPage";
 import { SystemLogsPage } from "./pages/SystemLogsPage";
+import { SqlConsolePage } from "./pages/SqlConsolePage";
+import { canUseSqlConsole } from "./lib/sqlApi";
 import { BreakGlassPage } from "./pages/BreakGlassPage";
 import { GeoQueuePage } from "./pages/GeoQueuePage";
 import { LateReportsPage } from "./pages/LateReportsPage";
@@ -488,6 +490,10 @@ export function AppRoutes() {
         <Route
           path="changes"
           element={scoped(canReadSystemTrail, <ChangesPage />)}
+        />
+        <Route
+          path="sql"
+          element={scoped(canUseSqlConsole, <SqlConsolePage />)}
         />
         <Route
           path="break-glass"

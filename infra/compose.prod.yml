@@ -33,6 +33,8 @@ x-api-prod-env: &api-prod-env
   API_CORS_ORIGINS: https://${DASHBOARD_HOST:?set DASHBOARD_HOST},https://${PORTAL_HOST}
   # The logs window (profile "logs"): http://loki:3100 once Loki runs; empty, the window says it is off.
   LOKI_URL: ${LOKI_URL:-}
+  # The SQL window (docs/sql/console.md): empty, it reads the API's own database; a SELECT-only role is advised.
+  SQL_CONSOLE_TARGETS: ${SQL_CONSOLE_TARGETS:-}
   DATABASE_URL: postgresql+asyncpg://${EHIMAYA_DB_RUNTIME_USER:-ehimaya_app}:${EHIMAYA_DB_RUNTIME_PASSWORD:?set EHIMAYA_DB_RUNTIME_PASSWORD}@postgres:5432/${EHIMAYA_DB_NAME:-ehimaya}
   # Only the edge proxy (fixed address below) may set X-Forwarded-For: per-address limits see real clients.
   FORWARDED_ALLOW_IPS: ${EDGE_PROXY_IP:-172.31.250.10}

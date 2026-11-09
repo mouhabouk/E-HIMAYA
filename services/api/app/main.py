@@ -130,6 +130,7 @@ from app.modules.sensors.router import router as sensors_router
 from app.modules.settings import service as platform_settings
 from app.modules.settings.router import router as settings_router
 from app.modules.snacr.router import router as snacr_router
+from app.modules.sqlconsole.router import router as sqlconsole_router
 from app.modules.strategies.router import router as strategies_router
 from app.modules.streams.camera_events import router as camera_events_router
 from app.modules.streams.camera_events import staff_router as camera_events_staff_router
@@ -357,6 +358,7 @@ def create_app() -> FastAPI:
         audit_router,
         journal_router,
         syslogs_router,
+        sqlconsole_router,
         privacy_router,
         weather_router,
         weather_staff_router,

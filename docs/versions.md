@@ -836,3 +836,8 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
       بـ cosign، ثم يُنشر إصدار GitHub بحزمة النشر. النشر على الخادم (`scripts/deploy.sh`) يتحقق من التوقيعات، ويحفظ
       قاعدة البيانات، ويرحّل، ويعود إلى النسخة السابقة إن لم تصح الخدمات. النشر الآلي لا يشتغل إلا إذا ضُبطت متغيرات
       الخادم في المستودع، والإنتاج يمرّ بموافقة يامن في GitHub.
+53. نافذة SQL لمدير النظام (طلب يامن 2026-11-09، `docs/sql/console.md`): لا حزمة جديدة. `alembic upgrade head`
+    (0098) ينشئ `platform.sql_query` لسجل الاستعلامات. النافذة للقراءة فقط وتستعمل اتصال الواجهة إن لم يُضبط
+    `SQL_CONSOLE_TARGETS`؛ يُنصح في الإنتاج بدور `ehimaya_console` لا يملك إلا SELECT (الأوامر في §3 من الملف).
+    الإعدادات الاختيارية: `SQL_CONSOLE_ENABLED` و`SQL_CONSOLE_TIMEOUT_S` و`SQL_CONSOLE_MAX_ROWS`
+    و`SQL_CONSOLE_EXPORT_MAX_ROWS`.

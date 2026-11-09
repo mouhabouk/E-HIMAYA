@@ -8,6 +8,7 @@ import type { TFunction } from "i18next";
 import { Icon, IconTile, type IconName, type Tone } from "./Icon";
 import type { StaffIdentity as Identity } from "../auth/identity";
 import { canReadSystemTrail } from "../lib/systemApi";
+import { canUseSqlConsole } from "../lib/sqlApi";
 import {
   canEditAiSettings,
   canReadModelCards,
@@ -448,6 +449,13 @@ export function navGroups(
           "historyEdu",
           "slate",
           "changes",
+        ),
+        ...e(
+          canUseSqlConsole(identity),
+          "/sql",
+          "database",
+          "slate",
+          "sqlConsole",
         ),
         ...e(
           canOpenBreakGlass(identity),
