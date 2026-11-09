@@ -13,6 +13,10 @@
       "en": "English"
     },
     "themeToggle": "Thème : {{current}} (cliquer pour changer)",
+    "brand": {
+      "blue": "Bleu royal",
+      "red": "Rouge royal"
+    },
     "theme": {
       "system": "système",
       "light": "clair",

@@ -82,6 +82,10 @@ class _StaffAppState extends ConsumerState<StaffApp>
       theme: buildTheme(Brightness.light, settings.palette),
       darkTheme: buildTheme(Brightness.dark, settings.palette),
       themeMode: settings.themeMode,
+      builder: (context, child) => BrandFrame(
+        palette: settings.palette,
+        child: child ?? const SizedBox.shrink(),
+      ),
       home: const StaffHome(),
     );
   }

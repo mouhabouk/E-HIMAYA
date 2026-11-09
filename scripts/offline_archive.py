@@ -28,7 +28,7 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-SKIP_FILES = ("uploads", "data-private")
+SKIP_FILES = ("uploads", "data-private", "archive")  # archive: the previous archive parts, never nested
 MAX_VIEW = 1_500_000
 CSS = """
 :root{--bg:#f7f8fa;--paper:#fff;--ink:#182038;--muted:#5b6478;--line:#dfe3e8;--navy:#1f3fa0;--red:#d7141a;--chip:#eef1f5;

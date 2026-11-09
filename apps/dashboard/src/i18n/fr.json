@@ -101,6 +101,10 @@
     "logoAlt": "Office National de la Protection Civile",
     "account": "Mon compte et réglages",
     "themeLabel": "Mode",
+    "brand": {
+      "blue": "Bleu royal",
+      "red": "Rouge royal"
+    },
     "menu": {
       "shape": "Forme du menu",
       "position": "Position du menu",

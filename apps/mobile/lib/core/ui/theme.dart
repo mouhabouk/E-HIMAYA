@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'tokens.dart';
 
-/// Colour palettes of the app (phase A, addition 1). [office] is the default. Since the design
-/// system (docs/design-system.md) a palette only changes the primary colour; the category colours
-/// of [Tone] never change.
-enum AppPalette { office, red, blue, green }
+/// Brand colours of the app (docs/design-system.md §2.0, Yamen 2026-11-08): white stays the base
+/// colour; royal blue (default) or royal red fills the frame around the screen ([BrandFrame]) and
+/// gives the primary colour. The category colours of [Tone] and the SOS red never change.
+enum AppPalette {
+  blue,
+  red;
+
+  /// The stored choice. Older values of phase A: `red` stays red; `office`, `blue` and `green`
+  /// become royal blue.
+  static AppPalette fromStored(String? value) =>
+      value == 'red' ? AppPalette.red : AppPalette.blue;
+}
 
 /// Colours of the Office's logo, as the design system's vivid hues.
 abstract final class BrandColors {
@@ -13,6 +21,19 @@ abstract final class BrandColors {
   static const orange = Hue.orange;
   static const green = Hue.green;
   static const red = Hue.red;
+
+  static const royalBlue = Hue.navy;
+  static const royalRed = Color(0xFF9B1B2C);
+  static const gold = Color(0xFFC9A24A);
+}
+
+/// Colour of the frame around the screen: the royal colour, or its night shade in the dark mode.
+Color brandFrameColor(AppPalette palette, Brightness brightness) {
+  final dark = brightness == Brightness.dark;
+  return switch (palette) {
+    AppPalette.blue => dark ? const Color(0xFF0B1A3F) : BrandColors.royalBlue,
+    AppPalette.red => dark ? const Color(0xFF3A0910) : BrandColors.royalRed,
+  };
 }
 
 /// The SOS colour stays the same red in every palette and brightness, white label (5.2:1).
@@ -21,11 +42,8 @@ const sosRed = Hue.red;
 Color _primary(AppPalette palette, Brightness brightness) {
   final dark = brightness == Brightness.dark;
   return switch (palette) {
-    AppPalette.office => dark ? const Color(0xFF8FA8FF) : Hue.navy,
-    AppPalette.red => dark ? const Color(0xFFFF8A80) : const Color(0xFFB3261E),
-    AppPalette.blue => dark ? const Color(0xFF90CAF9) : const Color(0xFF1565C0),
-    AppPalette.green =>
-      dark ? const Color(0xFF81C784) : const Color(0xFF2E7D32),
+    AppPalette.blue => dark ? const Color(0xFF8FA8FF) : BrandColors.royalBlue,
+    AppPalette.red => dark ? const Color(0xFFFF8A95) : BrandColors.royalRed,
   };
 }
 
@@ -66,7 +84,7 @@ ColorScheme _scheme(AppPalette palette, Brightness brightness) {
 
 ThemeData buildTheme(
   Brightness brightness, [
-  AppPalette palette = AppPalette.office,
+  AppPalette palette = AppPalette.blue,
 ]) {
   final scheme = _scheme(palette, brightness);
   final n = brightness == Brightness.dark ? Neutrals.dark : Neutrals.light;

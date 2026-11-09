@@ -11,7 +11,7 @@ class AppSettings {
   const AppSettings({
     required this.locale,
     required this.themeMode,
-    this.palette = AppPalette.office,
+    this.palette = AppPalette.blue,
   });
 
   final Locale locale;
@@ -39,8 +39,7 @@ class SettingsController extends Notifier<AppSettings> {
       locale: Locale(supportedLanguageCodes.contains(code) ? code! : 'ar'),
       themeMode:
           ThemeMode.values.asNameMap()[prefs.themeMode] ?? ThemeMode.system,
-      palette:
-          AppPalette.values.asNameMap()[prefs.palette] ?? AppPalette.office,
+      palette: AppPalette.fromStored(prefs.palette),
     );
   }
 

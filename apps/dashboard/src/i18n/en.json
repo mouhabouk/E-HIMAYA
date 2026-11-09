@@ -101,6 +101,10 @@
     "logoAlt": "Office National de la Protection Civile",
     "account": "My account and settings",
     "themeLabel": "Mode",
+    "brand": {
+      "blue": "Royal blue",
+      "red": "Royal red"
+    },
     "menu": {
       "shape": "Menu shape",
       "position": "Menu position",

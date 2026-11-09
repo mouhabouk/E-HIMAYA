@@ -2461,10 +2461,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get colorOffice => 'Civil Protection (logo)';
 
   @override
-  String get colorRed => 'Red';
+  String get colorRed => 'Royal red';
 
   @override
-  String get colorBlue => 'Blue';
+  String get colorBlue => 'Royal blue';
 
   @override
   String get colorGreen => 'Green';

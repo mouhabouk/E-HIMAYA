@@ -6,6 +6,7 @@ import { IconTile } from "./Icon";
 import { LANGUAGES } from "../i18n";
 import { useLanguage } from "../lib/hooks";
 import { applyTheme, nextTheme, storedTheme, type Theme } from "../lib/theme";
+import { applyBrand, otherBrand, storedBrand, type Brand } from "../lib/brand";
 import { AnnouncementBanner } from "./AnnouncementBanner";
 import { EnvironmentStrip } from "./EnvironmentStrip";
 
@@ -28,6 +29,29 @@ export function LanguageSwitch() {
         </button>
       ))}
     </div>
+  );
+}
+
+/**
+ * Brand switch (docs/design-system.md §2.0): a coin of the other royal colour; one press swaps royal blue and royal
+ * red for the frame and the primary colour. White stays the base colour.
+ */
+export function BrandToggle() {
+  const { t } = useTranslation();
+  const [brand, setBrand] = useState<Brand>(storedBrand);
+  const next = otherBrand(brand);
+  const label = t(`header.brand.${next}`);
+  return (
+    <button
+      type="button"
+      className={`brand-coin brand-coin--${next}`}
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        applyBrand(next);
+        setBrand(next);
+      }}
+    />
   );
 }
 
@@ -142,6 +166,7 @@ export function Layout() {
         </nav>
         <div className="header__tools">
           <LanguageSwitch />
+          <BrandToggle />
           <ThemeToggle />
           {user ? (
             <>
