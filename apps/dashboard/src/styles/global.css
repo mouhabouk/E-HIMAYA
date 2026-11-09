@@ -6065,12 +6065,15 @@ button.nav-card:hover {
   border-inline-start-color: var(--tone-red);
 }
 
+/* An overridden directive is struck through and muted, not faded as a whole: a faded card took its pills below the
+   contrast ratio (WCAG 1.4.3). */
 .directive--overridden {
-  opacity: 0.7;
+  border-inline-start-color: var(--border);
 }
 
 .directive--overridden .directive__body {
   text-decoration: line-through;
+  color: var(--muted);
 }
 
 .directive__head {
