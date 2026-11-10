@@ -1699,7 +1699,9 @@
       "resource": "Moyen",
       "chooseResource": "Choisir un moyen disponible",
       "noResource": "Aucun moyen disponible dans votre périmètre",
-      "submit": "Émettre l’ordre"
+      "submit": "Émettre l’ordre",
+      "sheet": "Imprimer l’ordre de mission",
+      "sheetLabel": "Imprimer l’ordre de mission et le compte rendu d’intervention de {{who}}"
     },
     "callout": {
       "title": "Appel aux volontaires",

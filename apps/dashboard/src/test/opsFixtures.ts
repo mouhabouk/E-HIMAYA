@@ -43,6 +43,7 @@ export function fakeOpsApi(): OpsApi {
     addIncidentNote: vi.fn(),
     createAssignment: vi.fn(),
     updateAssignment: vi.fn(),
+    missionSheet: vi.fn(() => Promise.resolve({ blob: new Blob(["%PDF"]), filename: "mission-1.pdf" })),
     saveMissionRecord: vi.fn(),
     suggestMissionTimes: vi.fn(() => Promise.resolve([])),
     closeIncident: vi.fn(),

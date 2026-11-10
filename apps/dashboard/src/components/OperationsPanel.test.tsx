@@ -42,6 +42,25 @@ describe("OperationsPanel", () => {
     await waitFor(() => expect(api.updateAssignment).toHaveBeenCalledWith("a-1", "en_route", "Départ"));
   });
 
+  it("prints the mission sheet the team takes to the scene", async () => {
+    const createObjectURL = vi.fn(() => "blob:sheet");
+    Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() });
+    const api = fakeApi();
+    renderApp(<OperationsPanel incident={makeIncidentDetail({ assignments: [makeAssignment()], callouts: [] })} />, {
+      api,
+      lang: "fr",
+    });
+
+    const table = screen.getByRole("table", { name: "Engagements actifs" });
+    fireEvent.click(
+      await within(table).findByRole("button", {
+        name: "Imprimer l’ordre de mission et le compte rendu d’intervention de FPT-12 · Fourgon d’incendie",
+      }),
+    );
+    await waitFor(() => expect(api.missionSheet).toHaveBeenCalledWith("a-1"));
+    await waitFor(() => expect(createObjectURL).toHaveBeenCalled());
+  });
+
   it("calls the nearest volunteers out, or the picked ones", async () => {
     const api = fakeApi({
       volunteerSuggestions: vi.fn(() =>

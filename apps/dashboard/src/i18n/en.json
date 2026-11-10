@@ -1699,7 +1699,9 @@
       "resource": "Resource",
       "chooseResource": "Choose an available resource",
       "noResource": "No resource available in your scope",
-      "submit": "Issue the order"
+      "submit": "Issue the order",
+      "sheet": "Print mission sheet",
+      "sheetLabel": "Print the mission sheet and intervention report form for {{who}}"
     },
     "callout": {
       "title": "Volunteer call-out",

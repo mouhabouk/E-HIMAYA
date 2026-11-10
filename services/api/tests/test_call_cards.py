@@ -327,6 +327,13 @@ async def test_the_team_completes_the_card_from_the_scene(client: httpx.AsyncCli
     scene = (await client.get(f"{REPORTS}/{report_id}/call-card", headers=agent)).json()["scene"]
     assert scene["nature"] == "fire" and scene["deceased"] == 1
     assert scene["checks"] == ["nature_differs"]
+    # The mission sheet printed in the room carries the card, the scene's QR code and the page filled in by hand.
+    sheet = await client.get(
+        f"/api/v1/staff/assignments/{path.rsplit('/', 1)[1]}/sheet", params={"format": "html"}, headers=agent
+    )
+    assert sheet.status_code == 200, sheet.text
+    for words in ("بطاقة الاستقبال", "جواب الفريق في الميدان", "امسح الرمز لفتح المكان", "محضر التدخل", "وصف التدخل"):
+        assert words in sheet.text, words
     # A question the card does not have is refused.
     r = await leader.post(f"{path}/call-card", write(answers={"nope": "yes"}))
     assert r.status_code == 422 and r.json()["detail"] == "call_card_question"
