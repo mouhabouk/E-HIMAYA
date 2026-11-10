@@ -156,6 +156,7 @@ const ReportSchedulesPage = page(
   "ReportSchedulesPage",
 );
 const CommandPage = page(() => import("./pages/CommandPage"), "CommandPage");
+const OpsRoomPage = page(() => import("./pages/OpsRoomPage"), "OpsRoomPage");
 const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
 const RoomReportPage = page(
   () => import("./pages/RoomReportPage"),
@@ -414,6 +415,7 @@ export function AppRoutes() {
         <Route path="incidents" element={reports(<IncidentsPage />)} />
         <Route path="incidents/:id" element={reports(<IncidentDetailPage />)} />
         <Route path="map" element={reports(<MapPage />)} />
+        <Route path="map/room" element={reports(<OpsRoomPage />)} />
         <Route path="streams" element={reports(<StreamsPage />)} />
         <Route path="streams/wall" element={reports(<StreamWallPage />)} />
         <Route

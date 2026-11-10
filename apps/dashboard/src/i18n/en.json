@@ -9,6 +9,7 @@
     "home": "Indicators",
     "reports": "Reports",
     "map": "Live map",
+    "opsRoom": "Operations room",
     "incidents": "Incidents",
     "aiSettings": "AI settings",
     "orgs": "Establishments",
@@ -8947,5 +8948,53 @@
       "feedback": "App feedback",
       "forecast": "Forecasts"
     }
+  },
+  "opsRoom": {
+    "title": "Operations room",
+    "live": "Live",
+    "back": "Live map",
+    "today": "Today",
+    "kpi": {
+      "total": "Reports today",
+      "open": "Open reports",
+      "highPriority": "High priority",
+      "firstResponse": "Mean first response"
+    },
+    "last24": "Reports in the last 24 hours",
+    "chart": {
+      "label": "Reports hour by hour over the last 24 hours, {{total}} in all",
+      "ago24": "24 h ago",
+      "peak": "Peak {{count}} in an hour",
+      "now": "Now"
+    },
+    "byCategory": "Today's reports by category",
+    "none": "Nothing right now",
+    "loading": "Loading…",
+    "mapLabel": "3D operations room map: reports, hotspots and units",
+    "tag": {
+      "open": "Open reports",
+      "units": "Units on the map"
+    },
+    "home": "My area",
+    "card": {
+      "label": "Selected report",
+      "close": "Close the card",
+      "code": "Tracking code",
+      "status": "Status",
+      "time": "Reported at",
+      "priority": "Priority",
+      "open": "Open the report"
+    },
+    "layers": {
+      "title": "Map layers",
+      "reports": "Reports, last 24 hours",
+      "hotspots": "3D hotspots (last {{days}} days)",
+      "units": "Civil protection units",
+      "buildings": "3D buildings"
+    },
+    "readiness": "Readiness of the means",
+    "openReports": "Open reports by priority",
+    "alerts": "Active alerts",
+    "noAlerts": "No active alert"
   }
 }
