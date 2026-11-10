@@ -85,6 +85,8 @@ import { AuditPage } from "./pages/AuditPage";
 import { ChangesPage } from "./pages/ChangesPage";
 import { SystemLogsPage } from "./pages/SystemLogsPage";
 import { SqlConsolePage } from "./pages/SqlConsolePage";
+import { RepoMapPage } from "./pages/RepoMapPage";
+import { canUseDevTools } from "./lib/repoMap";
 import { canUseSqlConsole } from "./lib/sqlApi";
 import { BreakGlassPage } from "./pages/BreakGlassPage";
 import { GeoQueuePage } from "./pages/GeoQueuePage";
@@ -494,6 +496,10 @@ export function AppRoutes() {
         <Route
           path="sql"
           element={scoped(canUseSqlConsole, <SqlConsolePage />)}
+        />
+        <Route
+          path="dev/map"
+          element={scoped(canUseDevTools, <RepoMapPage />)}
         />
         <Route
           path="break-glass"

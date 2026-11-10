@@ -21,3 +21,5 @@ Checklist at the end of a phase:
 6. Files copied to the project files and linked in the phase report.
 7. A new tool, version, setting or service: the install guides `docs/install-guide.md` and `docs/install-guide-wsl.md` (and their copies in `guide/`),
    and deferred items moved in or out of `docs/backlog.md`.
+8. The system map of the «تطوير النظام» menu regenerated: `python3 -I scripts/repo_map.py . services/api/app/modules/devtools/repo_map.json`
+   (`docs/dev/repo-map.md`).

@@ -53,6 +53,7 @@ from app.modules.crisis.router import router as crisis_router
 from app.modules.crisis.worker import crisis_forever
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
+from app.modules.devtools.router import router as devtools_router
 from app.modules.doctors.committee_router import router as medical_committee_router
 from app.modules.doctors.router import router as doctors_router
 from app.modules.doctors.staff_router import router as doctors_staff_router
@@ -359,6 +360,7 @@ def create_app() -> FastAPI:
         journal_router,
         syslogs_router,
         sqlconsole_router,
+        devtools_router,
         privacy_router,
         weather_router,
         weather_staff_router,

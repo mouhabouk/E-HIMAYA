@@ -25,6 +25,7 @@ const GROUPS = [
   "orgs",
   "knowledge",
   "system",
+  "dev",
   // Phase 5: the field app, the citizen app and the portal.
   "field_app",
   "citizen_app",

@@ -841,3 +841,5 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     `SQL_CONSOLE_TARGETS`؛ يُنصح في الإنتاج بدور `ehimaya_console` لا يملك إلا SELECT (الأوامر في §3 من الملف).
     الإعدادات الاختيارية: `SQL_CONSOLE_ENABLED` و`SQL_CONSOLE_TIMEOUT_S` و`SQL_CONSOLE_MAX_ROWS`
     و`SQL_CONSOLE_EXPORT_MAX_ROWS`.
+54. قائمة «تطوير النظام» (طلب يامن 2026-11-09، `docs/dev/repo-map.md`): لا حزمة جديدة ولا ترحيل. تضم نافذة SQL
+    وخريطة المنظومة (`/dev/map`)، مولَّدة بـ `python3 -I scripts/repo_map.py . services/api/app/modules/devtools/repo_map.json`.

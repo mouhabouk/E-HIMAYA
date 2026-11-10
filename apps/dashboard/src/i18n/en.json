@@ -60,7 +60,8 @@
       "strategies": "Strategies",
       "field_app": "Field app",
       "citizen_app": "Citizen app",
-      "portal": "Organisations portal"
+      "portal": "Organisations portal",
+      "dev": "System development"
     },
     "inventory": "Resources register",
     "plans": "Intervention plans",
@@ -82,7 +83,8 @@
     "personnel": "Personnel",
     "systemLogs": "System logs",
     "changes": "Change journal",
-    "sqlConsole": "SQL console"
+    "sqlConsole": "SQL console",
+    "repoMap": "System map"
   },
   "header": {
     "scope": "Geographic scope",
@@ -8837,6 +8839,46 @@
       "filter": "Filter column {{column}}",
       "filterShort": "Filter…"
     }
+  },
+  "repoMap": {
+    "title": "System map",
+    "intro": "Every dashboard and portal page, the mobile app's parts, the API modules, the services and infrastructure, and what ties them. Generated from the repository on {{date}} (scripts/repo_map.py).",
+    "counts": {
+      "nodes": "Elements: {{count}}",
+      "edges": "Links: {{count}}",
+      "routes": "API routes: {{count}}",
+      "code": "{{files}} files · {{loc}} lines"
+    },
+    "search": "Search a page or module",
+    "groupsLabel": "Element kinds",
+    "kindsLabel": "Link kinds",
+    "groups": {
+      "dashboard": "Dashboard",
+      "portal": "Portal",
+      "mobile": "Mobile app",
+      "api": "API",
+      "service": "Services",
+      "infra": "Infrastructure",
+      "external": "External services"
+    },
+    "kinds": {
+      "http": "HTTP request",
+      "import": "Code import",
+      "calls": "Service call"
+    },
+    "caption": "Map of the system's elements and their links",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Original view",
+    "hint": "Drag to move, scroll to zoom. Click an element to highlight its links and see its details. Size follows its lines of code.",
+    "size": "{{files}} files · {{loc}} lines of code",
+    "uses": "Uses",
+    "usedBy": "Used by",
+    "results": "Results: {{count}}",
+    "howTitle": "Reading the map",
+    "how": "Pages on one side, the API in the middle, what it calls (services, database, external services) on the other. Blue: an HTTP request from a page to a module; grey: a code import; dashed orange: a service called through a setting.",
+    "mostUsed": "Most connected",
+    "links": "{{count}} links"
   },
   "changes": {
     "title": "Change journal",

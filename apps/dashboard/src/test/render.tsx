@@ -394,6 +394,7 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     sqlHistory: vi.fn(() => Promise.resolve([])),
     sqlEditHistory: vi.fn(),
     sqlDeleteHistory: vi.fn(),
+    repoMap: vi.fn(() => Promise.resolve({ nodes: [], edges: [], routes: 0, generated_at: "2026-11-09T22:00:00Z" })),
     ...overrides,
   };
 }
