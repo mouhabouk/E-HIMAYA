@@ -156,6 +156,9 @@ class RoomReportIn(BaseModel):
     received_at: AwareDatetime | None = None
     # The guided call-taking card answered during the call (OS2); optional, the free text stays.
     call_card: CallCardIn | None = None
+    # The call of the dashboard's phone this report was written from (2026-11-11): linked to it on saving, so the
+    # recording and the caller's number (encrypted, on the call) are found from the report.
+    call_id: uuid.UUID | None = None
 
 
 class StaffReport(BaseModel):

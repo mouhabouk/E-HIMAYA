@@ -203,10 +203,10 @@ export function CallCardPanel({
   );
 }
 
-/** Seconds since the form opened: how long the call has lasted so far. */
-export function useCallTimer(): string {
-  const [start] = useState(() => Date.now());
-  const [now, setNow] = useState(start);
+/** Seconds since the call was answered (or the form opened): how long the call has lasted so far. */
+export function useCallTimer(from?: number): string {
+  const [start] = useState(() => from ?? Date.now());
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);

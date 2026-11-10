@@ -30,6 +30,11 @@ SMS gateway ── POST /internal/sms/inbound (HMAC) ─► API ─► report so
 * **Records.** `telephony.call`: caller number encrypted (`caller_number_enc`) with a blind index for exact lookups,
   times, operator, status, linked report/incident, recording. Staff without call access (local and central committees)
   see numbers masked except the last 2 digits, in the API and in the live feed.
+* **From the call to the report.** While a queue or outgoing call is up, the softphone shows «إدخال بلاغ من هذه
+  المكالمة»: it opens the intake screen (`/reports/new?call=<calls.id>&at=<answer time>`) with the channel set to
+  phone, the time received set to the answer and the call timer counting from it. On save, `POST
+  /api/v1/staff/reports` with `call_id` links the call to the new report in the same transaction (`call.link`
+  audited, same rules as the manual link form, which stays for a call about a report already entered).
 * **Recordings** (`calls/<call_id>.wav` in S3, `reports.media kind=call_recording`) are downloaded through a 5-minute
   presigned link, audited (`call.recording.download`), by operators, ops managers and field commanders only.
 

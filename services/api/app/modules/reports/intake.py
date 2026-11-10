@@ -98,6 +98,8 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
     if (await authorize(session, principal, Action.REPORT_CLAIM, ctx)).allowed:
         locked, ctx = await jurisdiction.load(session, principal, report.id)
         await jurisdiction.claim(session, principal, locked, ctx)
+    if body.call_id is not None:
+        await _link_call(session, principal, body.call_id, report.id)
     await audit.record(
         session,
         actor=audit.actor_of(principal),
@@ -107,6 +109,7 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
             "channel": body.channel,
             "category": body.category.value,
             "call_card": body.call_card.version if body.call_card is not None else None,
+            "call_id": str(body.call_id) if body.call_id is not None else None,
         },
         gouvernorats=[gouvernorat],
     )
@@ -120,3 +123,19 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
         },
     )
     return report.id
+
+
+async def _link_call(session: AsyncSession, principal: Principal, call_id: uuid.UUID, report_id: uuid.UUID) -> None:
+    """The call the report was written from, linked as the phone's «ربط المكالمة» does (same checks, same audit)."""
+    from app.modules.telephony import actions as calls
+    from app.modules.telephony import service as telephony
+    from app.modules.telephony.domain import CALL_ROLES
+
+    if not principal.roles & CALL_ROLES:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "forbidden")
+    call, _ = await telephony.visible_call(session, principal, call_id, lock=True)
+    actor = audit.actor_of(principal)
+    details = await calls.link(
+        session, principal, call, report_id=report_id, tracking_code=None, incident_id=None, actor=actor
+    )
+    await audit.record(session, actor=actor, action="call.link", target=f"call:{call_id}", details=details)
