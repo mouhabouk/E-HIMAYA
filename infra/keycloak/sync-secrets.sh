@@ -77,6 +77,7 @@ fi
 # Realm roles added after the first import: name|description.
 STAFF_ROLES=(
   "personnel_officer|قسم التصرف في الأفراد (جهوي أو مركزي)"
+  "inspector_general|المتفقّد العام: التفقّدات الدورية (وطني)"
 )
 for entry in "${STAFF_ROLES[@]}"; do
   role=${entry%%|*}

@@ -42,6 +42,16 @@ from app.modules.features.models import FeatureRule
 from app.modules.forecast.models import ForecastRun
 from app.modules.geo.models import Delegation, Gouvernorat, Layer, LayerFeature, LayerImport, LayerRevision
 from app.modules.identity.models import Account, Consent, EmailCode, ErasureRequest, Profile
+from app.modules.inspections.models import (
+    Inspection,
+    Inspector,
+    MissionSite,
+    OrderNote,
+    Recommendation,
+)
+from app.modules.inspections.models import Mission as InspectionMission
+from app.modules.inspections.models import Policy as InspectionPolicy
+from app.modules.inspections.models import Profile as InspectionProfile
 from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryRevision, Stock, UnitCheck
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.learning.models import LearnedModel, TrainingJob
@@ -219,6 +229,11 @@ __all__ = [
     "Hazmat",
     "Incident",
     "IndexState",
+    "Inspection",
+    "InspectionMission",
+    "InspectionPolicy",
+    "InspectionProfile",
+    "Inspector",
     "InventoryRevision",
     "Invitation",
     "Layer",
@@ -242,12 +257,14 @@ __all__ = [
     "MemoryEntry",
     "MemoryEntryVersion",
     "Message",
+    "MissionSite",
     "ModelDecision",
     "Need",
     "Nomination",
     "Notification",
     "Observation",
     "OperatorEndpoint",
+    "OrderNote",
     "OrgDigest",
     "Organization",
     "Outbox",
@@ -260,6 +277,7 @@ __all__ = [
     "Programme",
     "ProgrammePoint",
     "ProgrammeRevision",
+    "Recommendation",
     "RefItem",
     "RefList",
     "RegisterAttachment",

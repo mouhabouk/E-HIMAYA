@@ -1333,6 +1333,152 @@ erDiagram
     identity__volunteer ||--o{ identity__volunteer_review : "user_id"
 ```
 
+## insp
+
+```mermaid
+erDiagram
+    insp__inspection {
+        uuid id PK
+        uuid mission_id FK
+        uuid site_id FK
+        text target
+        text unit_kind
+        text unit_name
+        uuid unit_id FK
+        text room
+        smallint gouvernorat_code FK
+        uuid inspector_id FK
+        text kind
+        uuid profile_id FK
+        jsonb profile
+        text status
+        datetime started_at
+        geography_point_4326 location
+        jsonb answers
+        smallint present
+        smallint expected
+        integer exit_seconds
+        smallint score
+        text verdict
+        text summary
+        text head_name
+        blob inspector_sig
+        blob head_sig
+        datetime signed_at
+        datetime submitted_at
+        uuid client_id
+        text receipt
+        jsonb disclosure
+        datetime updated_at
+        datetime deleted_at
+        text deleted_by_name
+        text delete_reason
+    }
+    insp__inspector {
+        uuid id PK
+        text kind
+        text matricule
+        text name
+        text organisation
+        text phone
+        text email
+        text via
+        text status
+        date expires_on
+        uuid agent_id FK
+        text requested_device
+        datetime requested_at
+        datetime decided_at
+        text decided_by_name
+        text reject_reason
+        text code_hash
+        datetime code_expires_at
+        smallint code_attempts
+        datetime activated_at
+        text device_model
+        text device_platform
+        text device_ref
+        text push_token
+        text refresh_hash
+        datetime refresh_expires_at
+        datetime last_seen_at
+        datetime lost_at
+        datetime closed_at
+        integer version
+    }
+    insp__mission {
+        uuid id PK
+        text ref
+        date on_date
+        time at_time
+        text kind
+        uuid inspector_id FK
+        text status
+        text cancel_reason
+        boolean published
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
+    insp__mission_site {
+        uuid id PK
+        uuid mission_id FK
+        smallint position
+        text target
+        text unit_kind
+        text unit_name
+        uuid unit_id FK
+        text room
+        smallint gouvernorat_code FK
+        array sections
+    }
+    insp__order_note {
+        uuid id PK
+        smallint position
+        text text
+    }
+    insp__policy {
+        smallint id PK
+        jsonb config
+        text updated_by_name
+        datetime updated_at
+    }
+    insp__profile {
+        uuid id PK
+        text name
+        integer version
+        boolean active
+        jsonb config
+        text created_by_name
+        datetime created_at
+    }
+    insp__recommendation {
+        uuid id PK
+        uuid inspection_id FK
+        smallint gouvernorat_code FK
+        smallint position
+        text kind
+        text item_key
+        text text
+        text priority
+        boolean to_central
+        boolean to_regional
+    }
+    geo__gouvernorat ||--o{ insp__inspection : "gouvernorat_code"
+    geo__gouvernorat ||--o{ insp__mission_site : "gouvernorat_code"
+    geo__gouvernorat ||--o{ insp__recommendation : "gouvernorat_code"
+    insp__inspection ||--o{ insp__recommendation : "inspection_id"
+    insp__inspector ||--o{ insp__inspection : "inspector_id"
+    insp__inspector ||--o{ insp__mission : "inspector_id"
+    insp__mission ||--o{ insp__inspection : "mission_id"
+    insp__mission ||--o{ insp__mission_site : "mission_id"
+    insp__mission_site ||--o{ insp__inspection : "site_id"
+    insp__profile ||--o{ insp__inspection : "profile_id"
+    inv__agent ||--o{ insp__inspector : "agent_id"
+    ops__unit ||--o{ insp__inspection : "unit_id"
+    ops__unit ||--o{ insp__mission_site : "unit_id"
+```
+
 ## inv
 
 ```mermaid
