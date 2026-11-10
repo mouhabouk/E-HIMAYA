@@ -112,6 +112,7 @@ from app.modules.programmes.worker import programmes_forever
 from app.modules.references.router import router as references_router
 from app.modules.register.router import router as register_router
 from app.modules.register.worker import register_forever
+from app.modules.reports.callcards_router import router as call_cards_router
 from app.modules.reports.jurisdiction import sla_forever
 from app.modules.reports.live import hub
 from app.modules.reports.live import router as live_router
@@ -321,6 +322,7 @@ def create_app() -> FastAPI:
         identity_email_router,
         reports_router,
         staff_router,
+        call_cards_router,
         ops_router,
         command_router,
         volunteers_router,

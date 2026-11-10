@@ -85,7 +85,9 @@
     "systemLogs": "Journaux système",
     "changes": "Journal des modifications",
     "sqlConsole": "Console SQL",
-    "repoMap": "Carte du système"
+    "repoMap": "Carte du système",
+    "roomGuide": "Guide de l'agent de salle",
+    "callCards": "Fiches d'appel"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -633,7 +635,14 @@
     "range_too_long": "La période est trop longue.",
     "range_invalid": "La date de fin précède la date de début.",
     "event_not_found": "Entrée introuvable.",
-    "absence_not_found": "Absence introuvable."
+    "absence_not_found": "Absence introuvable.",
+    "call_card_changed": "La fiche d'appel a changé pendant l'appel (une nouvelle version a été approuvée). Elle a été rechargée : revoyez les réponses puis envoyez.",
+    "call_card_category": "Cette fiche ne correspond pas à la catégorie choisie.",
+    "call_card_question": "Les réponses contiennent une question que la fiche ne connaît pas.",
+    "call_card_not_draft": "Seul un brouillon se modifie. Une version approuvée ou retirée est figée.",
+    "draft_exists": "Un brouillon existe déjà pour cette catégorie. Modifiez-le ou supprimez-le d'abord.",
+    "medical_validation_required": "Fiche médicale : la validation médicale est requise avant l'approbation.",
+    "no_call_card": "Aucune fiche d'appel n'a servi pour ce signalement."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -7835,7 +7844,20 @@
     "point": "Lieu du signalement",
     "mapAria": "Carte pour placer le signalement",
     "submit": "Enregistrer le signalement",
-    "entered": "Saisi par la salle · {{channel}}"
+    "entered": "Saisi par la salle · {{channel}}",
+    "tiles": {
+      "medical": "Secours",
+      "fire": "Incendie",
+      "traffic_accident": "Accident de la route",
+      "drowning": "Noyade",
+      "flood": "Inondation",
+      "chemical_leak": "Fuite chimique",
+      "landslide": "Glissement ou effondrement",
+      "sos": "Secours général",
+      "other": "Autre"
+    },
+    "categoryStep": "1. Type d'incident",
+    "firstQuestion": "Première question, toujours : « Que se passe-t-il ? Où êtes-vous exactement ? »"
   },
   "whatWhere": {
     "title": "Quoi, puis où",
@@ -8997,5 +9019,266 @@
     "openReports": "Signalements ouverts par priorité",
     "alerts": "Alertes actives",
     "noAlerts": "Aucune alerte active"
+  },
+  "callCards": {
+    "title": "Fiches d'appel guidées",
+    "intro": "Des questions par catégorie que l'agent pose à l'appelant ; le niveau, les moyens suggérés et les consignes à lire s'affichent aussitôt. Le Bureau les rédige, le médecin valide les fiches médicales, le chef des opérations les approuve.",
+    "list": "Fiches",
+    "history": "Afficher les versions précédentes",
+    "col": {
+      "card": "Fiche",
+      "version": "Version",
+      "questions": "Questions",
+      "status": "État",
+      "used": "Utilisée"
+    },
+    "keyCount": "{{n}} décisives",
+    "status": {
+      "draft": "Brouillon",
+      "approved": "Approuvée",
+      "retired": "Retirée"
+    },
+    "approvedLine": "Version approuvée {{version}}, par {{by}} le {{at}}.",
+    "draftLine": "Brouillon de la version {{version}} en cours ({{by}}).",
+    "medicalDone": "Validée médicalement : {{by}}. {{reason}}",
+    "medicalPending": "En attente de validation médicale avant l'approbation.",
+    "saveDraft": "Enregistrer le brouillon",
+    "saveExplain": "Indiquez ce qui change et pourquoi. C'est consigné au journal.",
+    "editDraft": "Modifier le brouillon",
+    "newVersion": "Nouvelle version",
+    "discard": "Supprimer le brouillon",
+    "validate": "Validation médicale",
+    "validateExplain": "Indiquez le médecin qui a relu les consignes et son avis.",
+    "approve": "Approuver",
+    "approveExplain": "Cette version remplace l'approuvée et sert dans les salles dès maintenant. Indiquez la raison.",
+    "trial": "Essayer la fiche approuvée",
+    "trialDraft": "Essayer le brouillon",
+    "trialHint": "Répondez comme pendant un appel. Rien n'est enregistré.",
+    "reasonLabel": "Raison",
+    "edit": {
+      "addEffect": "Ajouter un effet ({{answer}})",
+      "ifAnswer": "Si la réponse est {{answer}}",
+      "why": "Raison montrée à l'agent",
+      "band": "Niveau",
+      "noBand": "Ne change pas le niveau",
+      "flag": "Alerte",
+      "instruction": "Consignes à lire",
+      "noInstruction": "Sans consignes",
+      "means": "Moyens suggérés (un par ligne)",
+      "lives": "Vie en danger",
+      "injured": "Blessés",
+      "removeEffect": "Retirer l'effet",
+      "question": "Question {{n}}",
+      "up": "Monter",
+      "down": "Descendre",
+      "remove": "Supprimer",
+      "text": "Texte de la question",
+      "help": "Aide pour l'agent",
+      "id": "Identifiant",
+      "when": "Affichée",
+      "always": "Toujours",
+      "after": "Après « {{answer}} » à {{question}}",
+      "key": "Question décisive",
+      "title": "Titre de la fiche",
+      "baseBand": "Niveau de départ",
+      "baseMeans": "Moyens de base (un par ligne)",
+      "questions": "Questions",
+      "addQuestion": "Ajouter une question",
+      "instructions": "Consignes lues à l'appelant",
+      "insTitle": "Titre",
+      "metronome": "Rythme des compressions par minute",
+      "steps": "Étapes (une par ligne)",
+      "medical": "Consignes médicales",
+      "removeInstruction": "Supprimer les consignes",
+      "newInstruction": "Identifiant des nouvelles consignes",
+      "addInstruction": "Ajouter des consignes"
+    },
+    "errors": {
+      "title": "Indiquez le titre de la fiche.",
+      "noQuestion": "Ajoutez au moins une question.",
+      "questionId": "L'identifiant d'une question : minuscules latines et chiffres, sans doublon.",
+      "questionText": "Écrivez le texte de chaque question.",
+      "followUp": "Une question de suivi vient après la question qu'elle suit.",
+      "why": "Indiquez la raison de chaque effet.",
+      "instruction": "Un effet renvoie à des consignes inexistantes.",
+      "instructionKey": "L'identifiant des consignes : minuscules latines et chiffres.",
+      "instructionText": "Chaque consigne a un titre et au moins une étape."
+    },
+    "timer": "Durée de l'appel",
+    "skip": "Saisir sans fiche (texte libre seul)",
+    "cardOf": "Fiche : {{title}}",
+    "version": "Version {{version}}",
+    "progress": "{{answered}} sur {{asked}}",
+    "simNote": "Fiche d'essai [SIM] : contenu à revoir par le Bureau et le médecin.",
+    "key": "Décisive",
+    "answer": {
+      "yes": "Oui",
+      "no": "Non",
+      "unknown": "Ne sait pas"
+    },
+    "band": {
+      "critical": "Critique",
+      "high": "Élevé",
+      "normal": "Normal",
+      "low": "Faible"
+    },
+    "bandTitle": "Niveau : {{band}}",
+    "bandHint": {
+      "critical": "Prise en charge dans la première minute. Prévenez le chef de salle maintenant.",
+      "high": "Prise en charge rapide. Poursuivez les questions.",
+      "normal": "Délai normal.",
+      "low": "Aucun danger apparent pour l'instant."
+    },
+    "noFlag": "Aucune alerte",
+    "why": "Pourquoi ce niveau",
+    "means": "Moyens suggérés",
+    "readToCaller": "À lire à l'appelant",
+    "read": "Lu à l'appelant",
+    "metronome": "{{rate}} compressions par minute",
+    "metronomeHint": "Comptez à voix haute avec le battement.",
+    "reason": {
+      "start": "Départ selon la catégorie : {{band}}",
+      "unknown": "Question décisive sans réponse : niveau {{band}} au moins"
+    }
+  },
+  "roomGuide": {
+    "title": "Guide de l'agent de salle",
+    "intro": "Tout le parcours d'un signalement, de l'appel à la clôture : ce qui est enregistré à chaque étape, qui décide, et les délais. L'envoi et la clôture restent toujours une décision humaine.",
+    "enter": "Saisir un signalement",
+    "lifeTitle": "La vie d'un signalement en huit étapes",
+    "withCard": "Avec la fiche d'appel :",
+    "stages": {
+      "intake": {
+        "title": "Réception",
+        "who": "Le citoyen depuis l'application, la salle (198, radio, au guichet) ou une équipe de terrain",
+        "items": [
+          "Le canal et qui a saisi",
+          "La catégorie, le lieu, le texte et les médias"
+        ],
+        "card": [
+          "Questions par catégorie, réponse oui, non ou ne sait pas",
+          "Consignes lues à l'appelant jusqu'à l'arrivée de l'équipe"
+        ]
+      },
+      "record": {
+        "title": "Enregistrement",
+        "who": "Automatique à la saisie",
+        "items": [
+          "Le code de suivi",
+          "Gouvernorat et délégation d'après le lieu",
+          "État « reçu » et historique des états"
+        ],
+        "card": [
+          "Réponses et version de la fiche gardées avec le signalement",
+          "Résumé de la fiche en tête du texte"
+        ]
+      },
+      "analysis": {
+        "title": "Analyse initiale",
+        "who": "Automatique, règles puis modèle",
+        "items": [
+          "La crédibilité",
+          "La priorité de 0 à 100 : vie en danger, blessés, gravité, sites sensibles, météo, niveau opérationnel",
+          "Suggestion de regrouper les signalements semblables"
+        ],
+        "card": [
+          "La fiche devient une source des composantes vie en danger et blessés, à côté du modèle et des mots-clés"
+        ]
+      },
+      "deadline": {
+        "title": "Bande de délai",
+        "who": "D'après la priorité, réglage national",
+        "items": [
+          "Délai de prise en charge selon le niveau (tableau ci-dessous)",
+          "Un SOS est toujours critique"
+        ],
+        "card": [
+          "Le niveau de la fiche est un plancher : la bande ne descend pas en dessous",
+          "Un « oui » décisif peut le rendre critique"
+        ]
+      },
+      "claim": {
+        "title": "Prise en charge",
+        "who": "La salle du gouvernorat, la salle centrale pour les retards",
+        "items": [
+          "« En cours » ou « rejeté » avec une raison écrite",
+          "Un retard alerte la salle centrale"
+        ],
+        "card": []
+      },
+      "dispatch": {
+        "title": "Envoi et intervention",
+        "who": "Le chef de salle décide, l'équipe exécute",
+        "items": [
+          "Suggestion des unités les plus proches et des acteurs concernés",
+          "La mission et ses heures : ordre, départ, arrivée, fin",
+          "« Intervenu » ou « intervention en cours »",
+          "Le citoyen est prévenu de l'arrivée de l'équipe"
+        ],
+        "card": [
+          "Les moyens suggérés restent une suggestion, le chef de salle décide",
+          "Le résumé et les consignes lues sont dans le texte du signalement, visible par la salle et tout lecteur du tableau de bord"
+        ]
+      },
+      "closure": {
+        "title": "Clôture",
+        "who": "La salle après le rapport de l'équipe",
+        "items": [
+          "Le bilan et le procès-verbal",
+          "« Intervention clôturée »",
+          "Le déclarant est prévenu"
+        ],
+        "card": []
+      },
+      "after": {
+        "title": "Après le signalement",
+        "who": "Apprentissage et planification",
+        "items": [
+          "Journal de mission et retour d'expérience",
+          "SNACR, statistiques et fenêtre des décideurs",
+          "Passage en catastrophe possible pendant l'intervention"
+        ],
+        "card": []
+      }
+    },
+    "statusesTitle": "Les états vus par le déclarant et la salle",
+    "statusRules": [
+      "« Rejeté » seulement depuis « reçu » ou « en cours », avec une raison écrite.",
+      "« Intervenu » et « intervention en cours » alternent.",
+      "La clôture est définitive."
+    ],
+    "deadlinesTitle": "Délais de prise en charge",
+    "band": "Niveau",
+    "from": "Priorité",
+    "claimWithin": "Prise en charge sous",
+    "below": "moins de {{n}}",
+    "atLeast": "{{n}} et plus",
+    "seconds": "{{n}} s",
+    "fromSettings": "Valeurs des réglages nationaux actuels.",
+    "defaults": "Valeurs par défaut (réglages nationaux illisibles).",
+    "deadlineRules": [
+      "Un SOS est toujours critique.",
+      "Le niveau de la fiche d'appel est un plancher, gardé lors des recalculs.",
+      "Un retard de prise en charge apparaît dans la file des retards de la salle centrale."
+    ],
+    "cardTitle": "Mener l'appel avec la fiche guidée",
+    "cardSteps": [
+      "Choisissez la catégorie : sa fiche approuvée s'affiche et le chronomètre démarre.",
+      "Posez les questions dans l'ordre et répondez oui, non ou ne sait pas. Une question de suivi apparaît après la réponse qu'elle suit.",
+      "Suivez le niveau, les alertes et les moyens suggérés dans la colonne ; prévenez le chef de salle au niveau critique.",
+      "Lisez les consignes telles quelles et cochez « lu à l'appelant ». Pour la réanimation, comptez avec le rythme.",
+      "Complétez le lieu et le texte libre, puis envoyez. Le résumé et les réponses sont gardés avec le signalement."
+    ],
+    "rulesTitle": "Règles de la fiche",
+    "rules": [
+      "Les réponses ne baissent jamais le niveau.",
+      "Une question décisive à « ne sait pas » met le niveau au moins à élevé.",
+      "La fiche est facultative : le texte libre seul reste possible.",
+      "Le signalement citoyen depuis l'application ne change pas, ni la formule de priorité et ses poids.",
+      "Une fiche médicale ne s'approuve qu'après validation médicale ; modifier le brouillon annule la validation.",
+      "Si une nouvelle version est approuvée pendant l'appel, l'envoi est refusé et la nouvelle fiche se recharge pour revoir les réponses."
+    ],
+    "cardsLink": "Les fiches approuvées et leurs versions",
+    "arrow": "→"
   }
 }

@@ -85,7 +85,9 @@
     "systemLogs": "System logs",
     "changes": "Change journal",
     "sqlConsole": "SQL console",
-    "repoMap": "System map"
+    "repoMap": "System map",
+    "roomGuide": "Room agent's guide",
+    "callCards": "Call-taking cards"
   },
   "header": {
     "scope": "Geographic scope",
@@ -633,7 +635,14 @@
     "range_too_long": "The period is too long.",
     "range_invalid": "The end date is before the start date.",
     "event_not_found": "Entry not found.",
-    "absence_not_found": "Absence not found."
+    "absence_not_found": "Absence not found.",
+    "call_card_changed": "The call-taking card changed during the call (a new version was approved). It was reloaded: check the answers, then send.",
+    "call_card_category": "This card is not for the chosen category.",
+    "call_card_question": "The answers hold a question the card does not know.",
+    "call_card_not_draft": "Only a draft can be edited. An approved or retired version is fixed.",
+    "draft_exists": "This category already has a draft. Edit or discard it first.",
+    "medical_validation_required": "This is a medical card: it needs a medical validation before approval.",
+    "no_call_card": "No call-taking card was used for this report."
   },
   "kpi": {
     "title": "Key indicators",
@@ -7835,7 +7844,20 @@
     "point": "Place of the report",
     "mapAria": "Map to place the report",
     "submit": "Record the report",
-    "entered": "Entered by the room · {{channel}}"
+    "entered": "Entered by the room · {{channel}}",
+    "tiles": {
+      "medical": "Medical",
+      "fire": "Fire",
+      "traffic_accident": "Road accident",
+      "drowning": "Drowning",
+      "flood": "Flood",
+      "chemical_leak": "Chemical leak",
+      "landslide": "Landslide or collapse",
+      "sos": "General rescue",
+      "other": "Other"
+    },
+    "categoryStep": "1. Type of incident",
+    "firstQuestion": "The first question, always: “What is happening? Where are you exactly?”"
   },
   "whatWhere": {
     "title": "What, then where",
@@ -8997,5 +9019,266 @@
     "openReports": "Open reports by priority",
     "alerts": "Active alerts",
     "noAlerts": "No active alert"
+  },
+  "callCards": {
+    "title": "Guided call-taking cards",
+    "intro": "Questions by category that the room agent asks the caller; the band, the suggested resources and the instructions to read follow at once. The Office writes them, the doctor validates the medical ones, the head of operations approves them.",
+    "list": "Cards",
+    "history": "Show earlier versions",
+    "col": {
+      "card": "Card",
+      "version": "Version",
+      "questions": "Questions",
+      "status": "Status",
+      "used": "Used"
+    },
+    "keyCount": "{{n}} decisive",
+    "status": {
+      "draft": "Draft",
+      "approved": "Approved",
+      "retired": "Retired"
+    },
+    "approvedLine": "Approved version {{version}}, by {{by}} on {{at}}.",
+    "draftLine": "Draft of version {{version}} in progress ({{by}}).",
+    "medicalDone": "Medically validated: {{by}}. {{reason}}",
+    "medicalPending": "Waiting for the medical validation before approval.",
+    "saveDraft": "Save draft",
+    "saveExplain": "Say what changed and why. It goes to the log.",
+    "editDraft": "Edit draft",
+    "newVersion": "New version",
+    "discard": "Discard draft",
+    "validate": "Medical validation",
+    "validateExplain": "Name the doctor who reviewed the instructions and their opinion.",
+    "approve": "Approve",
+    "approveExplain": "This version replaces the approved one and is used in the rooms from now on. Give the reason.",
+    "trial": "Try the approved card",
+    "trialDraft": "Try the draft",
+    "trialHint": "Answer as during a call. Nothing is recorded.",
+    "reasonLabel": "Reason",
+    "edit": {
+      "addEffect": "Add an effect for “{{answer}}”",
+      "ifAnswer": "If the answer is “{{answer}}”",
+      "why": "Reason shown to the agent",
+      "band": "Band",
+      "noBand": "Does not change the band",
+      "flag": "Flag",
+      "instruction": "Instructions to read",
+      "noInstruction": "No instructions",
+      "means": "Suggested resources (one per line)",
+      "lives": "Life in danger",
+      "injured": "Injured",
+      "removeEffect": "Remove effect",
+      "question": "Question {{n}}",
+      "up": "Move up",
+      "down": "Move down",
+      "remove": "Remove",
+      "text": "Question text",
+      "help": "Help for the agent",
+      "id": "Identifier",
+      "when": "Shown",
+      "always": "Always",
+      "after": "After “{{answer}}” to {{question}}",
+      "key": "Decisive question",
+      "title": "Card title",
+      "baseBand": "Starting band",
+      "baseMeans": "Base resources (one per line)",
+      "questions": "Questions",
+      "addQuestion": "Add question",
+      "instructions": "Instructions read to the caller",
+      "insTitle": "Title",
+      "metronome": "Compressions per minute",
+      "steps": "Steps (one per line)",
+      "medical": "Medical instructions",
+      "removeInstruction": "Remove instructions",
+      "newInstruction": "Identifier of new instructions",
+      "addInstruction": "Add instructions"
+    },
+    "errors": {
+      "title": "Write the card's title.",
+      "noQuestion": "Add at least one question.",
+      "questionId": "A question's identifier: lower-case Latin letters and digits, not repeated.",
+      "questionText": "Write the text of every question.",
+      "followUp": "A follow-up comes after the question it follows.",
+      "why": "Write the reason of every effect.",
+      "instruction": "An effect points to instructions that do not exist.",
+      "instructionKey": "An instructions identifier: lower-case Latin letters and digits.",
+      "instructionText": "Every instruction has a title and at least one step."
+    },
+    "timer": "Call time",
+    "skip": "Enter without a card (free text only)",
+    "cardOf": "Card: {{title}}",
+    "version": "Version {{version}}",
+    "progress": "{{answered}} of {{asked}}",
+    "simNote": "Trial card [SIM]: its content waits for the Office's and the doctor's review.",
+    "key": "Decisive",
+    "answer": {
+      "yes": "Yes",
+      "no": "No",
+      "unknown": "Doesn't know"
+    },
+    "band": {
+      "critical": "Critical",
+      "high": "High",
+      "normal": "Normal",
+      "low": "Low"
+    },
+    "bandTitle": "Band: {{band}}",
+    "bandHint": {
+      "critical": "Claim within the first minute. Tell the head of the room now.",
+      "high": "Claim quickly. Keep asking.",
+      "normal": "Normal deadline.",
+      "low": "No visible danger so far."
+    },
+    "noFlag": "No flag",
+    "why": "Why this band",
+    "means": "Suggested resources",
+    "readToCaller": "Read to the caller",
+    "read": "Read to the caller",
+    "metronome": "{{rate}} compressions a minute",
+    "metronomeHint": "Count aloud with the beat.",
+    "reason": {
+      "start": "Start for the category: {{band}}",
+      "unknown": "Decisive question unanswered: band {{band}} at least"
+    }
+  },
+  "roomGuide": {
+    "title": "Room agent's guide",
+    "intro": "A report's whole life, from the call to the closure: what is recorded at each stage, who decides, and the deadlines. Dispatch and closure are always a human decision.",
+    "enter": "Enter a report",
+    "lifeTitle": "A report's life in eight stages",
+    "withCard": "With the call-taking card:",
+    "stages": {
+      "intake": {
+        "title": "Intake",
+        "who": "The citizen from the app, the room (198, radio, in person) or a field team",
+        "items": [
+          "The channel and who entered it",
+          "Category, place, text and media"
+        ],
+        "card": [
+          "Questions by category, answered yes, no or doesn't know",
+          "Instructions read to the caller until the team arrives"
+        ]
+      },
+      "record": {
+        "title": "Record",
+        "who": "Automatic on entry",
+        "items": [
+          "The tracking code",
+          "Gouvernorat and delegation from the place",
+          "Status “received” and the status history"
+        ],
+        "card": [
+          "The card's answers and version kept with the report",
+          "The card's summary at the top of the text"
+        ]
+      },
+      "analysis": {
+        "title": "Initial analysis",
+        "who": "Automatic, rules first then the model",
+        "items": [
+          "Credibility",
+          "Priority 0 to 100: life in danger, injured, severity, sensitive sites, weather, operations level",
+          "Suggested grouping of similar reports"
+        ],
+        "card": [
+          "The card becomes a source of the life and injured components, beside the model and the keywords"
+        ]
+      },
+      "deadline": {
+        "title": "Deadline band",
+        "who": "From the priority, a national setting",
+        "items": [
+          "Claim deadline by band (table below)",
+          "An SOS is always critical"
+        ],
+        "card": [
+          "The card's band is a floor: the band never goes below it",
+          "A decisive “yes” can make it critical"
+        ]
+      },
+      "claim": {
+        "title": "Claim",
+        "who": "The gouvernorat's room, the central room for late ones",
+        "items": [
+          "“In progress” or “rejected” with a written reason",
+          "A late claim alerts the central room"
+        ],
+        "card": []
+      },
+      "dispatch": {
+        "title": "Dispatch and intervention",
+        "who": "The head of the room decides, the team acts",
+        "items": [
+          "Suggested nearest units and concerned bodies",
+          "The mission and its times: order, departure, arrival, end",
+          "“Intervened” or “ongoing”",
+          "The citizen is told the team arrived"
+        ],
+        "card": [
+          "Suggested resources stay a suggestion, the head of the room decides",
+          "The summary and instructions read are in the report text, seen by the room and every dashboard reader"
+        ]
+      },
+      "closure": {
+        "title": "Closure",
+        "who": "The room after the team's report",
+        "items": [
+          "Outcome and minutes",
+          "“Intervention closed”",
+          "The reporter is told"
+        ],
+        "card": []
+      },
+      "after": {
+        "title": "After the report",
+        "who": "Learning and planning",
+        "items": [
+          "Mission log and after-action review",
+          "SNACR, statistics and the decision makers' window",
+          "Escalation to a disaster possible during the intervention"
+        ],
+        "card": []
+      }
+    },
+    "statusesTitle": "Statuses the reporter and the room see",
+    "statusRules": [
+      "“Rejected” only from “received” or “in progress”, with a written reason.",
+      "“Intervened” and “ongoing” alternate.",
+      "Closure is final."
+    ],
+    "deadlinesTitle": "Claim deadlines",
+    "band": "Band",
+    "from": "Priority",
+    "claimWithin": "Claim within",
+    "below": "below {{n}}",
+    "atLeast": "{{n}} and above",
+    "seconds": "{{n}} s",
+    "fromSettings": "Values from the current national settings.",
+    "defaults": "Default values (the national settings could not be read).",
+    "deadlineRules": [
+      "An SOS is always critical.",
+      "The call-taking card's band is a floor, kept when the priority is computed again.",
+      "A late claim shows in the central room's late queue."
+    ],
+    "cardTitle": "Taking the call with the guided card",
+    "cardSteps": [
+      "Choose the category: its approved card shows and the call timer starts.",
+      "Ask the questions in order and answer yes, no or doesn't know. A follow-up shows after the answer it follows.",
+      "Watch the band, the flags and the suggested resources in the side column; tell the head of the room at critical.",
+      "Read the instructions as written and tick “read to the caller”. For CPR, count with the beat.",
+      "Complete the place and the free text, then send. The summary and the answers are kept with the report."
+    ],
+    "rulesTitle": "Card rules",
+    "rules": [
+      "Answers never lower the band.",
+      "A decisive question answered “doesn't know” makes the band high at least.",
+      "The card is optional: free text alone still works.",
+      "The citizen's report from the app does not change, nor the priority formula and its weights.",
+      "A medical card is approved only after the medical validation; editing the draft cancels the validation.",
+      "If a new version is approved during the call, sending is refused and the new card reloads to check the answers."
+    ],
+    "cardsLink": "Approved cards and their versions",
+    "arrow": "→"
   }
 }

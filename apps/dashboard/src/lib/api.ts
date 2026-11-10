@@ -449,6 +449,14 @@ export const ERROR_CODES = [
   "logs_not_configured",
   "logs_unreachable",
   "logs_query_refused",
+  // OS2: guided call-taking cards.
+  "call_card_changed",
+  "call_card_category",
+  "call_card_question",
+  "call_card_not_draft",
+  "draft_exists",
+  "medical_validation_required",
+  "no_call_card",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

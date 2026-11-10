@@ -2304,6 +2304,78 @@
         "title": "AnomalyOut",
         "type": "object"
       },
+      "AnswerOut": {
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "enum": [
+                "yes",
+                "no",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            "title": "Answers",
+            "type": "object"
+          },
+          "card_id": {
+            "format": "uuid",
+            "title": "Card Id",
+            "type": "string"
+          },
+          "card_version": {
+            "title": "Card Version",
+            "type": "integer"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "instructions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Instruction"
+            },
+            "title": "Instructions",
+            "type": "object"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/Outcome"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/Question"
+            },
+            "title": "Questions",
+            "type": "array"
+          },
+          "sim": {
+            "title": "Sim",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "card_id",
+          "category",
+          "card_version",
+          "sim",
+          "title",
+          "answers",
+          "outcome",
+          "questions",
+          "instructions",
+          "created_at"
+        ],
+        "title": "AnswerOut",
+        "type": "object"
+      },
       "AppVersionOut": {
         "properties": {
           "channel": {
@@ -4477,6 +4549,48 @@
         "title": "CalendarOut",
         "type": "object"
       },
+      "CallCardIn": {
+        "additionalProperties": false,
+        "description": "The card answered while the room wrote the call down (``RoomReportIn.call_card``).",
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "enum": [
+                "yes",
+                "no",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            "maxProperties": 20,
+            "title": "Answers",
+            "type": "object"
+          },
+          "card_id": {
+            "format": "uuid",
+            "title": "Card Id",
+            "type": "string"
+          },
+          "read": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 12,
+            "title": "Read",
+            "type": "array"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "card_id",
+          "version"
+        ],
+        "title": "CallCardIn",
+        "type": "object"
+      },
       "CallDetail": {
         "properties": {
           "answered_at": {
@@ -5181,138 +5295,61 @@
         "title": "CalloutTargetOut",
         "type": "object"
       },
-      "CardOut": {
+      "CardContent": {
+        "additionalProperties": false,
+        "description": "The JSON of a card version, as stored in ``reports.call_card.content``.",
         "properties": {
-          "can_decide": {
-            "title": "Can Decide",
-            "type": "boolean"
-          },
-          "can_train": {
-            "title": "Can Train",
-            "type": "boolean"
-          },
-          "data": {
-            "title": "Data",
-            "type": "string"
-          },
-          "decisions": {
-            "items": {
-              "$ref": "#/components/schemas/DecisionOut"
-            },
-            "title": "Decisions",
-            "type": "array"
-          },
-          "family": {
+          "base_band": {
+            "default": "normal",
             "enum": [
-              "vision",
-              "language",
-              "tabular"
+              "critical",
+              "high",
+              "normal",
+              "low"
             ],
-            "title": "Family",
+            "title": "Base Band",
             "type": "string"
           },
-          "id": {
-            "title": "Id",
-            "type": "string"
-          },
-          "licences": {
+          "base_means": {
             "items": {
+              "maxLength": 200,
+              "minLength": 1,
               "type": "string"
             },
-            "title": "Licences",
+            "maxItems": 8,
+            "title": "Base Means",
             "type": "array"
           },
-          "limits": {
-            "title": "Limits",
-            "type": "string"
-          },
-          "measures": {
-            "items": {
-              "$ref": "#/components/schemas/Table"
+          "instructions": {
+            "patternProperties": {
+              "^[a-z][a-z0-9_]{0,39}$": {
+                "$ref": "#/components/schemas/Instruction"
+              }
             },
-            "title": "Measures",
-            "type": "array"
+            "title": "Instructions",
+            "type": "object"
           },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "simulated": {
-            "title": "Simulated",
-            "type": "boolean"
-          },
-          "status": {
-            "enum": [
-              "approved",
-              "pending",
-              "changed",
-              "withdrawn",
-              "shadow"
-            ],
-            "title": "Status",
-            "type": "string"
-          },
-          "status_label": {
-            "title": "Status Label",
-            "type": "string"
-          },
-          "thresholds": {
+          "questions": {
             "items": {
-              "$ref": "#/components/schemas/Threshold"
+              "$ref": "#/components/schemas/Question"
             },
-            "title": "Thresholds",
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Questions",
             "type": "array"
           },
-          "use": {
-            "title": "Use",
-            "type": "string"
-          },
-          "version": {
-            "title": "Version",
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
             "type": "string"
           }
         },
         "required": [
-          "id",
-          "name",
-          "family",
-          "version",
-          "licences",
-          "simulated",
-          "status",
-          "status_label",
-          "use",
-          "limits",
-          "data",
-          "measures",
-          "thresholds",
-          "decisions",
-          "can_decide",
-          "can_train"
+          "title",
+          "questions"
         ],
-        "title": "CardOut",
-        "type": "object"
-      },
-      "CardsOut": {
-        "properties": {
-          "generated_at": {
-            "format": "date-time",
-            "title": "Generated At",
-            "type": "string"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/CardOut"
-            },
-            "title": "Items",
-            "type": "array"
-          }
-        },
-        "required": [
-          "items",
-          "generated_at"
-        ],
-        "title": "CardsOut",
+        "title": "CardContent",
         "type": "object"
       },
       "Casualties": {
@@ -11845,6 +11882,50 @@
         "title": "DownloadOut",
         "type": "object"
       },
+      "DraftIn": {
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/CardContent"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "reason"
+        ],
+        "title": "DraftIn",
+        "type": "object"
+      },
+      "DraftUpdateIn": {
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/CardContent"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "reason",
+          "updated_at"
+        ],
+        "title": "DraftUpdateIn",
+        "type": "object"
+      },
       "DroneCreated": {
         "description": "The new drone and its publish token, shown once (MediaMTX takes its video; nothing is ever sent back).",
         "properties": {
@@ -11991,6 +12072,85 @@
           "can_register"
         ],
         "title": "DronePage",
+        "type": "object"
+      },
+      "Effect": {
+        "additionalProperties": false,
+        "description": "What one answer does. Nothing here can lower the band.",
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "enum": [
+                  "critical",
+                  "high",
+                  "normal",
+                  "low"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "flag": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flag"
+          },
+          "injured": {
+            "default": false,
+            "title": "Injured",
+            "type": "boolean"
+          },
+          "instruction": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_]{0,39}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instruction"
+          },
+          "lives": {
+            "default": false,
+            "title": "Lives",
+            "type": "boolean"
+          },
+          "means": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Means",
+            "type": "array"
+          },
+          "why": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "why"
+        ],
+        "title": "Effect",
         "type": "object"
       },
       "EmailOut": {
@@ -21429,6 +21589,52 @@
         "title": "InspectionItemOut",
         "type": "object"
       },
+      "Instruction": {
+        "additionalProperties": false,
+        "properties": {
+          "medical": {
+            "default": false,
+            "title": "Medical",
+            "type": "boolean"
+          },
+          "metronome": {
+            "anyOf": [
+              {
+                "maximum": 140.0,
+                "minimum": 60.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metronome"
+          },
+          "steps": {
+            "items": {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 12,
+            "minItems": 1,
+            "title": "Steps",
+            "type": "array"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ],
+        "title": "Instruction",
+        "type": "object"
+      },
       "InterventionReportIn": {
         "properties": {
           "client_id": {
@@ -28752,6 +28958,77 @@
         "title": "OrganizationCard",
         "type": "object"
       },
+      "Outcome": {
+        "properties": {
+          "answered": {
+            "title": "Answered",
+            "type": "integer"
+          },
+          "asked": {
+            "title": "Asked",
+            "type": "integer"
+          },
+          "band": {
+            "enum": [
+              "critical",
+              "high",
+              "normal",
+              "low"
+            ],
+            "title": "Band",
+            "type": "string"
+          },
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "injured": {
+            "title": "Injured",
+            "type": "boolean"
+          },
+          "instructions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Instructions",
+            "type": "array"
+          },
+          "lives": {
+            "title": "Lives",
+            "type": "boolean"
+          },
+          "means": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Means",
+            "type": "array"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "band",
+          "flags",
+          "reasons",
+          "means",
+          "instructions",
+          "lives",
+          "injured",
+          "answered",
+          "asked"
+        ],
+        "title": "Outcome",
+        "type": "object"
+      },
       "OverviewOut": {
         "properties": {
           "can_edit": {
@@ -32312,6 +32589,70 @@
         "title": "QueryOut",
         "type": "object"
       },
+      "Question": {
+        "additionalProperties": false,
+        "properties": {
+          "effects": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Effect"
+            },
+            "propertyNames": {
+              "enum": [
+                "yes",
+                "no",
+                "unknown"
+              ]
+            },
+            "title": "Effects",
+            "type": "object"
+          },
+          "help": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Help"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,39}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "default": false,
+            "title": "Key",
+            "type": "boolean"
+          },
+          "text": {
+            "maxLength": 400,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "when": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/When"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "text"
+        ],
+        "title": "Question",
+        "type": "object"
+      },
       "QuotaOut": {
         "description": "Anonymous report quota (phase 9 §3); all null for registered accounts (no quota).",
         "properties": {
@@ -35231,6 +35572,16 @@
       "RoomReportIn": {
         "description": "A report a room agent enters by hand (phase N, docs/phase-n/design-n.md §5).",
         "properties": {
+          "call_card": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CallCardIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "category": {
             "$ref": "#/components/schemas/Category"
           },
@@ -47783,6 +48134,31 @@
         "title": "WeatherOut",
         "type": "object"
       },
+      "When": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "enum": [
+              "yes",
+              "no",
+              "unknown"
+            ],
+            "title": "Answer",
+            "type": "string"
+          },
+          "question": {
+            "pattern": "^[a-z][a-z0-9_]{0,39}$",
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "answer"
+        ],
+        "title": "When",
+        "type": "object"
+      },
       "WrappedKeyIn": {
         "properties": {
           "doctor_id": {
@@ -52212,6 +52588,140 @@
         "title": "InboxItem",
         "type": "object"
       },
+      "app__modules__modelcards__schemas__CardOut": {
+        "properties": {
+          "can_decide": {
+            "title": "Can Decide",
+            "type": "boolean"
+          },
+          "can_train": {
+            "title": "Can Train",
+            "type": "boolean"
+          },
+          "data": {
+            "title": "Data",
+            "type": "string"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionOut"
+            },
+            "title": "Decisions",
+            "type": "array"
+          },
+          "family": {
+            "enum": [
+              "vision",
+              "language",
+              "tabular"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "licences": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Licences",
+            "type": "array"
+          },
+          "limits": {
+            "title": "Limits",
+            "type": "string"
+          },
+          "measures": {
+            "items": {
+              "$ref": "#/components/schemas/Table"
+            },
+            "title": "Measures",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "approved",
+              "pending",
+              "changed",
+              "withdrawn",
+              "shadow"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_label": {
+            "title": "Status Label",
+            "type": "string"
+          },
+          "thresholds": {
+            "items": {
+              "$ref": "#/components/schemas/Threshold"
+            },
+            "title": "Thresholds",
+            "type": "array"
+          },
+          "use": {
+            "title": "Use",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "family",
+          "version",
+          "licences",
+          "simulated",
+          "status",
+          "status_label",
+          "use",
+          "limits",
+          "data",
+          "measures",
+          "thresholds",
+          "decisions",
+          "can_decide",
+          "can_train"
+        ],
+        "title": "CardOut",
+        "type": "object"
+      },
+      "app__modules__modelcards__schemas__CardsOut": {
+        "properties": {
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__modelcards__schemas__CardOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "generated_at"
+        ],
+        "title": "CardsOut",
+        "type": "object"
+      },
       "app__modules__modelcards__schemas__DecisionIn": {
         "properties": {
           "decision": {
@@ -56158,6 +56668,194 @@
           "can_create_central"
         ],
         "title": "SearchOut",
+        "type": "object"
+      },
+      "app__modules__reports__callcards_router__CardOut": {
+        "properties": {
+          "approval_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Reason"
+          },
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "content": {
+            "$ref": "#/components/schemas/CardContent"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "medical": {
+            "title": "Medical",
+            "type": "boolean"
+          },
+          "medical_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medical Reason"
+          },
+          "medical_validated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medical Validated At"
+          },
+          "medical_validated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medical Validated By"
+          },
+          "sim": {
+            "title": "Sim",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "used": {
+            "default": 0,
+            "title": "Used",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "version",
+          "status",
+          "content",
+          "sim",
+          "medical",
+          "medical_validated_by",
+          "medical_validated_at",
+          "medical_reason",
+          "approved_by",
+          "approved_at",
+          "approval_reason",
+          "created_by_name",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "CardOut",
+        "type": "object"
+      },
+      "app__modules__reports__callcards_router__CardsOut": {
+        "properties": {
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+            },
+            "title": "Cards",
+            "type": "array"
+          }
+        },
+        "required": [
+          "cards"
+        ],
+        "title": "CardsOut",
+        "type": "object"
+      },
+      "app__modules__reports__callcards_router__ReasonIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason",
+          "updated_at"
+        ],
+        "title": "ReasonIn",
         "type": "object"
       },
       "app__modules__reports__schemas__CategoryOut": {
@@ -74609,7 +75307,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardsOut"
+                  "$ref": "#/components/schemas/app__modules__modelcards__schemas__CardsOut"
                 }
               }
             },
@@ -74656,7 +75354,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardOut"
+                  "$ref": "#/components/schemas/app__modules__modelcards__schemas__CardOut"
                 }
               }
             },
@@ -74774,7 +75472,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CardOut"
+                  "$ref": "#/components/schemas/app__modules__modelcards__schemas__CardOut"
                 }
               }
             },
@@ -76694,6 +77392,334 @@
         "summary": "Revoke Grant",
         "tags": [
           "break-glass"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards": {
+      "get": {
+        "description": "``current``: the approved card and the draft of each category; ``all``: every version (the history).",
+        "operationId": "list_cards_api_v1_staff_call_cards_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "default": "current",
+              "title": "Include",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Cards",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{card_id}": {
+      "delete": {
+        "operationId": "discard_draft_api_v1_staff_call_cards__card_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "card_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Card Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Discard Draft",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      },
+      "put": {
+        "description": "Change a draft. Its medical validation, if any, is withdrawn: the text changed.",
+        "operationId": "update_draft_api_v1_staff_call_cards__card_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "card_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Card Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftUpdateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Draft",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{card_id}/approve": {
+      "post": {
+        "description": "The draft becomes the card the rooms use; the version it replaces is retired.",
+        "operationId": "approve_api_v1_staff_call_cards__card_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "card_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Card Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__reports__callcards_router__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{card_id}/medical-validation": {
+      "post": {
+        "description": "Record that the medical staff validated this draft's text (the reason names who, as for the guide).",
+        "operationId": "validate_medical_api_v1_staff_call_cards__card_id__medical_validation_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "card_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Card Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__reports__callcards_router__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Validate Medical",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{category}/draft": {
+      "post": {
+        "description": "A new version of the card of ``category``, written as a draft (one draft per category at a time).",
+        "operationId": "create_draft_api_v1_staff_call_cards__category__draft_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Draft",
+        "tags": [
+          "staff",
+          "call-cards"
         ]
       }
     },
@@ -98368,6 +99394,56 @@
         "summary": "Get Report",
         "tags": [
           "staff"
+        ]
+      }
+    },
+    "/api/v1/staff/reports/{report_id}/call-card": {
+      "get": {
+        "description": "The card answered when the room wrote this report down; 404 when it was entered without one.",
+        "operationId": "report_answers_api_v1_staff_reports__report_id__call_card_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Report Answers",
+        "tags": [
+          "staff",
+          "call-cards"
         ]
       }
     },

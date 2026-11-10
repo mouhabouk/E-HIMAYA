@@ -146,6 +146,43 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
         flags="personal",
     ),
+    # OS2 (Yamen 2026-11-10): the guided call-taking cards the rooms answer at intake, and the room agent's guide.
+    page(
+        "room_guide",
+        "ops",
+        "/room-guide",
+        ("دليل إجراءات عون القاعة", "Guide de l'agent de salle", "Room agent's guide"),
+    ),
+    page(
+        "call_cards",
+        "ops",
+        "/call-cards",
+        ("بطاقات الاستقبال", "Fiches d'appel", "Call-taking cards"),
+        ("* /call-cards",),
+        button(
+            "call_cards.edit",
+            ("تحرير نسخة جديدة", "Rédiger une version", "Write a version"),
+            "POST /call-cards/{category}/draft",
+            "PUT /call-cards/{card_id}",
+            "DELETE /call-cards/{card_id}",
+            flags="national",
+            act_as=R.CONTENT_EDITOR,
+        ),
+        button(
+            "call_cards.medical",
+            ("المصادقة الطبية", "Validation médicale", "Medical validation"),
+            "POST /call-cards/{card_id}/medical-validation",
+            flags="national",
+            act_as=R.MEDICAL_COORDINATOR,
+        ),
+        button(
+            "call_cards.approve",
+            ("اعتماد البطاقة", "Approuver la fiche", "Approve the card"),
+            "POST /call-cards/{card_id}/approve",
+            flags="national",
+            act_as=R.OPS_MANAGER,
+        ),
+    ),
     page(
         "incidents",
         "ops",
