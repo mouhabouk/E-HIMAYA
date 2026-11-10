@@ -16,6 +16,7 @@ import '../staff_config.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
+import 'call_card_screen.dart';
 import 'detailed_report_screen.dart';
 import 'field_flow.dart';
 import 'field_widgets.dart';
@@ -83,6 +84,20 @@ class MissionScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 _QuickActions(mission: m),
                 const SizedBox(height: 12),
+                // OS2: the card the room answered during the call; the leader completes it.
+                if (m.callCard != null) ...[
+                  NavCard(
+                    key: const Key('open-call-card'),
+                    icon: Icons.fact_check,
+                    tone: cardBandTone(m.callCard!.currentBand),
+                    title: l10n.staffCallCard,
+                    subtitle: l10n.staffCardBand(
+                      cardBandLabel(l10n, m.callCard!.currentBand),
+                    ),
+                    onTap: () => push(context, CallCardScreen(missionId: m.id)),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 NatureChips(mission: m, readOnly: readOnly),
                 const SizedBox(height: 12),
                 MissionPointCard(mission: m),

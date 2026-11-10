@@ -699,6 +699,110 @@ class DamageEntry {
   };
 }
 
+/// OS2: one question of the call-taking card, as the team reads it.
+class CardQuestion {
+  const CardQuestion({
+    required this.id,
+    required this.text,
+    this.help,
+    this.key = false,
+    this.whenQuestion,
+    this.whenAnswer,
+  });
+
+  factory CardQuestion.fromJson(Map<String, dynamic> j) {
+    final when = j['when'] as Map<String, dynamic>?;
+    return CardQuestion(
+      id: j['id'] as String,
+      text: j['text'] as String,
+      help: j['help'] as String?,
+      key: j['key'] as bool? ?? false,
+      whenQuestion: when?['question'] as String?,
+      whenAnswer: when?['answer'] as String?,
+    );
+  }
+
+  final String id;
+  final String text;
+  final String? help;
+  final bool key;
+  final String? whenQuestion;
+  final String? whenAnswer;
+}
+
+/// OS2: the card the room answered during the call, and what the team answered from the scene.
+/// The team's answers never lower the band the call gave (Yamen, 2026-11-10).
+class MissionCallCard {
+  const MissionCallCard({
+    required this.title,
+    required this.version,
+    required this.band,
+    required this.answers,
+    required this.questions,
+    this.sim = false,
+    this.flags = const [],
+    this.fieldBand,
+    this.fieldAnswers = const {},
+    this.fieldAt,
+    this.instructions = const {},
+  });
+
+  factory MissionCallCard.fromJson(Map<String, dynamic> j) {
+    final outcome = j['outcome'] as Map<String, dynamic>;
+    final field = j['field_outcome'] as Map<String, dynamic>?;
+    Map<String, String> answers(Object? x) => {
+      for (final e in (x as Map? ?? const {}).entries)
+        e.key as String: e.value as String,
+    };
+    return MissionCallCard(
+      title: j['title'] as String,
+      version: j['card_version'] as int,
+      sim: j['sim'] as bool? ?? false,
+      band: outcome['band'] as String,
+      flags: [
+        for (final f in (field ?? outcome)['flags'] as List? ?? const [])
+          f as String,
+      ],
+      answers: answers(j['answers']),
+      fieldBand: field?['band'] as String?,
+      fieldAnswers: answers(j['field_answers']),
+      fieldAt: _date(j['field_at']),
+      questions: [
+        for (final q in j['questions'] as List? ?? const [])
+          CardQuestion.fromJson(q as Map<String, dynamic>),
+      ],
+      instructions: {
+        for (final e in (j['instructions'] as Map? ?? const {}).entries)
+          (e.value as Map)['title'] as String: [
+            for (final x in (e.value as Map)['steps'] as List) x as String,
+          ],
+      },
+    );
+  }
+
+  final String title;
+  final int version;
+  final bool sim;
+
+  /// The band of the call (`critical`, `high`, `normal`, `low`) and, once the team answered, the
+  /// band with the team's answers.
+  final String band;
+  final String? fieldBand;
+  final List<String> flags;
+  final Map<String, String> answers;
+  final Map<String, String> fieldAnswers;
+  final DateTime? fieldAt;
+  final List<CardQuestion> questions;
+
+  /// The instructions read to the caller: title → steps.
+  final Map<String, List<String>> instructions;
+
+  String get currentBand => fieldBand ?? band;
+
+  /// What is known for a question: the team's answer over the caller's.
+  String? answerOf(String id) => fieldAnswers[id] ?? answers[id];
+}
+
 class Mission {
   const Mission({
     required this.id,
@@ -742,6 +846,7 @@ class Mission {
     this.fieldInitiated = false,
     this.toll,
     this.interventionReport,
+    this.callCard,
   });
 
   factory Mission.fromJson(Map<String, dynamic> j) {
@@ -820,6 +925,9 @@ class Mission {
       interventionReport: obj('intervention_report') == null
           ? null
           : FieldReport.fromJson(obj('intervention_report')!),
+      callCard: obj('call_card') == null
+          ? null
+          : MissionCallCard.fromJson(obj('call_card')!),
     );
   }
 
@@ -885,6 +993,9 @@ class Mission {
   final bool fieldInitiated;
   final FieldReport? toll;
   final FieldReport? interventionReport;
+
+  /// OS2: the call-taking card the room answered for this incident, with the team's answers.
+  final MissionCallCard? callCard;
 
   /// Where the team goes: the room's point, else the incident's centre.
   GeoPoint? get destination => target ?? location;

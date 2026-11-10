@@ -3610,5 +3610,41 @@
   "staffStageText": "Message text",
   "staffStageSend": "Send to the room",
   "staffStageSentList": "Messages sent on this mission",
-  "staffStageSpoken": "Spoken, corrected"
+  "staffStageSpoken": "Spoken, corrected",
+  "staffCallCard": "Call-taking card",
+  "staffCallCardHelp": "What the caller answered the room. Complete from the scene what stayed “doesn't know” or correct what proves wrong; the room sees it at once, and the band never goes down.",
+  "staffCardBand": "Band: {band}",
+  "@staffCardBand": {
+    "placeholders": {
+      "band": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCardFieldBand": "After the team: {band}",
+  "@staffCardFieldBand": {
+    "placeholders": {
+      "band": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCardBandCritical": "Critical",
+  "staffCardBandHigh": "High",
+  "staffCardBandNormal": "Normal",
+  "staffCardBandLow": "Low",
+  "staffCardYes": "Yes",
+  "staffCardNo": "No",
+  "staffCardUnknown": "Doesn't know",
+  "staffCardKey": "Decisive",
+  "staffCardCaller": "Caller: {answer}",
+  "@staffCardCaller": {
+    "placeholders": {
+      "answer": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCardCallerNone": "Not asked to the caller",
+  "staffCardRead": "Instructions read to the caller"
 }

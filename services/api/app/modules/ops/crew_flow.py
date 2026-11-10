@@ -24,6 +24,7 @@ from app.modules.decision.schemas import VoiceOut
 from app.modules.ops import crew, interventions, resources, schemas
 from app.modules.ops import service as incidents
 from app.modules.ops.models import Assignment, FieldReport, Incident, Resource
+from app.modules.reports import callcards_router as callcards
 from app.modules.reports import intake
 from app.modules.reports.domain import Category
 from app.modules.reports.models import Report
@@ -201,6 +202,20 @@ async def intervention_report(
         )
     )
     crew._timeline(session, assignment, "crew_report", crew._who(principal))
+    await crew._announce(session, assignment)
+    return assignment
+
+
+async def call_card(
+    session: AsyncSession, principal: Principal, assignment_id: uuid.UUID, body: schemas.CallCardFieldIn
+) -> Assignment:
+    """The team leader completes the call-taking card from the scene (OS2): the room sees it at once."""
+    assignment, _ = await crew._mission(session, principal, assignment_id)
+    if await crew._seen(session, body.client_id) is not None:
+        return assignment
+    outcome = await callcards.record_field(session, principal, assignment.incident_id, body.answers)
+    crew._event(session, principal, body, "call_card", assignment, {"answers": body.answers, "band": outcome.band})
+    crew._timeline(session, assignment, "crew_call_card", crew._who(principal), band=outcome.band)
     await crew._announce(session, assignment)
     return assignment
 

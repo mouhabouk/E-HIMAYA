@@ -11829,3 +11829,33 @@ body::after {
   margin: 12px 0 0;
   font-size: 0.85em;
 }
+
+/* OS2 follow-up: the call-taking card on the report's page, call beside field. */
+.report-card__bands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-block: 8px;
+}
+.report-card__table th[scope="row"] {
+  font-weight: 500;
+  text-align: start;
+}
+.report-card__key {
+  margin-inline-start: 6px;
+  font-size: 0.8em;
+}
+.report-card__changed td:last-child {
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+  font-weight: 600;
+}
+.report-card__checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}

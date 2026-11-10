@@ -9139,6 +9139,27 @@
     "reason": {
       "start": "Départ selon la catégorie : {{band}}",
       "unknown": "Question décisive sans réponse : niveau {{band}} au moins"
+    },
+    "report": {
+      "title": "Fiche d’appel : {{title}}",
+      "call": "Appel",
+      "field": "Terrain",
+      "waiting": "L’équipe n’a pas encore répondu",
+      "fieldBy": "Complétée depuis le terrain par {{name}} le {{at}}.",
+      "question": "Question",
+      "changed": "(réponse changée sur le terrain)",
+      "scene": "Ce que l’équipe a trouvé",
+      "nature": "Nature confirmée",
+      "toll": "Bilan",
+      "tollLine": "{{injured}} blessé(s) (dont {{serious}} grave(s)), {{deceased}} décès, {{trapped}} coincé(s)",
+      "nothingYet": "L’équipe n’a encore envoyé ni la nature ni le bilan.",
+      "checks": {
+        "nature_differs": "La nature confirmée par l’équipe diffère de la catégorie du signalement",
+        "lives_not_on_card": "Décès ou personnes coincées que la fiche n’avait pas prévus",
+        "injured_not_on_card": "Blessés que la fiche n’avait pas prévus",
+        "band_below_toll": "Le niveau de la fiche est inférieur au bilan : revoir la priorité",
+        "confirmed": "Ce que l’équipe a trouvé concorde avec la fiche"
+      }
     }
   },
   "roomGuide": {

@@ -483,6 +483,19 @@ class FakeCrewServer {
             'note': body['description'],
             'created_at': now,
           };
+        case 'call-card':
+          // OS2: the server raises the band to critical when the scene says bleeding (as in the API).
+          final card = Map<String, dynamic>.from(x['call_card'] as Map);
+          final field = Map<String, dynamic>.from(body['answers'] as Map);
+          card['field_answers'] = field;
+          card['field_outcome'] = {
+            ...card['outcome'] as Map,
+            'band': field['bleeding'] == 'yes'
+                ? 'critical'
+                : (card['outcome'] as Map)['band'],
+          };
+          card['field_at'] = now;
+          x['call_card'] = card;
         case 'report':
           x['intervention_report'] = {
             'kind': 'report',

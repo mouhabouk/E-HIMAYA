@@ -2033,5 +2033,20 @@
   "staffStageText": "نص الرسالة",
   "staffStageSend": "إرسال للقاعة",
   "staffStageSentList": "الرسائل المرسلة في هذه المهمة",
-  "staffStageSpoken": "صوتية مصحّحة"
+  "staffStageSpoken": "صوتية مصحّحة",
+  "staffCallCard": "بطاقة الاستقبال",
+  "staffCallCardHelp": "ما أجاب به المتصل في القاعة. أكمل من المكان ما بقي «لا يعرف» أو صحّح ما تبيّن خلافه؛ تصل أجوبتك إلى القاعة فورا، ولا تُنزل المستوى.",
+  "staffCardBand": "المستوى: {band}",
+  "staffCardFieldBand": "بعد أجوبة الفريق: {band}",
+  "staffCardBandCritical": "حرج",
+  "staffCardBandHigh": "عالٍ",
+  "staffCardBandNormal": "عادي",
+  "staffCardBandLow": "منخفض",
+  "staffCardYes": "نعم",
+  "staffCardNo": "لا",
+  "staffCardUnknown": "لا يعرف",
+  "staffCardKey": "حاسم",
+  "staffCardCaller": "المتصل: {answer}",
+  "staffCardCallerNone": "لم يُطرح على المتصل",
+  "staffCardRead": "تعليمات قُرئت على المتصل"
 }

@@ -128,9 +128,15 @@ async def _weather(session: AsyncSession, report: Report, category: Category) ->
 
 
 async def _call_card(session: AsyncSession, report_id: uuid.UUID) -> dict[str, Any] | None:
-    """What the answers of the room's guided call-taking card say about lives and injuries (OS2)."""
-    outcome = await session.scalar(select(CallCardAnswer.outcome).where(CallCardAnswer.report_id == report_id))
-    return callcards.card_facts(outcome)
+    """What the answers of the room's guided call-taking card say about lives and injuries (OS2), completed by
+    the team from the scene."""
+    row = (
+        await session.execute(
+            select(CallCardAnswer.outcome, CallCardAnswer.field_outcome).where(CallCardAnswer.report_id == report_id)
+        )
+    ).first()
+    # The team's answers from the scene, once given, never below the call's (callcards.on_scene).
+    return callcards.card_facts(row.field_outcome or row.outcome) if row is not None else None
 
 
 @system_scoped

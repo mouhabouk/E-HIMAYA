@@ -46,6 +46,7 @@ from app.modules.ops.models import (
     TimelineEvent,
     Unit,
 )
+from app.modules.reports import callcards_router as callcards
 from app.modules.reports import sniff
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Status
 
@@ -484,6 +485,7 @@ async def mission_out(session: AsyncSession, assignment: Assignment) -> schemas.
         field_initiated=assignment.field_initiated,
         toll=_report_out(toll) if toll is not None else None,
         intervention_report=_report_out(written) if written is not None else None,
+        call_card=await callcards.mission_card(session, incident.id),
     )
 
 

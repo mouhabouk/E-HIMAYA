@@ -362,6 +362,15 @@ async def no_intervention(
     return await _answer(session, principal, "crew.no_intervention", assignment)
 
 
+@router.post("/missions/{assignment_id}/call-card", response_model=schemas.MissionOut)
+async def call_card(
+    principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.CallCardFieldIn
+) -> schemas.MissionOut:
+    """The call-taking card completed from the scene (OS2): it only raises the band of the call."""
+    assignment = await crew_flow.call_card(session, principal, assignment_id, body)
+    return await _answer(session, principal, "crew.call_card", assignment)
+
+
 @router.post("/missions/{assignment_id}/toll", response_model=schemas.MissionOut)
 async def toll(
     principal: Leader, session: Session, _device: Device, assignment_id: uuid.UUID, body: schemas.TollIn

@@ -14,6 +14,7 @@ dashboard, one version at a time, and every report keeps the version it was ente
 """
 
 import uuid
+from datetime import datetime
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
@@ -182,8 +183,8 @@ def clean_answers(content: CardContent, answers: dict[str, Answer]) -> dict[str,
 def summary(
     content: CardContent, version: int, sim: bool, answers: dict[str, Answer], outcome: Outcome, read: list[str]
 ) -> str:
-    """The lines written at the top of the report's text: every reader of the report (the room, the team on its
-    mission, the committees) sees what was asked and answered."""
+    """The lines written at the top of the report's text: every reader of the report in the dashboard (the room,
+    the committees) sees what was asked and answered. The team reads the card on its mission (``on_scene``)."""
     head = f"[بطاقة الاستقبال: {content.title} · النسخة {version}{' [SIM]' if sim else ''}]"
     lines = [f"{head} المستوى: {BAND_LABELS[outcome.band]}"]
     if outcome.flags:
@@ -195,11 +196,81 @@ def summary(
     return "\n".join(lines)
 
 
+def on_scene(
+    content: CardContent, call: dict[str, Answer], field: dict[str, Answer], call_outcome: Outcome
+) -> tuple[dict[str, Answer], Outcome]:
+    """The card once the team answered from the scene: the team's answers replace the caller's question by question
+    (the caller's stay stored), and the result never goes below what the call gave (Yamen, 2026-11-10: the field
+    raises the band, it does not lower it; lowering stays the room's decision)."""
+    merged = clean_answers(content, {**call, **field})
+    outcome = evaluate(content, merged)
+    if higher(outcome.band, call_outcome.band) != outcome.band:
+        outcome.band = call_outcome.band
+        outcome.reasons.append(f"لا ينزل عن مستوى المكالمة: {BAND_LABELS[call_outcome.band]}")
+    outcome.lives = outcome.lives or call_outcome.lives
+    outcome.injured = outcome.injured or call_outcome.injured
+    outcome.flags += [f for f in call_outcome.flags if f not in outcome.flags]
+    return merged, outcome
+
+
 def card_facts(outcome: dict[str, Any] | None) -> dict[str, Any] | None:
     """What the priority reads from a report's card answers (``ai.scoring.Facts.call_card``)."""
     if not outcome:
         return None
     return {"lives": bool(outcome.get("lives")), "injured": bool(outcome.get("injured")), "band": outcome.get("band")}
+
+
+class Scene(BaseModel):
+    """What the teams found, beside what the card gave: the nature they confirmed and the incident's casualties."""
+
+    nature: str | None = None
+    injured: int = 0
+    serious: int = 0
+    deceased: int = 0
+    trapped: int = 0
+    #: ``nature_differs``, ``lives_not_on_card``, ``injured_not_on_card``, ``band_below_toll`` or ``confirmed``.
+    checks: list[str] = []
+
+
+def compare(category: str, outcome: Outcome, scene: Scene) -> list[str]:
+    """Where the card (with the team's answers when there are some) and the team's findings disagree. A general
+    call (``sos``, ``other``) has no nature to contradict."""
+    checks: list[str] = []
+    if scene.nature and category not in ("sos", "other") and scene.nature != category:
+        checks.append("nature_differs")
+    if not outcome.lives and (scene.deceased or scene.trapped):
+        checks.append("lives_not_on_card")
+    if not outcome.injured and scene.injured:
+        checks.append("injured_not_on_card")
+    if outcome.band in ("low", "normal") and (scene.deceased or scene.trapped or scene.serious):
+        checks.append("band_below_toll")
+    if not checks and (scene.nature or scene.injured or scene.deceased or scene.trapped):
+        checks.append("confirmed")
+    return checks
+
+
+class AnswerOut(BaseModel):
+    report_id: uuid.UUID
+    card_id: uuid.UUID
+    category: Category
+    card_version: int
+    sim: bool
+    title: str
+    #: The caller's answers and what they gave, with the instructions read to the caller.
+    answers: dict[str, Answer]
+    outcome: Outcome
+    read: list[str] = []
+    #: The team's answers from the scene, and what the card gives with them (never below the call's band).
+    field_answers: dict[str, Answer] | None = None
+    field_outcome: Outcome | None = None
+    field_by_name: str | None = None
+    field_at: datetime | None = None
+    #: What the teams found on the incident, compared with the card (the report page only).
+    scene: Scene | None = None
+    #: The questions shown for the answers known so far (the team's over the caller's), in the card's order.
+    questions: list[Question]
+    instructions: dict[str, Instruction]
+    created_at: datetime
 
 
 class CallCardIn(BaseModel):

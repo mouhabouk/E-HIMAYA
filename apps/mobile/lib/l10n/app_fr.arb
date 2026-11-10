@@ -2033,5 +2033,20 @@
   "staffStageText": "Texte du message",
   "staffStageSend": "Envoyer à la salle",
   "staffStageSentList": "Messages envoyés pour cette mission",
-  "staffStageSpoken": "Vocal corrigé"
+  "staffStageSpoken": "Vocal corrigé",
+  "staffCallCard": "Fiche d'appel",
+  "staffCallCardHelp": "Ce que l'appelant a répondu à la salle. Complétez depuis les lieux ce qui est resté « ne sait pas » ou corrigez ce qui s'avère faux ; la salle le voit aussitôt, et le niveau ne baisse pas.",
+  "staffCardBand": "Niveau : {band}",
+  "staffCardFieldBand": "Après l'équipe : {band}",
+  "staffCardBandCritical": "Critique",
+  "staffCardBandHigh": "Élevé",
+  "staffCardBandNormal": "Normal",
+  "staffCardBandLow": "Faible",
+  "staffCardYes": "Oui",
+  "staffCardNo": "Non",
+  "staffCardUnknown": "Ne sait pas",
+  "staffCardKey": "Décisive",
+  "staffCardCaller": "Appelant : {answer}",
+  "staffCardCallerNone": "Non posée à l'appelant",
+  "staffCardRead": "Consignes lues à l'appelant"
 }

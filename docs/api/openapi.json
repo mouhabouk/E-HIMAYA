@@ -2335,6 +2335,58 @@
             "title": "Created At",
             "type": "string"
           },
+          "field_answers": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "enum": [
+                    "yes",
+                    "no",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field Answers"
+          },
+          "field_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field At"
+          },
+          "field_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field By Name"
+          },
+          "field_outcome": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Outcome"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "instructions": {
             "additionalProperties": {
               "$ref": "#/components/schemas/Instruction"
@@ -2352,6 +2404,29 @@
             "title": "Questions",
             "type": "array"
           },
+          "read": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Read",
+            "type": "array"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "scene": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scene"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "sim": {
             "title": "Sim",
             "type": "boolean"
@@ -2362,6 +2437,7 @@
           }
         },
         "required": [
+          "report_id",
           "card_id",
           "category",
           "card_version",
@@ -4547,6 +4623,48 @@
           "days"
         ],
         "title": "CalendarOut",
+        "type": "object"
+      },
+      "CallCardFieldIn": {
+        "description": "The team leader completes the call-taking card from the scene (OS2): only the questions they answer.",
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "enum": [
+                "yes",
+                "no",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            "maxProperties": 20,
+            "minProperties": 1,
+            "title": "Answers",
+            "type": "object"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "device_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device At"
+          }
+        },
+        "required": [
+          "client_id",
+          "answers"
+        ],
+        "title": "CallCardFieldIn",
         "type": "object"
       },
       "CallCardIn": {
@@ -25681,6 +25799,16 @@
             ],
             "title": "Back At Unit At"
           },
+          "call_card": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AnswerOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "cancelled_at": {
             "anyOf": [
               {
@@ -36093,6 +36221,52 @@
           "next_cursor"
         ],
         "title": "ScenarioPage",
+        "type": "object"
+      },
+      "Scene": {
+        "description": "What the teams found, beside what the card gave: the nature they confirmed and the incident's casualties.",
+        "properties": {
+          "checks": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "deceased": {
+            "default": 0,
+            "title": "Deceased",
+            "type": "integer"
+          },
+          "injured": {
+            "default": 0,
+            "title": "Injured",
+            "type": "integer"
+          },
+          "nature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nature"
+          },
+          "serious": {
+            "default": 0,
+            "title": "Serious",
+            "type": "integer"
+          },
+          "trapped": {
+            "default": 0,
+            "title": "Trapped",
+            "type": "integer"
+          }
+        },
+        "title": "Scene",
         "type": "object"
       },
       "ScheduleIn": {
@@ -63205,6 +63379,82 @@
           }
         ],
         "summary": "Upload",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/call-card": {
+      "post": {
+        "description": "The call-taking card completed from the scene (OS2): it only raises the band of the call.",
+        "operationId": "call_card_api_v1_crew_missions__assignment_id__call_card_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CallCardFieldIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Call Card",
         "tags": [
           "crew"
         ]

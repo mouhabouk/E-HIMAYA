@@ -12303,6 +12303,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spoken, corrected'**
   String get staffStageSpoken;
+
+  /// No description provided for @staffCallCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Call-taking card'**
+  String get staffCallCard;
+
+  /// No description provided for @staffCallCardHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'What the caller answered the room. Complete from the scene what stayed “doesn\'t know” or correct what proves wrong; the room sees it at once, and the band never goes down.'**
+  String get staffCallCardHelp;
+
+  /// No description provided for @staffCardBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Band: {band}'**
+  String staffCardBand(String band);
+
+  /// No description provided for @staffCardFieldBand.
+  ///
+  /// In en, this message translates to:
+  /// **'After the team: {band}'**
+  String staffCardFieldBand(String band);
+
+  /// No description provided for @staffCardBandCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get staffCardBandCritical;
+
+  /// No description provided for @staffCardBandHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get staffCardBandHigh;
+
+  /// No description provided for @staffCardBandNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get staffCardBandNormal;
+
+  /// No description provided for @staffCardBandLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get staffCardBandLow;
+
+  /// No description provided for @staffCardYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get staffCardYes;
+
+  /// No description provided for @staffCardNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get staffCardNo;
+
+  /// No description provided for @staffCardUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Doesn\'t know'**
+  String get staffCardUnknown;
+
+  /// No description provided for @staffCardKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Decisive'**
+  String get staffCardKey;
+
+  /// No description provided for @staffCardCaller.
+  ///
+  /// In en, this message translates to:
+  /// **'Caller: {answer}'**
+  String staffCardCaller(String answer);
+
+  /// No description provided for @staffCardCallerNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not asked to the caller'**
+  String get staffCardCallerNone;
+
+  /// No description provided for @staffCardRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions read to the caller'**
+  String get staffCardRead;
 }
 
 class _AppLocalizationsDelegate

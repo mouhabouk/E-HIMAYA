@@ -82,14 +82,42 @@ export interface CardOutcome {
   asked: number;
 }
 
+/** What the teams found on the incident, set beside the card by the server (`callcards.compare`). */
+export const SCENE_CHECKS = [
+  "nature_differs",
+  "lives_not_on_card",
+  "injured_not_on_card",
+  "band_below_toll",
+  "confirmed",
+] as const;
+export type SceneCheck = (typeof SCENE_CHECKS)[number];
+
+export interface CardScene {
+  nature: string | null;
+  injured: number;
+  serious: number;
+  deceased: number;
+  trapped: number;
+  checks: SceneCheck[];
+}
+
 export interface ReportCallCard {
+  report_id: string;
   card_id: string;
   category: Category;
   card_version: number;
   sim: boolean;
   title: string;
+  /** The caller's answers, and what they gave. */
   answers: Record<string, CardAnswer>;
   outcome: CardOutcome;
+  read: string[];
+  /** The team's answers from the scene (they replace the caller's question by question; the band never goes down). */
+  field_answers: Record<string, CardAnswer> | null;
+  field_outcome: CardOutcome | null;
+  field_by_name: string | null;
+  field_at: string | null;
+  scene: CardScene | null;
   questions: CardQuestion[];
   instructions: Record<string, CardInstruction>;
   created_at: string;
@@ -215,6 +243,7 @@ export function checkContent(content: CardContent): string | null {
 export const callCardKeys = {
   all: ["call-cards"] as const,
   list: (include: "current" | "all") => ["call-cards", include] as const,
+  reportAll: ["call-cards", "report"] as const,
   report: (id: string) => ["call-cards", "report", id] as const,
 };
 

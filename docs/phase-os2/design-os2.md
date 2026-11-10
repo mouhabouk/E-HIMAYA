@@ -50,8 +50,25 @@ and who decides, what the card adds, the statuses, the claim deadlines read from
 Migration `0100_call_cards`: `reports.call_card`, `reports.call_card_answer` (row-level security like the other
 report tables, change journal attached), `reports.report.call_card_floor`, and the nine seeded cards.
 
-## 6. Not done here (backlog OS2-1 to OS2-3)
+## 6. The card on the scene (Yamen, 2026-11-10: synchronisation between the field app and the dashboard)
 
-- Comparing the card's band with what the team found on the scene, to improve the cards.
-- Showing the answers on the report page and in the field app (today they are in the report text).
-- Statistics of card use and call time per room.
+- **Field app:** the team's mission carries the card the room answered (`MissionOut.call_card`). The team leader
+  opens «بطاقة الاستقبال», sees the caller's answer under each question, and answers from the scene
+  (`POST /api/v1/crew/missions/{id}/call-card`, offline outbox like the other crew writes, button
+  `field_missions.reports`).
+- **Raise only (Yamen's choice):** the team's answers replace the caller's question by question (the caller's stay
+  stored), and the result never goes below the call's band (`callcards.on_scene`). The report's
+  `call_card_floor` rises with it; lowering stays the room's decision. The priority reads the field outcome when
+  there is one.
+- **Dashboard:** the report page shows the card with two columns, «المكالمة» and «الميدان», a changed answer
+  highlighted, and «ما وجده الفريق»: the nature the team confirmed and the incident's casualties. The server sets
+  them beside the card (`callcards.compare`): nature differs from the category, deaths or trapped people the card
+  did not foresee, injured people the card did not foresee, band below the toll, or «matches». The section follows
+  the teams' live events without a reload.
+- Migration `0101_call_card_field`: `field_answers`, `field_outcome`, `field_by`, `field_by_name`, `field_at` on
+  `reports.call_card_answer`, and `call_card` added to the crew event kinds.
+
+## 7. Not done here (backlog OS2-3, OS2-4)
+
+- Statistics of card use and call time per room, and of the comparisons above per card, to improve the cards.
+- The Office's and the doctor's review of the nine [SIM] cards.

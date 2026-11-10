@@ -9139,6 +9139,27 @@
     "reason": {
       "start": "Start for the category: {{band}}",
       "unknown": "Decisive question unanswered: band {{band}} at least"
+    },
+    "report": {
+      "title": "Call card: {{title}}",
+      "call": "Call",
+      "field": "Field",
+      "waiting": "The team has not answered yet",
+      "fieldBy": "Completed from the field by {{name}} at {{at}}.",
+      "question": "Question",
+      "changed": "(answer changed in the field)",
+      "scene": "What the team found",
+      "nature": "Confirmed nature",
+      "toll": "Toll",
+      "tollLine": "{{injured}} injured ({{serious}} serious), {{deceased}} dead, {{trapped}} trapped",
+      "nothingYet": "The team has not sent the nature or the toll yet.",
+      "checks": {
+        "nature_differs": "The nature the team confirmed differs from the report's category",
+        "lives_not_on_card": "Deaths or trapped people the card did not foresee",
+        "injured_not_on_card": "Injured people the card did not foresee",
+        "band_below_toll": "The card's band is below the toll: review the priority",
+        "confirmed": "What the team found matches the card"
+      }
     }
   },
   "roomGuide": {
