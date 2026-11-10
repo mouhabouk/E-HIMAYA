@@ -384,6 +384,16 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     changeSummary: vi.fn(() =>
       Promise.resolve({ hours: 24, total: 0, by_op: [], by_schema: [], by_actor_kind: [], tables: [] }),
     ),
+    // The SQL window (docs/sql/console.md).
+    sqlConnections: vi.fn(() => Promise.resolve([])),
+    sqlTestConnection: vi.fn(),
+    sqlSchema: vi.fn(() => Promise.resolve([])),
+    sqlExamples: vi.fn(() => Promise.resolve([])),
+    sqlQuery: vi.fn(),
+    sqlExport: vi.fn(),
+    sqlHistory: vi.fn(() => Promise.resolve([])),
+    sqlEditHistory: vi.fn(),
+    sqlDeleteHistory: vi.fn(),
     ...overrides,
   };
 }

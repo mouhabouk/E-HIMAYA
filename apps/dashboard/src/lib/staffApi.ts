@@ -33,6 +33,7 @@ import { phase7Api } from "./phase7Api";
 import { phase8Api } from "./phase8Api";
 import { phase9Api } from "./phase9Api";
 import { systemApi } from "./systemApi";
+import { sqlApi } from "./sqlApi";
 import { safetyApi } from "./safetyApi";
 import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
@@ -272,6 +273,7 @@ export function staffApi(api: ApiClient) {
     ...phase8Api(api),
     ...phase9Api(api),
     ...systemApi(api),
+    ...sqlApi(api),
     ...layersApi(api),
     ...coastalApi(api),
     ...programmesApi(api),

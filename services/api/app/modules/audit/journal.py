@@ -58,6 +58,8 @@ EXCLUDED: frozenset[str] = frozenset(
         "knowledge.index_state",
         "decision.procedure_chunk",
         "geo.layer_feature",
+        # The SQL window's own history (migration 0098): every run is already in the audit log with its text.
+        "platform.sql_query",
         "geo.gouvernorat",
         "geo.delegation",
         "geo.municipality",

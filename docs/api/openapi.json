@@ -6883,6 +6883,24 @@
         "title": "CodeOut",
         "type": "object"
       },
+      "ColumnOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "title": "ColumnOut",
+        "type": "object"
+      },
       "CommandBoard": {
         "properties": {
           "can_decide": {
@@ -7815,6 +7833,71 @@
           "active"
         ],
         "title": "ConferenceOut",
+        "type": "object"
+      },
+      "ConnectionOut": {
+        "properties": {
+          "database": {
+            "title": "Database",
+            "type": "string"
+          },
+          "export_max_rows": {
+            "title": "Export Max Rows",
+            "type": "integer"
+          },
+          "host": {
+            "title": "Host",
+            "type": "string"
+          },
+          "max_rows": {
+            "title": "Max Rows",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "port": {
+            "title": "Port",
+            "type": "integer"
+          },
+          "read_only": {
+            "default": true,
+            "title": "Read Only",
+            "type": "boolean"
+          },
+          "sslmode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sslmode"
+          },
+          "timeout_s": {
+            "title": "Timeout S",
+            "type": "integer"
+          },
+          "user": {
+            "title": "User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "host",
+          "port",
+          "database",
+          "user",
+          "sslmode",
+          "timeout_s",
+          "max_rows",
+          "export_max_rows"
+        ],
+        "title": "ConnectionOut",
         "type": "object"
       },
       "ConsentIn": {
@@ -14012,55 +14095,6 @@
         "title": "ExportDevice",
         "type": "object"
       },
-      "ExportIn": {
-        "properties": {
-          "compare": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CompareIn"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "filters": {
-            "$ref": "#/components/schemas/Filters"
-          },
-          "format": {
-            "enum": [
-              "pdf",
-              "xlsx"
-            ],
-            "title": "Format",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "search",
-              "compare"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "lang": {
-            "default": "ar",
-            "enum": [
-              "ar",
-              "fr",
-              "en"
-            ],
-            "title": "Lang",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "format"
-        ],
-        "title": "ExportIn",
-        "type": "object"
-      },
       "ExportLedgerEntry": {
         "properties": {
           "capped": {
@@ -19368,42 +19402,6 @@
         "title": "HistoryItem",
         "type": "object"
       },
-      "HistoryOut": {
-        "properties": {
-          "available": {
-            "title": "Available",
-            "type": "boolean"
-          },
-          "enabled": {
-            "title": "Enabled",
-            "type": "boolean"
-          },
-          "notice_version": {
-            "default": "7b-2026-10",
-            "title": "Notice Version",
-            "type": "string"
-          },
-          "until": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Until"
-          }
-        },
-        "required": [
-          "available",
-          "enabled",
-          "until"
-        ],
-        "title": "HistoryOut",
-        "type": "object"
-      },
       "HistoryPage": {
         "properties": {
           "items": {
@@ -19430,6 +19428,48 @@
           "next_cursor"
         ],
         "title": "HistoryPage",
+        "type": "object"
+      },
+      "HistoryPatch": {
+        "properties": {
+          "pinned": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinned"
+          },
+          "sql": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sql"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "HistoryPatch",
         "type": "object"
       },
       "Hit": {
@@ -29491,6 +29531,123 @@
         "title": "Person",
         "type": "object"
       },
+      "PingOut": {
+        "properties": {
+          "can_write": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Can Write"
+          },
+          "database": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Database"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "server_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Server Time"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "superuser": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superuser"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "name",
+          "ok"
+        ],
+        "title": "PingOut",
+        "type": "object"
+      },
       "PlaceIn": {
         "properties": {
           "kind": {
@@ -32059,6 +32216,100 @@
           }
         },
         "title": "PublishIn",
+        "type": "object"
+      },
+      "QueryIn": {
+        "properties": {
+          "connection": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Connection",
+            "type": "string"
+          },
+          "max_rows": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Rows"
+          },
+          "sql": {
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Sql",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection",
+          "sql"
+        ],
+        "title": "QueryIn",
+        "type": "object"
+      },
+      "QueryOut": {
+        "properties": {
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnOut"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "command": {
+            "title": "Command",
+            "type": "string"
+          },
+          "duration_ms": {
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "executed_at": {
+            "format": "date-time",
+            "title": "Executed At",
+            "type": "string"
+          },
+          "notices": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notices",
+            "type": "array"
+          },
+          "row_count": {
+            "title": "Row Count",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "items": {},
+              "type": "array"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "command",
+          "columns",
+          "rows",
+          "row_count",
+          "truncated",
+          "duration_ms",
+          "notices",
+          "executed_at"
+        ],
+        "title": "QueryOut",
         "type": "object"
       },
       "QuotaOut": {
@@ -56652,6 +56903,42 @@
         "title": "SettingsOut",
         "type": "object"
       },
+      "app__modules__safety__history__HistoryOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "notice_version": {
+            "default": "7b-2026-10",
+            "title": "Notice Version",
+            "type": "string"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          }
+        },
+        "required": [
+          "available",
+          "enabled",
+          "until"
+        ],
+        "title": "HistoryOut",
+        "type": "object"
+      },
       "app__modules__safety__history__PointIn": {
         "additionalProperties": false,
         "properties": {
@@ -58176,6 +58463,176 @@
         "title": "Totals",
         "type": "object"
       },
+      "app__modules__sqlconsole__router__ExportIn": {
+        "properties": {
+          "connection": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Connection",
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "csv",
+              "xlsx",
+              "json",
+              "sql",
+              "html",
+              "md"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "max_rows": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Rows"
+          },
+          "sql": {
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Sql",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection",
+          "sql",
+          "format"
+        ],
+        "title": "ExportIn",
+        "type": "object"
+      },
+      "app__modules__sqlconsole__router__HistoryOut": {
+        "properties": {
+          "command": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Command"
+          },
+          "connection": {
+            "title": "Connection",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "duration_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Ms"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_run_at": {
+            "format": "date-time",
+            "title": "Last Run At",
+            "type": "string"
+          },
+          "pinned": {
+            "title": "Pinned",
+            "type": "boolean"
+          },
+          "rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rows"
+          },
+          "run_count": {
+            "title": "Run Count",
+            "type": "integer"
+          },
+          "sql": {
+            "title": "Sql",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "connection",
+          "sql",
+          "title",
+          "pinned",
+          "status",
+          "command",
+          "rows",
+          "truncated",
+          "duration_ms",
+          "error",
+          "run_count",
+          "created_at",
+          "last_run_at",
+          "updated_at"
+        ],
+        "title": "HistoryOut",
+        "type": "object"
+      },
       "app__modules__strategies__schemas__ItemIn": {
         "properties": {
           "active": {
@@ -59024,6 +59481,55 @@
           "added_at"
         ],
         "title": "EventOut",
+        "type": "object"
+      },
+      "app__modules__window__schemas__ExportIn": {
+        "properties": {
+          "compare": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompareIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "filters": {
+            "$ref": "#/components/schemas/Filters"
+          },
+          "format": {
+            "enum": [
+              "pdf",
+              "xlsx"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "search",
+              "compare"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lang": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Lang",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "format"
+        ],
+        "title": "ExportIn",
         "type": "object"
       },
       "app__modules__window__schemas__Figures": {
@@ -59927,6 +60433,452 @@
         "summary": "Summary",
         "tags": [
           "logs"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/connections": {
+      "get": {
+        "description": "The configured databases: where they are and who the window connects as. Never the password.",
+        "operationId": "connections_api_v1_admin_sql_connections_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConnectionOut"
+                  },
+                  "title": "Response Connections Api V1 Admin Sql Connections Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Connections",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/connections/{name}/schema": {
+      "get": {
+        "description": "Schemas, tables and views with their columns, for the tree beside the editor.",
+        "operationId": "connection_schema_api_v1_admin_sql_connections__name__schema_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response Connection Schema Api V1 Admin Sql Connections  Name  Schema Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Connection Schema",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/connections/{name}/test": {
+      "post": {
+        "description": "Opens a connection to the target and reads its version, role and size (the «اختبار الاتصال» button).",
+        "operationId": "test_connection_api_v1_admin_sql_connections__name__test_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Test Connection",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/examples": {
+      "get": {
+        "description": "The ready queries of docs/sql/01-queries.sql (Q01-Q56) with their section, title and description.",
+        "operationId": "examples_api_v1_admin_sql_examples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  },
+                  "title": "Response Examples Api V1 Admin Sql Examples Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Examples",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/export": {
+      "post": {
+        "description": "Runs the statement again with the export limit and returns the result as a file in the chosen format.",
+        "operationId": "export_api_v1_admin_sql_export_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__sqlconsole__router__ExportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/history": {
+      "get": {
+        "description": "The caller's own queries, pinned first, then the latest run first.",
+        "operationId": "history_api_v1_admin_sql_history_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "only",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^(pinned|errors)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Only"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__sqlconsole__router__HistoryOut"
+                  },
+                  "title": "Response History Api V1 Admin Sql History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "History",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/history/{entry_id}": {
+      "delete": {
+        "description": "Removes one of the caller's entries (the audit log keeps its runs).",
+        "operationId": "delete_history_api_v1_admin_sql_history__entry_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete History",
+        "tags": [
+          "sql-console"
+        ]
+      },
+      "patch": {
+        "description": "Renames, edits the text of, pins or unpins one of the caller's entries.",
+        "operationId": "edit_history_api_v1_admin_sql_history__entry_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__sqlconsole__router__HistoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Edit History",
+        "tags": [
+          "sql-console"
+        ]
+      }
+    },
+    "/api/v1/admin/sql/query": {
+      "post": {
+        "description": "Runs one reading statement and returns at most ``max_rows`` rows (the configured limit by default).",
+        "operationId": "query_api_v1_admin_sql_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Query",
+        "tags": [
+          "sql-console"
         ]
       }
     },
@@ -72526,7 +73478,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HistoryOut"
+                  "$ref": "#/components/schemas/app__modules__safety__history__HistoryOut"
                 }
               }
             },
@@ -72589,7 +73541,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HistoryOut"
+                  "$ref": "#/components/schemas/app__modules__safety__history__HistoryOut"
                 }
               }
             },
@@ -106174,7 +107126,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExportIn"
+                "$ref": "#/components/schemas/app__modules__window__schemas__ExportIn"
               }
             }
           },
