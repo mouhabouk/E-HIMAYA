@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ء-حماية | تقرير المرحلة OS2</title>
+<style>
+:root{--bg:#f7f8fa;--paper:#fff;--ink:#1b2430;--muted:#5b6675;--line:#dfe3e8;--accent:#b3261e;--accent2:#0b5cad;--ok:#1e7d3a;--warn:#a15c00;--chip:#eef1f5;--head:#f1f3f6;--navy:#1f3d99;--orange:#e07b00}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--paper:#161b22;--ink:#e6eaef;--muted:#9aa5b1;--line:#2a313b;--accent:#ff6b5e;--accent2:#5aa9ff;--ok:#5cc97a;--warn:#e0a24a;--chip:#1f2630;--head:#1c222b;--navy:#8fa8ff;--orange:#ffb35c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Naskh Arabic","Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px 24px;margin-bottom:20px}
+header.cover h1{margin:0 0 6px;font-size:30px}
+header.cover .sub{color:var(--muted);margin:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:16px}
+.meta div{background:var(--chip);border-radius:6px;padding:8px 12px;font-size:14px}
+.meta b{display:block;color:var(--muted);font-weight:600;font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:20px}
+h2{margin-top:0;font-size:23px;border-bottom:2px solid var(--line);padding-bottom:8px}
+h3{font-size:18px;margin:18px 0 8px}
+.tbl{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+th{background:var(--head);font-weight:700;white-space:nowrap}
+code{direction:ltr;unicode-bidi:isolate;background:var(--chip);padding:1px 5px;border-radius:4px;font-size:13px}
+pre{direction:ltr;text-align:left;background:var(--chip);padding:10px 12px;border-radius:6px;overflow-x:auto;font-size:13px;margin:6px 0}
+.note{border-inline-start:4px solid var(--accent2);background:var(--chip);padding:10px 14px;border-radius:6px;margin:12px 0}
+.warn{border-inline-start:4px solid var(--warn)}
+.sim{display:inline-block;background:#ffb300;color:#1f1300;font-weight:700;font-size:12px;padding:1px 8px;border-radius:999px;margin-inline-end:6px}
+.simbox{border:2px dashed #ffb300;background:rgba(255,179,0,.10);border-radius:8px;padding:12px 16px;margin:12px 0}
+.ltr{direction:ltr;unicode-bidi:isolate}
+ul,ol{padding-inline-start:22px}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden;min-width:90px}
+.bar span{display:block;height:100%;background:var(--ok)}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.pipeline div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--chip);font-weight:600}
+.pipeline div.now{border-color:var(--accent);background:rgba(179,38,30,.08)}
+.pipeline i{color:var(--muted);font-style:normal}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .v{color:var(--muted);font-size:13px;margin:0 0 6px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:14px}
+.card dt{color:var(--muted);font-weight:600}
+.card dd{margin:0}
+.prio{display:inline-block;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700;color:#fff}
+.p1{background:#b3261e}.p2{background:#a15c00}.p3{background:#0b5cad}.p4{background:#5b6675}
+footer{color:var(--muted);text-align:center;font-size:13px}
+@media print{body{background:#fff}section,header.cover,.card{border:none;break-inside:avoid-page}}
+</style>
+<style>.shot{max-width:100%;border:1px solid var(--line);border-radius:8px;margin:8px 0}</style>
+</head>
+<body>
+<div class="wrap">
+<header class="cover">
+  <h1>ء-حماية <span class="ltr">e-Himaya</span></h1>
+  <p class="sub">تقرير المرحلة OS2: بطاقات الاستقبال الموجّهة في القاعة، ودليل إجراءات عون القاعة في القائمة</p>
+  <div class="meta">
+    <div><b>التاريخ</b>2026-11-10</div>
+    <div><b>الفرع</b><span class="ltr">claude/project-thread-klc6ha</span></div>
+    <div><b>النسخة السابقة محفوظة في</b><span class="ltr">archive/before-call-cards-2026-11-10</span></div>
+    <div><b>الترحيل</b><span class="ltr">0100_call_cards</span></div>
+  </div>
+</header>
+
+<section>
+<h2>1. ما أُنجز</h2>
+<ul>
+<li><b>البطاقة في شاشة إدخال البلاغ:</b> عند اختيار الصنف تظهر بطاقته المعتمدة وعدّاد المكالمة. يجيب العون بنعم أو لا أو لا يعرف، فيظهر المستوى والتنبيهات والوسائل المقترحة والتعليمات التي تُقرأ على المتصل (مع إيقاع الإنعاش 110 في الدقيقة). البطاقة اختيارية والنص الحر باقٍ.</li>
+<li><b>الخادم يعيد الحساب:</b> تُحفظ الأجوبة ورقم النسخة مع البلاغ، ويُضاف ملخص عربي في أول نص البلاغ، ويصبح مستوى البطاقة حدّا أدنى لحزام الأجل، وتغذي البطاقة مكوّني «حياة في خطر» و«الإصابات» في الأولوية دون تغيير الأوزان.</li>
+<li><b>صفحة «بطاقات الاستقبال»:</b> قائمة البطاقات ونسخها، وكتابة مسودة بسبب، والتصديق الطبي للبطاقات الطبية، والاعتماد من رئيس العمليات، وتجربة البطاقة دون تسجيل. كل كتابة على المستوى الوطني ومسجّلة في السجل.</li>
+<li><b>صفحة «دليل إجراءات عون القاعة»:</b> حياة البلاغ في ثماني مراحل، وما تضيفه البطاقة في كل مرحلة، والحالات، وآجال الاستلام من الإعدادات الوطنية، وإجراء المكالمة وقواعد البطاقة.</li>
+<li><b>إصلاح جانبي:</b> قوس ناقص في <code>global.css</code> (منذ صفحة جدار القاعة) جعل أنماط نافذة SQL وخريطة المنظومة لا تُطبَّق إلا عند تقليل الحركة. أُغلق.</li>
+</ul>
+<div class="simbox"><span class="sim">[SIM]</span>البطاقات التسع المزروعة تجريبية: محتواها صيغ من الأدلة العامة وينتظر مراجعة المكتب والطبيب قبل الاستعمال الفعلي (البند OS2-4).</div>
+</section>
+
+<section>
+<h2>2. لقطات من المنظومة</h2>
+<h3>عون القاعة يستقبل مكالمة لشخص فاقد للوعي لا يتنفس</h3>
+<img class="shot" src="phase-os2/os2-room-card.png" alt="شاشة إدخال البلاغ مع البطاقة الطبية والمستوى الحرج وتعليمات الإنعاش">
+<h3>صفحة بطاقات الاستقبال</h3>
+<img class="shot" src="phase-os2/os2-cards.png" alt="قائمة البطاقات التسع وتجربة بطاقة الغرق">
+<h3>دليل إجراءات عون القاعة</h3>
+<img class="shot" src="phase-os2/os2-room-guide.png" alt="مراحل حياة البلاغ الثماني والحالات والآجال">
+<img class="shot" src="phase-os2/os2-menu.png" alt="الدليل والبطاقات في قائمة العمليات اليومية">
+</section>
+
+<section>
+<h2>3. الصلاحيات</h2>
+<div class="tbl"><table>
+<tr><th>العمل</th><th>من (النطاق الوطني فقط للكتابة)</th></tr>
+<tr><td>قراءة البطاقات وتجربتها، والدليل</td><td>عون القاعة، رئيس العمليات، محرر المحتوى، المنسق الطبي</td></tr>
+<tr><td>كتابة مسودة وتعديلها وحذفها</td><td>محرر المحتوى، رئيس العمليات</td></tr>
+<tr><td>التصديق الطبي</td><td>المنسق الطبي، أو محرر المحتوى باسم الطبيب في السبب</td></tr>
+<tr><td>الاعتماد (يسحب النسخة السابقة)</td><td>رئيس العمليات</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>4. الاختبارات</h2>
+<ul>
+<li>الخادم: 1259 اختبارا ناجحا، منها 10 جديدة في <code>tests/test_call_cards.py</code>. اختبار واحد (<code>test_anomaly::test_reports_out_of_habit</code>) يفشل محليا عند إعادة التشغيل على القاعدة نفسها لأن سجل التدقيق يتراكم بين التشغيلات، ولا علاقة له بهذا العمل؛ في CI القاعدة جديدة.</li>
+<li>اللوحة: 700 اختبار ناجح (11 جديدة)، وفحص الأنواع والتدقيق نظيفان.</li>
+<li>المتصفح: <code>e2e/phase-os2.spec.ts</code> (3 اختبارات) و <code>phase-n</code> ناجحة.</li>
+</ul>
+</section>
+
+<section>
+<h2>5. ما بقي (قائمة الانتظار)</h2>
+<ul>
+<li>OS2-1: مقارنة مستوى البطاقة بما وجده الفريق لتحسين البطاقات.</li>
+<li>OS2-2: عرض الأجوبة في صفحة البلاغ وتطبيق الفرق.</li>
+<li>OS2-3: إحصاء الاستعمال ومدة المكالمة.</li>
+<li>OS2-4: مراجعة المحتوى التجريبي.</li>
+</ul>
+<p class="note">الوثائق الخمس الكبرى (المرجع البصري، مخططات UML، الوصف، كراس الشروط، العرض) تُحدَّث معا في نهاية المرحلة كما في <code>docs/phase-end.md</code>، بعد اكتمال أفكار المشاريع المفتوحة الجارية.</p>
+</section>
+<footer>ء-حماية · المرحلة OS2 · <a href="phase-os2/design-os2.md">وثيقة التصميم</a></footer>
+</div>
+</body>
+</html>

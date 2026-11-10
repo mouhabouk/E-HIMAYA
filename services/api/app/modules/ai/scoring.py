@@ -37,6 +37,8 @@ class Facts:
     # Weather at the report's nearest grid point (phase 7, weather.signals): fire danger for fires, heavy-rain level
     # for floods, wind gusts otherwise; None = no weather data there.
     weather: tuple[float, dict[str, Any]] | None = None
+    # Answers of the guided call-taking card the room filled in (OS2, reports.callcards.card_facts): lives, injured.
+    call_card: dict[str, Any] | None = None
 
 
 def _component(key: str, value: float | None, detail: dict[str, Any]) -> dict[str, Any]:
@@ -87,6 +89,9 @@ def _severity(facts: Facts, settings: PrioritySettings) -> tuple[float, dict[str
 
 
 def _lives(facts: Facts) -> tuple[float, dict[str, Any]]:
+    if facts.call_card and facts.call_card.get("lives"):
+        # The caller answered the card's questions: a life in danger by their own answer (OS2).
+        return 1.0, {"source": "call_card"}
     ex = facts.extraction
     if ex is not None:
         at_risk = bool(ex.get("lives_at_risk") or ex.get("people_trapped") or ex.get("deaths_reported"))
@@ -102,12 +107,16 @@ def _lives(facts: Facts) -> tuple[float, dict[str, Any]]:
 
 def _casualties(facts: Facts) -> tuple[float, dict[str, Any]]:
     ex = facts.extraction
+    card_injured = bool(facts.call_card and facts.call_card.get("injured"))
     if ex is not None and (ex.get("injured_count") or ex.get("deaths_reported")):
         count = int(ex.get("injured_count") or 0)
         value = 1.0 if ex.get("deaths_reported") else min(count / 5, 1.0)
         return value, {"source": "model", "injured": count, "deaths": bool(ex.get("deaths_reported"))}
     if facts.keywords.get("deaths"):
         return 1.0, {"source": "keywords", "deaths": True}
+    if card_injured:
+        # The caller said someone is hurt (OS2); the count is not asked, so a little above the keywords.
+        return 0.6, {"source": "call_card", "injured": True}
     if facts.keywords.get("injured"):
         return 0.4, {"source": "keywords", "injured": True}
     return 0.0, {"source": "model" if ex is not None else "keywords"}

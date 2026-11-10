@@ -10711,6 +10711,7 @@ body::after {
   .ops-room__ring {
     animation: none;
   }
+}
 
 /* The SQL window (docs/sql/console.md): connection card, tables tree, editor and result, history. */
 .sql-console .page__head {
@@ -11341,4 +11342,416 @@ body::after {
   .repo-map__grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ---------------------------------------------------------------------------------------------------------------
+ * Guided call-taking cards (OS2): the card in the room's intake form, the Office's cards page and the room
+ * agent's guide. Colours come from the tone tokens, so the dark theme follows them.
+ * ------------------------------------------------------------------------------------------------------------- */
+.call-card__timer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.call-card__clock {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.call-card__skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.call-card {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: start;
+  margin-block: 12px;
+}
+@media (max-width: 900px) {
+  .call-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.call-card__questions,
+.call-card__result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.call-card__result {
+  position: sticky;
+  top: 12px;
+}
+.call-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.call-card__head h3 {
+  margin: 0;
+}
+.call-card__progress {
+  margin-inline-start: auto;
+}
+.call-card__sim {
+  margin: 6px 0 0;
+}
+.call-card__steps {
+  display: flex;
+  gap: 4px;
+  margin: 12px 0;
+}
+.call-card__steps i {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-2);
+}
+.call-card__steps i.done {
+  background: var(--tone-navy);
+}
+.call-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.call-card__q {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.call-card__q fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.call-card__q--key {
+  border-inline-start: 4px solid var(--tone-red);
+}
+.call-card__q--follow {
+  margin-inline-start: 24px;
+}
+.call-card__q legend {
+  float: inline-start;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+.call-card__qtext {
+  font-weight: 600;
+}
+.call-card__help {
+  flex-basis: 100%;
+  font-size: 0.9em;
+}
+.call-card__answers {
+  clear: both;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.call-card__answer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--surface);
+}
+.call-card__answer:has(input:checked) {
+  font-weight: 700;
+}
+.call-card__answer--yes:has(input:checked) {
+  background: var(--tone-red-tint);
+  border-color: var(--tone-red);
+  color: var(--tone-red-ink);
+}
+.call-card__answer--no:has(input:checked) {
+  background: var(--tone-green-tint);
+  border-color: var(--tone-green);
+  color: var(--tone-green-ink);
+}
+.call-card__answer--unknown:has(input:checked) {
+  background: var(--tone-amber-tint);
+  border-color: var(--tone-amber);
+  color: var(--tone-amber-ink);
+}
+.call-card__band {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+}
+.call-card__band--critical {
+  background: var(--tone-red);
+  color: var(--tone-red-on);
+}
+.call-card__band--high {
+  background: var(--tone-red-tint);
+  color: var(--tone-red-ink);
+}
+.call-card__band--normal {
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+}
+.call-card__band--low {
+  background: var(--tone-slate-tint);
+  color: var(--tone-slate-ink);
+}
+.call-card__band-title {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.call-card__band-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.call-card__band-pill--critical {
+  background: var(--tone-red);
+  color: var(--tone-red-on);
+}
+.call-card__band-pill--high {
+  background: var(--tone-red-tint);
+  color: var(--tone-red-ink);
+}
+.call-card__band-pill--normal {
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+}
+.call-card__band-pill--low {
+  background: var(--tone-slate-tint);
+  color: var(--tone-slate-ink);
+}
+.call-card__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.call-card__sect {
+  margin: 14px 0 6px;
+}
+.call-card__why,
+.call-card__means {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+.call-card__means {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.call-card__means li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.call-card__script {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--tone-navy-tint);
+  color: var(--tone-navy-ink);
+}
+.call-card__script h4 {
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.call-card__read {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.call-card__metronome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.call-card__beat {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--tone-red);
+  animation-name: call-card-beat;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+}
+@keyframes call-card-beat {
+  0% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .call-card__beat {
+    animation: none;
+  }
+}
+
+.call-cards__table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.call-cards .row--selected td {
+  background: var(--tone-navy-tint);
+}
+.call-cards__pick {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--tone-navy-ink);
+  cursor: pointer;
+  text-align: start;
+}
+.call-cards__pick:hover {
+  text-decoration: underline;
+}
+.call-cards__detail {
+  margin-top: 16px;
+}
+.call-cards__detail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.call-cards__actions {
+  flex-wrap: wrap;
+}
+.call-cards__reason {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.call-card-editor {
+  display: grid;
+  gap: 12px;
+}
+.call-card-editor__qs {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-inline-start: 20px;
+}
+.call-card-editor__q,
+.call-card-editor__ins {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+.call-card-editor__qhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.call-card-editor__effect {
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+.call-card-editor__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.call-card-editor__add {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.room-guide__h {
+  margin: 20px 0 10px;
+}
+.room-guide__stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.room-guide__stage-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.room-guide__stage-head h3 {
+  margin: 0;
+}
+.room-guide__stage ul {
+  margin: 10px 0 0;
+  padding-inline-start: 18px;
+}
+.room-guide__num {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--tone-navy);
+  color: var(--tone-navy-on);
+  font-size: 0.85em;
+}
+.room-guide__card-note {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+}
+.room-guide__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  margin-block: 16px;
+}
+.room-guide__statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.room-guide__steps {
+  display: grid;
+  gap: 6px;
 }

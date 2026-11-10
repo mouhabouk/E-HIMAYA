@@ -8,6 +8,7 @@ from app.modules.geo.schemas import AdminAddressOut
 from app.modules.medical.schemas import LockedFileIn
 from app.modules.moderation.terms import MaskKind
 from app.modules.orgs.schemas import OrganizationCard, OrgRef
+from app.modules.reports.callcards import CallCardIn
 from app.modules.reports.domain import LAT_MAX, LAT_MIN, LON_MAX, LON_MIN, Category, Lang, Status
 
 
@@ -153,6 +154,8 @@ class RoomReportIn(BaseModel):
     lang: Lang = "ar"
     # When the call or the radio message came in, if earlier than the entry; never in the future.
     received_at: AwareDatetime | None = None
+    # The guided call-taking card answered during the call (OS2); optional, the free text stays.
+    call_card: CallCardIn | None = None
 
 
 class StaffReport(BaseModel):

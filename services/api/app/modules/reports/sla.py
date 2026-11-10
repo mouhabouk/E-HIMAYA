@@ -1,7 +1,8 @@
 """Claim deadlines (phase 9 §2, §4.2): the SLA band of a report and when it becomes late if nobody claims it.
 
 Bands come from the BR-20 priority (``reports.report.priority_score``) and the national settings ``sla.bands``; an SOS
-report is always critical; a report without a score yet is ``normal``. The due time is ``received_at`` plus the band's
+report is always critical; a report without a score yet is ``normal``; a report whose guided call-taking card called
+for a band (``call_card_floor``, OS2) never goes below it. The due time is ``received_at`` plus the band's
 claim delay (``sla.claim_delay_s``). When the priority changes before a claim (AI rescoring), the band and due time
 are recomputed from ``received_at`` but never earlier than ``now + RESCORE_GRACE``.
 """
@@ -20,7 +21,18 @@ Band = Literal["critical", "high", "normal", "low"]
 RESCORE_GRACE = timedelta(seconds=5)
 
 
-def band_of(priority: int | None, category: str, bands: dict[str, Any]) -> Band:
+ORDER: tuple[Band, ...] = ("low", "normal", "high", "critical")
+
+
+def band_of(priority: int | None, category: str, bands: dict[str, Any], floor: str | None = None) -> Band:
+    """The band of the priority; never below ``floor``, the band a guided call-taking card called for (OS2)."""
+    band = _band(priority, category, bands)
+    if floor in ORDER and ORDER.index(floor) > ORDER.index(band):
+        return floor
+    return band
+
+
+def _band(priority: int | None, category: str, bands: dict[str, Any]) -> Band:
     if category == Category.SOS.value:
         return "critical"
     if priority is None:
@@ -48,14 +60,14 @@ async def thresholds(session: AsyncSession) -> tuple[dict[str, Any], dict[str, A
 async def assign(session: AsyncSession, report: Report) -> None:
     """Band and due time of a new report, from its baseline priority."""
     bands, delays = await thresholds(session)
-    band = band_of(report.priority_score, report.category, bands)
+    band = band_of(report.priority_score, report.category, bands, report.call_card_floor)
     report.sla_band = band
     report.sla_due_at = report.received_at + timedelta(seconds=int(delays[band]))
 
 
 def recompute(report: Report, bands: dict[str, Any], delays: dict[str, Any], now: datetime) -> bool:
     """Follow a priority change of an unclaimed report; True when the band changed."""
-    band = band_of(report.priority_score, report.category, bands)
+    band = band_of(report.priority_score, report.category, bands, report.call_card_floor)
     if band == report.sla_band:
         return False
     report.sla_band = band

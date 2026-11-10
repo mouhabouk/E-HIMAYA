@@ -1,6 +1,6 @@
 // covers: phase N (docs/phase-n/design-n.md §5): the room agent enters a report that came by telephone, radio or in
 // person. It becomes a report like the others (tracking code, AI baseline, grouping, follow-up), held by the room.
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
@@ -16,6 +16,11 @@ import { initialBoundsFor } from "../lib/mapStyle";
 import { INTAKE_CHANNELS, type IntakeChannel } from "../lib/staffApi";
 import { CATEGORIES, type Category } from "../lib/types";
 import { DictatedTextarea } from "../components/Dictation";
+import { CallCardPanel, useCallTimer } from "../components/CallCardPanel";
+import { Icon } from "../components/Icon";
+import { callCardKeys, shownAnswers, type Answers } from "../lib/callCards";
+import { canReadCallCards } from "../lib/roles";
+import { ApiError } from "../lib/api";
 
 /** A latitude and a longitude typed by hand, or null while either is not a number inside Tunisia's box. */
 export function parsePoint(lat: string, lon: string): { lat: number; lon: number } | null {
@@ -42,6 +47,24 @@ export function RoomReportPage() {
   const [tried, setTried] = useState(false);
   const [bounds] = useState(() => initialBoundsFor(user?.identity.gouvernoratCode ?? null));
   const point = parsePoint(lat, lon);
+  const timer = useCallTimer();
+  // The guided call-taking card of the category (OS2); the form works as before without it.
+  const cards = useQuery({
+    queryKey: callCardKeys.list("current"),
+    queryFn: ({ signal }) => api.callCards("current", signal),
+    enabled: canReadCallCards(user?.identity.roles ?? []),
+    staleTime: 60_000,
+  });
+  const card = cards.data?.cards.find((c) => c.category === category && c.status === "approved") ?? null;
+  const [answers, setAnswers] = useState<Answers>({});
+  const [read, setRead] = useState<string[]>([]);
+  const [skipCard, setSkipCard] = useState(false);
+  const activeCard = skipCard ? null : card;
+  const pickCategory = (c: Category) => {
+    setCategory(c);
+    setAnswers({});
+    setRead([]);
+  };
   const save = useMutation({
     mutationFn: () =>
       api.enterReport({
@@ -50,10 +73,23 @@ export function RoomReportPage() {
         location: point ?? { lat: 0, lon: 0 },
         text: text.trim() || undefined,
         received_at: receivedAt ? new Date(receivedAt).toISOString() : undefined,
+        call_card:
+          activeCard
+            ? {
+                card_id: activeCard.id,
+                version: activeCard.version,
+                answers: shownAnswers(activeCard.content, answers),
+                read,
+              }
+            : undefined,
       }),
     onSuccess: (r) => {
       void qc.invalidateQueries({ queryKey: ["reports"] });
       void navigate(`/reports/${encodeURIComponent(r.id)}`);
+    },
+    onError: (e) => {
+      // The Office approved a newer version during the call: load it; the answers are kept where the questions are.
+      if (e instanceof ApiError && e.code === "call_card_changed") void qc.invalidateQueries({ queryKey: callCardKeys.all });
     },
   });
   const submit = (e: SyntheticEvent) => {
@@ -75,6 +111,11 @@ export function RoomReportPage() {
         {t("intake.title")}
       </PageTitle>
       <p className="muted">{t("intake.intro")}</p>
+      <p className="call-card__timer">
+        <span className="pill tone-red">
+          <Icon name="schedule" /> {t("callCards.timer")} <span className="call-card__clock">{timer}</span>
+        </span>
+      </p>
       <form className="card ops-form intake-form" onSubmit={submit} noValidate aria-describedby={`${id}-hint`}>
         <fieldset className="chips">
           <legend>{t("intake.channel")}</legend>
@@ -88,7 +129,7 @@ export function RoomReportPage() {
         <div className="form-grid">
           <div className="field">
             <label htmlFor={`${id}-c`}>{t("intake.category")}</label>
-            <select id={`${id}-c`} value={category} onChange={(e) => setCategory(e.target.value as Category)}>
+            <select id={`${id}-c`} value={category} onChange={(e) => pickCategory(e.target.value as Category)}>
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
                   {t(`category.${c}`)}
@@ -101,6 +142,15 @@ export function RoomReportPage() {
             <input id={`${id}-r`} type="datetime-local" value={receivedAt} onChange={(e) => setReceivedAt(e.target.value)} />
           </div>
         </div>
+        {card && (
+          <label className="call-card__skip">
+            <input type="checkbox" checked={skipCard} onChange={(e) => setSkipCard(e.target.checked)} />
+            {t("callCards.skip")}
+          </label>
+        )}
+        {activeCard && (
+          <CallCardPanel card={activeCard} answers={answers} onAnswers={setAnswers} read={read} onRead={setRead} />
+        )}
         <div className="field">
           <label htmlFor={`${id}-x`}>{t("intake.text")}</label>
           <DictatedTextarea field="intake.text" id={`${id}-x`} rows={3} maxLength={4000} value={text} onText={setText} />

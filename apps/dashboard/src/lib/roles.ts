@@ -653,6 +653,29 @@ export function canEditReportTemplates(identity: { roles: readonly string[]; nat
 export const AXIS_ROLES = ["operator", "ops_manager"] as const;
 export const COMMAND_ROLES = ["governor", "minister", "ops_manager"] as const;
 
+/** Guided call-taking cards (OS2): the rooms read them, the Office writes, validates and approves them. */
+export const CALL_CARD_READ_ROLES = ["operator", "ops_manager", "content_editor", "medical_coordinator"] as const;
+
+export function canReadCallCards(roles: readonly string[]): boolean {
+  return any(CALL_CARD_READ_ROLES, roles);
+}
+
+/** What the signed-in person may do on a card: every action needs the national scope (the API checks it again). */
+export function callCardRights(identity: { roles: readonly string[]; gouvernoratCode: number | null }) {
+  const national = identity.gouvernoratCode === null;
+  const roles = identity.roles;
+  return {
+    edit: national && any(["content_editor", "ops_manager"], roles),
+    validate: national && any(["medical_coordinator", "content_editor"], roles),
+    approve: national && roles.includes("ops_manager"),
+  };
+}
+
+/** The room agent's guide (OS2): every staff member of the operations rooms, and the Office who writes the cards. */
+export function canReadRoomGuide(roles: readonly string[]): boolean {
+  return any(CALL_CARD_READ_ROLES, roles);
+}
+
 /** The rooms write down the reports that come by telephone, radio or in person (phase N, API: RoomAgent). */
 export function canEnterReports(roles: readonly string[]): boolean {
   return roles.includes("operator") || roles.includes("ops_manager");
