@@ -56,7 +56,7 @@ export function IncidentsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="localFireDepartment" tone="red">{t("incidents.title")}</PageTitle>
+        <PageTitle print icon="localFireDepartment" tone="red">{t("incidents.title")}</PageTitle>
         <StatusFilter value={status} onChange={setStatus} />
       </div>
       <p className="muted">{t("incidents.intro")}</p>

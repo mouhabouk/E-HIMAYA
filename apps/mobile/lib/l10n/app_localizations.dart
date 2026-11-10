@@ -12393,6 +12393,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Instructions read to the caller'**
   String get staffCardRead;
+
+  /// No description provided for @staffMissionSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission sheet (PDF)'**
+  String get staffMissionSheet;
+
+  /// No description provided for @staffMissionSheetHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'To print or keep on the phone; opens without network'**
+  String get staffMissionSheetHelp;
+
+  /// No description provided for @staffMissionSheetSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'No network: the copy saved on the phone was opened'**
+  String get staffMissionSheetSaved;
+
+  /// No description provided for @staffMissionSheetNoViewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission sheet saved, but no app on the phone opens PDF files'**
+  String get staffMissionSheetNoViewer;
+
+  /// No description provided for @staffMissionSheetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not download the mission sheet, and no copy is saved yet'**
+  String get staffMissionSheetFailed;
 }
 
 class _AppLocalizationsDelegate

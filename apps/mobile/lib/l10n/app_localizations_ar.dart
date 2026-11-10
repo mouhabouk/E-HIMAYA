@@ -6943,4 +6943,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffCardRead => 'تعليمات قُرئت على المتصل';
+
+  @override
+  String get staffMissionSheet => 'أمر المهمة (PDF)';
+
+  @override
+  String get staffMissionSheetHelp =>
+      'للطباعة أو للحفظ في الهاتف، ويُفتح دون شبكة';
+
+  @override
+  String get staffMissionSheetSaved =>
+      'لا شبكة: فُتحت النسخة المحفوظة في الهاتف';
+
+  @override
+  String get staffMissionSheetNoViewer =>
+      'حُفظ أمر المهمة، لكن لا يوجد في الهاتف تطبيق لفتح ملفات PDF';
+
+  @override
+  String get staffMissionSheetFailed =>
+      'تعذر تنزيل أمر المهمة ولا نسخة محفوظة بعد';
 }

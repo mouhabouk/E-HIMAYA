@@ -61,4 +61,18 @@ test.describe("OS2: guided call-taking cards", () => {
     await expect(page.getByRole("link", { name: "دليل إجراءات عون القاعة" })).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/os2-menu.png` });
   });
+
+  test("a page read on paper prints alone, under the Office's header", async ({ page }) => {
+    await signIn(page, ["operator"]);
+    await page.addInitScript(() => window.localStorage.setItem("ehimaya.lang", "ar"));
+    await page.goto("/room-guide");
+    await expect(page.getByRole("button", { name: "طباعة" })).toBeVisible();
+    await page.emulateMedia({ media: "print" });
+    await expect(page.locator(".print-head")).toBeVisible();
+    await expect(page.locator(".print-head")).toContainText("الديوان الوطني للحماية المدنية");
+    await expect(page.locator("header.header")).toBeHidden();
+    await expect(page.getByRole("button", { name: "طباعة" })).toBeHidden();
+    await expect(page.getByRole("heading", { level: 1, name: "دليل إجراءات عون القاعة" })).toBeVisible();
+    await page.pdf({ path: `${SHOTS}/os2-room-guide-print.pdf`, format: "A4", printBackground: true });
+  });
 });

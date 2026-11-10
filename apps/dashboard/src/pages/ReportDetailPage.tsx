@@ -277,7 +277,7 @@ export function ReportDetailPage() {
         <Link to="/reports">{t("detail.back")}</Link>
       </p>
       <div className="page__head">
-        <PageTitle icon="description" tone="red" id="detail-title">
+        <PageTitle print icon="description" tone="red" id="detail-title">
           {t("detail.title")} <span dir="ltr" className="code">{r.tracking_code}</span>
         </PageTitle>
         <StatusChip status={r.status} />

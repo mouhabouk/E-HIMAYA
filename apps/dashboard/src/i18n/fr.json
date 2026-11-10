@@ -9303,5 +9303,10 @@
     ],
     "cardsLink": "Les fiches approuvées et leurs versions",
     "arrow": "→"
+  },
+  "print": {
+    "button": "Imprimer",
+    "office": "Office national de la protection civile",
+    "printedBy": "Imprimé par {{name}} le {{at}}"
   }
 }

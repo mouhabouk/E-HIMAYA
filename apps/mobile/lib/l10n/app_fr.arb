@@ -2048,5 +2048,10 @@
   "staffCardKey": "Décisive",
   "staffCardCaller": "Appelant : {answer}",
   "staffCardCallerNone": "Non posée à l'appelant",
-  "staffCardRead": "Consignes lues à l'appelant"
+  "staffCardRead": "Consignes lues à l'appelant",
+  "staffMissionSheet": "Ordre de mission (PDF)",
+  "staffMissionSheetHelp": "À imprimer ou garder sur le téléphone, s’ouvre sans réseau",
+  "staffMissionSheetSaved": "Pas de réseau : la copie enregistrée sur le téléphone est ouverte",
+  "staffMissionSheetNoViewer": "Ordre de mission enregistré, mais aucune application du téléphone n’ouvre les PDF",
+  "staffMissionSheetFailed": "Impossible de télécharger l’ordre de mission, et aucune copie enregistrée"
 }

@@ -9303,5 +9303,10 @@
     ],
     "cardsLink": "Approved cards and their versions",
     "arrow": "→"
+  },
+  "print": {
+    "button": "Print",
+    "office": "National Civil Protection Office",
+    "printedBy": "Printed by {{name}} on {{at}}"
   }
 }

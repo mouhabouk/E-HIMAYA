@@ -574,7 +574,7 @@ export function OrgDetailPage() {
         <Link to="/orgs">{t("orgs.detail.back")}</Link>
       </p>
       <div className="page__head">
-        <PageTitle icon="apartment" tone="navy" id="org-title" dir="auto">
+        <PageTitle print icon="apartment" tone="navy" id="org-title" dir="auto">
           {org.name}
         </PageTitle>
         <OrgStatusChip status={org.status} />

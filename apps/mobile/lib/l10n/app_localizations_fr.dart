@@ -7090,4 +7090,23 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get staffCardRead => 'Consignes lues à l\'appelant';
+
+  @override
+  String get staffMissionSheet => 'Ordre de mission (PDF)';
+
+  @override
+  String get staffMissionSheetHelp =>
+      'À imprimer ou garder sur le téléphone, s’ouvre sans réseau';
+
+  @override
+  String get staffMissionSheetSaved =>
+      'Pas de réseau : la copie enregistrée sur le téléphone est ouverte';
+
+  @override
+  String get staffMissionSheetNoViewer =>
+      'Ordre de mission enregistré, mais aucune application du téléphone n’ouvre les PDF';
+
+  @override
+  String get staffMissionSheetFailed =>
+      'Impossible de télécharger l’ordre de mission, et aucune copie enregistrée';
 }

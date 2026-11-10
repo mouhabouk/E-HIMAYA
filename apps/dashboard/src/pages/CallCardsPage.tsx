@@ -588,7 +588,7 @@ export function CallCardsPage() {
   const cards = q.data?.cards ?? [];
   return (
     <div className="page">
-      <PageTitle icon="call" tone="navy">
+      <PageTitle print icon="call" tone="navy">
         {t("callCards.title")}
       </PageTitle>
       <p className="muted">{t("callCards.intro")}</p>

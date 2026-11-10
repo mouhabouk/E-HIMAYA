@@ -11859,3 +11859,70 @@ body::after {
   padding: 0;
   list-style: none;
 }
+
+/* Printing any page (Yamen, 2026-11-10): the page alone, under the Office's header, without the menus, the
+   banners, the phone and the buttons. Cards keep together; colours of chips and bands are kept. */
+.print-only {
+  display: none;
+}
+.print-button {
+  margin-inline-start: auto;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  .print-only {
+    display: flex;
+  }
+  .print-head {
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--tone-red);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .print-head__meta {
+    margin-inline-start: auto;
+    font-size: 0.85em;
+    color: var(--muted);
+  }
+  .header,
+  .skip-link,
+  .env-strip,
+  .level-banner,
+  .announcement,
+  .shell__banner,
+  .softphone,
+  .toasts,
+  .no-print,
+  button,
+  .btn,
+  .form-actions {
+    display: none !important;
+  }
+  body,
+  .main,
+  .shell__body {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #c9c9c9;
+    break-inside: avoid;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .pill,
+  .chip,
+  .tag,
+  .call-card__band-pill,
+  .sim-badge {
+    print-color-adjust: exact;
+  }
+}

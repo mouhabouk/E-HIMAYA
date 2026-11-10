@@ -2048,5 +2048,10 @@
   "staffCardKey": "حاسم",
   "staffCardCaller": "المتصل: {answer}",
   "staffCardCallerNone": "لم يُطرح على المتصل",
-  "staffCardRead": "تعليمات قُرئت على المتصل"
+  "staffCardRead": "تعليمات قُرئت على المتصل",
+  "staffMissionSheet": "أمر المهمة (PDF)",
+  "staffMissionSheetHelp": "للطباعة أو للحفظ في الهاتف، ويُفتح دون شبكة",
+  "staffMissionSheetSaved": "لا شبكة: فُتحت النسخة المحفوظة في الهاتف",
+  "staffMissionSheetNoViewer": "حُفظ أمر المهمة، لكن لا يوجد في الهاتف تطبيق لفتح ملفات PDF",
+  "staffMissionSheetFailed": "تعذر تنزيل أمر المهمة ولا نسخة محفوظة بعد"
 }

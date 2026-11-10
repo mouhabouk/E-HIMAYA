@@ -10,6 +10,7 @@ import '../../core/ui/components.dart';
 import '../../core/ui/tokens.dart';
 import '../../features/report/category_labels.dart';
 import '../../l10n/app_localizations.dart';
+import '../mission_sheet.dart';
 import '../staff_app.dart';
 import '../staff_chrome.dart';
 import '../staff_config.dart';
@@ -98,6 +99,16 @@ class MissionScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
+                // The mission sheet as a PDF, kept on the phone to print or show without network.
+                NavCard(
+                  key: const Key('open-mission-sheet'),
+                  icon: Icons.print,
+                  tone: Tone.navy,
+                  title: l10n.staffMissionSheet,
+                  subtitle: l10n.staffMissionSheetHelp,
+                  onTap: () => _openSheet(context, ref, m.id),
+                ),
+                const SizedBox(height: 12),
                 NatureChips(mission: m, readOnly: readOnly),
                 const SizedBox(height: 12),
                 MissionPointCard(mission: m),
@@ -600,4 +611,17 @@ class _QuickActions extends ConsumerWidget {
       ],
     );
   }
+}
+
+Future<void> _openSheet(BuildContext context, WidgetRef ref, String id) async {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final result = await ref.read(openMissionSheetProvider)(id);
+  final text = switch (result) {
+    SheetResult.opened => null,
+    SheetResult.openedSaved => l10n.staffMissionSheetSaved,
+    SheetResult.noViewer => l10n.staffMissionSheetNoViewer,
+    SheetResult.failed => l10n.staffMissionSheetFailed,
+  };
+  if (text != null) messenger.showSnackBar(SnackBar(content: Text(text)));
 }

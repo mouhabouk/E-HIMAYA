@@ -29,7 +29,7 @@ export function ResourceRequestsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="inventory2" tone="amber">{t("resourceRequests.pageTitle")}</PageTitle>
+        <PageTitle print icon="inventory2" tone="amber">{t("resourceRequests.pageTitle")}</PageTitle>
       </div>
       <p className="muted">{t("resourceRequests.intro")}</p>
       <div className="filters__row">

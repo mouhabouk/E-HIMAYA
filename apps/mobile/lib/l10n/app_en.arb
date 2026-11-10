@@ -3646,5 +3646,10 @@
     }
   },
   "staffCardCallerNone": "Not asked to the caller",
-  "staffCardRead": "Instructions read to the caller"
+  "staffCardRead": "Instructions read to the caller",
+  "staffMissionSheet": "Mission sheet (PDF)",
+  "staffMissionSheetHelp": "To print or keep on the phone; opens without network",
+  "staffMissionSheetSaved": "No network: the copy saved on the phone was opened",
+  "staffMissionSheetNoViewer": "Mission sheet saved, but no app on the phone opens PDF files",
+  "staffMissionSheetFailed": "Could not download the mission sheet, and no copy is saved yet"
 }

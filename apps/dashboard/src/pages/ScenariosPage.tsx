@@ -282,7 +282,7 @@ export function ScenariosPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="analytics" tone="navy">{t("scenarios.title")}</PageTitle>
+        <PageTitle print icon="analytics" tone="navy">{t("scenarios.title")}</PageTitle>
       </div>
       <AnalyticsTabs />
       <p className="muted">{t("scenarios.intro")}</p>

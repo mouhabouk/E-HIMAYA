@@ -7026,4 +7026,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffCardRead => 'Instructions read to the caller';
+
+  @override
+  String get staffMissionSheet => 'Mission sheet (PDF)';
+
+  @override
+  String get staffMissionSheetHelp =>
+      'To print or keep on the phone; opens without network';
+
+  @override
+  String get staffMissionSheetSaved =>
+      'No network: the copy saved on the phone was opened';
+
+  @override
+  String get staffMissionSheetNoViewer =>
+      'Mission sheet saved, but no app on the phone opens PDF files';
+
+  @override
+  String get staffMissionSheetFailed =>
+      'Could not download the mission sheet, and no copy is saved yet';
 }
