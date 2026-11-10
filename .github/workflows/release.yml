@@ -119,7 +119,7 @@ jobs:
       - name: Sign (keyless, this workflow's identity)
         run: cosign sign --yes "$IMAGE@${{ steps.push.outputs.digest }}"
       - name: Build provenance attestation
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: ${{ env.IMAGE }}
           subject-digest: ${{ steps.push.outputs.digest }}
