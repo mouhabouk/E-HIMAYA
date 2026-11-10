@@ -966,7 +966,7 @@ export function ProgrammeDetailPage() {
       <p>
         <Link to="/programmes">{t("programmes.back")}</Link>
       </p>
-      <PageTitle icon="schedule" tone="orange">
+      <PageTitle print icon="schedule" tone="orange">
         <span dir="auto">{p.title}</span>
       </PageTitle>
       <p>

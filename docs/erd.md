@@ -2778,6 +2778,11 @@ erDiagram
         jsonb outcome
         text entered_by
         datetime created_at
+        jsonb field_answers
+        jsonb field_outcome
+        text field_by
+        text field_by_name
+        datetime field_at
     }
     reports__camera_event {
         bigint id PK

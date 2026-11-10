@@ -940,6 +940,10 @@ class StaffController extends Notifier<StaffState> {
     });
   }
 
+  /// OS2: the leader completes the call-taking card from the scene (only the questions answered).
+  Future<bool> callCard(String id, Map<String, String> answers) =>
+      _write(id, 'call-card', {'answers': answers});
+
   /// The intervention report (محضر التدخل), from the mission's page.
   Future<bool> interventionReport(String id, String text, {String? voiceId}) =>
       _write(id, 'report', {'text': text.trim(), 'voice_id': ?voiceId});

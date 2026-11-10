@@ -150,7 +150,7 @@ export function DoctorDetailPage() {
         <Link to="/doctors">{t("doctors.back")}</Link>
       </p>
       <div className="page__head">
-        <PageTitle icon="stethoscope" tone="purple" id="doctor-title" dir="auto">
+        <PageTitle print icon="stethoscope" tone="purple" id="doctor-title" dir="auto">
           {d.full_name ?? t("doctors.unnamed")}
         </PageTitle>
         <VolunteerStatusChip status={d.status} />

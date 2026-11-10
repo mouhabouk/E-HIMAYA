@@ -19,11 +19,12 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.access import NATIONAL_SCOPE_REQUIRED, Action, authorize, require
-from app.core.db import get_session
+from app.core.db import as_system, get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
 from app.modules.reports import callcards as cc
 from app.modules.reports import service
+from app.modules.reports.callcards import AnswerOut
 from app.modules.reports.domain import Category
 from app.modules.reports.models import CallCard, CallCardAnswer, Report
 
@@ -88,17 +89,30 @@ class ReasonIn(BaseModel):
     updated_at: datetime
 
 
-class AnswerOut(BaseModel):
-    card_id: uuid.UUID
-    category: Category
-    card_version: int
-    sim: bool
-    title: str
-    answers: dict[str, cc.Answer]
-    outcome: cc.Outcome
-    questions: list[cc.Question]
-    instructions: dict[str, cc.Instruction]
-    created_at: datetime
+def answer_out(card: CallCard, row: CallCardAnswer) -> AnswerOut:
+    content = cc.CardContent.model_validate(card.content)
+    merged = {**row.answers, **(row.field_answers or {})}
+    read = [k for k in row.outcome.get("read", []) if k in content.instructions]
+    offered = row.field_outcome["instructions"] if row.field_outcome else row.outcome.get("instructions", [])
+    keys = list(dict.fromkeys([*read, *offered]))
+    return AnswerOut(
+        report_id=row.report_id,
+        card_id=card.id,
+        category=Category(row.category),
+        card_version=row.card_version,
+        sim=card.sim,
+        title=content.title,
+        answers=row.answers,
+        outcome=cc.Outcome.model_validate(row.outcome),
+        read=read,
+        field_answers=row.field_answers,
+        field_outcome=cc.Outcome.model_validate(row.field_outcome) if row.field_outcome else None,
+        field_by_name=row.field_by_name,
+        field_at=row.field_at,
+        questions=cc.asked(content, merged),
+        instructions={k: content.instructions[k] for k in keys if k in content.instructions},
+        created_at=row.created_at,
+    )
 
 
 def _national(principal: Principal) -> None:
@@ -313,20 +327,32 @@ async def report_answers(principal: ReportReader, session: Session, report_id: u
     row = await session.get(CallCardAnswer, report_id)
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no_call_card")
-    card = await _card(session, row.card_id)
-    content = cc.CardContent.model_validate(card.content)
-    return AnswerOut(
-        card_id=card.id,
-        category=Category(row.category),
-        card_version=row.card_version,
-        sim=card.sim,
-        title=content.title,
-        answers=row.answers,
-        outcome=cc.Outcome.model_validate(row.outcome),
-        questions=cc.asked(content, row.answers),
-        instructions={k: content.instructions[k] for k in row.outcome.get("read", []) if k in content.instructions},
-        created_at=row.created_at,
-    )
+    out = answer_out(await _card(session, row.card_id), row)
+    if report.incident_id is not None:
+        out.scene = await scene_of(session, report.incident_id, row.category, out.field_outcome or out.outcome)
+    return out
+
+
+async def scene_of(session: AsyncSession, incident_id: uuid.UUID, category: str, outcome: cc.Outcome) -> cc.Scene:
+    """The nature the teams confirmed (the latest one) and the incident's casualty counters, against the card."""
+    from app.modules.ops.models import Assignment, CasualtyCount
+
+    async with as_system(session):
+        nature = await session.scalar(
+            select(Assignment.crew_nature)
+            .where(Assignment.incident_id == incident_id, Assignment.crew_nature.is_not(None))
+            .order_by(Assignment.created_at.desc())
+            .limit(1)
+        )
+        counts = await session.get(CasualtyCount, incident_id)
+    scene = cc.Scene(nature=nature)
+    if counts is not None:
+        scene.injured = counts.injured_light + counts.injured_serious
+        scene.serious = counts.injured_serious
+        scene.deceased = counts.deceased
+        scene.trapped = counts.trapped
+    scene.checks = cc.compare(category, outcome, scene)
+    return scene
 
 
 # ---------------------------------------------------------------- at intake (reports.intake)
@@ -364,3 +390,56 @@ async def record(
     report.call_card_floor = outcome.band
     await session.flush()
     return cc.summary(content, card.version, card.sim, answers, outcome, read)
+
+
+# ---------------------------------------------------------------- on the team's mission (ops.crew)
+
+
+async def of_incident(session: AsyncSession, incident_id: uuid.UUID) -> CallCardAnswer | None:
+    """The card answered on the first report of an incident that was entered with one (read as the system: the team
+    reaches it through its mission, which the caller already checked)."""
+    async with as_system(session):
+        return await session.scalar(
+            select(CallCardAnswer)
+            .join(Report, Report.id == CallCardAnswer.report_id)
+            .where(Report.incident_id == incident_id)
+            .order_by(CallCardAnswer.created_at)
+            .limit(1)
+        )
+
+
+async def mission_card(session: AsyncSession, incident_id: uuid.UUID) -> AnswerOut | None:
+    row = await of_incident(session, incident_id)
+    if row is None:
+        return None
+    async with as_system(session):
+        card = await _card(session, row.card_id)
+    return answer_out(card, row)
+
+
+async def record_field(
+    session: AsyncSession, principal: Principal, incident_id: uuid.UUID, answers: dict[str, cc.Answer]
+) -> cc.Outcome:
+    """The team leader's answers from the scene (the caller's are kept); the report's floor rises with them."""
+    row = await of_incident(session, incident_id)
+    if row is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "no_call_card")
+    async with as_system(session):
+        card = await _card(session, row.card_id)
+        content = cc.CardContent.model_validate(card.content)
+        try:
+            merged, outcome = cc.on_scene(content, row.answers, answers, cc.Outcome.model_validate(row.outcome))
+        except ValueError as exc:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "call_card_question") from exc
+        field = {k: v for k, v in merged.items() if k in answers}
+        row.field_answers = field
+        row.field_outcome = outcome.model_dump()
+        row.field_by = audit.actor_of(principal)
+        row.field_by_name = audit.name_of(principal)
+        row.field_at = datetime.now(UTC)
+        report = await session.get(Report, row.report_id, with_for_update=True)
+        if report is not None:
+            floor = report.call_card_floor if report.call_card_floor in cc.BANDS else None
+            report.call_card_floor = cc.higher(outcome.band, floor)
+        await session.flush()
+    return outcome

@@ -7038,4 +7038,75 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get staffStageSpoken => 'Vocal corrigé';
+
+  @override
+  String get staffCallCard => 'Fiche d\'appel';
+
+  @override
+  String get staffCallCardHelp =>
+      'Ce que l\'appelant a répondu à la salle. Complétez depuis les lieux ce qui est resté « ne sait pas » ou corrigez ce qui s\'avère faux ; la salle le voit aussitôt, et le niveau ne baisse pas.';
+
+  @override
+  String staffCardBand(String band) {
+    return 'Niveau : $band';
+  }
+
+  @override
+  String staffCardFieldBand(String band) {
+    return 'Après l\'équipe : $band';
+  }
+
+  @override
+  String get staffCardBandCritical => 'Critique';
+
+  @override
+  String get staffCardBandHigh => 'Élevé';
+
+  @override
+  String get staffCardBandNormal => 'Normal';
+
+  @override
+  String get staffCardBandLow => 'Faible';
+
+  @override
+  String get staffCardYes => 'Oui';
+
+  @override
+  String get staffCardNo => 'Non';
+
+  @override
+  String get staffCardUnknown => 'Ne sait pas';
+
+  @override
+  String get staffCardKey => 'Décisive';
+
+  @override
+  String staffCardCaller(String answer) {
+    return 'Appelant : $answer';
+  }
+
+  @override
+  String get staffCardCallerNone => 'Non posée à l\'appelant';
+
+  @override
+  String get staffCardRead => 'Consignes lues à l\'appelant';
+
+  @override
+  String get staffMissionSheet => 'Ordre de mission (PDF)';
+
+  @override
+  String get staffMissionSheetHelp =>
+      'À imprimer ou garder sur le téléphone, s’ouvre sans réseau';
+
+  @override
+  String get staffMissionSheetSaved =>
+      'Pas de réseau : la copie enregistrée sur le téléphone est ouverte';
+
+  @override
+  String get staffMissionSheetNoViewer =>
+      'Ordre de mission enregistré, mais aucune application du téléphone n’ouvre les PDF';
+
+  @override
+  String get staffMissionSheetFailed =>
+      'Impossible de télécharger l’ordre de mission, et aucune copie enregistrée';
 }

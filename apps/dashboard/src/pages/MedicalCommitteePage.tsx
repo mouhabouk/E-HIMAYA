@@ -218,7 +218,7 @@ export function MedicalCommitteePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="groups" tone="purple">{t("medicalCommittee.title")}</PageTitle>
+        <PageTitle print icon="groups" tone="purple">{t("medicalCommittee.title")}</PageTitle>
       </div>
       <p className="muted">{t("medicalCommittee.intro")}</p>
       <ul className="muted">

@@ -155,7 +155,7 @@ export function VolunteerDetailPage() {
         <Link to="/volunteers">{t("volunteers.back")}</Link>
       </p>
       <div className="page__head">
-        <PageTitle icon="volunteerActivism" tone="green" id="volunteer-title" dir="auto">
+        <PageTitle print icon="volunteerActivism" tone="green" id="volunteer-title" dir="auto">
           {v.full_name ?? t("ops.volunteer")}
         </PageTitle>
         <VolunteerStatusChip status={v.status} />

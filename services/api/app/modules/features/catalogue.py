@@ -1626,6 +1626,8 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /@crew/missions/{assignment_id}/detailed-report",
             "POST /@crew/missions/{assignment_id}/toll",
             "POST /@crew/missions/{assignment_id}/report",
+            # The call-taking card completed from the scene (OS2): a report from the field like the others.
+            "POST /@crew/missions/{assignment_id}/call-card",
             act_as=R.TEAM_LEADER,
         ),
         button(

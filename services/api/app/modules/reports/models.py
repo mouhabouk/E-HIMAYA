@@ -251,3 +251,9 @@ class CallCardAnswer(Base):
     outcome: Mapped[dict[str, Any]] = mapped_column(JSONB)
     entered_by: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # What the team leader answered from the scene, and what the card gives with it (never below the call's band).
+    field_answers: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    field_outcome: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    field_by: Mapped[str | None] = mapped_column(Text)
+    field_by_name: Mapped[str | None] = mapped_column(Text)
+    field_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

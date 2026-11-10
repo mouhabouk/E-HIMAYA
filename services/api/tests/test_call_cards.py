@@ -249,3 +249,102 @@ async def test_the_office_writes_validates_and_approves_a_version(client: httpx.
         headers=agent,
     )
     assert r.status_code == 409 and r.json()["detail"] == "call_card_changed"
+
+
+def _medical_content() -> Any:
+    """The seeded medical card (migration 0100), read from the migration itself."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).parents[1] / "migrations" / "versions" / "0100_call_cards.py"
+    spec = importlib.util.spec_from_file_location("m0100", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return dict(module.SEED)["medical"]
+
+
+def test_the_scene_completes_the_card_and_only_raises_its_band() -> None:
+    content = cc.CardContent.model_validate(_medical_content())
+    call = {"chest": "unknown"}
+    called = cc.evaluate(content, call)
+    assert called.band == "high"
+    merged, raised = cc.on_scene(content, call, {"bleeding": "yes"}, called)
+    assert merged == {"chest": "unknown", "bleeding": "yes"} and raised.band == "critical"
+    # The scene says it was nothing: the band stays where the call put it, with the reason why.
+    _, kept = cc.on_scene(content, call, {"chest": "no"}, called)
+    assert kept.band == "high" and kept.reasons[-1].startswith("لا ينزل")
+
+
+async def test_the_team_completes_the_card_from_the_scene(client: httpx.AsyncClient, staff: Staff) -> None:
+    from tests.test_crew import _on_shift, write
+    from tests.test_crew_field import _place
+
+    agent = staff(["operator"], gouvernorat=61, name="عون القاعة")
+    card = _approved(await _cards(client, agent), "medical")
+    body = {
+        "category": "medical",
+        "location": _place(),
+        "channel": "phone",
+        "call_card": {"card_id": card["id"], "version": card["version"], "answers": {"chest": "unknown"}, "read": []},
+    }
+    r = await client.post(REPORTS, json=body, headers=agent)
+    assert r.status_code == 201, r.text
+    report_id = r.json()["id"]
+    r = await client.post(
+        f"{REPORTS}/{report_id}/incident",
+        json={"action": "new", "override_reason": "حادث منفصل للاختبار"},
+        headers=agent,
+    )
+    assert r.status_code == 200, r.text
+    leader, resource = await _on_shift(client, staff)
+    r = await client.post(
+        f"/api/v1/staff/incidents/{r.json()['incident_id']}/assignments",
+        json={"resource_id": resource["id"], "order": "إسعاف"},
+        headers=agent,
+    )
+    assert r.status_code == 201, r.text
+    path = f"/missions/{r.json()['id']}"
+    # The team reads the card the room answered on its mission.
+    mission = next(m for m in (await leader.get("/missions")).json()["items"] if f"/missions/{m['id']}" == path)
+    assert mission["call_card"]["outcome"]["band"] == "high"
+    assert mission["call_card"]["answers"] == {"chest": "unknown"}
+    # From the scene: a question the caller could not answer, and one the caller was not asked.
+    r = await leader.post(f"{path}/call-card", write(answers={"chest": "no", "bleeding": "yes"}))
+    assert r.status_code == 200, r.text
+    field = r.json()["call_card"]
+    assert field["field_answers"] == {"chest": "no", "bleeding": "yes"}
+    assert field["field_outcome"]["band"] == "critical" and field["field_by_name"]
+    assert field["answers"] == {"chest": "unknown"}
+    # The room reads both, and the report's floor followed.
+    room = (await client.get(f"{REPORTS}/{report_id}/call-card", headers=agent)).json()
+    assert room["field_outcome"]["band"] == "critical" and room["answers"] == {"chest": "unknown"}
+    assert room["scene"]["checks"] == []
+    # What the team finds is set beside the card: a fire where the card said medical (the death fits the card: lives
+    # were already at stake).
+    assert (await leader.post(f"{path}/nature", write(nature="fire"))).status_code == 200
+    assert (await leader.post(f"{path}/casualties", write(deceased=1))).status_code == 200
+    scene = (await client.get(f"{REPORTS}/{report_id}/call-card", headers=agent)).json()["scene"]
+    assert scene["nature"] == "fire" and scene["deceased"] == 1
+    assert scene["checks"] == ["nature_differs"]
+    # The mission sheet printed in the room carries the card, the scene's QR code and the page filled in by hand.
+    sheet = await client.get(
+        f"/api/v1/staff/assignments/{path.rsplit('/', 1)[1]}/sheet", params={"format": "html"}, headers=agent
+    )
+    assert sheet.status_code == 200, sheet.text
+    for words in ("بطاقة الاستقبال", "جواب الفريق في الميدان", "امسح الرمز لفتح المكان", "محضر التدخل", "وصف التدخل"):
+        assert words in sheet.text, words
+    # A question the card does not have is refused.
+    r = await leader.post(f"{path}/call-card", write(answers={"nope": "yes"}))
+    assert r.status_code == 422 and r.json()["detail"] == "call_card_question"
+
+
+def test_the_card_is_set_beside_what_the_team_found() -> None:
+    content = cc.CardContent.model_validate(_medical_content())
+    calm = cc.evaluate(content, {})
+    assert calm.band in ("low", "normal") and not calm.lives
+    found = cc.Scene(nature="medical", injured=1, serious=1, trapped=1)
+    assert cc.compare("medical", calm, found) == ["lives_not_on_card", "injured_not_on_card", "band_below_toll"]
+    # A general call has no nature to contradict; nothing found yet says nothing.
+    assert cc.compare("sos", calm, cc.Scene(nature="fire")) == ["confirmed"]
+    assert cc.compare("medical", calm, cc.Scene()) == []

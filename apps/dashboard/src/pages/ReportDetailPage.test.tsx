@@ -5,6 +5,9 @@ import type { StaffReportDetail } from "../lib/types";
 import { makeAnalysis, makeDetail, makeOrganizationCard } from "../test/fixtures";
 import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { ReportDetailPage } from "./ReportDetailPage";
+import type { ReportCallCard } from "../lib/callCards";
+import { applyLiveEvent } from "../lib/liveCache";
+import { makeAssignment } from "../test/opsFixtures";
 
 vi.mock("../components/LazyMap", () => ({ LazyMapView: () => <div data-testid="map" /> }));
 
@@ -193,5 +196,75 @@ describe("ReportDetailPage", () => {
     expect(within(card).getByText("لم تُصرّح المؤسسة بأي مادة خطرة.")).toBeInTheDocument();
     expect(within(card).getByText("لا يوجد ممثل مسجّل.")).toBeInTheDocument();
     expect(within(card).getByText("تربوية")).toBeInTheDocument();
+  });
+
+  it("shows the call-taking card, the caller's answers beside the team's, live (OS2)", async () => {
+    const outcome = {
+      band: "high" as const,
+      flags: [],
+      reasons: [],
+      means: [],
+      instructions: [],
+      lives: false,
+      injured: false,
+      answered: 1,
+      asked: 2,
+    };
+    const call: ReportCallCard = {
+      report_id: "r1",
+      card_id: "c1",
+      category: "medical",
+      card_version: 1,
+      sim: true,
+      title: "حالة صحية طارئة",
+      answers: { chest: "unknown" },
+      outcome,
+      read: [],
+      field_answers: null,
+      field_outcome: null,
+      field_by_name: null,
+      field_at: null,
+      scene: null,
+      questions: [
+        { id: "chest", text: "ألم في الصدر؟", help: null, key: true, when: null, effects: {} },
+        { id: "bleeding", text: "نزيف غزير؟", help: null, key: false, when: null, effects: {} },
+      ],
+      instructions: {},
+      created_at: "2026-11-10T10:00:00Z",
+    };
+    const field: ReportCallCard = {
+      ...call,
+      field_answers: { chest: "no", bleeding: "yes" },
+      field_outcome: { ...outcome, band: "critical", flags: ["نزيف"], lives: true },
+      field_by_name: "Chef d’équipe",
+      field_at: "2026-11-10T10:20:00Z",
+      scene: { nature: "fire", injured: 2, serious: 1, deceased: 0, trapped: 0, checks: ["nature_differs", "injured_not_on_card"] },
+    };
+    const reportCallCard = vi.fn().mockResolvedValueOnce(call).mockResolvedValue(field);
+    const api = fakeApi({ report: vi.fn(() => Promise.resolve(makeDetail({ id: "r1" }))), reportCallCard });
+    const { queryClient } = renderApp(<ReportDetailPage />, { api, path: "/reports/r1", route, lang: "fr" });
+
+    const section = await screen.findByRole("region", { name: /Fiche d’appel/ });
+    expect(within(section).getByText("[SIM]")).toBeInTheDocument();
+    expect(within(section).getByText("L’équipe n’a pas encore répondu")).toBeInTheDocument();
+    expect(within(section).getByText("L’équipe n’a encore envoyé ni la nature ni le bilan.")).toBeInTheDocument();
+
+    // The team answers from the scene: the page follows without a reload.
+    act(() => {
+      applyLiveEvent(queryClient, {
+        type: "assignment.updated",
+        assignment: makeAssignment({ incident_id: "i1" }),
+        gouvernorat_code: 61,
+      });
+    });
+    expect(await within(section).findByText(/Complétée depuis le terrain par Chef d’équipe/)).toBeInTheDocument();
+    const chest = within(section).getByRole("row", { name: /ألم في الصدر/ });
+    expect(within(chest).getByText("Ne sait pas")).toBeInTheDocument();
+    expect(within(chest).getByText(/réponse changée sur le terrain/)).toBeInTheDocument();
+    expect(within(section).getByText("Critique")).toBeInTheDocument();
+    expect(
+      within(section).getByText("La nature confirmée par l’équipe diffère de la catégorie du signalement"),
+    ).toBeInTheDocument();
+    expect(within(section).getByText("Blessés que la fiche n’avait pas prévus")).toBeInTheDocument();
   });
 });

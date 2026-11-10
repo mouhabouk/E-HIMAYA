@@ -3610,5 +3610,46 @@
   "staffStageText": "Message text",
   "staffStageSend": "Send to the room",
   "staffStageSentList": "Messages sent on this mission",
-  "staffStageSpoken": "Spoken, corrected"
+  "staffStageSpoken": "Spoken, corrected",
+  "staffCallCard": "Call-taking card",
+  "staffCallCardHelp": "What the caller answered the room. Complete from the scene what stayed “doesn't know” or correct what proves wrong; the room sees it at once, and the band never goes down.",
+  "staffCardBand": "Band: {band}",
+  "@staffCardBand": {
+    "placeholders": {
+      "band": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCardFieldBand": "After the team: {band}",
+  "@staffCardFieldBand": {
+    "placeholders": {
+      "band": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCardBandCritical": "Critical",
+  "staffCardBandHigh": "High",
+  "staffCardBandNormal": "Normal",
+  "staffCardBandLow": "Low",
+  "staffCardYes": "Yes",
+  "staffCardNo": "No",
+  "staffCardUnknown": "Doesn't know",
+  "staffCardKey": "Decisive",
+  "staffCardCaller": "Caller: {answer}",
+  "@staffCardCaller": {
+    "placeholders": {
+      "answer": {
+        "type": "String"
+      }
+    }
+  },
+  "staffCardCallerNone": "Not asked to the caller",
+  "staffCardRead": "Instructions read to the caller",
+  "staffMissionSheet": "Mission sheet (PDF)",
+  "staffMissionSheetHelp": "To print or keep on the phone; opens without network",
+  "staffMissionSheetSaved": "No network: the copy saved on the phone was opened",
+  "staffMissionSheetNoViewer": "Mission sheet saved, but no app on the phone opens PDF files",
+  "staffMissionSheetFailed": "Could not download the mission sheet, and no copy is saved yet"
 }

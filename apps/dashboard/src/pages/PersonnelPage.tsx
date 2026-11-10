@@ -209,7 +209,7 @@ export function PersonnelPage({ tab }: { tab: PersonnelTab }) {
   return (
     <div className="page personnel-page">
       <div className="page__head">
-        <PageTitle icon="manageAccounts" tone="navy">
+        <PageTitle print icon="manageAccounts" tone="navy">
           {t("personnel.title")}
         </PageTitle>
       </div>

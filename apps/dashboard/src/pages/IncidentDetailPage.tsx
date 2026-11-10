@@ -314,7 +314,7 @@ export function IncidentDetailPage() {
         <Link to="/incidents">{t("incidents.detail.back")}</Link>
       </p>
       <div className="page__head">
-        <PageTitle icon="localFireDepartment" tone="red" id="incident-title">
+        <PageTitle print icon="localFireDepartment" tone="red" id="incident-title">
           {t("incidents.detail.title")} · <CategoryLabel category={incident.category} />
           {incident.title && (
             <>

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/staff/staff_auth.dart';
 import 'package:flutter/material.dart';
@@ -377,4 +379,124 @@ void main() {
     final shift = server.writes.lastWhere((w) => w.path.endsWith('/shifts'));
     expect((shift.json! as Map)['crew_agent_ids'], ['ag-1']);
   });
+
+  testWidgets(
+    'the team reads the call-taking card and completes it from the scene',
+    (tester) async {
+      final server = await onMission(
+        extra: {
+          'call_card': {
+            'report_id': 'r-1',
+            'card_id': 'c-1',
+            'category': 'medical',
+            'card_version': 1,
+            'sim': true,
+            'title': 'إسعاف: شخص مريض أو مصاب',
+            'answers': {'chest': 'unknown'},
+            'outcome': {
+              'band': 'high',
+              'flags': <String>[],
+              'reasons': <String>[],
+              'means': <String>[],
+              'instructions': <String>[],
+              'lives': false,
+              'injured': false,
+              'answered': 1,
+              'asked': 2,
+            },
+            'read': <String>[],
+            'field_answers': null,
+            'field_outcome': null,
+            'questions': [
+              {
+                'id': 'chest',
+                'text': 'هل يشكو من ألم في الصدر؟',
+                'help': null,
+                'key': true,
+                'when': null,
+                'effects': <String, dynamic>{},
+              },
+              {
+                'id': 'bleeding',
+                'text': 'هل يوجد نزيف قوي لا يتوقف؟',
+                'help': null,
+                'key': true,
+                'when': null,
+                'effects': <String, dynamic>{},
+              },
+            ],
+            'instructions': <String, dynamic>{},
+            'created_at': '2026-10-26T09:00:00Z',
+          },
+        },
+      );
+      await openMission(tester, server);
+      await reveal(tester, 'open-call-card');
+      expect(find.text('Band: High'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('open-call-card')));
+      await tester.pumpAndSettle();
+      expect(find.text("Caller: Doesn't know"), findsOneWidget);
+      await tester.tap(find.byKey(const Key('card-bleeding-yes')));
+      await tester.pumpAndSettle();
+      await reveal(tester, 'card-send');
+      await tester.tap(find.byKey(const Key('card-send')));
+      await tester.pumpAndSettle();
+      final write = server.writes.last;
+      expect(write.path, '/api/v1/crew/missions/m-1/call-card');
+      expect(write.json, containsPair('answers', {'bleeding': 'yes'}));
+      // Back on the mission: the band the room now sees too.
+      expect(find.text('Band: Critical'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'the mission sheet is kept on the phone and opens again offline',
+    (tester) async {
+      final server = await onMission();
+      final dir = await tester.runAsync(
+        () => Directory.systemTemp.createTemp('sheet'),
+      );
+      addTearDown(() => dir!.deleteSync(recursive: true));
+      final opened = <String>[];
+      final s = await signedInStore();
+      await StaffVault(s).setPin('123456', 'salt');
+      await pumpStaffApp(
+        tester,
+        server,
+        store: s,
+        sheetDir: dir,
+        opened: opened,
+      );
+      await enterPin(tester, '123456');
+      await tester.tap(find.byKey(const Key('mission-m-1')));
+      await tester.pumpAndSettle();
+
+      await reveal(tester, 'open-mission-sheet');
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const Key('open-mission-sheet')));
+        for (var i = 0; i < 50 && opened.isEmpty; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
+      });
+      await tester.pump();
+      expect(opened, hasLength(1));
+      final file = File(opened.single);
+      expect(file.readAsStringSync(), startsWith('%PDF'));
+
+      // Without network the saved copy opens, and the leader is told so.
+      server.down = true;
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const Key('open-mission-sheet')));
+        for (var i = 0; i < 50 && opened.length < 2; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
+      });
+      await tester.pump();
+      expect(opened, [file.path, file.path]);
+      expect(
+        find.text('No network: the copy saved on the phone was opened'),
+        findsOneWidget,
+      );
+    },
+  );
 }

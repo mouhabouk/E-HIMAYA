@@ -53,7 +53,7 @@ export function RoomGuidePage() {
   const delays = value("sla.claim_delay_s") ?? DEFAULT_DELAYS;
   return (
     <div className="page room-guide">
-      <PageTitle icon="menuBook" tone="navy">
+      <PageTitle print icon="menuBook" tone="navy">
         {t("roomGuide.title")}
       </PageTitle>
       <p className="muted">{t("roomGuide.intro")}</p>

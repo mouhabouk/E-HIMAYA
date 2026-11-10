@@ -169,7 +169,7 @@ export function VolunteersPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="volunteerActivism" tone="green">{t("volunteers.title")}</PageTitle>
+        <PageTitle print icon="volunteerActivism" tone="green">{t("volunteers.title")}</PageTitle>
       </div>
       <p className="muted">{t("volunteers.intro")}</p>
 

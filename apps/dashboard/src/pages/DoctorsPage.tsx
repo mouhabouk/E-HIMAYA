@@ -83,7 +83,7 @@ export function DoctorsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="stethoscope" tone="purple">{t("doctors.title")}</PageTitle>
+        <PageTitle print icon="stethoscope" tone="purple">{t("doctors.title")}</PageTitle>
       </div>
       <p className="muted">{t("doctors.intro")}</p>
 

@@ -1,5 +1,6 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { inBBox, matchesFilters, type BBox, type ReportFilters } from "./filters";
+import { callCardKeys } from "./callCards";
 import { isStreamEvent, type LiveEvent } from "./live";
 import { p7Keys } from "./phase7Api";
 import { opsKeys } from "./opsApi";
@@ -281,6 +282,8 @@ function applyOpsEvent(qc: QueryClient, event: LiveEvent): boolean {
       return true;
     case "assignment.updated":
       void qc.invalidateQueries({ queryKey: queryKeys.incident(event.assignment.incident_id) });
+      // The team answered the call-taking card, confirmed the nature or counted the casualties (OS2).
+      void qc.invalidateQueries({ queryKey: callCardKeys.reportAll });
       void qc.invalidateQueries({ queryKey: opsKeys.resourcesAll });
       void qc.invalidateQueries({ queryKey: opsKeys.resourceSummary });
       void qc.invalidateQueries({ queryKey: opsKeys.resourcesMapAll });
@@ -345,6 +348,7 @@ export function applyLiveEvent(qc: QueryClient, event: LiveEvent, now: number = 
   }
   if (event.type === "incident.updated") {
     applyIncidentUpdate(qc, event.incident);
+    void qc.invalidateQueries({ queryKey: callCardKeys.reportAll });
     return;
   }
   if (event.type === "org.updated") {

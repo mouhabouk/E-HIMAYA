@@ -14,6 +14,7 @@ from app.modules.ops.domain import (
     UnitKind,
 )
 from app.modules.ops.models import OpLevel
+from app.modules.reports.callcards import Answer, AnswerOut
 from app.modules.reports.domain import Category
 from app.modules.reports.schemas import StaffReport
 
@@ -853,6 +854,8 @@ class MissionOut(MissionRecord):
     field_initiated: bool = False
     toll: FieldReportOut | None = None
     intervention_report: FieldReportOut | None = None
+    # OS2: the call-taking card the room answered for this incident, and the team's answers from the scene.
+    call_card: AnswerOut | None = None
 
 
 class MissionPage(BaseModel):
@@ -1147,6 +1150,12 @@ class TollIn(CrewWrite):
 class InterventionReportIn(CrewWrite):
     text: VoiceText
     voice_id: uuid.UUID | None = None
+
+
+class CallCardFieldIn(CrewWrite):
+    """The team leader completes the call-taking card from the scene (OS2): only the questions they answer."""
+
+    answers: dict[str, Answer] = Field(min_length=1, max_length=20)
 
 
 class OpenMissionIn(CrewWrite):

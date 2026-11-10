@@ -11,7 +11,12 @@ intervention:
   line, said so);
 * the institution's card when a report comes from one: hazardous materials, evacuation points, representative;
 * the vehicle, its unit, the leader and the crew's names, the contact number on the scene;
-* the safety notes, then the signatures: the team leader and the duty officer of the room.
+* the safety notes, then the signatures: the team leader and the duty officer of the room;
+* the call-taking card the room answered (OS2): its band, flags, answers and suggested means, and a QR code that
+  opens the scene on the team's phone;
+* a last page the team fills in by hand (Yamen, 2026-11-10): the times of the mission, the toll, the means used
+  and the written intervention report, with the signatures. Back at the unit the room copies them into the same
+  mission (``record``), so the paper is the mission, never a second one.
 
 The page is built here as HTML and printed by WeasyPrint, as the other documents; the map is SVG, so nothing is
 fetched from outside (no tile server is needed to print).
@@ -140,6 +145,10 @@ class Sheet:
     boundary: dict[str, Any] | None
     org: dict[str, Any] | None
     sensitive: list[str] = field(default_factory=list)
+    #: The call-taking card of the incident's first report entered with one (``callcards_router.answer_out``).
+    card: dict[str, Any] | None = None
+    #: The mission's times known when printing, by step (``en_route``, ``on_scene``…); blank boxes otherwise.
+    times: dict[str, datetime | None] = field(default_factory=dict)
 
 
 def _local(at: datetime | None) -> str:
@@ -232,6 +241,9 @@ async def gather(session: AsyncSession, principal: Principal, assignment: Assign
     if len(members) > 1:
         sensitive.append(f"{len(members)} بلاغات على الحادث نفسه")
 
+    from app.modules.reports import callcards_router
+
+    card = await callcards_router.mission_card(session, incident.id)
     return Sheet(
         number=f"{now.astimezone(TUNIS):%Y%m%d}-{str(assignment.id)[:8].upper()}",
         issued_at=assignment.created_at,
@@ -268,6 +280,14 @@ async def gather(session: AsyncSession, principal: Principal, assignment: Assign
         boundary=boundary,
         org=org,
         sensitive=sensitive,
+        card=card.model_dump(mode="json") if card else None,
+        times={
+            "en_route": assignment.en_route_at,
+            "on_scene": assignment.on_scene_at,
+            "left_scene": assignment.left_scene_at,
+            "at_hospital": assignment.at_hospital_at,
+            "back_at_unit": assignment.back_at_unit_at,
+        },
     )
 
 
@@ -386,6 +406,20 @@ th { background: #f4f4f4; width: 24%; font-weight: bold; }
 .sign div { flex: 1; border: 1px solid #999; height: 24mm; padding: 4px 6px; }
 .sign b { display: block; margin-bottom: 3px; }
 .small { font-size: 8pt; color: #555; }
+.place { display: flex; gap: 4mm; align-items: flex-start; }
+.place table { flex: 1; }
+.place .qr { width: 26mm; text-align: center; font-size: 7.5pt; color: #555; }
+.place .qr img { width: 24mm; height: 24mm; }
+.band { display: inline-block; padding: 1px 8px; border-radius: 8px; font-weight: bold; border: 1px solid #b71c1c; }
+.band-critical { background: #b71c1c; color: #fff; } .band-high { background: #fdecea; color: #b71c1c; }
+.band-normal { background: #fff4e0; color: #8a5300; border-color: #8a5300; }
+.band-low { background: #eef1f5; color: #3d4a5c; border-color: #3d4a5c; }
+.sim { color: #8a5300; font-weight: bold; }
+.handwritten { page-break-before: always; }
+.handwritten td { height: 8mm; }
+.handwritten th { width: 40%; }
+.handwritten .toll th { width: auto; }
+.lines div { border-bottom: 1px dotted #888; height: 8mm; }
 """
 
 
@@ -461,6 +495,13 @@ def render_html(sheet: Sheet) -> str:
         f"e-Himaya|أمر مهمة|{sheet.number}",
     )
     svg = map_svg(sheet)
+    card_html = _card_html(sheet)
+    place_qr = (
+        f'<div class="qr"><img src="{print_footer.qr_uri(_osm(sheet.lat, sheet.lon))}" alt="QR">'
+        "امسح الرمز لفتح المكان على الخريطة</div>"
+        if sheet.lat is not None and sheet.lon is not None
+        else ""
+    )
     return f"""<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <title>أمر مهمة {e(sheet.number)}</title><style>{_CSS}{print_footer.CSS}</style></head><body>
 {footer}
@@ -478,10 +519,11 @@ def render_html(sheet: Sheet) -> str:
 {row("رقم الاتصال في عين المكان", sheet.contact_phone, True)}
 </table>
 <div class="small">ما قاله المبلّغون:</div><ul class="small">{texts}</ul>
-<h2>2. مكان الحادث والمسلك</h2><table>
+{card_html}
+<h2>2. مكان الحادث والمسلك</h2><div class="place"><table>
 {row("الولاية", sheet.gouvernorat)}{row("المعتمدية", sheet.delegation)}{row("العمادة", sheet.sector)}
 {row("البلدية", sheet.municipality)}{row("الإحداثيات", coords, True)}{row("المسلك", route_text)}
-</table>
+</table>{place_qr}</div>
 <div class="map">{svg}</div>
 <div class="legend"><span class="b">● الوحدة</span> &nbsp; <span class="r">━ المسلك المتبع ━ ▼ مكان الحادث</span>
 &nbsp; <span class="g">■ نقطة إخلاء</span> &nbsp; حدود المعتمدية بالأخضر الفاتح</div>
@@ -496,7 +538,73 @@ def render_html(sheet: Sheet) -> str:
 <li>إعلام القاعة فورا بكل خطر على الفريق وطلب الدعم عند الحاجة.</li></ul>
 <div class="sign"><div><b>رئيس الفريق</b>الاسم: {e(sheet.leader or "")}<br>الإمضاء:<br>التاريخ والساعة:</div>
 <div><b>الضابط المناوب بالقاعة</b>الاسم:<br>الإمضاء والختم:</div></div>
+{handwritten_html(sheet)}
 </body></html>"""
+
+
+BANDS = {"critical": "حرج", "high": "عالٍ", "normal": "عادي", "low": "منخفض"}
+ANSWERS = {"yes": "نعم", "no": "لا", "unknown": "لا يعرف"}
+TIMES = {
+    "en_route": "مغادرة الوحدة",
+    "on_scene": "الوصول إلى مكان الحادث",
+    "left_scene": "مغادرة مكان الحادث",
+    "at_hospital": "الوصول إلى المستشفى",
+    "back_at_unit": "العودة إلى الوحدة",
+}
+TOLL = ("مصابون (خفيف)", "مصابون (بليغ)", "وفيات", "محاصرون", "أُنقذوا", "نُقلوا إلى المستشفى")
+
+
+def _osm(lat: float | None, lon: float | None) -> str:
+    return f"https://www.openstreetmap.org/?mlat={lat:.5f}&mlon={lon:.5f}#map=17/{lat:.5f}/{lon:.5f}"
+
+
+def _card_html(sheet: Sheet) -> str:
+    """The call-taking card the room answered: what the caller said, and the team's answers when it has some."""
+    c = sheet.card
+    if not c:
+        return ""
+    e = html.escape
+    outcome = c.get("field_outcome") or c["outcome"]
+    band = outcome["band"]
+    field_answers = c.get("field_answers") or {}
+    rows = "".join(
+        f"<tr><td>{e(q['text'])}</td><td>{e(ANSWERS.get(c['answers'].get(q['id'], ''), '—'))}</td>"
+        f"<td>{e(ANSWERS.get(field_answers.get(q['id'], ''), ''))}</td></tr>"
+        for q in c["questions"]
+    )
+    flags = "، ".join(outcome.get("flags") or []) or "—"
+    means = "، ".join(outcome.get("means") or []) or "—"
+    sim = ' <span class="sim">[SIM]</span>' if c.get("sim") else ""
+    return (
+        f"<h2>المعطيات الأولية: بطاقة الاستقبال «{e(c['title'])}» · النسخة {c['card_version']}{sim}</h2>"
+        f"<p>المستوى: <span class='band band-{e(band)}'>{e(BANDS.get(band, band))}</span> · علامات: {e(flags)}</p>"
+        f"<p>الوسائل المقترحة لهذا النوع: {e(means)}</p>"
+        "<table><tr><th>السؤال</th><th>جواب المتصل</th><th>جواب الفريق في الميدان</th></tr>"
+        f"{rows}</table>"
+    )
+
+
+def handwritten_html(sheet: Sheet) -> str:
+    """The page the team fills in by hand; times already known when printing are written in."""
+    e = html.escape
+    known = {k: _local(at) for k, at in sheet.times.items() if at is not None}
+    times = "".join(
+        f"<tr><th>{e(label)}</th><td class='ltr'>{e(known.get(k, ''))}</td></tr>" for k, label in TIMES.items()
+    )
+    toll_head = "".join(f"<th>{e(x)}</th>" for x in TOLL)
+    toll_cells = "<td></td>" * len(TOLL)
+    lines = "<div></div>" * 10
+    return f"""<section class="handwritten">
+<h1>محضر التدخل</h1>
+<div class="sub">يملؤه رئيس الفريق ويعيده إلى القاعة مع هذا الأمر · أمر مهمة {e(sheet.number)}</div>
+<h2>أوقات المهمة (الساعة والدقيقة)</h2><table>{times}</table>
+<h2>الحصيلة</h2><table class="toll"><tr>{toll_head}</tr><tr>{toll_cells}</tr></table>
+<h2>الطبيعة كما وُجدت في المكان</h2><div class="lines"><div></div></div>
+<h2>الوسائل المستعملة والمواد المستهلكة</h2><div class="lines"><div></div><div></div></div>
+<h2>وصف التدخل</h2><div class="lines">{lines}</div>
+<div class="sign"><div><b>رئيس الفريق</b>الاسم: {e(sheet.leader or "")}<br>الإمضاء:<br>التاريخ والساعة:</div>
+<div><b>استلمه بالقاعة</b>الاسم:<br>الإمضاء:<br>دُوّن في المنظومة بتاريخ:</div></div>
+</section>"""
 
 
 def render_pdf(page: str) -> bytes:
