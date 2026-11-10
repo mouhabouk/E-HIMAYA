@@ -7844,7 +7844,20 @@
     "point": "Place of the report",
     "mapAria": "Map to place the report",
     "submit": "Record the report",
-    "entered": "Entered by the room · {{channel}}"
+    "entered": "Entered by the room · {{channel}}",
+    "tiles": {
+      "medical": "Medical",
+      "fire": "Fire",
+      "traffic_accident": "Road accident",
+      "drowning": "Drowning",
+      "flood": "Flood",
+      "chemical_leak": "Chemical leak",
+      "landslide": "Landslide or collapse",
+      "sos": "General rescue",
+      "other": "Other"
+    },
+    "categoryStep": "1. Type of incident",
+    "firstQuestion": "The first question, always: “What is happening? Where are you exactly?”"
   },
   "whatWhere": {
     "title": "What, then where",
@@ -9204,7 +9217,7 @@
         ],
         "card": [
           "Suggested resources stay a suggestion, the head of the room decides",
-          "The summary and instructions read are in the text the team sees"
+          "The summary and instructions read are in the report text, seen by the room and every dashboard reader"
         ]
       },
       "closure": {

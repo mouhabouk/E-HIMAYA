@@ -102,7 +102,7 @@ test.describe("phase N", () => {
     await page.addInitScript(() => window.localStorage.setItem("ehimaya.lang", "ar"));
     await page.goto("/reports/new");
     await expect(page.getByRole("radio", { name: "هاتف" })).toBeChecked();
-    await page.getByLabel("النوع").selectOption("flood");
+    await page.locator(".intake-cats__tile", { hasText: "فيضان" }).click();
     await page.getByLabel("ما قاله المبلّغ").fill("[SIM] المياه تغمر الطريق قرب وادي سوحيل، عائلة على سطح منزلها");
     await page.getByLabel("خط العرض").fill("36.4561");
     await page.getByLabel("خط الطول").fill("10.7376");

@@ -6,7 +6,7 @@ import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CallCardPanel } from "../components/CallCardPanel";
 import { ErrorBox, Loading } from "../components/Feedback";
-import { IconTile, type IconName, type Tone } from "../components/Icon";
+import { IconTile } from "../components/Icon";
 import { PageTitle } from "../components/PageTitle";
 import { ReasonField } from "../components/Phase9Bits";
 import { useAuth } from "../context/auth";
@@ -32,19 +32,10 @@ import {
 import { useFormat } from "../lib/hooks";
 import { reasonValid } from "../lib/phase9";
 import { callCardRights } from "../lib/roles";
+import { CATEGORY_TILE } from "../lib/categoryIcons";
 import { CATEGORIES, type Category } from "../lib/types";
 
-const CATEGORY_ICON: Record<Category, [IconName, Tone]> = {
-  sos: ["crisisAlert", "red"],
-  fire: ["localFireDepartment", "red"],
-  flood: ["thunderstorm", "sky"],
-  traffic_accident: ["localShipping", "amber"],
-  drowning: ["water", "teal"],
-  landslide: ["landslide", "amber"],
-  chemical_leak: ["science", "purple"],
-  medical: ["medicalServices", "red"],
-  other: ["description", "slate"],
-};
+const CATEGORY_ICON = CATEGORY_TILE;
 
 const lines = (s: string) =>
   s

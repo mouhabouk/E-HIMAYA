@@ -14,10 +14,11 @@ import { errorMessageKey } from "../lib/api";
 import { useLanguage } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { INTAKE_CHANNELS, type IntakeChannel } from "../lib/staffApi";
-import { CATEGORIES, type Category } from "../lib/types";
+import type { Category } from "../lib/types";
 import { DictatedTextarea } from "../components/Dictation";
 import { CallCardPanel, useCallTimer } from "../components/CallCardPanel";
-import { Icon } from "../components/Icon";
+import { Icon, IconTile } from "../components/Icon";
+import { CATEGORY_TILE, TILE_ORDER } from "../lib/categoryIcons";
 import { callCardKeys, shownAnswers, type Answers } from "../lib/callCards";
 import { canReadCallCards } from "../lib/roles";
 import { ApiError } from "../lib/api";
@@ -116,7 +117,32 @@ export function RoomReportPage() {
           <Icon name="schedule" /> {t("callCards.timer")} <span className="call-card__clock">{timer}</span>
         </span>
       </p>
-      <form className="card ops-form intake-form" onSubmit={submit} noValidate aria-describedby={`${id}-hint`}>
+      <form className="intake-layout" onSubmit={submit} noValidate aria-describedby={`${id}-hint`}>
+        <fieldset className="card intake-cats">
+          <legend>{t("intake.categoryStep")}</legend>
+          <div className="intake-cats__grid">
+            {TILE_ORDER.map((c) => (
+              <label key={c} className="intake-cats__tile">
+                <input
+                  type="radio"
+                  className="visually-hidden"
+                  name={`${id}-category`}
+                  checked={category === c}
+                  onChange={() => pickCategory(c)}
+                />
+                {category === c && (
+                  <span className="intake-cats__check" aria-hidden="true">
+                    <Icon name="check" />
+                  </span>
+                )}
+                <IconTile name={CATEGORY_TILE[c][0]} tone={CATEGORY_TILE[c][1]} />
+                <span>{t(`intake.tiles.${c}`)}</span>
+              </label>
+            ))}
+          </div>
+          <p className="muted intake-cats__hint">{t("intake.firstQuestion")}</p>
+        </fieldset>
+        <div className="card ops-form intake-form">
         <fieldset className="chips">
           <legend>{t("intake.channel")}</legend>
           {INTAKE_CHANNELS.map((c) => (
@@ -126,21 +152,9 @@ export function RoomReportPage() {
             </label>
           ))}
         </fieldset>
-        <div className="form-grid">
-          <div className="field">
-            <label htmlFor={`${id}-c`}>{t("intake.category")}</label>
-            <select id={`${id}-c`} value={category} onChange={(e) => pickCategory(e.target.value as Category)}>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {t(`category.${c}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor={`${id}-r`}>{t("intake.receivedAt")}</label>
-            <input id={`${id}-r`} type="datetime-local" value={receivedAt} onChange={(e) => setReceivedAt(e.target.value)} />
-          </div>
+        <div className="field">
+          <label htmlFor={`${id}-r`}>{t("intake.receivedAt")}</label>
+          <input id={`${id}-r`} type="datetime-local" value={receivedAt} onChange={(e) => setReceivedAt(e.target.value)} />
         </div>
         {card && (
           <label className="call-card__skip">
@@ -214,6 +228,7 @@ export function RoomReportPage() {
           <Link className="btn" to="/reports">
             {t("common.cancel")}
           </Link>
+        </div>
         </div>
       </form>
     </div>

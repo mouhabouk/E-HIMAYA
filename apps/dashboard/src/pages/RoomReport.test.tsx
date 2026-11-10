@@ -32,7 +32,7 @@ describe("RoomReportPage", () => {
     expect(enterReport).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole("radio", { name: "لاسلكي" }));
-    fireEvent.change(screen.getByLabelText("النوع"), { target: { value: "fire" } });
+    fireEvent.click(screen.getByRole("radio", { name: "حريق" }));
     fireEvent.change(screen.getByLabelText("ما قاله المبلّغ"), { target: { value: "دخان كثيف قرب السوق" } });
     fireEvent.click(await screen.findByRole("button", { name: "خريطة لتحديد مكان البلاغ" }));
     expect(screen.getByLabelText("خط العرض")).toHaveValue("36.45130");
@@ -57,7 +57,7 @@ describe("RoomReportPage with the guided call-taking card (OS2)", () => {
       auth: fakeAuth(agent),
       lang: "ar",
     });
-    fireEvent.change(screen.getByLabelText("النوع"), { target: { value: "medical" } });
+    fireEvent.click(screen.getByRole("radio", { name: "إسعاف" }));
     const conscious = await screen.findByRole("group", { name: /هل المريض فاقد للوعي/ });
     fireEvent.click(within(conscious).getByRole("radio", { name: "نعم" }));
     const breathing = await screen.findByRole("group", { name: /هل يتنفس تنفسا طبيعيا/ });
@@ -85,7 +85,7 @@ describe("RoomReportPage with the guided call-taking card (OS2)", () => {
       auth: fakeAuth(agent),
       lang: "ar",
     });
-    fireEvent.change(screen.getByLabelText("النوع"), { target: { value: "fire" } });
+    fireEvent.click(screen.getByRole("radio", { name: "حريق" }));
     fireEvent.click(await screen.findByRole("checkbox", { name: "إدخال بلا بطاقة (النص الحر فقط)" }));
     expect(screen.queryByRole("group", { name: /هل/ })).toBeNull();
     fireEvent.click(await screen.findByRole("button", { name: "خريطة لتحديد مكان البلاغ" }));

@@ -20,8 +20,8 @@ the branch `archive/before-call-cards-2026-11-10`.
 - Instructions to read to the caller have numbered steps; CPR carries a metronome (60 to 140 a minute, 110 seeded).
 - The intake form sends `call_card {card_id, version, answers, read}` with `POST /api/v1/staff/reports/room`. The server
   evaluates the answers again against the approved version (409 `call_card_changed` when a new one was approved during
-  the call), stores them in `reports.call_card_answer`, prepends an Arabic summary to the report text (so the team and
-  every reader see it without a mobile change), and sets `reports.report.call_card_floor`.
+  the call), stores them in `reports.call_card_answer`, prepends an Arabic summary to the report text (the room and every
+  dashboard reader see it; the field app's mission does not carry the report text yet, backlog OS2-2), and sets `reports.report.call_card_floor`.
 - The SLA band never goes below `call_card_floor`, also when the priority is computed again (`reports/sla.py`).
 - The priority: `lives` gives the «life in danger» component 1.0 with the source `call_card`; `injured` gives 0.6 to the
   casualties component (`ai/scoring.py`). The weights do not change.

@@ -11755,3 +11755,77 @@ body::after {
   display: grid;
   gap: 6px;
 }
+
+/* The room's intake (OS2): the incident type as tiles beside the form. */
+.intake-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .intake-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.intake-cats {
+  margin: 0;
+  position: sticky;
+  top: 12px;
+}
+.intake-cats legend {
+  float: inline-start;
+  width: 100%;
+  font-weight: 700;
+  font-size: 1.05em;
+  margin-bottom: 12px;
+}
+.intake-cats__grid {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.intake-cats__tile {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 12px 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+.intake-cats__tile:hover {
+  border-color: var(--tone-navy);
+}
+.intake-cats__tile:has(input:checked) {
+  border: 2px solid var(--tone-amber);
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+}
+.intake-cats__tile:has(input:focus-visible) {
+  outline: 3px solid var(--tone-navy);
+  outline-offset: 2px;
+}
+.intake-cats__check {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 6px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--tone-amber);
+  color: var(--tone-amber-on);
+  font-size: 14px;
+}
+.intake-cats__hint {
+  margin: 12px 0 0;
+  font-size: 0.85em;
+}

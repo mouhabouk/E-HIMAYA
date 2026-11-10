@@ -31,7 +31,7 @@ test.describe("OS2: guided call-taking cards", () => {
     await signIn(page, ["operator"]);
     await page.addInitScript(() => window.localStorage.setItem("ehimaya.lang", "ar"));
     await page.goto("/reports/new");
-    await page.getByLabel("النوع").selectOption("medical");
+    await page.locator(".intake-cats__tile", { hasText: "إسعاف" }).click();
     const conscious = page.getByRole("group", { name: /هل المريض فاقد للوعي/ });
     await conscious.getByText("نعم", { exact: true }).click();
     const breathing = page.getByRole("group", { name: /هل يتنفس تنفسا طبيعيا/ });

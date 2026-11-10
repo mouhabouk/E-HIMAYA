@@ -7844,7 +7844,20 @@
     "point": "Lieu du signalement",
     "mapAria": "Carte pour placer le signalement",
     "submit": "Enregistrer le signalement",
-    "entered": "Saisi par la salle · {{channel}}"
+    "entered": "Saisi par la salle · {{channel}}",
+    "tiles": {
+      "medical": "Secours",
+      "fire": "Incendie",
+      "traffic_accident": "Accident de la route",
+      "drowning": "Noyade",
+      "flood": "Inondation",
+      "chemical_leak": "Fuite chimique",
+      "landslide": "Glissement ou effondrement",
+      "sos": "Secours général",
+      "other": "Autre"
+    },
+    "categoryStep": "1. Type d'incident",
+    "firstQuestion": "Première question, toujours : « Que se passe-t-il ? Où êtes-vous exactement ? »"
   },
   "whatWhere": {
     "title": "Quoi, puis où",
@@ -9204,7 +9217,7 @@
         ],
         "card": [
           "Les moyens suggérés restent une suggestion, le chef de salle décide",
-          "Le résumé et les consignes lues sont dans le texte que l'équipe voit"
+          "Le résumé et les consignes lues sont dans le texte du signalement, visible par la salle et tout lecteur du tableau de bord"
         ]
       },
       "closure": {
