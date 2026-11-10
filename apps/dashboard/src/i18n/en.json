@@ -2394,7 +2394,8 @@
       "drone": "Drone",
       "camera": "Fixed camera",
       "sim": "Simulated source",
-      "crew": "Team in the field"
+      "crew": "Team in the field",
+      "news": "News from the field"
     },
     "status": {
       "pending": "Pending",

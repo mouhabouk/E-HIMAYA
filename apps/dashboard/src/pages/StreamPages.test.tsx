@@ -92,6 +92,22 @@ describe("StreamsPage (live list)", () => {
     expect(JSON.parse(localStorage.getItem("ehimaya.streamWall") ?? "{}")).toEqual({ layout: 4, pinned: ["s-1"] });
   });
 
+  it("names an agent's stream without a mission «news from the field» (Yamen 2026-11-09)", async () => {
+    const api = fakeApi({
+      streams: vi.fn(() =>
+        page([
+          makeStream({ id: "s-news", source: "crew", news: true, label: "شاحنة إطفاء 12", report_id: null, tracking_code: null }),
+          makeStream({ id: "s-team", source: "crew", label: "حريق غابة", incident_id: "i-1" }),
+        ]),
+      ),
+    });
+    renderApp(<StreamsPage />, { api, lang: "ar" });
+    const news = (await screen.findByRole("link", { name: "شاحنة إطفاء 12" })).closest("tr") as HTMLElement;
+    expect(within(news).getByText("خبر من الميدان")).toBeInTheDocument();
+    const team = screen.getByRole("link", { name: "حريق غابة" }).closest("tr") as HTMLElement;
+    expect(within(team).getByText("فريق في الميدان")).toBeInTheDocument();
+  });
+
   it("renders in Arabic", async () => {
     const api = fakeApi({ streams: vi.fn(() => page([makeStream()])) });
     renderApp(<StreamsPage />, { api, lang: "ar" });

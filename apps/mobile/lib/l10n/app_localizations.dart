@@ -12148,6 +12148,36 @@ abstract class AppLocalizations {
   /// **'Back to the mission'**
   String get staffLiveBack;
 
+  /// No description provided for @staffNews.
+  ///
+  /// In en, this message translates to:
+  /// **'Live news from the field'**
+  String get staffNews;
+
+  /// No description provided for @staffNewsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'The room sees what you see, without a mission'**
+  String get staffNewsSub;
+
+  /// No description provided for @staffNewsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The room sees it on the video wall as news from the field'**
+  String get staffNewsHint;
+
+  /// No description provided for @staffNewsEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream over. The room keeps the recording.'**
+  String get staffNewsEnded;
+
+  /// No description provided for @staffNewsBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to home'**
+  String get staffNewsBack;
+
   /// No description provided for @calloutBySms.
   ///
   /// In en, this message translates to:

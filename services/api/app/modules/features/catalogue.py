@@ -1617,6 +1617,12 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /@crew/streams/{stream_id}/stop",
             act_as=R.TEAM_LEADER,
         ),
+        # Yamen 2026-11-09: any agent on shift streams news from the field, without a mission.
+        button(
+            "field_missions.news",
+            ("بث خبر من الميدان", "Info en direct du terrain", "Live news from the field"),
+            "POST /@crew/streams",
+        ),
         # The team's alerts and positions keep the crew safe: never hidden.
         button(
             "field_missions.alerts",

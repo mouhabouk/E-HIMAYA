@@ -310,6 +310,11 @@ class StaffApi {
         ),
       );
 
+  /// News from the field (Yamen 2026-11-09): any agent on shift streams what they see, without a mission.
+  /// `409 no_open_shift`, `409 stream_already_active`.
+  Future<LiveStreamGrant> startNewsStream() async =>
+      LiveStreamGrant.fromJson(await _call('POST', '/streams'));
+
   Future<void> postCrewStreamLocation(String streamId, GeoPoint p) => _call(
     'POST',
     '/streams/${Uri.encodeComponent(streamId)}/location',
@@ -385,8 +390,12 @@ class StaffApi {
   );
 }
 
-/// The live session of the shared controller on a mission (the target id is the mission's).
-/// Crew errors become [ApiException]s, as the controller expects.
+/// The target id of a stream without a mission: news from the field (Yamen 2026-11-09).
+const newsStreamTarget = 'news';
+
+/// The live session of the shared controller on a mission (the target id is the mission's), or
+/// news from the field ([newsStreamTarget]). Crew errors become [ApiException]s, as the controller
+/// expects.
 class CrewLiveStreamApi implements LiveStreamApi {
   const CrewLiveStreamApi(this._api);
   final StaffApi _api;
@@ -406,8 +415,11 @@ class CrewLiveStreamApi implements LiveStreamApi {
   }
 
   @override
-  Future<LiveStreamGrant> startStream(String targetId) =>
-      _guard(() => _api.startMissionStream(targetId));
+  Future<LiveStreamGrant> startStream(String targetId) => _guard(
+    () => targetId == newsStreamTarget
+        ? _api.startNewsStream()
+        : _api.startMissionStream(targetId),
+  );
 
   @override
   Future<void> postStreamLocation(String streamId, GeoPoint position) =>

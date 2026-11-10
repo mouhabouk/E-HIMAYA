@@ -6802,6 +6802,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get staffLiveBack => 'رجوع إلى المهمة';
 
   @override
+  String get staffNews => 'بث خبر من الميدان';
+
+  @override
+  String get staffNewsSub => 'ما تراه يصل القاعة مباشرة، دون مهمة';
+
+  @override
+  String get staffNewsHint => 'القاعة ترى البث في جدار الشاشات كخبر من الميدان';
+
+  @override
+  String get staffNewsEnded => 'انتهى البث. حُفظ التسجيل لدى القاعة.';
+
+  @override
+  String get staffNewsBack => 'العودة إلى الرئيسية';
+
+  @override
   String get calloutBySms =>
       'لا يوجد اتصال بالإنترنت: جهّزنا ردّك في رسالة قصيرة موقّعة. اضغط «إرسال» في تطبيق الرسائل.';
 

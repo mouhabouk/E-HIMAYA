@@ -40308,6 +40308,11 @@
             ],
             "title": "Max Smoke Confidence"
           },
+          "news": {
+            "default": false,
+            "title": "News",
+            "type": "boolean"
+          },
           "recordings_count": {
             "title": "Recordings Count",
             "type": "integer"
@@ -40482,6 +40487,11 @@
               }
             ],
             "title": "Max Smoke Confidence"
+          },
+          "news": {
+            "default": false,
+            "title": "News",
+            "type": "boolean"
           },
           "recordings": {
             "items": {
@@ -64801,6 +64811,62 @@
           }
         ],
         "summary": "End Shift",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/streams": {
+      "post": {
+        "description": "News from the field: stream what the agent sees, without a mission. ``409 no_open_shift`` off shift,\n``409 stream_already_active`` while their previous news stream is still on.",
+        "operationId": "open_news_stream_api_v1_crew_streams_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open News Stream",
         "tags": [
           "crew"
         ]

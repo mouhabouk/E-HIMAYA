@@ -238,6 +238,12 @@ class FakeCrewServer {
       liveStreams.add(live.group(1)!);
       return FakeResponse(201, json: grantJson(id));
     }
+    // News from the field (Yamen 2026-11-09): a stream without a mission.
+    if (p == '/api/v1/crew/streams' && r.method == 'POST') {
+      final id = 'cs-${liveStreams.length + 1}';
+      liveStreams.add('news');
+      return FakeResponse(201, json: grantJson(id));
+    }
     final crewStream = RegExp(
       r'^/api/v1/crew/streams/([^/]+)(/(location|stop))?$',
     ).firstMatch(p);

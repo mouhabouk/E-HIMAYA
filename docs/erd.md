@@ -2863,6 +2863,7 @@ erDiagram
         datetime bridge_seen_at
         uuid assignment_id FK
         uuid incident_id FK
+        boolean news
     }
     reports__media {
         uuid id PK

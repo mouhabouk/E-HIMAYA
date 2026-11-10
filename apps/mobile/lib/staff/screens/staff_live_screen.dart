@@ -8,15 +8,24 @@ import '../../core/ui/theme.dart';
 import '../../features/live/live_controller.dart';
 import '../../features/live/live_widgets.dart';
 import '../../l10n/app_localizations.dart';
+import '../staff_api.dart' show newsStreamTarget;
 
 /// Phase D, review point 17: the team streams the scene to the room from the staff app. The same
 /// live session as the citizen app (WHIP, adaptive quality, reconnections, position), aimed at the
 /// mission (`/api/v1/crew/missions/{id}/stream`): the room sees it in the wall and on the incident
 /// page. It starts at once (the leader already chose to stream) and stops when the screen closes.
+///
+/// News from the field (Yamen 2026-11-09, [StaffLiveScreen.news]): any agent on shift streams what
+/// they see from the home of the app, without a mission; the room sees it on the wall as news.
 class StaffLiveScreen extends ConsumerStatefulWidget {
-  const StaffLiveScreen({super.key, required this.missionId});
+  const StaffLiveScreen({super.key, required String this.missionId});
 
-  final String missionId;
+  const StaffLiveScreen.news({super.key}) : missionId = null;
+
+  /// Null for news from the field.
+  final String? missionId;
+
+  bool get news => missionId == null;
 
   @override
   ConsumerState<StaffLiveScreen> createState() => _StaffLiveScreenState();
@@ -42,7 +51,9 @@ class _StaffLiveScreenState extends ConsumerState<StaffLiveScreen> {
 
   Future<void> _start() async {
     _controller.reset();
-    await _controller.start(LiveTarget.existing(serverId: widget.missionId));
+    await _controller.start(
+      LiveTarget.existing(serverId: widget.missionId ?? newsStreamTarget),
+    );
   }
 
   @override
@@ -63,7 +74,7 @@ class _StaffLiveScreenState extends ConsumerState<StaffLiveScreen> {
         LiveEndReason.maxDuration => l10n.liveEndedMaxDuration(
           s.maxDuration.inMinutes,
         ),
-        _ => l10n.staffLiveEnded,
+        _ => widget.news ? l10n.staffNewsEnded : l10n.staffLiveEnded,
       },
       LivePhase.failed => switch (s.failure) {
         LiveFailure.permissionDenied => l10n.liveFailPermission,
@@ -101,7 +112,12 @@ class _StaffLiveScreenState extends ConsumerState<StaffLiveScreen> {
                           icon: over ? Icons.info_outline : Icons.hourglass_top,
                           text: status,
                         ),
-                      LivePill(icon: Icons.groups, text: l10n.staffLiveHint),
+                      LivePill(
+                        icon: Icons.groups,
+                        text: widget.news
+                            ? l10n.staffNewsHint
+                            : l10n.staffLiveHint,
+                      ),
                       LiveRemaining(
                         startedAt: s.startedAt,
                         maxDuration: s.maxDuration,
@@ -134,7 +150,11 @@ class _StaffLiveScreenState extends ConsumerState<StaffLiveScreen> {
                                 minimumSize: const Size.fromHeight(52),
                               ),
                               onPressed: () => Navigator.of(context).pop(),
-                              child: Text(l10n.staffLiveBack),
+                              child: Text(
+                                widget.news
+                                    ? l10n.staffNewsBack
+                                    : l10n.staffLiveBack,
+                              ),
                             ),
                           ],
                         )
