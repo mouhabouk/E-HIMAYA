@@ -60,7 +60,8 @@
       "strategies": "Stratégies",
       "field_app": "Application de terrain",
       "citizen_app": "Application citoyenne",
-      "portal": "Portail des établissements"
+      "portal": "Portail des établissements",
+      "dev": "Développement du système"
     },
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
@@ -82,7 +83,8 @@
     "personnel": "Gestion du personnel",
     "systemLogs": "Journaux système",
     "changes": "Journal des modifications",
-    "sqlConsole": "Console SQL"
+    "sqlConsole": "Console SQL",
+    "repoMap": "Carte du système"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -8838,6 +8840,46 @@
       "filter": "Filtrer la colonne {{column}}",
       "filterShort": "Filtrer…"
     }
+  },
+  "repoMap": {
+    "title": "Carte du système",
+    "intro": "Toutes les pages du tableau de bord et du portail, les parties de l'application mobile, les modules de l'API, les services et l'infrastructure, et ce qui les relie. Générée depuis le dépôt le {{date}} (scripts/repo_map.py).",
+    "counts": {
+      "nodes": "Éléments : {{count}}",
+      "edges": "Liens : {{count}}",
+      "routes": "Routes API : {{count}}",
+      "code": "{{files}} fichiers · {{loc}} lignes"
+    },
+    "search": "Chercher une page ou un module",
+    "groupsLabel": "Types d'éléments",
+    "kindsLabel": "Types de liens",
+    "groups": {
+      "dashboard": "Tableau de bord",
+      "portal": "Portail",
+      "mobile": "Application mobile",
+      "api": "API",
+      "service": "Services",
+      "infra": "Infrastructure",
+      "external": "Services externes"
+    },
+    "kinds": {
+      "http": "Requête HTTP",
+      "import": "Import de code",
+      "calls": "Appel de service"
+    },
+    "caption": "Carte des éléments du système et de leurs liens",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "reset": "Vue d'origine",
+    "hint": "Faites glisser pour déplacer, molette pour zoomer. Un clic sur un élément met ses liens en évidence et affiche ses détails. Taille selon le nombre de lignes de code.",
+    "size": "{{files}} fichiers · {{loc}} lignes de code",
+    "uses": "Utilise",
+    "usedBy": "Utilisé par",
+    "results": "Résultats : {{count}}",
+    "howTitle": "Lire la carte",
+    "how": "Les pages d'un côté, l'API au centre, ce qu'elle appelle (services, base, services externes) de l'autre. Bleu : requête HTTP d'une page vers un module ; gris : import de code ; orange pointillé : appel d'un service via un réglage.",
+    "mostUsed": "Les plus reliés",
+    "links": "{{count}} liens"
   },
   "changes": {
     "title": "Journal des modifications (mouchard)",

@@ -1511,11 +1511,19 @@ CATALOGUE: tuple[Spec, ...] = (
         ("سجلات المنظومة", "Journaux système", "System logs"),
         flags="national fixed",
     ),
+    # The «تطوير النظام» menu (Yamen, 2026-11-09): the SQL window and the repository map.
     page(
         "sql_console",
-        "system",
+        "dev",
         "/sql",
         ("نافذة SQL", "Console SQL", "SQL console"),
+        flags="national fixed",
+    ),
+    page(
+        "repo_map",
+        "dev",
+        "/dev/map",
+        ("خريطة المنظومة", "Carte du système", "System map"),
         flags="national fixed",
     ),
     page(
