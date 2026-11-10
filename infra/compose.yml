@@ -831,7 +831,7 @@ services:
   ollama:
     <<: *restart
     profiles: ["ai"]
-    image: ollama/ollama:0.40.6@sha256:265409e1d931028a8f7d5a32bcbafddd7bffbc6cc629d77efe9560adf692a5e7
+    image: ollama/ollama:0.40.13@sha256:b2f0122c476bc9fe7ce679d8bb4bd555351e25e2554eefb156f61cb0a89cf429
     environment:
       OLLAMA_KEEP_ALIVE: 30m
     volumes:
