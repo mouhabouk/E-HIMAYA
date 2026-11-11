@@ -5,6 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 import { canEnterReports } from "../lib/roles";
 import { SIM_CALL_CARDS } from "../test/callCardsData";
 import { fakeApi, fakeAuth, renderApp } from "../test/render";
+import { intakeLinkFor } from "../components/Softphone";
+import type { SoftphoneCall } from "../lib/softphone";
 import { parsePoint, RoomReportPage } from "./RoomReportPage";
 
 vi.mock("../components/LazyMap", () => ({
@@ -45,6 +47,24 @@ describe("RoomReportPage", () => {
       text: "دخان كثيف قرب السوق",
       received_at: undefined,
     });
+  });
+});
+
+describe("RoomReportPage opened from a softphone call", () => {
+  it("links the call to the report and takes the answer as the time received", async () => {
+    const answered = Date.parse("2026-11-10T21:05:00Z");
+    const href = intakeLinkFor({ apiCallId: "call-7", answeredAt: answered } as SoftphoneCall);
+    expect(href).toBe("/reports/new?call=call-7&at=2026-11-10T21%3A05%3A00.000Z");
+    const enterReport = vi.fn(() => Promise.resolve({ id: "rep-9" }));
+    renderApp(<RoomReportPage />, { api: fakeApi({ enterReport } as never), auth: fakeAuth(agent), lang: "ar", path: href });
+    expect(screen.getByRole("status")).toHaveTextContent("تُربط المكالمة بالبلاغ عند الحفظ");
+    expect(screen.getByRole("radio", { name: "هاتف" })).toBeChecked();
+    fireEvent.click(await screen.findByRole("button", { name: "خريطة لتحديد مكان البلاغ" }));
+    fireEvent.click(screen.getByRole("button", { name: "تسجيل البلاغ" }));
+    await waitFor(() => expect(enterReport).toHaveBeenCalled());
+    expect(enterReport).toHaveBeenCalledWith(
+      expect.objectContaining({ channel: "phone", call_id: "call-7", received_at: "2026-11-10T21:05:00.000Z" }),
+    );
   });
 });
 

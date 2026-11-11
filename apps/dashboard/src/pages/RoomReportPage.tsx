@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useId, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
 import { PageTitle } from "../components/PageTitle";
@@ -31,6 +31,20 @@ export function parsePoint(lat: string, lon: string): { lat: number; lon: number
   return y >= 30 && y <= 37.6 && x >= 7.4 && x <= 11.7 ? { lat: y, lon: x } : null;
 }
 
+function answeredMs(at: string | null): number | undefined {
+  const ms = at ? Date.parse(at) : NaN;
+  return Number.isFinite(ms) ? ms : undefined;
+}
+
+/** An ISO time as the value of a datetime-local input, in the browser's time zone. */
+function localInput(at: string | null): string {
+  const ms = answeredMs(at);
+  if (ms === undefined) return "";
+  const d = new Date(ms);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
 export function RoomReportPage() {
   const { t } = useTranslation();
   const { api, mapStyleUrl } = useServices();
@@ -40,15 +54,18 @@ export function RoomReportPage() {
   const qc = useQueryClient();
   const id = useId();
   const [category, setCategory] = useState<Category>("sos");
+  // Opened from the softphone (« enter a report from this call »): the call is linked on save, received at the answer.
+  const [params] = useSearchParams();
+  const callId = params.get("call") || null;
   const [channel, setChannel] = useState<IntakeChannel>("phone");
   const [text, setText] = useState("");
   const [lat, setLat] = useState("");
   const [lon, setLon] = useState("");
-  const [receivedAt, setReceivedAt] = useState("");
+  const [receivedAt, setReceivedAt] = useState(() => localInput(params.get("at")));
   const [tried, setTried] = useState(false);
   const [bounds] = useState(() => initialBoundsFor(user?.identity.gouvernoratCode ?? null));
   const point = parsePoint(lat, lon);
-  const timer = useCallTimer();
+  const timer = useCallTimer(answeredMs(params.get("at")));
   // The guided call-taking card of the category (OS2); the form works as before without it.
   const cards = useQuery({
     queryKey: callCardKeys.list("current"),
@@ -74,6 +91,7 @@ export function RoomReportPage() {
         location: point ?? { lat: 0, lon: 0 },
         text: text.trim() || undefined,
         received_at: receivedAt ? new Date(receivedAt).toISOString() : undefined,
+        call_id: callId ?? undefined,
         call_card:
           activeCard
             ? {
@@ -112,6 +130,11 @@ export function RoomReportPage() {
         {t("intake.title")}
       </PageTitle>
       <p className="muted">{t("intake.intro")}</p>
+      {callId && (
+        <p className="pill tone-green" role="status">
+          <Icon name="call" /> {t("intake.fromCall")}
+        </p>
+      )}
       <p className="call-card__timer">
         <span className="pill tone-red">
           <Icon name="schedule" /> {t("callCards.timer")} <span className="call-card__clock">{timer}</span>

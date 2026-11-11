@@ -122,6 +122,13 @@ function Transfer198({ call }: { call: SoftphoneCall }) {
   );
 }
 
+/** The intake screen opened from a call: the call is linked to the report on save, the time received is the answer. */
+export function intakeLinkFor(call: SoftphoneCall): string {
+  const q = new URLSearchParams({ call: call.apiCallId ?? "" });
+  if (call.answeredAt) q.set("at", new Date(call.answeredAt).toISOString());
+  return `/reports/new?${q.toString()}`;
+}
+
 type LinkKind = "tracking_code" | "report_id" | "incident_id";
 
 /** Link the call to a report (tracking code or id) or an incident; the API stores it on the call row. */
@@ -303,6 +310,13 @@ function ActiveCall({ call }: { call: SoftphoneCall }) {
       )}
       {!ended && telephony && call.purpose !== "conference" && (
         <>
+          {call.apiCallId && !call.apiCall?.report_id && (
+            <p className="phone-intake">
+              <Link className="btn btn--primary" to={intakeLinkFor(call)}>
+                {t("phone.intake")}
+              </Link>
+            </p>
+          )}
           <CallLinkForm call={call} />
           {call.purpose === "queue" && <Transfer198 call={call} />}
         </>

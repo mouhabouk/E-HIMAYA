@@ -11926,3 +11926,12 @@ body::after {
     print-color-adjust: exact;
   }
 }
+
+/* Enter a report from the call in progress (softphone). */
+.phone-intake {
+  margin: 0;
+}
+.phone-intake .btn {
+  inline-size: 100%;
+  justify-content: center;
+}

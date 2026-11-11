@@ -506,6 +506,29 @@ async def test_link_call_to_report(
     await destroyed(call.channel_id)
 
 
+async def test_a_report_entered_from_the_call_is_linked_to_it(
+    client: httpx.AsyncClient, staff: Staff, session: AsyncSession
+) -> None:
+    from tests.test_crew_field import _place
+
+    operator = staff(gouvernorat=61)
+    call = await answered_call(client, operator, session)
+    body = {"category": "fire", "location": _place(), "channel": "phone", "call_id": str(call.id)}
+    # A committee member cannot attach a call, even through a report.
+    committee = staff(["local_committee"], gouvernorat=61)
+    r = await client.post("/api/v1/staff/reports", json=body, headers=committee)
+    assert r.status_code in (403, 404), r.text
+    # An unknown call is refused and no report is left behind.
+    r = await client.post("/api/v1/staff/reports", json={**body, "call_id": str(uuid.uuid4())}, headers=operator)
+    assert r.status_code == 404, r.text
+    r = await client.post("/api/v1/staff/reports", json=body, headers=operator)
+    assert r.status_code == 201, r.text
+    report_id = r.json()["id"]
+    linked = (await client.get(f"/api/v1/staff/calls/{call.id}", headers=operator)).json()
+    assert linked["report_id"] == report_id and linked["tracking_code"] == r.json()["tracking_code"]
+    await destroyed(call.channel_id)
+
+
 async def test_transfer_198(
     client: httpx.AsyncClient, staff: Staff, fake_ari: FakeAri, session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ) -> None:
