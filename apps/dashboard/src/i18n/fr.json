@@ -2853,7 +2853,8 @@
       "submit": "Lier",
       "waitingId": "En attente de l’identifiant de l’appel…",
       "done": "Appel lié."
-    }
+    },
+    "intake": "Saisir un signalement depuis cet appel"
   },
   "calls": {
     "title": "Journal des appels",
@@ -7859,7 +7860,8 @@
       "other": "Autre"
     },
     "categoryStep": "1. Type d'incident",
-    "firstQuestion": "Première question, toujours : « Que se passe-t-il ? Où êtes-vous exactement ? »"
+    "firstQuestion": "Première question, toujours : « Que se passe-t-il ? Où êtes-vous exactement ? »",
+    "fromCall": "Signalement depuis un appel du téléphone intégré : l’appel est lié au signalement à l’enregistrement, l’heure de réception est celle de la réponse."
   },
   "whatWhere": {
     "title": "Quoi, puis où",

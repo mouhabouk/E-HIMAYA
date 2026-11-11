@@ -36858,6 +36858,18 @@
               }
             ]
           },
+          "call_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Call Id"
+          },
           "category": {
             "$ref": "#/components/schemas/Category"
           },

@@ -2853,7 +2853,8 @@
       "submit": "Link",
       "waitingId": "Waiting for the call identifier…",
       "done": "Call linked."
-    }
+    },
+    "intake": "Enter a report from this call"
   },
   "calls": {
     "title": "Call log",
@@ -7859,7 +7860,8 @@
       "other": "Other"
     },
     "categoryStep": "1. Type of incident",
-    "firstQuestion": "The first question, always: “What is happening? Where are you exactly?”"
+    "firstQuestion": "The first question, always: “What is happening? Where are you exactly?”",
+    "fromCall": "Report from a softphone call: the call is linked to the report on save, and the time received is the answer time."
   },
   "whatWhere": {
     "title": "What, then where",

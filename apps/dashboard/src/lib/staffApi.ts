@@ -101,6 +101,8 @@ export interface RoomReportBody {
   received_at?: string;
   /** The guided call-taking card answered during the call (OS2). */
   call_card?: CallCardBody;
+  /** The call this report was entered from (softphone): linked to the report on save. */
+  call_id?: string;
 }
 
 export function staffApi(api: ApiClient) {

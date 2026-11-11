@@ -5,8 +5,8 @@
 #                                  -f infra/compose.demo.yml --profile sim --profile camera up -d --wait)
 #
 # What it changes from production:
-#   - the host publishes 443 only (HTTPS, and HTTP/3), plus 8189/udp for the live video of the phones (WebRTC media
-#     cannot go through 443); 80, RTSP 8554, RTMP 1935 and SIP are closed: the cameras and the relay are on the same
+#   - the host publishes 443 only (HTTPS, and HTTP/3), plus 8189/udp for the live video of the phones and the RTP range
+#     of the softphone (WebRTC media cannot go through 443); 80, RTSP 8554, RTMP 1935 and SIP are closed: the cameras and the relay are on the same
 #     computer and reach MediaMTX on the internal network;
 #   - certificates from Caddy's own CA (CADDY_TLS=internal): no public DNS name, no Let's Encrypt;
 #   - APP_ENV=development, so the [SIM] camera (stream-sim) and the simulated channels run, with the amber «تدريب»
@@ -59,8 +59,14 @@ services:
     ports: !override
       - "${DEMO_LAN_IP}:8189:8189/udp"
 
+  # Telephony: no trunk and no SIP port; the [SIM] calls of `scripts/demo.sh call` enter inside the computer (the sim
+  # context exists only with TELEPHONY_SIM_PASSWORD). The softphone's media needs the RTP range on the Wi-Fi address.
   telephony:
-    ports: !reset []
+    environment:
+      TELEPHONY_SIM_PASSWORD: ${TELEPHONY_SIM_PASSWORD:?set TELEPHONY_SIM_PASSWORD (any random value, for the [SIM] calls)}
+      TELEPHONY_EXTERNAL_HOST: ${DEMO_LAN_IP}
+    ports: !override
+      - "${DEMO_LAN_IP}:${TELEPHONY_RTP_START:-10000}-${TELEPHONY_RTP_END:-10099}:${TELEPHONY_RTP_START:-10000}-${TELEPHONY_RTP_END:-10099}/udp"
 
   # The development helpers production leaves out: the push/SMS simulator and the mail catcher, internal only.
   notify-sim:

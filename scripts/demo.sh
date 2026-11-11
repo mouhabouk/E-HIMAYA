@@ -5,6 +5,7 @@
 #   scripts/demo.sh users       create the demonstration accounts in Keycloak (passwords from .env.demo)
 #   scripts/demo.sh seed        the [SIM] institution, the team leader's activation code, the camera link
 #   scripts/demo.sh prealert    the institution's camera «sees» a fire: the owner's phone rings, 90 s countdown
+#   scripts/demo.sh call        a [SIM] citizen calls the platform number now: the room's softphone rings
 #   scripts/demo.sh status      what the scenario has, and the containers
 #   scripts/demo.sh ca          the certificate to install on the phones (Caddy's own CA), written to ./demo-ca.crt
 #   scripts/demo.sh down        stop (the data stays; `down --volumes` erases it for a clean rehearsal)
@@ -76,6 +77,11 @@ case "${1:-}" in
     ;;
   prealert)
     "${COMPOSE[@]}" exec -T worker python -m app.demo prealert --label "${2:-fire}"
+    ;;
+  call)
+    # The call simulator's own path (docs/telephony.md §9): notice, recording, then the operators' queue.
+    "${COMPOSE[@]}" exec -T telephony asterisk -C /run/asterisk/etc/asterisk.conf \
+      -rx "channel originate Local/8000@ehimaya-sim-in application Wait ${2:-60}"
     ;;
   status)
     "${COMPOSE[@]}" exec -T worker python -m app.demo status
