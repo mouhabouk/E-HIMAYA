@@ -5,6 +5,7 @@
 import type { Page, Route, WebSocketRoute } from "@playwright/test";
 import { E2E_ENV } from "../playwright.config";
 import { BASEMAP } from "../src/test/basemapData";
+import { SIM_CALL_CARDS } from "../src/test/callCardsData";
 
 export const API = E2E_ENV.VITE_API_BASE_URL;
 
@@ -138,6 +139,9 @@ export function commonAnswer(
       },
     ]);
   }
+  // The guided call-taking cards (OS2): the nine simulated cards of migration 0100.
+  if (method === "GET" && pathname === "/api/v1/staff/call-cards")
+    return json(route, { cards: SIM_CALL_CARDS });
   // Saved places of the room (phase M): none.
   if (method === "GET" && pathname === "/api/v1/staff/places") return json(route, []);
   if (method === "GET" && pathname === "/api/v1/staff/levels")

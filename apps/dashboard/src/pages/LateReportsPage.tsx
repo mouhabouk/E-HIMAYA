@@ -72,7 +72,7 @@ export function LateReportsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="schedule" tone="orange">{t("late.title")}</PageTitle>
+        <PageTitle print icon="schedule" tone="orange">{t("late.title")}</PageTitle>
         <Link to="/reports/geo-queue">{t("nav.geoQueue")}</Link>
       </div>
       <p className="muted">{t("late.intro")}</p>

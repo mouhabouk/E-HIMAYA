@@ -281,7 +281,7 @@ export function PlansPage() {
   return (
     <div className="page plans-page">
       <div className="page__head">
-        <PageTitle icon="menuBook" tone="navy">
+        <PageTitle print icon="menuBook" tone="navy">
           {t("plans.title")}
         </PageTitle>
       </div>

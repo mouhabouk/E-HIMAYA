@@ -102,6 +102,30 @@ class StaffApi {
     return data is Map<String, dynamic> ? data : {'items': data};
   }
 
+  /// The mission sheet (أمر مهمة) as a PDF: the order, the incident, the place with its QR code, the team, and the
+  /// page of the intervention report the leader fills in by hand (`GET /missions/{id}/sheet`).
+  Future<Uint8List> missionSheet(String missionId) async {
+    final headers = {
+      'Authorization': 'Bearer ${await _token()}',
+      'Accept': 'application/pdf',
+    };
+    final device = await _vault.deviceId();
+    if (device != null) headers['X-Staff-Device'] = device;
+    final r = await _dio.get<List<int>>(
+      '$_base/api/v1/crew/missions/${Uri.encodeComponent(missionId)}/sheet',
+      options: Options(
+        headers: headers,
+        responseType: ResponseType.bytes,
+        validateStatus: (_) => true,
+      ),
+    );
+    final status = r.statusCode ?? 0;
+    if (status == 410) throw const DeviceRevoked();
+    if (status == 401) throw const StaffSignedOut();
+    if (status >= 400) throw CrewError(status, 'http_$status');
+    return Uint8List.fromList(r.data ?? const []);
+  }
+
   Map<String, dynamic> _write([
     Map<String, dynamic> body = const {},
     DateTime? at,

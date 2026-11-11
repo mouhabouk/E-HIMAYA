@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -9,7 +10,10 @@ import 'package:ehimaya/core/storage/secure_store.dart';
 import 'package:ehimaya/core/webrtc/whip_client.dart';
 import 'package:ehimaya/features/live/live_controller.dart';
 import 'package:ehimaya/features/live/live_publisher.dart';
+import 'package:ehimaya/features/rewards/rewards_providers.dart'
+    show fileOpenerProvider;
 import 'package:ehimaya/staff/mission_box.dart';
+import 'package:ehimaya/staff/mission_sheet.dart';
 import 'package:ehimaya/staff/prevention/prevention_store.dart';
 import 'package:ehimaya/staff/prevention/sign_screen.dart';
 import 'package:ehimaya/staff/staff_api.dart';
@@ -398,6 +402,9 @@ class FakeCrewServer {
         .firstMatch(sub);
     if (pv != null) return _visit(r, pv.group(1)!, pv.group(2));
     final m = RegExp(r'^/missions/([^/]+)/(.+)$').firstMatch(sub);
+    if (m != null && r.method == 'GET' && m.group(2) == 'sheet') {
+      return FakeResponse(200, bytes: utf8.encode('%PDF-1.7 mission'));
+    }
     if (m != null && r.method == 'GET' && m.group(2) == 'hospitals') {
       return const FakeResponse(200, json: hospitals);
     }
@@ -483,6 +490,19 @@ class FakeCrewServer {
             'note': body['description'],
             'created_at': now,
           };
+        case 'call-card':
+          // OS2: the server raises the band to critical when the scene says bleeding (as in the API).
+          final card = Map<String, dynamic>.from(x['call_card'] as Map);
+          final field = Map<String, dynamic>.from(body['answers'] as Map);
+          card['field_answers'] = field;
+          card['field_outcome'] = {
+            ...card['outcome'] as Map,
+            'band': field['bleeding'] == 'yes'
+                ? 'critical'
+                : (card['outcome'] as Map)['band'],
+          };
+          card['field_at'] = now;
+          x['call_card'] = card;
         case 'report':
           x['intervention_report'] = {
             'kind': 'report',
@@ -764,6 +784,8 @@ Future<void> pumpStaffApp(
   StaffPush? push,
   String smsNumber = '',
   LivePublisher? publisher,
+  Directory? sheetDir,
+  List<String>? opened,
 }) async {
   // A tall phone: the forms fit without scrolling.
   tester.view.physicalSize = const Size(1080, 2400);
@@ -787,6 +809,12 @@ Future<void> pumpStaffApp(
           return true;
         }),
         staffCaptureProvider.overrideWithValue(FakeCapture()),
+        if (sheetDir != null)
+          missionSheetDirProvider.overrideWithValue(() async => sheetDir),
+        fileOpenerProvider.overrideWithValue((path, mime) async {
+          opened?.add(path);
+          return true;
+        }),
         blobStoreProvider.overrideWithValue(blobs ?? MemoryBlobStore()),
         missionBlobStoreProvider.overrideWithValue(
           missionBlobs ?? MemoryBlobStore(),

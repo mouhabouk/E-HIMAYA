@@ -513,7 +513,7 @@ export function EmergencyGuidePage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="medicalServices" tone="red">{t("guide.title")}</PageTitle>
+        <PageTitle print icon="medicalServices" tone="red">{t("guide.title")}</PageTitle>
         <p className="muted">{t("guide.intro")}</p>
       </div>
       {/* Simulation notice (amber): first-aid texts are not official until the Office's medical staff validates them. */}

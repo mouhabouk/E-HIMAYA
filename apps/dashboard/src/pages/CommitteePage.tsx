@@ -647,7 +647,7 @@ export function CommitteePage() {
     <div className="page">
       <div className="page__head">
         <div>
-          <PageTitle icon="monitoring" tone="navy">{t("committee.title")}</PageTitle>
+          <PageTitle print icon="monitoring" tone="navy">{t("committee.title")}</PageTitle>
           <CommitteeHeading />
         </div>
       </div>

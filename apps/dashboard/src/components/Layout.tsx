@@ -8,6 +8,7 @@ import { itemPath, useStrategyItems } from "../lib/strategies";
 import { localized } from "../lib/localized";
 import { Disclosure, MainNav, navGroups } from "./Navigation";
 import { useAuth } from "../context/auth";
+import { PrintHeader } from "./PrintButton";
 import { useLiveState } from "../context/live";
 import { directionOf, LANGUAGES, type Language } from "../i18n";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
@@ -362,6 +363,7 @@ export function Layout() {
           </div>
         )}
         <main id="main" tabIndex={-1} className="main">
+          <PrintHeader />
           {live === "forbidden" ? (
             <NoAccessPage reason="liveForbidden" embedded />
           ) : (

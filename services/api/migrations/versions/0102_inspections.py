@@ -22,7 +22,7 @@ Row level security: the inspections and their recommendations follow their gouve
 room's; the central room's have none); every other table is national only (a regional room never sees a planned
 inspection).
 
-Revision ID: 0100_inspections
+Revision ID: 0102_inspections
 Revises: 0099_field_news_stream
 Create Date: 2026-11-11
 """
@@ -31,8 +31,8 @@ from collections.abc import Sequence
 
 from migrations.sqlutil import run_script
 
-revision: str = "0100_inspections"
-down_revision: str | None = "0099_field_news_stream"
+revision: str = "0102_inspections"
+down_revision: str | None = "0101_call_card_field"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

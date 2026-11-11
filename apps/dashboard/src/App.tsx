@@ -74,6 +74,8 @@ import {
   hasReadAccess,
   isCommittee,
   landingPath,
+  canReadCallCards,
+  canReadRoomGuide,
 } from "./lib/roles";
 import type { StaffIdentity } from "./auth/identity";
 import { AccountsPage } from "./pages/AccountsPage";
@@ -158,6 +160,8 @@ const ReportSchedulesPage = page(
 const CommandPage = page(() => import("./pages/CommandPage"), "CommandPage");
 const OpsRoomPage = page(() => import("./pages/OpsRoomPage"), "OpsRoomPage");
 const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
+const CallCardsPage = page(() => import("./pages/CallCardsPage"), "CallCardsPage");
+const RoomGuidePage = page(() => import("./pages/RoomGuidePage"), "RoomGuidePage");
 const RoomReportPage = page(
   () => import("./pages/RoomReportPage"),
   "RoomReportPage",
@@ -410,6 +414,14 @@ export function AppRoutes() {
         <Route
           path="reports/new"
           element={gated(canEnterReports, <RoomReportPage />)}
+        />
+        <Route
+          path="call-cards"
+          element={gated(canReadCallCards, <CallCardsPage />)}
+        />
+        <Route
+          path="room-guide"
+          element={gated(canReadRoomGuide, <RoomGuidePage />)}
         />
         <Route path="reports/:id" element={reports(<ReportDetailPage />)} />
         <Route path="incidents" element={reports(<IncidentsPage />)} />

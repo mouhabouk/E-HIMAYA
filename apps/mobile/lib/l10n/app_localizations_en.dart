@@ -6974,4 +6974,75 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffStageSpoken => 'Spoken, corrected';
+
+  @override
+  String get staffCallCard => 'Call-taking card';
+
+  @override
+  String get staffCallCardHelp =>
+      'What the caller answered the room. Complete from the scene what stayed “doesn\'t know” or correct what proves wrong; the room sees it at once, and the band never goes down.';
+
+  @override
+  String staffCardBand(String band) {
+    return 'Band: $band';
+  }
+
+  @override
+  String staffCardFieldBand(String band) {
+    return 'After the team: $band';
+  }
+
+  @override
+  String get staffCardBandCritical => 'Critical';
+
+  @override
+  String get staffCardBandHigh => 'High';
+
+  @override
+  String get staffCardBandNormal => 'Normal';
+
+  @override
+  String get staffCardBandLow => 'Low';
+
+  @override
+  String get staffCardYes => 'Yes';
+
+  @override
+  String get staffCardNo => 'No';
+
+  @override
+  String get staffCardUnknown => 'Doesn\'t know';
+
+  @override
+  String get staffCardKey => 'Decisive';
+
+  @override
+  String staffCardCaller(String answer) {
+    return 'Caller: $answer';
+  }
+
+  @override
+  String get staffCardCallerNone => 'Not asked to the caller';
+
+  @override
+  String get staffCardRead => 'Instructions read to the caller';
+
+  @override
+  String get staffMissionSheet => 'Mission sheet (PDF)';
+
+  @override
+  String get staffMissionSheetHelp =>
+      'To print or keep on the phone; opens without network';
+
+  @override
+  String get staffMissionSheetSaved =>
+      'No network: the copy saved on the phone was opened';
+
+  @override
+  String get staffMissionSheetNoViewer =>
+      'Mission sheet saved, but no app on the phone opens PDF files';
+
+  @override
+  String get staffMissionSheetFailed =>
+      'Could not download the mission sheet, and no copy is saved yet';
 }

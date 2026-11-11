@@ -488,7 +488,7 @@ export function SafetyTipsPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="healthAndSafety" tone="green">{t("tips.title")}</PageTitle>
+        <PageTitle print icon="healthAndSafety" tone="green">{t("tips.title")}</PageTitle>
         <button
           type="button"
           className="btn btn--primary"

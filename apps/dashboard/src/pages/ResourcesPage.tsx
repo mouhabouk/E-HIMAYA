@@ -661,7 +661,7 @@ export function ResourcesPage() {
   return (
     <div className="page">
       <div className="page__head">
-        <PageTitle icon="localShipping" tone="amber">{t("resources.title")}</PageTitle>
+        <PageTitle print icon="localShipping" tone="amber">{t("resources.title")}</PageTitle>
       </div>
       <p className="muted">{t("resources.intro")}</p>
       <section className="card" aria-labelledby="sec-summary">

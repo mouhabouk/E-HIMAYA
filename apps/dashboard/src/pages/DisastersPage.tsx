@@ -99,7 +99,7 @@ export function DisastersPage() {
     <div className="disasters-page">
       <div className="page-head">
         <div>
-          <PageTitle icon="warning" tone="red">
+          <PageTitle print icon="warning" tone="red">
             {t("disasters.title")}
           </PageTitle>
           <CommitteeHeading />

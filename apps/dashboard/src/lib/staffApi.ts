@@ -28,6 +28,7 @@ import { contactApi } from "./contact";
 import { opsApi } from "./opsApi";
 import { crewApi } from "./crewApi";
 import { guideApi } from "./guide";
+import { callCardsApi, type CallCardBody } from "./callCards";
 import { layersApi } from "./layersApi";
 import { phase7Api } from "./phase7Api";
 import { phase8Api } from "./phase8Api";
@@ -98,6 +99,8 @@ export interface RoomReportBody {
   channel: IntakeChannel;
   text?: string;
   received_at?: string;
+  /** The guided call-taking card answered during the call (OS2). */
+  call_card?: CallCardBody;
 }
 
 export function staffApi(api: ApiClient) {
@@ -301,6 +304,7 @@ export function staffApi(api: ApiClient) {
     ...learningApi(api),
     ...anomalyApi(api),
     ...guideApi(api),
+    ...callCardsApi(api),
     ...preventionApi(api),
     ...contactApi(api),
     ...safetyApi(api),

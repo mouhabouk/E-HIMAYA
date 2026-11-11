@@ -6,6 +6,7 @@ import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
 import { useFormat, useGouvernorats } from "../lib/hooks";
 import { opsKeys } from "../lib/opsApi";
+import { saveDownload } from "../lib/layersApi";
 import {
   ACTIVE_ASSIGNMENT_STATUSES,
   ASSIGNMENT_TRANSITIONS,
@@ -28,6 +29,7 @@ import { useDraft } from "../lib/drafts";
 import { CrewLine, FieldFlowLine, FieldSection, PositionLine, crewTimelineParts } from "./CrewBits";
 import { MissionIndicators, MissionRecordEditor } from "./MissionRecord";
 import { Stepper } from "./Stepper";
+import { Icon } from "./Icon";
 
 /** A recommendation's "open assignment" (phase 7 §3): preselects a resource; the operator still submits. */
 export interface AssignPreset {
@@ -191,6 +193,10 @@ function AssignmentRow({
       void qc.invalidateQueries({ queryKey: opsKeys.resourcesAll });
     },
   });
+  const sheet = useMutation({
+    mutationFn: () => api.missionSheet(assignment.id),
+    onSuccess: saveDownload,
+  });
   const next = ASSIGNMENT_TRANSITIONS[assignment.status];
   const who =
     assignment.kind === "resource"
@@ -268,6 +274,18 @@ function AssignmentRow({
               {assignment.target ? t("crew.flow.moveTarget") : t("crew.flow.pickTarget")}
             </button>
           )}
+          {canEdit && assignment.status !== "cancelled" && (
+            <button
+              type="button"
+              className="btn btn--small"
+              disabled={sheet.isPending}
+              onClick={() => sheet.mutate()}
+              aria-label={t("ops.assignment.sheetLabel", { who })}
+            >
+              <Icon name="print" size={16} /> {t("ops.assignment.sheet")}
+            </button>
+          )}
+          <MutationError error={sheet.error} />
           {recordable && (
             <button
               type="button"

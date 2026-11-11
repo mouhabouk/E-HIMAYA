@@ -49,6 +49,8 @@ import {
   canUseNotifications,
   hasReadAccess,
   isCommittee,
+  canReadCallCards,
+  canReadRoomGuide,
 } from "../lib/roles";
 import type { MenuPosition, MenuShape } from "../lib/menu";
 import { allowed, featureOfPath, type FeatureAccess } from "../lib/features";
@@ -104,6 +106,8 @@ export function navGroups(
       items: [
         ...e(reads, "/", "home", "navy", "home", true),
         ...e(reads, "/reports", "description", "red", "reports"),
+        ...e(canReadRoomGuide(roles), "/room-guide", "menuBook", "navy", "roomGuide"),
+        ...e(canReadCallCards(roles), "/call-cards", "call", "red", "callCards"),
         ...e(reads, "/incidents", "localFireDepartment", "red", "incidents"),
         ...e(reads, "/map", "map", "teal", "map"),
         ...e(reads, "/map/room", "monitoring", "red", "opsRoom"),

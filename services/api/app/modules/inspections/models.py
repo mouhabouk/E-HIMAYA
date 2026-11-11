@@ -1,4 +1,4 @@
-"""Periodic inspections of the units, phase I1 (migration 0100, docs/phase-i/design-i.md)."""
+"""Periodic inspections of the units, phase I1 (migration 0102, docs/phase-i/design-i.md)."""
 
 import uuid
 from datetime import date, datetime, time

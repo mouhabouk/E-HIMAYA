@@ -1,4 +1,21 @@
+import type { IconName, Tone } from "../components/Icon";
 import type { Category } from "./types";
+
+/** Icon and tone of each category on the tiles of the room (intake form, call-taking cards; OS2). */
+export const CATEGORY_TILE: Record<Category, [IconName, Tone]> = {
+  medical: ["medicalServices", "red"],
+  fire: ["localFireDepartment", "red"],
+  traffic_accident: ["localShipping", "amber"],
+  drowning: ["water", "teal"],
+  flood: ["thunderstorm", "sky"],
+  chemical_leak: ["science", "purple"],
+  landslide: ["landslide", "amber"],
+  sos: ["crisisAlert", "red"],
+  other: ["description", "slate"],
+};
+
+/** The order of the tiles: the most frequent calls first. */
+export const TILE_ORDER = Object.keys(CATEGORY_TILE) as Category[];
 
 /** 24×24 single-path pictograms (stroke-free fill), used in the list, the detail page and the map markers. */
 export const CATEGORY_ICON_PATHS: Record<Category, string> = {

@@ -6891,4 +6891,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get staffStageSpoken => 'صوتية مصحّحة';
+
+  @override
+  String get staffCallCard => 'بطاقة الاستقبال';
+
+  @override
+  String get staffCallCardHelp =>
+      'ما أجاب به المتصل في القاعة. أكمل من المكان ما بقي «لا يعرف» أو صحّح ما تبيّن خلافه؛ تصل أجوبتك إلى القاعة فورا، ولا تُنزل المستوى.';
+
+  @override
+  String staffCardBand(String band) {
+    return 'المستوى: $band';
+  }
+
+  @override
+  String staffCardFieldBand(String band) {
+    return 'بعد أجوبة الفريق: $band';
+  }
+
+  @override
+  String get staffCardBandCritical => 'حرج';
+
+  @override
+  String get staffCardBandHigh => 'عالٍ';
+
+  @override
+  String get staffCardBandNormal => 'عادي';
+
+  @override
+  String get staffCardBandLow => 'منخفض';
+
+  @override
+  String get staffCardYes => 'نعم';
+
+  @override
+  String get staffCardNo => 'لا';
+
+  @override
+  String get staffCardUnknown => 'لا يعرف';
+
+  @override
+  String get staffCardKey => 'حاسم';
+
+  @override
+  String staffCardCaller(String answer) {
+    return 'المتصل: $answer';
+  }
+
+  @override
+  String get staffCardCallerNone => 'لم يُطرح على المتصل';
+
+  @override
+  String get staffCardRead => 'تعليمات قُرئت على المتصل';
+
+  @override
+  String get staffMissionSheet => 'أمر المهمة (PDF)';
+
+  @override
+  String get staffMissionSheetHelp =>
+      'للطباعة أو للحفظ في الهاتف، ويُفتح دون شبكة';
+
+  @override
+  String get staffMissionSheetSaved =>
+      'لا شبكة: فُتحت النسخة المحفوظة في الهاتف';
+
+  @override
+  String get staffMissionSheetNoViewer =>
+      'حُفظ أمر المهمة، لكن لا يوجد في الهاتف تطبيق لفتح ملفات PDF';
+
+  @override
+  String get staffMissionSheetFailed =>
+      'تعذر تنزيل أمر المهمة ولا نسخة محفوظة بعد';
 }

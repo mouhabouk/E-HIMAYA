@@ -90,6 +90,8 @@ class Report(Base):
     # Claim deadline from the priority band (national settings); the SLA worker marks unclaimed reports late.
     sla_band: Mapped[str | None] = mapped_column(Text)
     sla_due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Band the answers of a guided call-taking card call for (OS2): the claim band never goes below it.
+    call_card_floor: Mapped[str | None] = mapped_column(Text)
     escalation_state: Mapped[str] = mapped_column(Text, server_default="none")
     escalated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     referred_to: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
@@ -204,3 +206,54 @@ class MedicalAttachment(Base):
     )
     data: Mapped[dict[str, Any]] = mapped_column("data_enc", EncryptedJSON("reports.medical_attachment.data"))
     attached_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CallCard(Base):
+    """One version of the guided call-taking card of a report category (OS2, docs/phase-os2/design-os2.md)."""
+
+    __tablename__ = "call_card"
+    __table_args__ = {"schema": "reports"}
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    category: Mapped[str] = mapped_column(Text)
+    version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(Text)
+    content: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    sim: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    medical: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    medical_validated_by: Mapped[str | None] = mapped_column(Text)
+    medical_validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    medical_reason: Mapped[str | None] = mapped_column(Text)
+    approved_by: Mapped[str | None] = mapped_column(Text)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    approval_reason: Mapped[str | None] = mapped_column(Text)
+    retired_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_by_name: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class CallCardAnswer(Base):
+    """The answers given on one report entered by a room, with the card version used and what they gave (OS2)."""
+
+    __tablename__ = "call_card_answer"
+    __table_args__ = {"schema": "reports"}
+
+    report_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("reports.report.id", ondelete="CASCADE"), primary_key=True
+    )
+    card_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("reports.call_card.id"))
+    category: Mapped[str] = mapped_column(Text)
+    card_version: Mapped[int] = mapped_column(Integer)
+    answers: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    outcome: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    entered_by: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # What the team leader answered from the scene, and what the card gives with it (never below the call's band).
+    field_answers: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    field_outcome: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    field_by: Mapped[str | None] = mapped_column(Text)
+    field_by_name: Mapped[str | None] = mapped_column(Text)
+    field_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

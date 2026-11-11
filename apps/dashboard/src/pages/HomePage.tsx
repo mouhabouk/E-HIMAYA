@@ -118,7 +118,7 @@ export function HomePage() {
     <div className="page">
       <div className="page__head">
         <div>
-          <PageTitle icon="home" tone="navy">{t("kpi.title")}</PageTitle>
+          <PageTitle print icon="home" tone="navy">{t("kpi.title")}</PageTitle>
           <CommitteeHeading />
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />

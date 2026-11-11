@@ -36,8 +36,9 @@ from app.modules.ai.models import Analysis
 from app.modules.identity.models import Account
 from app.modules.ops import levels
 from app.modules.orgs import sites
+from app.modules.reports import callcards
 from app.modules.reports.domain import Category, Status
-from app.modules.reports.models import Media, Report, StatusHistory
+from app.modules.reports.models import CallCardAnswer, Media, Report, StatusHistory
 from app.modules.streams import signals
 from app.modules.weather.signals import weather_signal
 
@@ -126,6 +127,18 @@ async def _weather(session: AsyncSession, report: Report, category: Category) ->
     return await weather_signal(session, category, position[0], position[1])
 
 
+async def _call_card(session: AsyncSession, report_id: uuid.UUID) -> dict[str, Any] | None:
+    """What the answers of the room's guided call-taking card say about lives and injuries (OS2), completed by
+    the team from the scene."""
+    row = (
+        await session.execute(
+            select(CallCardAnswer.outcome, CallCardAnswer.field_outcome).where(CallCardAnswer.report_id == report_id)
+        )
+    ).first()
+    # The team's answers from the scene, once given, never below the call's (callcards.on_scene).
+    return callcards.card_facts(row.field_outcome or row.outcome) if row is not None else None
+
+
 @system_scoped
 async def score(session: AsyncSession, report: Report, analysis: Analysis) -> list[grouping.Match]:
     """Recompute credibility, priority and the grouping suggestion of a report from what is known now."""
@@ -152,6 +165,7 @@ async def score(session: AsyncSession, report: Report, analysis: Analysis) -> li
         op_level=(await levels.level_of(session, report.gouvernorat_code)).value,
         vision_fire=await signals.vision_signal(session, report.id),
         weather=await _weather(session, report, category),
+        call_card=await _call_card(session, report.id),
     )
     credibility = scoring.credibility(facts)
     priority = scoring.priority(facts, credibility["score"], settings.priority)

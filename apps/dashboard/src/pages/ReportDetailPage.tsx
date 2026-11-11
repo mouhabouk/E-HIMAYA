@@ -15,6 +15,7 @@ import { VisionImage, VisionSummary, visionDetections } from "../components/Visi
 import { OrganizationCardPanel } from "../components/OrganizationCardPanel";
 import { ClaimBadge, EscalationTag, GeoStateTag } from "../components/Phase9Bits";
 import { ReportHandling } from "../components/ReportHandling";
+import { ReportCallCard } from "../components/ReportCallCard";
 import { LearningLabelSection } from "../components/LearningLabel";
 import { featureKindLabel, MapLegend, orgKindLabel, orgPois, pointsBounds, useLegendItems } from "../components/OrgBits";
 import { StatusChip } from "../components/StatusChip";
@@ -276,7 +277,7 @@ export function ReportDetailPage() {
         <Link to="/reports">{t("detail.back")}</Link>
       </p>
       <div className="page__head">
-        <PageTitle icon="description" tone="red" id="detail-title">
+        <PageTitle print icon="description" tone="red" id="detail-title">
           {t("detail.title")} <span dir="ltr" className="code">{r.tracking_code}</span>
         </PageTitle>
         <StatusChip status={r.status} />
@@ -384,6 +385,8 @@ export function ReportDetailPage() {
             <p className="muted">{t("detail.noText")}</p>
           )}
         </section>
+
+        <ReportCallCard reportId={r.id} />
 
         <ReporterSection report={r} />
         <MedicalSection report={r} />

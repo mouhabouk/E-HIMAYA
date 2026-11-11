@@ -39,6 +39,7 @@ import type {
 } from "./opsTypes";
 import type { IncidentDetail, Page, TimelineEntry } from "./types";
 import type { RecordBody, TimeSuggestion } from "./missionRecord";
+import type { Download } from "./layersApi";
 
 const enc = encodeURIComponent;
 const incidentPath = (id: string) => `/api/v1/staff/incidents/${enc(id)}`;
@@ -126,6 +127,12 @@ export function opsApi(api: ApiClient) {
           ...(contactPhone?.trim() ? { contact_phone: contactPhone.trim() } : {}),
         },
       }),
+    /** The mission sheet (أمر مهمة) to print for the team, with the page it fills in by hand (Yamen, 2026-11-10). */
+    missionSheet: async (id: string): Promise<Download> => {
+      const response = await api.requestRaw(`/api/v1/staff/assignments/${enc(id)}/sheet`, { accept: "application/pdf" });
+      const match = /filename="([^"]+)"/.exec(response.headers.get("Content-Disposition") ?? "");
+      return { blob: await response.blob(), filename: match?.[1] ?? `mission-${id}.pdf` };
+    },
     updateAssignment: (id: string, status: AssignmentStatus, note?: string | null) =>
       api.request<Assignment>(`/api/v1/staff/assignments/${enc(id)}/status`, {
         method: "POST",

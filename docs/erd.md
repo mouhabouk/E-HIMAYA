@@ -2894,6 +2894,42 @@ erDiagram
 
 ```mermaid
 erDiagram
+    reports__call_card {
+        uuid id PK
+        text category
+        integer version
+        text status
+        jsonb content
+        boolean sim
+        boolean medical
+        text medical_validated_by
+        datetime medical_validated_at
+        text medical_reason
+        text approved_by
+        datetime approved_at
+        text approval_reason
+        datetime retired_at
+        text created_by
+        text created_by_name
+        datetime created_at
+        text updated_by_name
+        datetime updated_at
+    }
+    reports__call_card_answer {
+        uuid report_id PK,FK
+        uuid card_id FK
+        text category
+        integer card_version
+        jsonb answers
+        jsonb outcome
+        text entered_by
+        datetime created_at
+        jsonb field_answers
+        jsonb field_outcome
+        text field_by
+        text field_by_name
+        datetime field_at
+    }
     reports__camera_event {
         bigint id PK
         uuid stream_id FK
@@ -3082,6 +3118,7 @@ erDiagram
         datetime claimed_at
         text sla_band
         datetime sla_due_at
+        text call_card_floor
         text escalation_state
         datetime escalated_at
         smallint referred_to FK
@@ -3161,6 +3198,7 @@ erDiagram
     ops__incident ||--o{ reports__report : "incident_id"
     org__organization ||--o{ reports__live_stream : "org_id"
     org__organization ||--o{ reports__report : "organization_id"
+    reports__call_card ||--o{ reports__call_card_answer : "card_id"
     reports__camera_tower ||--o{ reports__tower_event : "stream_id"
     reports__drone_zone ||--o{ reports__drone_alert : "zone_id"
     reports__live_stream ||--o{ reports__camera_event : "stream_id"
@@ -3175,6 +3213,7 @@ erDiagram
     reports__media ||--o{ reports__stream_detection : "media_id"
     reports__media ||--o{ reports__stream_segment : "media_id"
     reports__media ||--o{ reports__tower_event : "media_id"
+    reports__report ||--o{ reports__call_card_answer : "report_id"
     reports__report ||--o{ reports__escalation : "report_id"
     reports__report ||--o{ reports__live_stream : "report_id"
     reports__report ||--o{ reports__media : "report_id"

@@ -25,6 +25,7 @@ from app.modules.audit import service as audit
 from app.modules.geo.service import admin_address
 from app.modules.identity.models import AccountKind
 from app.modules.identity.service import _upsert_account
+from app.modules.reports import callcards_router as callcards
 from app.modules.reports import jurisdiction, schemas, sla
 from app.modules.reports.domain import Status
 from app.modules.reports.models import Report, StatusHistory
@@ -77,6 +78,13 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
     )
     session.add(report)
     await session.flush()
+    if body.call_card is not None:
+        # The card's answers: stored, the report's floor set, and their summary written above the free text so the
+        # room, the team on its mission and the committees read what was asked (OS2).
+        lines = await callcards.record(session, principal, report, body.category.value, body.call_card)
+        report.text_original = f"{lines}\n\n{text}" if text else lines
+        report.lang_original = report.lang_original or "ar"
+        await session.flush()
     session.add(
         StatusHistory(report_id=report.id, status=Status.RECEIVED.value, at=now, actor=audit.actor_of(principal))
     )
@@ -95,7 +103,11 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
         actor=audit.actor_of(principal),
         action="report.room_entered",
         target=str(report.id),
-        details={"channel": body.channel, "category": body.category.value},
+        details={
+            "channel": body.channel,
+            "category": body.category.value,
+            "call_card": body.call_card.version if body.call_card is not None else None,
+        },
         gouvernorats=[gouvernorat],
     )
     analysis = await session.get(Analysis, report.id)

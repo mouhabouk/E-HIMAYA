@@ -969,7 +969,7 @@ export function DrillPage() {
       <p>
         <Link to="/drills">{t("drill.back")}</Link>
       </p>
-      <PageTitle icon="militaryTech" tone="amber">
+      <PageTitle print icon="militaryTech" tone="amber">
         {d.title}
       </PageTitle>
       <div className="drill-page__meta">

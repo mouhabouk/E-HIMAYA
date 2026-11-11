@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { vi } from "vitest";
+import { ApiError } from "../lib/api";
 import { fakeFeaturesApi } from "./featuresFixtures";
 import { fakeWindowApi } from "./windowFixtures";
 import { fakeDrillApi } from "./drillFixtures";
@@ -395,6 +396,14 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     sqlEditHistory: vi.fn(),
     sqlDeleteHistory: vi.fn(),
     repoMap: vi.fn(() => Promise.resolve({ nodes: [], edges: [], routes: 0, generated_at: "2026-11-09T22:00:00Z" })),
+    // OS2: guided call-taking cards.
+    callCards: vi.fn(() => Promise.resolve({ cards: [] })),
+    createCardDraft: vi.fn(),
+    updateCardDraft: vi.fn(),
+    discardCardDraft: vi.fn(),
+    validateCardMedical: vi.fn(),
+    approveCard: vi.fn(),
+    reportCallCard: vi.fn(() => Promise.reject(new ApiError(404, "no_call_card"))),
     ...overrides,
   };
 }
