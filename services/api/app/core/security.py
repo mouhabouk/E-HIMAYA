@@ -64,6 +64,12 @@ class Role(StrEnum):
     # administrative file of the staff (ranks, appointments, transfers, leave, absences, sanctions, rewards); no
     # operational rights, and the operations rooms never see its sanctions, rewards or references.
     PERSONNEL_OFFICER = "personnel_officer"
+    # Phase I1 (docs/phase-i/design-i.md §2): the general inspectorate plans the inspections of the units, activates
+    # the inspectors' app accounts and decides what the operations rooms read; the inspectors (of the inspectorate, or
+    # from outside it on a temporary account) carry out their own missions from the app and nothing else.
+    INSPECTOR_GENERAL = "inspector_general"
+    INSPECTOR = "inspector"
+    INSPECTOR_EXTERNAL = "inspector_external"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -87,9 +93,18 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.GOVERNOR,
             Role.MINISTER,
             Role.FIELD_AGENT,
+            Role.INSPECTOR_GENERAL,
+            Role.INSPECTOR,
+            Role.INSPECTOR_EXTERNAL,
         }
     ),
 }
+
+#: The only roles a token of the platform's own issuer (``field_tokens``) may carry: the phones of the field agents
+#: and of the inspectors. Any other role in such a token is ignored.
+FIELD_TOKEN_ROLES: frozenset[Role] = frozenset(
+    {Role.TEAM_LEADER, Role.FIELD_AGENT, Role.INSPECTOR, Role.INSPECTOR_EXTERNAL}
+)
 
 
 class Function(StrEnum):
@@ -109,7 +124,13 @@ FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
     Function.OPERATIONS: frozenset({Role.OPERATOR, Role.OPS_MANAGER}),
     Function.TECHNICAL: frozenset({Role.SYSADMIN, Role.SECURITY_ADMIN, Role.AI_ADMIN, Role.REGIONAL_ACCOUNT_ADMIN}),
     Function.SUPPORT: frozenset(
-        {Role.CONTENT_EDITOR, Role.ORG_AUDITOR, Role.MEDICAL_COORDINATOR, Role.PERSONNEL_OFFICER}
+        {
+            Role.CONTENT_EDITOR,
+            Role.ORG_AUDITOR,
+            Role.MEDICAL_COORDINATOR,
+            Role.PERSONNEL_OFFICER,
+            Role.INSPECTOR_GENERAL,
+        }
     ),
     Function.FIELD: frozenset({Role.TEAM_LEADER}),
 }
@@ -229,7 +250,7 @@ class TokenVerifier:
                 )
 
         raw_roles = set(claims.get("realm_access", {}).get("roles", []))
-        allowed = REALM_ROLES[realm]
+        allowed = FIELD_TOKEN_ROLES if field else REALM_ROLES[realm]
         roles = frozenset(r for r in allowed if r.value in raw_roles)
 
         gouvernorat_code: int | None = None

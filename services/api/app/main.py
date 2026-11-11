@@ -72,6 +72,11 @@ from app.modules.health.router import router as health_router
 from app.modules.identity.email import router as identity_email_router
 from app.modules.identity.internal import router as identity_internal_router
 from app.modules.identity.router import router as identity_router
+from app.modules.inspections.router import admin_router as inspections_admin_router
+from app.modules.inspections.router import app_router as inspections_app_router
+from app.modules.inspections.router import public_router as inspections_public_router
+from app.modules.inspections.router import rooms_router as inspections_rooms_router
+from app.modules.inspections.router import router as inspections_router
 from app.modules.inventory.router import router as inventory_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
@@ -397,6 +402,11 @@ def create_app() -> FastAPI:
         schedule_router,
         inventory_router,
         personnel_router,
+        inspections_router,
+        inspections_rooms_router,
+        inspections_admin_router,
+        inspections_app_router,
+        inspections_public_router,
         basemap_router,
         basemap_tiles_router,
         appdownload_router,

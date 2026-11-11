@@ -32,6 +32,8 @@ CONCURRENCY = 20
 LEASE = timedelta(seconds=120)
 OUTBOX_MAX_ATTEMPTS = 8
 SMS_MAX_CHARS = 300
+#: What stays of a secret message (an activation code) once the outbox is done with it.
+REDACTED = "[redacted]"
 DIGEST_EVERY = timedelta(days=7)
 #: F-APP-38 pushes (phase P4d), which a citizen may turn off per phone.
 TEAM_STATUS = "team_status"
@@ -335,6 +337,15 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
             outcomes[row.id] = ("sent", None) if result.ok else ("retry", result.error)
             if result.unregistered:
                 outcomes[row.id] = ("skipped", "unregistered")
+        elif row.channel == "sms":
+            # Phase I: one SMS to one number (the inspector's activation code).
+            if not providers.sms.configured:
+                outcomes[row.id] = ("skipped", "not_configured")
+                continue
+            assert row.address is not None
+            result = await providers.sms.send(row.address, row.payload["text"])
+            _count_failures("sms", [result])
+            outcomes[row.id] = ("sent", None) if result.ok else ("retry", result.error)
         else:
             if not providers.email.configured:
                 outcomes[row.id] = ("skipped", "not_configured")
@@ -358,6 +369,9 @@ async def run_outbox(sessionmaker: async_sessionmaker[AsyncSession], limit: int 
             else:
                 record.status = state
                 record.sent_at = _now() if state == "sent" else None
+            if record.status != "pending" and record.payload.get("secret"):
+                # A one-time code is never kept once its message has left (or will never leave).
+                record.payload = {**record.payload, "text": REDACTED}
         if gone:
             await session.execute(delete(Device).where(Device.token.in_(gone)))
     return len(rows)

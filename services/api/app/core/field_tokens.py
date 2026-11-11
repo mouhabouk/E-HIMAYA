@@ -50,11 +50,14 @@ def issue(
     name: str | None,
     username: str,
     roles: list[str],
-    gouvernorat_code: int,
+    gouvernorat_code: int | None,
     device_id: str,
     now: datetime | None = None,
 ) -> tuple[str, datetime]:
-    """An access token with the same claims the API reads from a staff Keycloak token."""
+    """An access token with the same claims the API reads from a staff Keycloak token.
+
+    ``gouvernorat_code`` None gives a national scope (the inspectors, phase I1, who go to units of every gouvernorat;
+    what they read is limited to their own missions by the routes)."""
     now = now or datetime.now(UTC)
     expires = now + ACCESS_TTL
     claims: dict[str, Any] = {
@@ -67,8 +70,9 @@ def issue(
         "name": name,
         "preferred_username": username,
         "realm_access": {"roles": roles},
-        "scope_level": "regional",
-        "gouvernorat_code": gouvernorat_code,
+        "scope_level": "regional" if gouvernorat_code is not None else "national",
         "device_id": device_id,
     }
+    if gouvernorat_code is not None:
+        claims["gouvernorat_code"] = gouvernorat_code
     return jwt.encode(claims, signing_key(), algorithm=ALGORITHM), expires

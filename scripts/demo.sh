@@ -64,10 +64,11 @@ case "${1:-}" in
     create_user ehimaya-staff demo-central "$password" operator,central_committee,sysadmin "scope_level=national" >/dev/null
     create_user ehimaya-staff demo-committee "$password" governor,local_committee "gouvernorat_code=$g" >/dev/null
     create_user ehimaya-staff demo-personnel "$password" personnel_officer "gouvernorat_code=$g" >/dev/null
+    create_user ehimaya-staff demo-inspection "$password" inspector_general "scope_level=national" >/dev/null
     owner=$(create_user ehimaya-public demo-owner "$password" citizen,org_admin)
     create_user ehimaya-public demo-citizen "$password" citizen >/dev/null
     echo "$owner" >.demo-owner-id
-    echo "demo: accounts demo-room, demo-central, demo-committee, demo-personnel (staff) and demo-owner, demo-citizen (public)"
+    echo "demo: accounts demo-room, demo-central, demo-committee, demo-personnel, demo-inspection (staff) and demo-owner, demo-citizen (public)"
     ;;
   seed)
     [ -f .demo-owner-id ] || { echo "demo: run scripts/demo.sh users first" >&2; exit 1; }

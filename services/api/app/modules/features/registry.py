@@ -27,6 +27,9 @@ _PUBLIC_SKIP = (
     "/api/v1/geo/",
     "/api/v1/basemap/",
     "/api/v1/field/",
+    # The inspector's app (phase I): its own accounts, activated by the inspector general, not a citizen's app.
+    "/api/v1/inspect/",
+    "/api/v1/verify/om/",
     "/api/v1/admin/",
     # The camera bridges: machines signing with their camera's key, no person to grant or deny a button.
     "/api/v1/camera-events",
@@ -40,6 +43,7 @@ _PREFERENCE = (
     Role.ORG_AUDITOR,
     Role.MEDICAL_COORDINATOR,
     Role.PERSONNEL_OFFICER,
+    Role.INSPECTOR_GENERAL,
     Role.FIELD_COMMANDER,
     Role.OPS_MANAGER,
     Role.LOCAL_COMMITTEE,

@@ -821,6 +821,25 @@
         "title": "Actions",
         "type": "object"
       },
+      "ActivateIn": {
+        "description": "The inspector general activates a registration; an external inspector's account needs its end date.",
+        "properties": {
+          "expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires On"
+          }
+        },
+        "title": "ActivateIn",
+        "type": "object"
+      },
       "ActivityIn": {
         "properties": {
           "ends_on": {
@@ -2452,6 +2471,316 @@
         "title": "AnswerOut",
         "type": "object"
       },
+      "AppActivateIn": {
+        "properties": {
+          "code": {
+            "maxLength": 12,
+            "minLength": 8,
+            "title": "Code",
+            "type": "string"
+          },
+          "device": {
+            "$ref": "#/components/schemas/AppDevice"
+          },
+          "matricule": {
+            "pattern": "^[0-9A-Za-z-]{3,20}$",
+            "title": "Matricule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "matricule",
+          "code",
+          "device"
+        ],
+        "title": "AppActivateIn",
+        "type": "object"
+      },
+      "AppDevice": {
+        "properties": {
+          "device_ref": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Ref"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "platform": {
+            "enum": [
+              "android",
+              "ios"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "push_token": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Push Token"
+          }
+        },
+        "required": [
+          "platform"
+        ],
+        "title": "AppDevice",
+        "type": "object"
+      },
+      "AppInspectionOut": {
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "enum": [
+                "ok",
+                "note",
+                "ko"
+              ],
+              "type": "string"
+            },
+            "title": "Answers",
+            "type": "object"
+          },
+          "exit_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Seconds"
+          },
+          "expected": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "present": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Present"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ProfileConfig"
+          },
+          "receipt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "site_id": {
+            "format": "uuid",
+            "title": "Site Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "in_progress",
+              "submitted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "id",
+          "site_id",
+          "status",
+          "profile",
+          "answers",
+          "present",
+          "expected",
+          "exit_seconds",
+          "score",
+          "verdict",
+          "receipt"
+        ],
+        "title": "AppInspectionOut",
+        "type": "object"
+      },
+      "AppMissionOut": {
+        "properties": {
+          "at_time": {
+            "format": "time",
+            "title": "At Time",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteOut"
+            },
+            "title": "Sites",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "on_date",
+          "at_time",
+          "kind",
+          "sites"
+        ],
+        "title": "AppMissionOut",
+        "type": "object"
+      },
+      "AppRefreshIn": {
+        "properties": {
+          "refresh_token": {
+            "maxLength": 200,
+            "minLength": 20,
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ],
+        "title": "AppRefreshIn",
+        "type": "object"
+      },
+      "AppTokens": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires On"
+          },
+          "kind": {
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_at",
+          "refresh_token",
+          "name",
+          "kind",
+          "expires_on"
+        ],
+        "title": "AppTokens",
+        "type": "object"
+      },
       "AppVersionOut": {
         "properties": {
           "channel": {
@@ -3186,6 +3515,36 @@
         "title": "AttachIn",
         "type": "object"
       },
+      "AudienceIn": {
+        "properties": {
+          "audience": {
+            "enum": [
+              "none",
+              "regional",
+              "central",
+              "both"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 60,
+            "minItems": 1,
+            "title": "Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ids",
+          "audience"
+        ],
+        "title": "AudienceIn",
+        "type": "object"
+      },
       "AudienceOut": {
         "properties": {
           "email": {
@@ -3399,91 +3758,30 @@
         "title": "AxisDetail",
         "type": "object"
       },
-      "AxisIn": {
+      "AxisIn-Output": {
         "properties": {
-          "area": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "gouvernorat_code": {
-            "anyOf": [
-              {
-                "maximum": 83.0,
-                "minimum": 11.0,
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat Code"
-          },
-          "gouvernorats": {
-            "items": {
-              "maximum": 83.0,
-              "minimum": 11.0,
-              "type": "integer"
-            },
-            "maxItems": 24,
-            "title": "Gouvernorats",
-            "type": "array"
-          },
-          "incident_ids": {
-            "items": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "maxItems": 200,
-            "title": "Incident Ids",
-            "type": "array"
-          },
-          "kind": {
-            "enum": [
-              "flood",
-              "forest_fire",
-              "storm",
-              "earthquake",
-              "technological",
-              "health",
-              "other"
-            ],
-            "title": "Kind",
+          "key": {
+            "pattern": "^[a-z]{1,8}$",
+            "title": "Key",
             "type": "string"
           },
-          "level": {
-            "maximum": 4.0,
-            "minimum": 1.0,
-            "title": "Level",
-            "type": "integer"
-          },
           "name": {
-            "maxLength": 200,
-            "minLength": 3,
+            "maxLength": 60,
+            "minLength": 2,
             "title": "Name",
             "type": "string"
           },
-          "national": {
-            "default": false,
-            "title": "National",
-            "type": "boolean"
-          },
-          "plan": {
-            "default": "",
-            "maxLength": 2000,
-            "title": "Plan",
-            "type": "string"
+          "weight": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "integer"
           }
         },
         "required": [
+          "key",
           "name",
-          "kind",
-          "level"
+          "weight"
         ],
         "title": "AxisIn",
         "type": "object"
@@ -4451,6 +4749,68 @@
         "title": "Bilingual",
         "type": "object"
       },
+      "BinRow": {
+        "properties": {
+          "delete_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delete Reason"
+          },
+          "deleted_at": {
+            "format": "date-time",
+            "title": "Deleted At",
+            "type": "string"
+          },
+          "deleted_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deleted By Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          }
+        },
+        "required": [
+          "id",
+          "place",
+          "submitted_at",
+          "deleted_at",
+          "deleted_by_name",
+          "delete_reason"
+        ],
+        "title": "BinRow",
+        "type": "object"
+      },
       "BookingOut": {
         "properties": {
           "kind": {
@@ -5411,6 +5771,21 @@
           "position"
         ],
         "title": "CalloutTargetOut",
+        "type": "object"
+      },
+      "CancelIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "CancelIn",
         "type": "object"
       },
       "CardContent": {
@@ -9082,6 +9457,72 @@
         "title": "DamageStatus",
         "type": "object"
       },
+      "DashboardOut": {
+        "properties": {
+          "average_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Score"
+          },
+          "by_month": {
+            "items": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "title": "By Month",
+            "type": "array"
+          },
+          "levels": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Levels",
+            "type": "object"
+          },
+          "month_done": {
+            "title": "Month Done",
+            "type": "integer"
+          },
+          "month_missions": {
+            "title": "Month Missions",
+            "type": "integer"
+          },
+          "month_planned": {
+            "title": "Month Planned",
+            "type": "integer"
+          },
+          "rooms_without_plan": {
+            "title": "Rooms Without Plan",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "month_missions",
+          "month_done",
+          "month_planned",
+          "rooms_without_plan",
+          "average_score",
+          "by_month",
+          "levels"
+        ],
+        "title": "DashboardOut",
+        "type": "object"
+      },
       "DatasetOut": {
         "properties": {
           "file_name": {
@@ -9714,34 +10155,6 @@
           "events"
         ],
         "title": "DelegationIn",
-        "type": "object"
-      },
-      "DeleteIn": {
-        "properties": {
-          "confirm": {
-            "const": "DELETE",
-            "title": "Confirm",
-            "type": "string"
-          }
-        },
-        "required": [
-          "confirm"
-        ],
-        "title": "DeleteIn",
-        "type": "object"
-      },
-      "DeleteOut": {
-        "properties": {
-          "status": {
-            "const": "deleted",
-            "title": "Status",
-            "type": "string"
-          }
-        },
-        "required": [
-          "status"
-        ],
-        "title": "DeleteOut",
         "type": "object"
       },
       "DetachIn": {
@@ -10771,6 +11184,56 @@
         "title": "DisasterMap",
         "type": "object"
       },
+      "DisclosureIn": {
+        "properties": {
+          "inspection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection"
+          },
+          "room": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Room",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "room"
+        ],
+        "title": "DisclosureIn",
+        "type": "object"
+      },
       "DismissIn": {
         "properties": {
           "reason": {
@@ -11693,7 +12156,7 @@
           },
           "recommendations": {
             "items": {
-              "$ref": "#/components/schemas/RecommendationOut"
+              "$ref": "#/components/schemas/app__modules__register__schemas__RecommendationOut"
             },
             "title": "Recommendations",
             "type": "array"
@@ -13923,6 +14386,49 @@
           "injects"
         ],
         "title": "ExerciseOut",
+        "type": "object"
+      },
+      "ExitIn": {
+        "properties": {
+          "fast": {
+            "maximum": 3600.0,
+            "minimum": 1.0,
+            "title": "Fast",
+            "type": "integer"
+          },
+          "fast_value": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Fast Value",
+            "type": "integer"
+          },
+          "ok": {
+            "maximum": 3600.0,
+            "minimum": 1.0,
+            "title": "Ok",
+            "type": "integer"
+          },
+          "ok_value": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Ok Value",
+            "type": "integer"
+          },
+          "slow_value": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Slow Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "fast",
+          "ok",
+          "fast_value",
+          "ok_value",
+          "slow_value"
+        ],
+        "title": "ExitIn",
         "type": "object"
       },
       "ExplainedScore": {
@@ -21707,6 +22213,234 @@
         "title": "InspectionItemOut",
         "type": "object"
       },
+      "InspectorOut": {
+        "properties": {
+          "activated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activated At"
+          },
+          "code_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Expires At"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "device_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Model"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires On"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "last_seen_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Seen At"
+          },
+          "lost_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lost At"
+          },
+          "matched_agent": {
+            "title": "Matched Agent",
+            "type": "boolean"
+          },
+          "matricule": {
+            "title": "Matricule",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "organisation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organisation"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "reject_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reject Reason"
+          },
+          "requested_at": {
+            "format": "date-time",
+            "title": "Requested At",
+            "type": "string"
+          },
+          "requested_device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested Device"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "code_sent",
+              "active",
+              "blocked",
+              "rejected",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "via": {
+            "enum": [
+              "sms",
+              "email"
+            ],
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "matricule",
+          "name",
+          "organisation",
+          "phone",
+          "email",
+          "via",
+          "status",
+          "expires_on",
+          "matched_agent",
+          "requested_device",
+          "requested_at",
+          "decided_at",
+          "decided_by_name",
+          "reject_reason",
+          "code_expires_at",
+          "activated_at",
+          "device_model",
+          "last_seen_at",
+          "lost_at"
+        ],
+        "title": "InspectorOut",
+        "type": "object"
+      },
       "Instruction": {
         "additionalProperties": false,
         "properties": {
@@ -22085,6 +22819,40 @@
           "on_date"
         ],
         "title": "ItemCreate",
+        "type": "object"
+      },
+      "ItemIn-Output": {
+        "properties": {
+          "axis": {
+            "pattern": "^[a-z]{1,8}$",
+            "title": "Axis",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z]{1,8}[0-9]{1,3}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Text",
+            "type": "string"
+          },
+          "weight": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "axis",
+          "text",
+          "weight"
+        ],
+        "title": "ItemIn",
         "type": "object"
       },
       "ItemStatusIn": {
@@ -23435,31 +24203,35 @@
         "title": "Level",
         "type": "string"
       },
-      "LevelIn": {
+      "LevelIn-Output": {
         "properties": {
-          "gouvernorat_codes": {
-            "items": {
-              "type": "integer"
-            },
-            "maxItems": 24,
-            "minItems": 1,
-            "title": "Gouvernorat Codes",
-            "type": "array"
+          "colour": {
+            "enum": [
+              "green",
+              "amber",
+              "orange",
+              "red"
+            ],
+            "title": "Colour",
+            "type": "string"
           },
-          "level": {
-            "$ref": "#/components/schemas/OpLevel"
+          "min": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Min",
+            "type": "integer"
           },
-          "reason": {
-            "maxLength": 500,
-            "minLength": 5,
-            "title": "Reason",
+          "name": {
+            "maxLength": 40,
+            "minLength": 2,
+            "title": "Name",
             "type": "string"
           }
         },
         "required": [
-          "gouvernorat_codes",
-          "level",
-          "reason"
+          "name",
+          "min",
+          "colour"
         ],
         "title": "LevelIn",
         "type": "object"
@@ -25631,6 +26403,56 @@
         "title": "MissionFamily",
         "type": "object"
       },
+      "MissionIn": {
+        "properties": {
+          "at_time": {
+            "format": "time",
+            "title": "At Time",
+            "type": "string"
+          },
+          "inspector_id": {
+            "format": "uuid",
+            "title": "Inspector Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "publish": {
+            "default": false,
+            "title": "Publish",
+            "type": "boolean"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteIn"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Sites",
+            "type": "array"
+          }
+        },
+        "required": [
+          "on_date",
+          "at_time",
+          "kind",
+          "inspector_id",
+          "sites"
+        ],
+        "title": "MissionIn",
+        "type": "object"
+      },
       "MissionIncident": {
         "properties": {
           "category": {
@@ -25735,393 +26557,11 @@
         "title": "MissionIncident",
         "type": "object"
       },
-      "MissionOut": {
-        "properties": {
-          "acknowledged_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Acknowledged At"
-          },
-          "alerts": {
-            "items": {
-              "$ref": "#/components/schemas/app__modules__ops__schemas__AlertOut"
-            },
-            "title": "Alerts",
-            "type": "array"
-          },
-          "at_hospital_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "At Hospital At"
-          },
-          "attachments": {
-            "items": {
-              "$ref": "#/components/schemas/app__modules__ops__schemas__AttachmentOut"
-            },
-            "title": "Attachments",
-            "type": "array"
-          },
-          "available_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Available At"
-          },
-          "back_at_unit_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Back At Unit At"
-          },
-          "call_card": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AnswerOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "cancelled_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Cancelled At"
-          },
-          "casualties": {
-            "$ref": "#/components/schemas/CasualtiesOut"
-          },
-          "consumables": {
-            "additionalProperties": {
-              "type": "number"
-            },
-            "propertyNames": {
-              "enum": [
-                "water_m3",
-                "foam_l",
-                "powder_kg",
-                "co2_kg",
-                "extinguishers",
-                "oxygen_l",
-                "fuel_l",
-                "sandbags",
-                "absorbent_kg"
-              ]
-            },
-            "title": "Consumables",
-            "type": "object"
-          },
-          "contact_phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Contact Phone"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "crew_count": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Crew Count"
-          },
-          "crew_nature": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Crew Nature"
-          },
-          "damages": {
-            "items": {
-              "$ref": "#/components/schemas/DamageEntry"
-            },
-            "title": "Damages",
-            "type": "array"
-          },
-          "detailed_report": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FieldReportOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "distance_m": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Distance M"
-          },
-          "en_route_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "En Route At"
-          },
-          "field_initiated": {
-            "default": false,
-            "title": "Field Initiated",
-            "type": "boolean"
-          },
-          "field_report": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FieldReportOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "incident": {
-            "$ref": "#/components/schemas/MissionIncident"
-          },
-          "intervention_report": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FieldReportOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "left_scene_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Left Scene At"
-          },
-          "no_intervention_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "No Intervention Reason"
-          },
-          "on_scene_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "On Scene At"
-          },
-          "order": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Order"
-          },
-          "record_warnings": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Record Warnings",
-            "type": "array"
-          },
-          "released_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Released At"
-          },
-          "skipped": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Skipped",
-            "type": "object"
-          },
-          "status": {
-            "enum": [
-              "ordered",
-              "en_route",
-              "on_scene",
-              "released",
-              "cancelled"
-            ],
-            "title": "Status",
-            "type": "string"
-          },
-          "target": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "target_note": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Target Note"
-          },
-          "template": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "time_sources": {
-            "additionalProperties": {
-              "enum": [
-                "app",
-                "sms",
-                "room"
-              ],
-              "type": "string"
-            },
-            "title": "Time Sources",
-            "type": "object"
-          },
-          "toll": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FieldReportOut"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "transports": {
-            "items": {
-              "$ref": "#/components/schemas/TransportOut"
-            },
-            "title": "Transports",
-            "type": "array"
-          }
-        },
-        "required": [
-          "id",
-          "status",
-          "order",
-          "created_at",
-          "acknowledged_at",
-          "en_route_at",
-          "on_scene_at",
-          "released_at",
-          "cancelled_at",
-          "incident",
-          "field_report",
-          "casualties",
-          "transports"
-        ],
-        "title": "MissionOut",
-        "type": "object"
-      },
       "MissionPage": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/MissionOut"
+              "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
             },
             "title": "Items",
             "type": "array"
@@ -27777,6 +28217,76 @@
           "plans"
         ],
         "title": "Options",
+        "type": "object"
+      },
+      "OrderNotesIn": {
+        "properties": {
+          "notes": {
+            "items": {
+              "maxLength": 400,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Notes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "notes"
+        ],
+        "title": "OrderNotesIn",
+        "type": "object"
+      },
+      "OrderNotesOut": {
+        "properties": {
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "notes"
+        ],
+        "title": "OrderNotesOut",
+        "type": "object"
+      },
+      "OrderVerifyOut": {
+        "description": "What the QR code of a mission order shows to anyone: enough to tell a real order from a forged one.",
+        "properties": {
+          "inspector_name": {
+            "title": "Inspector Name",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "places": {
+            "title": "Places",
+            "type": "integer"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ref",
+          "on_date",
+          "inspector_name",
+          "places",
+          "valid"
+        ],
+        "title": "OrderVerifyOut",
         "type": "object"
       },
       "OrgAckRow": {
@@ -30921,6 +31431,74 @@
         "title": "PointsOut",
         "type": "object"
       },
+      "PolicyIn": {
+        "properties": {
+          "central": {
+            "$ref": "#/components/schemas/RoomDisclosure"
+          },
+          "publish_programme": {
+            "title": "Publish Programme",
+            "type": "boolean"
+          },
+          "recommendations": {
+            "$ref": "#/components/schemas/RecommendationRules"
+          },
+          "regional": {
+            "$ref": "#/components/schemas/RoomDisclosure"
+          }
+        },
+        "required": [
+          "central",
+          "regional",
+          "recommendations",
+          "publish_programme"
+        ],
+        "title": "PolicyIn",
+        "type": "object"
+      },
+      "PolicyOut": {
+        "properties": {
+          "central": {
+            "$ref": "#/components/schemas/RoomDisclosure"
+          },
+          "publish_programme": {
+            "title": "Publish Programme",
+            "type": "boolean"
+          },
+          "recommendations": {
+            "$ref": "#/components/schemas/RecommendationRules"
+          },
+          "regional": {
+            "$ref": "#/components/schemas/RoomDisclosure"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "central",
+          "regional",
+          "recommendations",
+          "publish_programme",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "PolicyOut",
+        "type": "object"
+      },
       "Position": {
         "properties": {
           "at": {
@@ -31239,200 +31817,65 @@
         "title": "PrioritySettings",
         "type": "object"
       },
-      "ProfileIn": {
+      "ProfileConfig": {
         "properties": {
-          "address": {
-            "anyOf": [
-              {
-                "maxLength": 300,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Address"
+          "axes": {
+            "items": {
+              "$ref": "#/components/schemas/AxisIn-Output"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Axes",
+            "type": "array"
           },
-          "cin": {
-            "description": "Tunisian national ID card number (8 digits)",
-            "pattern": "^\\d{8}$",
-            "title": "Cin",
-            "type": "string"
+          "exit": {
+            "$ref": "#/components/schemas/ExitIn"
           },
-          "delegation_id": {
-            "title": "Delegation Id",
-            "type": "integer"
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemIn-Output"
+            },
+            "maxItems": 80,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
           },
-          "first_name": {
-            "maxLength": 100,
-            "minLength": 1,
-            "title": "First Name",
-            "type": "string"
+          "levels": {
+            "items": {
+              "$ref": "#/components/schemas/LevelIn-Output"
+            },
+            "maxItems": 6,
+            "minItems": 2,
+            "title": "Levels",
+            "type": "array"
           },
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
+          "sections": {
+            "items": {
+              "maxLength": 60,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Sections",
+            "type": "array"
           },
-          "last_name": {
-            "maxLength": 100,
-            "minLength": 1,
-            "title": "Last Name",
-            "type": "string"
+          "values": {
+            "$ref": "#/components/schemas/ValuesIn"
           },
-          "locale": {
-            "default": "ar",
-            "enum": [
-              "ar",
-              "fr",
-              "en"
-            ],
-            "title": "Locale",
-            "type": "string"
-          },
-          "medical": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MedicalInfo"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "phone": {
-            "pattern": "^\\+216\\d{8}$",
-            "title": "Phone",
-            "type": "string"
+          "weights": {
+            "$ref": "#/components/schemas/WeightsIn"
           }
         },
         "required": [
-          "first_name",
-          "last_name",
-          "cin",
-          "phone",
-          "gouvernorat_code",
-          "delegation_id"
+          "axes",
+          "items",
+          "values",
+          "weights",
+          "exit",
+          "levels",
+          "sections"
         ],
-        "title": "ProfileIn",
-        "type": "object"
-      },
-      "ProfileOut": {
-        "properties": {
-          "address": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Address"
-          },
-          "cin_last4": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Cin Last4"
-          },
-          "delegation_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Delegation Id"
-          },
-          "email": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Email"
-          },
-          "first_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "First Name"
-          },
-          "gouvernorat_code": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat Code"
-          },
-          "last_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Last Name"
-          },
-          "locale": {
-            "title": "Locale",
-            "type": "string"
-          },
-          "medical": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MedicalInfo"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Phone"
-          }
-        },
-        "required": [
-          "first_name",
-          "last_name",
-          "cin_last4",
-          "phone",
-          "email",
-          "gouvernorat_code",
-          "delegation_id",
-          "address",
-          "locale"
-        ],
-        "title": "ProfileOut",
+        "title": "ProfileConfig",
         "type": "object"
       },
       "ProgrammeDetail": {
@@ -31829,6 +32272,66 @@
           "can_create"
         ],
         "title": "ProgrammesOut",
+        "type": "object"
+      },
+      "ProgressIn": {
+        "properties": {
+          "answers": {
+            "maxProperties": 80,
+            "patternProperties": {
+              "^[a-z]{1,8}[0-9]{1,3}$": {
+                "enum": [
+                  "ok",
+                  "note",
+                  "ko"
+                ],
+                "type": "string"
+              }
+            },
+            "title": "Answers",
+            "type": "object"
+          },
+          "exit_seconds": {
+            "anyOf": [
+              {
+                "maximum": 3600.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Seconds"
+          },
+          "expected": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected"
+          },
+          "present": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Present"
+          }
+        },
+        "title": "ProgressIn",
         "type": "object"
       },
       "ProgressNow": {
@@ -33063,6 +33566,41 @@
         "title": "Reason",
         "type": "string"
       },
+      "ReceiptOut": {
+        "properties": {
+          "inspection_id": {
+            "format": "uuid",
+            "title": "Inspection Id",
+            "type": "string"
+          },
+          "receipt": {
+            "title": "Receipt",
+            "type": "string"
+          },
+          "received_at": {
+            "format": "date-time",
+            "title": "Received At",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "verdict": {
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "inspection_id",
+          "receipt",
+          "score",
+          "verdict",
+          "received_at"
+        ],
+        "title": "ReceiptOut",
+        "type": "object"
+      },
       "Recipient": {
         "properties": {
           "doctor_id": {
@@ -33168,124 +33706,56 @@
         "title": "Recommendation",
         "type": "object"
       },
-      "RecommendationIn": {
+      "RecommendationRules": {
         "properties": {
-          "body": {
-            "maxLength": 2000,
-            "minLength": 3,
-            "title": "Body",
-            "type": "string"
-          },
-          "due_on": {
-            "anyOf": [
-              {
-                "format": "date",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Due On"
-          },
-          "responsible": {
-            "default": "",
-            "maxLength": 200,
-            "title": "Responsible",
-            "type": "string"
-          }
-        },
-        "required": [
-          "body"
-        ],
-        "title": "RecommendationIn",
-        "type": "object"
-      },
-      "RecommendationOut": {
-        "properties": {
-          "body": {
-            "title": "Body",
-            "type": "string"
-          },
-          "due_on": {
-            "anyOf": [
-              {
-                "format": "date",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Due On"
-          },
-          "id": {
-            "title": "Id",
-            "type": "string"
-          },
-          "number": {
-            "title": "Number",
-            "type": "integer"
-          },
-          "overdue": {
-            "title": "Overdue",
-            "type": "boolean"
-          },
-          "responsible": {
-            "title": "Responsible",
-            "type": "string"
-          },
-          "status": {
+          "general": {
             "enum": [
-              "proposed",
-              "in_progress",
-              "done",
-              "dropped"
+              "none",
+              "regional",
+              "central",
+              "both"
             ],
-            "title": "Status",
+            "title": "General",
             "type": "string"
           },
-          "status_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+          "high": {
+            "enum": [
+              "none",
+              "regional",
+              "central",
+              "both"
             ],
-            "title": "Status Reason"
-          },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
+            "title": "High",
             "type": "string"
           },
-          "updated_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+          "low": {
+            "enum": [
+              "none",
+              "regional",
+              "central",
+              "both"
             ],
-            "title": "Updated By Name"
+            "title": "Low",
+            "type": "string"
+          },
+          "medium": {
+            "enum": [
+              "none",
+              "regional",
+              "central",
+              "both"
+            ],
+            "title": "Medium",
+            "type": "string"
           }
         },
         "required": [
-          "id",
-          "number",
-          "body",
-          "responsible",
-          "due_on",
-          "status",
-          "status_reason",
-          "updated_by_name",
-          "updated_at",
-          "overdue"
+          "high",
+          "medium",
+          "low",
+          "general"
         ],
-        "title": "RecommendationOut",
+        "title": "RecommendationRules",
         "type": "object"
       },
       "RecommendationStatusIn": {
@@ -33433,6 +33903,462 @@
           }
         },
         "title": "RecordIn",
+        "type": "object"
+      },
+      "RecordOut": {
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "enum": [
+                "ok",
+                "note",
+                "ko"
+              ],
+              "type": "string"
+            },
+            "title": "Answers",
+            "type": "object"
+          },
+          "disclosure": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RoomDisclosure"
+            },
+            "title": "Disclosure",
+            "type": "object"
+          },
+          "exit_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Seconds"
+          },
+          "expected": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "head_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Head Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspector_name": {
+            "title": "Inspector Name",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "mission_ref": {
+            "title": "Mission Ref",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "present": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Present"
+          },
+          "previous_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Score"
+          },
+          "profile_name": {
+            "title": "Profile Name",
+            "type": "string"
+          },
+          "profile_version": {
+            "title": "Profile Version",
+            "type": "integer"
+          },
+          "receipt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt"
+          },
+          "recommendations": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__inspections__schemas__RecommendationOut"
+            },
+            "title": "Recommendations",
+            "type": "array"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "enum": [
+                  "central",
+                  "regional"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed At"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "in_progress",
+              "submitted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "target": {
+            "enum": [
+              "unit",
+              "room"
+            ],
+            "title": "Target",
+            "type": "string"
+          },
+          "unit_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "regional_directorate",
+                  "brigade",
+                  "centre",
+                  "advanced_centre",
+                  "guard_post",
+                  "beach",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Kind"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "id",
+          "mission_ref",
+          "kind",
+          "target",
+          "unit_kind",
+          "room",
+          "place",
+          "gouvernorat_code",
+          "inspector_name",
+          "status",
+          "started_at",
+          "submitted_at",
+          "score",
+          "verdict",
+          "previous_score",
+          "receipt",
+          "answers",
+          "present",
+          "expected",
+          "exit_seconds",
+          "summary",
+          "head_name",
+          "signed_at",
+          "profile_name",
+          "profile_version",
+          "disclosure",
+          "recommendations"
+        ],
+        "title": "RecordOut",
+        "type": "object"
+      },
+      "RecordRow": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspector_name": {
+            "title": "Inspector Name",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "mission_ref": {
+            "title": "Mission Ref",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "previous_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Score"
+          },
+          "receipt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "enum": [
+                  "central",
+                  "regional"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "in_progress",
+              "submitted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          },
+          "target": {
+            "enum": [
+              "unit",
+              "room"
+            ],
+            "title": "Target",
+            "type": "string"
+          },
+          "unit_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "regional_directorate",
+                  "brigade",
+                  "centre",
+                  "advanced_centre",
+                  "guard_post",
+                  "beach",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Kind"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "id",
+          "mission_ref",
+          "kind",
+          "target",
+          "unit_kind",
+          "room",
+          "place",
+          "gouvernorat_code",
+          "inspector_name",
+          "status",
+          "started_at",
+          "submitted_at",
+          "score",
+          "verdict",
+          "previous_score",
+          "receipt"
+        ],
+        "title": "RecordRow",
         "type": "object"
       },
       "RecordTimes": {
@@ -33734,6 +34660,129 @@
           "reason"
         ],
         "title": "ReferralRefuseIn",
+        "type": "object"
+      },
+      "RegisterIn": {
+        "description": "A registration typed on the app; no account yet.",
+        "properties": {
+          "device_model": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Model"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "kind": {
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "matricule": {
+            "pattern": "^[0-9A-Za-z-]{3,20}$",
+            "title": "Matricule",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "organisation": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organisation"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "pattern": "^\\+?[0-9 ]{8,16}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "via": {
+            "enum": [
+              "sms",
+              "email"
+            ],
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "matricule",
+          "name",
+          "via"
+        ],
+        "title": "RegisterIn",
+        "type": "object"
+      },
+      "RegisterOut": {
+        "properties": {
+          "destination": {
+            "title": "Destination",
+            "type": "string"
+          },
+          "status": {
+            "const": "pending",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "destination"
+        ],
+        "title": "RegisterOut",
+        "type": "object"
+      },
+      "RejectIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RejectIn",
         "type": "object"
       },
       "ReleaseIn": {
@@ -35692,10 +36741,109 @@
           "governor",
           "minister",
           "field_agent",
-          "personnel_officer"
+          "personnel_officer",
+          "inspector_general",
+          "inspector",
+          "inspector_external"
         ],
         "title": "Role",
         "type": "string"
+      },
+      "RoomDisclosure": {
+        "properties": {
+          "inspection": {
+            "title": "Inspection",
+            "type": "boolean"
+          },
+          "score": {
+            "title": "Score",
+            "type": "boolean"
+          },
+          "verdict": {
+            "title": "Verdict",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "inspection",
+          "verdict",
+          "score"
+        ],
+        "title": "RoomDisclosure",
+        "type": "object"
+      },
+      "RoomLiveOut": {
+        "properties": {
+          "answered": {
+            "title": "Answered",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspector_name": {
+            "title": "Inspector Name",
+            "type": "string"
+          },
+          "items": {
+            "title": "Items",
+            "type": "integer"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "room": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Room",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "room",
+          "place",
+          "gouvernorat_code",
+          "inspector_name",
+          "started_at",
+          "answered",
+          "items",
+          "score"
+        ],
+        "title": "RoomLiveOut",
+        "type": "object"
       },
       "RoomReportIn": {
         "description": "A report a room agent enters by hand (phase N, docs/phase-n/design-n.md §5).",
@@ -35779,6 +36927,147 @@
           "channel"
         ],
         "title": "RoomReportIn",
+        "type": "object"
+      },
+      "RoomResultOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "recommendations": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__inspections__schemas__RecommendationOut"
+            },
+            "title": "Recommendations",
+            "type": "array"
+          },
+          "room": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Room",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "id",
+          "room",
+          "place",
+          "gouvernorat_code",
+          "kind",
+          "submitted_at",
+          "verdict",
+          "score",
+          "recommendations"
+        ],
+        "title": "RoomResultOut",
+        "type": "object"
+      },
+      "RoomUpcomingOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "room": {
+            "enum": [
+              "central",
+              "regional"
+            ],
+            "title": "Room",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "room",
+          "place",
+          "gouvernorat_code",
+          "on_date",
+          "kind"
+        ],
+        "title": "RoomUpcomingOut",
         "type": "object"
       },
       "RouteOut": {
@@ -37827,6 +39116,251 @@
           "signed_message"
         ],
         "title": "SigningKeyOut",
+        "type": "object"
+      },
+      "SiteIn": {
+        "description": "A unit: its gouvernorat, its kind and its name (the register's id is optional); or an operations room.",
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "enum": [
+                  "central",
+                  "regional"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "sections": {
+            "items": {
+              "maxLength": 60,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Sections",
+            "type": "array"
+          },
+          "target": {
+            "enum": [
+              "unit",
+              "room"
+            ],
+            "title": "Target",
+            "type": "string"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          },
+          "unit_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "regional_directorate",
+                  "brigade",
+                  "centre",
+                  "advanced_centre",
+                  "guard_post",
+                  "beach",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Kind"
+          },
+          "unit_name": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Name"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "title": "SiteIn",
+        "type": "object"
+      },
+      "SiteOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspection_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection Id"
+          },
+          "inspection_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "in_progress",
+                  "submitted"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection Status"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "enum": [
+                  "central",
+                  "regional"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "sections": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "target": {
+            "enum": [
+              "unit",
+              "room"
+            ],
+            "title": "Target",
+            "type": "string"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Id"
+          },
+          "unit_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "regional_directorate",
+                  "brigade",
+                  "centre",
+                  "advanced_centre",
+                  "guard_post",
+                  "beach",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Kind"
+          },
+          "unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Name"
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "target",
+          "unit_kind",
+          "unit_name",
+          "unit_id",
+          "room",
+          "name",
+          "gouvernorat_code",
+          "sections",
+          "inspection_id",
+          "inspection_status"
+        ],
+        "title": "SiteOut",
         "type": "object"
       },
       "SitrepOut": {
@@ -42075,6 +43609,58 @@
         "title": "StampOut",
         "type": "object"
       },
+      "StartIn": {
+        "properties": {
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "site_id": {
+            "format": "uuid",
+            "title": "Site Id",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          }
+        },
+        "required": [
+          "site_id"
+        ],
+        "title": "StartIn",
+        "type": "object"
+      },
       "Status": {
         "enum": [
           "received",
@@ -42949,6 +44535,121 @@
           "archived_at"
         ],
         "title": "StudySummary",
+        "type": "object"
+      },
+      "SubmitIn": {
+        "properties": {
+          "answers": {
+            "maxProperties": 80,
+            "patternProperties": {
+              "^[a-z]{1,8}[0-9]{1,3}$": {
+                "enum": [
+                  "ok",
+                  "note",
+                  "ko"
+                ],
+                "type": "string"
+              }
+            },
+            "title": "Answers",
+            "type": "object"
+          },
+          "client_id": {
+            "format": "uuid",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "exit_seconds": {
+            "anyOf": [
+              {
+                "maximum": 3600.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Seconds"
+          },
+          "expected": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected"
+          },
+          "head_name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Head Name",
+            "type": "string"
+          },
+          "head_signature": {
+            "maxLength": 280000,
+            "minLength": 20,
+            "title": "Head Signature",
+            "type": "string"
+          },
+          "inspector_signature": {
+            "maxLength": 280000,
+            "minLength": 20,
+            "title": "Inspector Signature",
+            "type": "string"
+          },
+          "present": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Present"
+          },
+          "recommendations": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__inspections__schemas__RecommendationIn"
+            },
+            "maxItems": 60,
+            "title": "Recommendations",
+            "type": "array"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "title": "Signed At",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          }
+        },
+        "required": [
+          "client_id",
+          "head_name",
+          "inspector_signature",
+          "head_signature",
+          "signed_at"
+        ],
+        "title": "SubmitIn",
         "type": "object"
       },
       "SubtypeCount": {
@@ -46622,6 +48323,152 @@
         "title": "UnitRow",
         "type": "object"
       },
+      "UnitStatusOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "last_inspection_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Inspection Id"
+          },
+          "last_on": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last On"
+          },
+          "last_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Score"
+          },
+          "last_verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Verdict"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next On"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "enum": [
+                  "central",
+                  "regional"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "target": {
+            "enum": [
+              "unit",
+              "room"
+            ],
+            "title": "Target",
+            "type": "string"
+          },
+          "unit_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "regional_directorate",
+                  "brigade",
+                  "centre",
+                  "advanced_centre",
+                  "guard_post",
+                  "beach",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Kind"
+          },
+          "unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Name"
+          }
+        },
+        "required": [
+          "target",
+          "unit_kind",
+          "unit_name",
+          "room",
+          "name",
+          "gouvernorat_code",
+          "last_inspection_id",
+          "last_on",
+          "last_score",
+          "last_verdict",
+          "next_on"
+        ],
+        "title": "UnitStatusOut",
+        "type": "object"
+      },
       "UnitsOut": {
         "properties": {
           "items": {
@@ -46773,6 +48620,35 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "ValuesIn": {
+        "properties": {
+          "ko": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Ko",
+            "type": "integer"
+          },
+          "note": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Note",
+            "type": "integer"
+          },
+          "ok": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Ok",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ok",
+          "note",
+          "ko"
+        ],
+        "title": "ValuesIn",
         "type": "object"
       },
       "VehicleIn": {
@@ -48318,6 +50194,35 @@
           "simulated"
         ],
         "title": "WeatherOut",
+        "type": "object"
+      },
+      "WeightsIn": {
+        "properties": {
+          "exit": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Exit",
+            "type": "integer"
+          },
+          "items": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Items",
+            "type": "integer"
+          },
+          "presence": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Presence",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "presence",
+          "exit"
+        ],
+        "title": "WeightsIn",
         "type": "object"
       },
       "When": {
@@ -50061,6 +51966,95 @@
         "title": "Area",
         "type": "object"
       },
+      "app__modules__crisis__schemas__AxisIn": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__Area"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 83.0,
+                "minimum": 11.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "gouvernorats": {
+            "items": {
+              "maximum": 83.0,
+              "minimum": 11.0,
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "title": "Gouvernorats",
+            "type": "array"
+          },
+          "incident_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Incident Ids",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "flood",
+              "forest_fire",
+              "storm",
+              "earthquake",
+              "technological",
+              "health",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Name",
+            "type": "string"
+          },
+          "national": {
+            "default": false,
+            "title": "National",
+            "type": "boolean"
+          },
+          "plan": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Plan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "level"
+        ],
+        "title": "AxisIn",
+        "type": "object"
+      },
       "app__modules__crisis__schemas__CloseIn": {
         "properties": {
           "summary": {
@@ -51314,6 +53308,666 @@
           "name_fr"
         ],
         "title": "DelegationOut",
+        "type": "object"
+      },
+      "app__modules__identity__router__ProfileIn": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "cin": {
+            "description": "Tunisian national ID card number (8 digits)",
+            "pattern": "^\\d{8}$",
+            "title": "Cin",
+            "type": "string"
+          },
+          "delegation_id": {
+            "title": "Delegation Id",
+            "type": "integer"
+          },
+          "first_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "First Name",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "last_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Last Name",
+            "type": "string"
+          },
+          "locale": {
+            "default": "ar",
+            "enum": [
+              "ar",
+              "fr",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          },
+          "medical": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MedicalInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "pattern": "^\\+216\\d{8}$",
+            "title": "Phone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "cin",
+          "phone",
+          "gouvernorat_code",
+          "delegation_id"
+        ],
+        "title": "ProfileIn",
+        "type": "object"
+      },
+      "app__modules__identity__router__ProfileOut": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "cin_last4": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cin Last4"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name"
+          },
+          "locale": {
+            "title": "Locale",
+            "type": "string"
+          },
+          "medical": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MedicalInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "cin_last4",
+          "phone",
+          "email",
+          "gouvernorat_code",
+          "delegation_id",
+          "address",
+          "locale"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__AxisIn": {
+        "properties": {
+          "key": {
+            "pattern": "^[a-z]{1,8}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 60,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "weight": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "weight"
+        ],
+        "title": "AxisIn",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__DeleteIn": {
+        "properties": {
+          "confirm": {
+            "title": "Confirm",
+            "type": "string"
+          },
+          "from_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Date"
+          },
+          "inspection_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection Id"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 10,
+            "title": "Reason",
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "one",
+              "period",
+              "all"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "to_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Date"
+          }
+        },
+        "required": [
+          "scope",
+          "reason",
+          "confirm"
+        ],
+        "title": "DeleteIn",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__DeleteOut": {
+        "properties": {
+          "deleted": {
+            "title": "Deleted",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "deleted"
+        ],
+        "title": "DeleteOut",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__ItemIn": {
+        "properties": {
+          "axis": {
+            "pattern": "^[a-z]{1,8}$",
+            "title": "Axis",
+            "type": "string"
+          },
+          "key": {
+            "pattern": "^[a-z]{1,8}[0-9]{1,3}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Text",
+            "type": "string"
+          },
+          "weight": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "axis",
+          "text",
+          "weight"
+        ],
+        "title": "ItemIn",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__LevelIn": {
+        "properties": {
+          "colour": {
+            "enum": [
+              "green",
+              "amber",
+              "orange",
+              "red"
+            ],
+            "title": "Colour",
+            "type": "string"
+          },
+          "min": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Min",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 40,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "min",
+          "colour"
+        ],
+        "title": "LevelIn",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__MissionOut": {
+        "properties": {
+          "at_time": {
+            "format": "time",
+            "title": "At Time",
+            "type": "string"
+          },
+          "cancel_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancel Reason"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspector_id": {
+            "format": "uuid",
+            "title": "Inspector Id",
+            "type": "string"
+          },
+          "inspector_name": {
+            "title": "Inspector Name",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "published": {
+            "title": "Published",
+            "type": "boolean"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteOut"
+            },
+            "title": "Sites",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "live",
+              "done",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "on_date",
+          "at_time",
+          "kind",
+          "inspector_id",
+          "inspector_name",
+          "status",
+          "cancel_reason",
+          "published",
+          "sites",
+          "created_by_name",
+          "created_at"
+        ],
+        "title": "MissionOut",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__ProfileIn": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/ProfileConfig"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "config"
+        ],
+        "title": "ProfileIn",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__ProfileOut": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/ProfileConfig"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "config",
+          "created_by_name",
+          "created_at"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__RecommendationIn": {
+        "properties": {
+          "item_key": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z]{1,8}[0-9]{1,3}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Key"
+          },
+          "kind": {
+            "enum": [
+              "detailed",
+              "general"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "text": {
+            "maxLength": 600,
+            "minLength": 2,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "text"
+        ],
+        "title": "RecommendationIn",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__RecommendationOut": {
+        "properties": {
+          "audience": {
+            "enum": [
+              "none",
+              "regional",
+              "central",
+              "both"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "item_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Key"
+          },
+          "kind": {
+            "enum": [
+              "detailed",
+              "general"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "item_key",
+          "text",
+          "priority",
+          "audience"
+        ],
+        "title": "RecommendationOut",
         "type": "object"
       },
       "app__modules__inventory__schemas__AgentIn": {
@@ -53688,6 +56342,417 @@
         "title": "DirectiveOut",
         "type": "object"
       },
+      "app__modules__ops__schemas__LevelIn": {
+        "properties": {
+          "gouvernorat_codes": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 24,
+            "minItems": 1,
+            "title": "Gouvernorat Codes",
+            "type": "array"
+          },
+          "level": {
+            "$ref": "#/components/schemas/OpLevel"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gouvernorat_codes",
+          "level",
+          "reason"
+        ],
+        "title": "LevelIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__MissionOut": {
+        "properties": {
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acknowledged At"
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AlertOut"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AttachmentOut"
+            },
+            "title": "Attachments",
+            "type": "array"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
+          },
+          "call_card": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AnswerOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "casualties": {
+            "$ref": "#/components/schemas/CasualtiesOut"
+          },
+          "consumables": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "water_m3",
+                "foam_l",
+                "powder_kg",
+                "co2_kg",
+                "extinguishers",
+                "oxygen_l",
+                "fuel_l",
+                "sandbags",
+                "absorbent_kg"
+              ]
+            },
+            "title": "Consumables",
+            "type": "object"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
+          "crew_nature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Nature"
+          },
+          "damages": {
+            "items": {
+              "$ref": "#/components/schemas/DamageEntry"
+            },
+            "title": "Damages",
+            "type": "array"
+          },
+          "detailed_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "distance_m": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance M"
+          },
+          "en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "En Route At"
+          },
+          "field_initiated": {
+            "default": false,
+            "title": "Field Initiated",
+            "type": "boolean"
+          },
+          "field_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident": {
+            "$ref": "#/components/schemas/MissionIncident"
+          },
+          "intervention_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
+          },
+          "no_intervention_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "No Intervention Reason"
+          },
+          "on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene At"
+          },
+          "order": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order"
+          },
+          "record_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Warnings",
+            "type": "array"
+          },
+          "released_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Released At"
+          },
+          "skipped": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Skipped",
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "ordered",
+              "en_route",
+              "on_scene",
+              "released",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Note"
+          },
+          "template": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__TemplateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "time_sources": {
+            "additionalProperties": {
+              "enum": [
+                "app",
+                "sms",
+                "room"
+              ],
+              "type": "string"
+            },
+            "title": "Time Sources",
+            "type": "object"
+          },
+          "toll": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldReportOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "transports": {
+            "items": {
+              "$ref": "#/components/schemas/TransportOut"
+            },
+            "title": "Transports",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "order",
+          "created_at",
+          "acknowledged_at",
+          "en_route_at",
+          "on_scene_at",
+          "released_at",
+          "cancelled_at",
+          "incident",
+          "field_report",
+          "casualties",
+          "transports"
+        ],
+        "title": "MissionOut",
+        "type": "object"
+      },
       "app__modules__ops__schemas__Point": {
         "properties": {
           "lat": {
@@ -55171,6 +58236,34 @@
           "gouvernorat_code"
         ],
         "title": "UnitOut",
+        "type": "object"
+      },
+      "app__modules__privacy__router__DeleteIn": {
+        "properties": {
+          "confirm": {
+            "const": "DELETE",
+            "title": "Confirm",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "title": "DeleteIn",
+        "type": "object"
+      },
+      "app__modules__privacy__router__DeleteOut": {
+        "properties": {
+          "status": {
+            "const": "deleted",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "DeleteOut",
         "type": "object"
       },
       "app__modules__programmes__schemas__Figures": {
@@ -56758,6 +59851,126 @@
           "versions"
         ],
         "title": "PlanOut",
+        "type": "object"
+      },
+      "app__modules__register__schemas__RecommendationIn": {
+        "properties": {
+          "body": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Body",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "responsible": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Responsible",
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "title": "RecommendationIn",
+        "type": "object"
+      },
+      "app__modules__register__schemas__RecommendationOut": {
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "due_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due On"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "responsible": {
+            "title": "Responsible",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "in_progress",
+              "done",
+              "dropped"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "body",
+          "responsible",
+          "due_on",
+          "status",
+          "status_reason",
+          "updated_by_name",
+          "updated_at",
+          "overdue"
+        ],
+        "title": "RecommendationOut",
         "type": "object"
       },
       "app__modules__register__schemas__RevisionOut": {
@@ -63020,7 +66233,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63095,7 +66308,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63170,7 +66383,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63368,7 +66581,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63444,7 +66657,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63519,7 +66732,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63594,7 +66807,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63669,7 +66882,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63813,7 +67026,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63888,7 +67101,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -63963,7 +67176,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64038,7 +67251,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64189,7 +67402,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64264,7 +67477,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64402,7 +67615,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64477,7 +67690,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64553,7 +67766,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64755,7 +67968,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64896,7 +68109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -64971,7 +68184,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MissionOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__MissionOut"
                 }
               }
             },
@@ -66640,6 +69853,321 @@
         ]
       }
     },
+    "/api/v1/inspect/activate": {
+      "post": {
+        "operationId": "app_activate_api_v1_inspect_activate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppActivateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppTokens"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Activate",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/inspections": {
+      "post": {
+        "operationId": "start_api_v1_inspect_inspections_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppInspectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/inspections/{inspection_id}": {
+      "put": {
+        "operationId": "progress_api_v1_inspect_inspections__inspection_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppInspectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Progress",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/inspections/{inspection_id}/submit": {
+      "post": {
+        "operationId": "submit_api_v1_inspect_inspections__inspection_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Submit",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/missions": {
+      "get": {
+        "operationId": "my_missions_api_v1_inspect_missions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AppMissionOut"
+                  },
+                  "title": "Response My Missions Api V1 Inspect Missions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Missions",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/register": {
+      "post": {
+        "operationId": "register_api_v1_inspect_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Register",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/token": {
+      "post": {
+        "operationId": "app_refresh_api_v1_inspect_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppRefreshIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppTokens"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Refresh",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
     "/api/v1/invitations/{token}": {
       "get": {
         "operationId": "preview_invitation_api_v1_invitations__token__get",
@@ -67637,7 +71165,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteIn"
+                "$ref": "#/components/schemas/app__modules__privacy__router__DeleteIn"
               }
             }
           },
@@ -67648,7 +71176,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteOut"
+                  "$ref": "#/components/schemas/app__modules__privacy__router__DeleteOut"
                 }
               }
             },
@@ -68381,7 +71909,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProfileOut"
+                  "$ref": "#/components/schemas/app__modules__identity__router__ProfileOut"
                 }
               }
             },
@@ -68433,7 +71961,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProfileIn"
+                "$ref": "#/components/schemas/app__modules__identity__router__ProfileIn"
               }
             }
           },
@@ -68444,7 +71972,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProfileOut"
+                  "$ref": "#/components/schemas/app__modules__identity__router__ProfileOut"
                 }
               }
             },
@@ -79998,7 +83526,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AxisIn"
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__AxisIn"
               }
             }
           },
@@ -87088,6 +90616,1501 @@
         ]
       }
     },
+    "/api/v1/staff/inspection-admin/bin": {
+      "get": {
+        "operationId": "bin_rows_api_v1_staff_inspection_admin_bin_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BinRow"
+                  },
+                  "title": "Response Bin Rows Api V1 Staff Inspection Admin Bin Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Bin Rows",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspection-admin/bin/{inspection_id}/restore": {
+      "post": {
+        "operationId": "restore_api_v1_staff_inspection_admin_bin__inspection_id__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspection-admin/delete": {
+      "post": {
+        "operationId": "delete_records_api_v1_staff_inspection_admin_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__inspections__schemas__DeleteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inspections__schemas__DeleteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Records",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspection-results": {
+      "get": {
+        "operationId": "room_results_api_v1_staff_inspection_results_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RoomResultOut"
+                  },
+                  "title": "Response Room Results Api V1 Staff Inspection Results Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Room Results",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspection-results/live": {
+      "get": {
+        "operationId": "room_live_api_v1_staff_inspection_results_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RoomLiveOut"
+                  },
+                  "title": "Response Room Live Api V1 Staff Inspection Results Live Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Room Live",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspection-results/upcoming": {
+      "get": {
+        "operationId": "room_upcoming_api_v1_staff_inspection_results_upcoming_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RoomUpcomingOut"
+                  },
+                  "title": "Response Room Upcoming Api V1 Staff Inspection Results Upcoming Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Room Upcoming",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/dashboard": {
+      "get": {
+        "operationId": "dashboard_api_v1_staff_inspections_dashboard_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dashboard",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/inspectors": {
+      "get": {
+        "operationId": "list_inspectors_api_v1_staff_inspections_inspectors_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pending",
+                    "code_sent",
+                    "active",
+                    "blocked",
+                    "rejected",
+                    "closed"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InspectorOut"
+                  },
+                  "title": "Response List Inspectors Api V1 Staff Inspections Inspectors Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Inspectors",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/inspectors/{inspector_id}/activate": {
+      "post": {
+        "operationId": "activate_account_api_v1_staff_inspections_inspectors__inspector_id__activate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspector_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspector Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Activate Account",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/inspectors/{inspector_id}/close": {
+      "post": {
+        "operationId": "close_account_api_v1_staff_inspections_inspectors__inspector_id__close_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspector_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspector Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Close Account",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/inspectors/{inspector_id}/code": {
+      "post": {
+        "operationId": "renew_code_api_v1_staff_inspections_inspectors__inspector_id__code_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspector_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspector Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Renew Code",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/inspectors/{inspector_id}/lost": {
+      "post": {
+        "operationId": "report_lost_api_v1_staff_inspections_inspectors__inspector_id__lost_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspector_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspector Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Report Lost",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/inspectors/{inspector_id}/reject": {
+      "post": {
+        "operationId": "reject_account_api_v1_staff_inspections_inspectors__inspector_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspector_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspector Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reject Account",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/missions": {
+      "get": {
+        "operationId": "list_missions_api_v1_staff_inspections_missions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "inspector_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Inspector Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__inspections__schemas__MissionOut"
+                  },
+                  "title": "Response List Missions Api V1 Staff Inspections Missions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Missions",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      },
+      "post": {
+        "operationId": "create_mission_api_v1_staff_inspections_missions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MissionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inspections__schemas__MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Mission",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/missions/{mission_id}/cancel": {
+      "post": {
+        "operationId": "cancel_mission_api_v1_staff_inspections_missions__mission_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Mission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inspections__schemas__MissionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel Mission",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/missions/{mission_id}/order.pdf": {
+      "get": {
+        "operationId": "order_pdf_api_v1_staff_inspections_missions__mission_id__order_pdf_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mission_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Mission Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Order Pdf",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/order-notes": {
+      "get": {
+        "operationId": "get_order_notes_api_v1_staff_inspections_order_notes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderNotesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Order Notes",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      },
+      "put": {
+        "operationId": "put_order_notes_api_v1_staff_inspections_order_notes_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderNotesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderNotesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Order Notes",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/places": {
+      "get": {
+        "operationId": "places_api_v1_staff_inspections_places_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UnitStatusOut"
+                  },
+                  "title": "Response Places Api V1 Staff Inspections Places Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Places",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/policy": {
+      "get": {
+        "operationId": "get_policy_api_v1_staff_inspections_policy_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Policy",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      },
+      "put": {
+        "operationId": "put_policy_api_v1_staff_inspections_policy_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Policy",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/policy/apply": {
+      "post": {
+        "description": "Apply the policy to the rooms' reports already sent (the count of reports changed).",
+        "operationId": "apply_policy_api_v1_staff_inspections_policy_apply_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inspections__schemas__DeleteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Policy",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/profile": {
+      "get": {
+        "operationId": "get_profile_api_v1_staff_inspections_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inspections__schemas__ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Profile",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      },
+      "put": {
+        "operationId": "put_profile_api_v1_staff_inspections_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__inspections__schemas__ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__inspections__schemas__ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Profile",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/records": {
+      "get": {
+        "operationId": "list_records_api_v1_staff_inspections_records_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat_code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat Code"
+            }
+          },
+          {
+            "in": "query",
+            "name": "target",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "unit",
+                    "room"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Target"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "periodic",
+                    "surprise"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "inspector_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Inspector Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unit_kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "regional_directorate",
+                    "brigade",
+                    "centre",
+                    "advanced_centre",
+                    "guard_post",
+                    "beach",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unit Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "verdict",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Verdict"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RecordRow"
+                  },
+                  "title": "Response List Records Api V1 Staff Inspections Records Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Records",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/records/{inspection_id}": {
+      "get": {
+        "operationId": "get_record_api_v1_staff_inspections_records__inspection_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Record",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/records/{inspection_id}/audience": {
+      "put": {
+        "operationId": "set_audience_api_v1_staff_inspections_records__inspection_id__audience_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudienceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Audience",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/staff/inspections/records/{inspection_id}/disclosure": {
+      "put": {
+        "operationId": "set_disclosure_api_v1_staff_inspections_records__inspection_id__disclosure_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisclosureIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Disclosure",
+        "tags": [
+          "staff",
+          "inspections"
+        ]
+      }
+    },
     "/api/v1/staff/inventory/agents": {
       "get": {
         "operationId": "list_agents_api_v1_staff_inventory_agents_get",
@@ -91106,7 +96129,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LevelIn"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__LevelIn"
               }
             }
           },
@@ -97910,7 +102933,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RecommendationIn"
+                "$ref": "#/components/schemas/app__modules__register__schemas__RecommendationIn"
               }
             }
           },
@@ -98210,7 +103233,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RecommendationOut"
+                  "$ref": "#/components/schemas/app__modules__register__schemas__RecommendationOut"
                 }
               }
             },
@@ -109358,6 +114381,49 @@
         "summary": "Stop Stream",
         "tags": [
           "streams"
+        ]
+      }
+    },
+    "/api/v1/verify/om/{ref}": {
+      "get": {
+        "operationId": "verify_order_api_v1_verify_om__ref__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ref",
+            "required": true,
+            "schema": {
+              "pattern": "^OM-[0-9]{4}-[0-9]{4,}$",
+              "title": "Ref",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderVerifyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Order",
+        "tags": [
+          "inspections"
         ]
       }
     },
