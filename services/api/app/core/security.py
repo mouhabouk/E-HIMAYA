@@ -70,6 +70,10 @@ class Role(StrEnum):
     INSPECTOR_GENERAL = "inspector_general"
     INSPECTOR = "inspector"
     INSPECTOR_EXTERNAL = "inspector_external"
+    # Phase OS3 (docs/phase-os3/design-os3.md §1): the maintenance department of a gouvernorat (or the central one)
+    # owns the vehicle register: cards, faults sent to the workshop, maintenance and decommissioning. The operations
+    # rooms only set the operational state of a vehicle (at its unit, reinforcement, broken).
+    MAINTENANCE_OFFICER = "maintenance_officer"
 
 
 REALM_ROLES: dict[Realm, frozenset[Role]] = {
@@ -89,6 +93,7 @@ REALM_ROLES: dict[Realm, frozenset[Role]] = {
             Role.REGIONAL_ACCOUNT_ADMIN,
             Role.MEDICAL_COORDINATOR,
             Role.PERSONNEL_OFFICER,
+            Role.MAINTENANCE_OFFICER,
             Role.TEAM_LEADER,
             Role.GOVERNOR,
             Role.MINISTER,
@@ -130,6 +135,7 @@ FUNCTION_ROLES: dict[Function, frozenset[Role]] = {
             Role.MEDICAL_COORDINATOR,
             Role.PERSONNEL_OFFICER,
             Role.INSPECTOR_GENERAL,
+            Role.MAINTENANCE_OFFICER,
         }
     ),
     Function.FIELD: frozenset({Role.TEAM_LEADER}),

@@ -1,10 +1,10 @@
 import enum
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from geoalchemy2 import Geography
-from sqlalchemy import BigInteger, Boolean, DateTime, Enum, Float, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import BigInteger, Boolean, Date, DateTime, Enum, Float, ForeignKey, Integer, SmallInteger, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -173,9 +173,45 @@ class Resource(Base):
     year: Mapped[int | None] = mapped_column(SmallInteger)
     out_reason: Mapped[str | None] = mapped_column(Text)
     updated_by: Mapped[str | None] = mapped_column(Text)
+    # OS3 (migration 0102): the card of the maintenance department, the reinforcement host, the fault declared by the
+    # room, the maintenance in progress and the decommissioning decision.
+    plate: Mapped[str | None] = mapped_column(Text)
+    odometer_km: Mapped[int | None] = mapped_column(Integer)
+    acquired_on: Mapped[date | None] = mapped_column(Date)
+    stationed_unit_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.unit.id"))
+    stationed_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    fault: Mapped[str | None] = mapped_column(Text)
+    workshop: Mapped[str | None] = mapped_column(Text)
+    maint_reason: Mapped[str | None] = mapped_column(Text)
+    maint_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    maint_until: Mapped[date | None] = mapped_column(Date)
+    retired_on: Mapped[date | None] = mapped_column(Date)
+    retire_decision: Mapped[str | None] = mapped_column(Text)
+    retire_reason: Mapped[str | None] = mapped_column(Text)
     version: Mapped[int] = mapped_column(Integer, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class VehicleEvent(Base):
+    """OS3: the log of a vehicle (state set by a room, maintenance, decommissioning, repositioning)."""
+
+    __tablename__ = "vehicle_event"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    resource_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.resource.id", ondelete="CASCADE")
+    )
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    host_gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    kind: Mapped[str] = mapped_column(Text)
+    from_state: Mapped[str] = mapped_column(Text)
+    to_state: Mapped[str] = mapped_column(Text)
+    details: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Callout(Base):

@@ -44,7 +44,8 @@ async def _unit(client: httpx.AsyncClient, staff: Staff, code: int) -> dict[str,
 
 
 def _manager(staff: Staff, code: int | None = GABES) -> dict[str, str]:
-    return staff(["ops_manager"], gouvernorat=code)
+    # OS3: the room manager with the maintenance and personnel departments of the gouvernorat (each register its own).
+    return staff(["ops_manager", "maintenance_officer", "personnel_officer"], gouvernorat=code)
 
 
 def _matricule() -> str:
@@ -191,7 +192,7 @@ async def test_each_gouvernorat_keeps_and_sees_its_own(client: httpx.AsyncClient
         "unit_id": gabes["id"],
         "category_key": "fire_engine",
         "label": f"إطفاء {secrets.token_hex(2)}",
-        "code": "GB-17",
+        "code": f"GB-{secrets.token_hex(3)}",
         "specs": {"capacity_l": 2000, "four_wd": True},
         "year": 2018,
     }
@@ -212,15 +213,18 @@ async def test_each_gouvernorat_keeps_and_sees_its_own(client: httpx.AsyncClient
     assert (await client.post(f"{URL}/vehicles", json=elsewhere, headers=manager)).status_code == 404
     operator = staff(["operator"], gouvernorat=GABES)
     assert (await client.post(f"{URL}/vehicles", json={**vehicle, "label": "y"}, headers=operator)).status_code == 403
-    # Out for maintenance, with a reason; the version is kept.
-    patch = {**vehicle, "state": "maintenance", "version": created["version"]}
+    # A card edit carries a reason and never moves the state (OS3: the workshop has its own action).
+    patch = {**vehicle, "year": 2019, "version": created["version"]}
     assert (await client.patch(f"{URL}/vehicles/{created['id']}", json=patch, headers=manager)).status_code == 422
     r = await client.patch(
-        f"{URL}/vehicles/{created['id']}", json={**patch, "reason": "عطب في المضخة"}, headers=manager
+        f"{URL}/vehicles/{created['id']}", json={**patch, "reason": "تصحيح سنة الصنع"}, headers=manager
     )
-    assert r.json()["state"] == "maintenance"
+    assert r.json()["state"] == "ready"
     stale = {**patch, "reason": "مرة أخرى"}
     assert (await client.patch(f"{URL}/vehicles/{created['id']}", json=stale, headers=manager)).status_code == 409
+    workshop = {"workshop": "ورشة قابس", "reason": "عطب في المضخة", "version": r.json()["version"]}
+    r = await client.post(f"{URL}/vehicles/{created['id']}/maintenance", json=workshop, headers=manager)
+    assert r.json()["state"] == "maintenance", r.text
 
     ids = lambda r: {v["id"] for v in r.json()["items"]}  # noqa: E731
     assert created["id"] in ids(await client.get(f"{URL}/vehicles", headers=operator))
@@ -242,7 +246,7 @@ async def test_each_gouvernorat_keeps_and_sees_its_own(client: httpx.AsyncClient
     assert engines["maintenance"] >= 1
 
     history = (await client.get(f"{URL}/revisions", params={"entity_id": created["id"]}, headers=operator)).json()
-    assert [(h["action"], h["reason"]) for h in history["items"]] == [("update", "عطب في المضخة"), ("create", None)]
+    assert [(h["action"], h["reason"]) for h in history["items"]] == [("update", "تصحيح سنة الصنع"), ("create", None)]
     assert (
         await client.request("DELETE", f"{URL}/vehicles/{created['id']}", json={}, headers=manager)
     ).status_code == 422

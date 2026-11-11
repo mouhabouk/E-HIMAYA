@@ -31,9 +31,17 @@ Entity = Literal["vehicles", "stock", "agents"]
 ENTITIES: tuple[Entity, ...] = ("vehicles", "stock", "agents")
 KINDS = ("vehicle", "equipment", "skill")
 FAMILIES = ("vehicles", "equipment", "boats", "air", "ppe")
-# What the register shows for a vehicle; "assigned" is set by the interventions only.
-VEHICLE_STATES = ("ready", "assigned", "maintenance", "broken")
+# What the register shows for a vehicle (OS3, docs/phase-os3/design-os3.md §2): "assigned" is set by the interventions
+# only; "ready" (at its unit), "reinforcement" (waiting at another unit) and "broken" by the operations rooms;
+# "maintenance" and "retired" by the maintenance department.
+VEHICLE_STATES = ("ready", "assigned", "reinforcement", "broken", "maintenance", "retired")
+# The state a new card (form or import) may start in.
 WRITABLE_STATES = ("ready", "maintenance", "broken")
+ROOM_STATES = ("ready", "reinforcement", "broken")
+# States the maintenance department owns: the rooms cannot change them.
+WORKSHOP_STATES = ("maintenance", "retired")
+# Plate number (رقم منجمي) of a Tunisian vehicle: series, «تونس», number.
+PLATE = re.compile(r"^(\d{1,3}) ?تونس ?(\d{1,4})$")
 AVAILABILITY = ("on_duty", "rest", "leave", "sick", "training", "mission")
 STALE_DAYS = 30
 MAX_ROWS = 5000
@@ -143,17 +151,27 @@ class CategoryRef:
 # ---------------------------------------------------------------- vocabulary
 
 
-def vehicle_state(status: str, out_reason: str | None) -> str:
+def vehicle_state(status: str, out_reason: str | None, stationed: bool = False) -> str:
     if status == "available":
-        return "ready"
+        return "reinforcement" if stationed else "ready"
     if status == "assigned":
         return "assigned"
     return out_reason or "broken"
 
 
+def normal_plate(raw: str | None) -> str | None:
+    """«123 تونس 4567» with single spaces; ``ValueError`` when it is not a plate number."""
+    if raw is None or not raw.strip():
+        return None
+    found = PLATE.match(" ".join(raw.split()))
+    if found is None:
+        raise ValueError("plate_invalid")
+    return f"{int(found.group(1))} تونس {int(found.group(2))}"
+
+
 def state_columns(state: str) -> tuple[str, str | None]:
     """The ``ops.resource`` status and out-of-service reason of a register state (ready, maintenance, broken)."""
-    if state == "ready":
+    if state in ("ready", "reinforcement"):
         return "available", None
     return "out_of_service", state
 

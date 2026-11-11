@@ -12,8 +12,9 @@ from datetime import UTC, datetime
 from typing import Any
 
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import cast, func, select
+from sqlalchemy import cast, func, or_, select, true
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.core.security import Principal
 from app.modules.decision import domain, routing
@@ -23,7 +24,6 @@ from app.modules.decision.domain import danger_at_least, rain_at_least
 from app.modules.decision.responders import suggest as suggest_responders
 from app.modules.ops import interventions
 from app.modules.ops.models import Resource, Unit
-from app.modules.ops.resources import unit_scope
 from app.modules.reports.domain import Category
 from app.modules.settings import service as settings
 
@@ -132,15 +132,25 @@ def needs(situation: Situation) -> list[Need]:
 async def _candidates(
     session: AsyncSession, principal: Principal, kind: str, lat: float, lon: float
 ) -> list[tuple[Resource, Unit, float, float]]:
-    location = func.coalesce(Resource.location, Unit.location)
+    # OS3: a vehicle sent as reinforcement is proposed from the unit where it waits, by that unit's room too.
+    host = aliased(Unit)
+    location = func.coalesce(Resource.location, host.location, Unit.location)
     point = cast(func.ST_SetSRID(func.ST_MakePoint(lon, lat), 4326), Geography(srid=4326))
     distance = func.ST_Distance(location, point)
+    scope = (
+        true()
+        if principal.is_national
+        else or_(
+            Unit.gouvernorat_code == principal.gouvernorat_code, host.gouvernorat_code == principal.gouvernorat_code
+        )
+    )
     rows = (
         await session.execute(
-            select(Resource, Unit, func.ST_Y(cast(location, Geometry)), func.ST_X(cast(location, Geometry)))
+            select(Resource, Unit, host, func.ST_Y(cast(location, Geometry)), func.ST_X(cast(location, Geometry)))
             .join(Unit, Unit.id == Resource.unit_id)
+            .outerjoin(host, host.id == Resource.stationed_unit_id)
             .where(
-                unit_scope(principal),
+                scope,
                 Resource.kind == kind,
                 Resource.status == "available",
                 func.ST_DWithin(location, point, await settings.threshold(session, "decision.resource_radius_m")),
@@ -149,7 +159,7 @@ async def _candidates(
             .limit(CANDIDATES_PER_KIND)
         )
     ).all()
-    return [(r, u, float(la), float(lo)) for r, u, la, lo in rows]
+    return [(r, h or u, float(la), float(lo)) for r, u, h, la, lo in rows]
 
 
 def _minutes(seconds: float) -> int:

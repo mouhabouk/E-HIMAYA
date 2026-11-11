@@ -21,7 +21,7 @@ import {
   type UnitBody,
   type UnitKind,
 } from "../lib/opsTypes";
-import { canManageResources } from "../lib/roles";
+import { canManageFleet, canManageResources } from "../lib/roles";
 import type { Language } from "../i18n";
 import { localizedName } from "../lib/localized";
 import { PageTitle } from "../components/PageTitle";
@@ -655,7 +655,10 @@ export function ResourcesPage() {
   const { t } = useTranslation();
   const { api } = useServices();
   const { user } = useAuth();
-  const canManage = canManageResources(user?.identity.roles ?? []);
+  const roles = user?.identity.roles ?? [];
+  // OS3: the units belong to the room manager, the vehicle cards to the maintenance department.
+  const canManage = canManageResources(roles);
+  const canManageCards = canManageFleet(roles);
   const national = user?.identity.national ?? false;
   const units = useQuery({ queryKey: opsKeys.units, queryFn: ({ signal }) => api.units(signal) });
   return (
@@ -672,7 +675,7 @@ export function ResourcesPage() {
       {units.isError && <ErrorBox error={units.error} onRetry={() => void units.refetch()} />}
       {units.isSuccess && (
         <>
-          <ResourcesList units={units.data} canManage={canManage} national={national} />
+          <ResourcesList units={units.data} canManage={canManageCards} national={national} />
           <UnitsSection units={units.data} canManage={canManage} />
         </>
       )}

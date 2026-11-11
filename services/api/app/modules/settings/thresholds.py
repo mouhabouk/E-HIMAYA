@@ -29,6 +29,10 @@ SPECS: dict[str, Spec] = {
     "decision.unit_radius_m": Spec("crisis", "metres", 60_000, 1_000, 300_000),
     # Candidate resources considered per kind (straight line), then ranked by travel time.
     "decision.resource_radius_m": Spec("crisis", "metres", 150_000, 1_000, 500_000),
+    # Live coverage (OS3): minutes between the call and the departure of a ready vehicle, added to the road time.
+    "coverage.turnout_minutes": Spec("snacr", "minutes", 2, 0, 15),
+    # Repositioning suggestions per family of vehicles, best first.
+    "coverage.suggestions_max": Spec("snacr", "count", 3, 0, 10),
     "forecast.flood_radius_m": Spec("crisis", "metres", 3_000, 100, 50_000),
     # Alerts to the population.
     "alerts.max_days": Spec("alerts", "days", 7, 1, 30),

@@ -7,6 +7,18 @@ Entities are named `<schema>__<table>`. A foreign key to another schema is drawn
 
 ```mermaid
 erDiagram
+    access__feature_profile {
+        uuid id PK
+        text name
+        text description
+        jsonb items
+        boolean builtin
+        text created_by
+        text created_by_name
+        datetime created_at
+        text updated_by_name
+        datetime updated_at
+    }
     access__feature_rule {
         uuid id PK
         text feature_key
@@ -24,7 +36,10 @@ erDiagram
         datetime revoked_at
         text revoked_by_name
         text revoke_reason
+        uuid profile_id FK
+        uuid profile_assignment_id
     }
+    access__feature_profile ||--o{ access__feature_rule : "profile_id"
 ```
 
 ## ai
@@ -2107,6 +2122,19 @@ erDiagram
         smallint year
         text out_reason
         text updated_by
+        text plate
+        integer odometer_km
+        date acquired_on
+        uuid stationed_unit_id FK
+        datetime stationed_since
+        text fault
+        text workshop
+        text maint_reason
+        datetime maint_since
+        date maint_until
+        date retired_on
+        text retire_decision
+        text retire_reason
         integer version
         datetime created_at
         datetime updated_at
@@ -2199,6 +2227,19 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
+    ops__vehicle_event {
+        uuid id PK
+        uuid resource_id FK
+        smallint gouvernorat_code FK
+        smallint host_gouvernorat_code FK
+        text kind
+        text from_state
+        text to_state
+        jsonb details
+        text created_by
+        text created_by_name
+        datetime created_at
+    }
     geo__delegation ||--o{ ops__incident : "delegation_id"
     geo__delegation ||--o{ ops__saved_place : "delegation_id"
     geo__gouvernorat ||--o{ ops__directive : "issuer_scope"
@@ -2212,6 +2253,8 @@ erDiagram
     geo__gouvernorat ||--o{ ops__shift : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__staff_device : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__unit : "gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__vehicle_event : "gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__vehicle_event : "host_gouvernorat_code"
     geo__layer_feature ||--o{ ops__casualty_transport : "hospital_ref"
     identity__volunteer ||--o{ ops__assignment : "volunteer_id"
     identity__volunteer ||--o{ ops__callout_target : "volunteer_id"
@@ -2244,10 +2287,12 @@ erDiagram
     ops__resource ||--o{ ops__crew_position : "resource_id"
     ops__resource ||--o{ ops__resource_request : "resource_id"
     ops__resource ||--o{ ops__shift : "resource_id"
+    ops__resource ||--o{ ops__vehicle_event : "resource_id"
     ops__resource_request ||--o{ ops__assignment : "request_id"
     ops__shift ||--o{ ops__assignment : "shift_id"
     ops__shift ||--o{ ops__crew_event : "shift_id"
     ops__staff_device ||--o{ ops__shift : "device_id"
+    ops__unit ||--o{ ops__resource : "stationed_unit_id"
     ops__unit ||--o{ ops__resource : "unit_id"
 ```
 

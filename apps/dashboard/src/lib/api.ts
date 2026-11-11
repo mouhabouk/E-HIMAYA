@@ -457,6 +457,22 @@ export const ERROR_CODES = [
   "draft_exists",
   "medical_validation_required",
   "no_call_card",
+  // OS3: the fleet, its maintenance and the access profiles.
+  "acquired_in_future",
+  "fault_required",
+  "host_unit_required",
+  "not_in_maintenance",
+  "odometer_decrease",
+  "plate_invalid",
+  "plate_taken",
+  "profile_builtin",
+  "profile_in_use",
+  "profile_grants_nothing",
+  "feature_profile_taken",
+  "retired_in_future",
+  "until_in_past",
+  "vehicle_retired",
+  "vehicle_maintenance",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

@@ -6,7 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 Kind = Literal["vehicle", "equipment", "skill"]
 Family = Literal["vehicles", "equipment", "boats", "air", "ppe"]
-VehicleState = Literal["ready", "assigned", "maintenance", "broken"]
+VehicleState = Literal["ready", "assigned", "reinforcement", "broken", "maintenance", "retired"]
+RoomState = Literal["ready", "reinforcement", "broken"]
 WritableState = Literal["ready", "maintenance", "broken"]
 Availability = Literal["on_duty", "rest", "leave", "sick", "training", "mission"]
 SpecValue = float | int | bool
@@ -89,8 +90,10 @@ class UnitsOut(BaseModel):
 class Tally(BaseModel):
     ready: int = 0
     assigned: int = 0
+    reinforcement: int = 0
     maintenance: int = 0
     broken: int = 0
+    retired: int = 0
 
 
 class GouvernoratRow(BaseModel):
@@ -111,8 +114,10 @@ class CategoryTotal(BaseModel):
     kind: Kind
     ready: int = 0
     assigned: int = 0
+    reinforcement: int = 0
     maintenance: int = 0
     broken: int = 0
+    retired: int = 0
 
 
 class SkillTotal(BaseModel):
@@ -146,9 +151,14 @@ class VehicleIn(BaseModel):
     label: str = Field(min_length=1, max_length=60)
     code: str | None = Field(default=None, max_length=40)
     specs: dict[str, SpecValue] = Field(default_factory=dict)
+    # The state of a new card only: afterwards the rooms set it (POST .../state), the maintenance department sends
+    # it to the workshop or decommissions it (OS3).
     state: WritableState = "ready"
     year: int | None = Field(default=None, ge=1950, le=2100)
     notes: str | None = Field(default=None, max_length=500)
+    plate: str | None = Field(default=None, max_length=30)
+    odometer_km: int | None = Field(default=None, ge=0, le=5_000_000)
+    acquired_on: date | None = None
     reason: str = Field(default="", max_length=500)
     version: int | None = None
 
@@ -166,6 +176,22 @@ class VehicleOut(BaseModel):
     state: VehicleState
     year: int | None
     notes: str | None
+    plate: str | None = None
+    odometer_km: int | None = None
+    acquired_on: date | None = None
+    # Reinforcement: the unit where it waits and since when.
+    stationed_unit_id: uuid.UUID | None = None
+    stationed_unit_name: str | None = None
+    stationed_gouvernorat_code: int | None = None
+    stationed_since: datetime | None = None
+    fault: str | None = None
+    workshop: str | None = None
+    maint_reason: str | None = None
+    maint_since: datetime | None = None
+    maint_until: date | None = None
+    retired_on: date | None = None
+    retire_decision: str | None = None
+    retire_reason: str | None = None
     version: int
     updated_at: datetime
 
@@ -243,6 +269,60 @@ class AgentOut(BaseModel):
 class VehiclesOut(BaseModel):
     items: list[VehicleOut]
     can_edit: bool
+    # OS3: the operations rooms set the operational state; the maintenance department the workshop.
+    can_set_state: bool = False
+    can_maintain: bool = False
+
+
+class VehicleStateIn(BaseModel):
+    state: RoomState
+    # Reinforcement: the unit where the vehicle waits (proposed from there).
+    host_unit_id: uuid.UUID | None = None
+    # Broken: what the crew found (required).
+    fault: str | None = Field(default=None, max_length=500)
+    note: str | None = Field(default=None, max_length=500)
+    # A repositioning suggested by the live coverage (OS3): the population it brings within the target, logged.
+    suggested_gain: int | None = Field(default=None, ge=0, le=20_000_000)
+    version: int | None = None
+
+
+class MaintenanceIn(BaseModel):
+    workshop: str = Field(min_length=2, max_length=200)
+    reason: str = Field(min_length=3, max_length=500)
+    until: date | None = None
+    version: int | None = None
+
+
+class MaintenanceEndIn(BaseModel):
+    note: str | None = Field(default=None, max_length=500)
+    odometer_km: int | None = Field(default=None, ge=0, le=5_000_000)
+    version: int | None = None
+
+
+class RetireIn(BaseModel):
+    decision: str = Field(min_length=2, max_length=80)
+    retired_on: date
+    reason: str = Field(min_length=5, max_length=500)
+    version: int | None = None
+
+
+class VehicleEventOut(BaseModel):
+    id: uuid.UUID
+    resource_id: uuid.UUID
+    label: str
+    plate: str | None
+    unit_name: str
+    gouvernorat_code: int
+    kind: Literal["state", "maintenance_start", "maintenance_end", "retire", "reinforce", "reinforce_end"]
+    from_state: str
+    to_state: str
+    details: dict[str, Any]
+    created_by_name: str | None
+    created_at: datetime
+
+
+class VehicleEventsOut(BaseModel):
+    items: list[VehicleEventOut]
 
 
 class StockListOut(BaseModel):

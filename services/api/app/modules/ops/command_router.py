@@ -24,7 +24,9 @@ LocalCommittee = Annotated[Principal, Depends(require_roles(Role.LOCAL_COMMITTEE
 # Units and resources are operational: written by the ops manager of their gouvernorat (national: all), read by the
 # readers of reports. Technical roles (sysadmin) have no operational rights from phase 9 (§1.2).
 Logistics = Annotated[Principal, Depends(require_roles(Role.OPS_MANAGER))]
-LogisticsReader = Annotated[Principal, Depends(require_roles(*READ_ROLES))]
+LogisticsReader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.MAINTENANCE_OFFICER))]
+# OS3: vehicle cards belong to the maintenance department (the rooms set the state through the register).
+Fleet = Annotated[Principal, Depends(require_roles(Role.MAINTENANCE_OFFICER))]
 
 
 def _csv(raw: str | None, allowed: tuple[str, ...], code: str) -> list[str]:
@@ -164,7 +166,7 @@ async def resources_map(principal: LogisticsReader, session: Session, bbox: str 
 
 
 @router.post("/resources", response_model=schemas.ResourceOut, status_code=status.HTTP_201_CREATED)
-async def create_resource(principal: Logistics, session: Session, body: schemas.ResourceIn) -> schemas.ResourceOut:
+async def create_resource(principal: Fleet, session: Session, body: schemas.ResourceIn) -> schemas.ResourceOut:
     resource = await resources.save_resource(session, principal, body)
     await audit.record(
         session, actor=audit.actor_of(principal), action="resource.create", target=f"resource:{resource.id}"
@@ -177,7 +179,7 @@ async def create_resource(principal: Logistics, session: Session, body: schemas.
 
 @router.put("/resources/{resource_id}", response_model=schemas.ResourceOut)
 async def update_resource(
-    principal: Logistics, session: Session, resource_id: uuid.UUID, body: schemas.ResourceIn
+    principal: Fleet, session: Session, resource_id: uuid.UUID, body: schemas.ResourceIn
 ) -> schemas.ResourceOut:
     resource = await resources.save_resource(session, principal, body, resource_id)
     await audit.record(
@@ -194,7 +196,7 @@ async def update_resource(
 
 
 @router.delete("/resources/{resource_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_resource(principal: Logistics, session: Session, resource_id: uuid.UUID) -> Response:
+async def delete_resource(principal: Fleet, session: Session, resource_id: uuid.UUID) -> Response:
     await resources.delete_resource(session, principal, resource_id)
     await audit.record(
         session, actor=audit.actor_of(principal), action="resource.delete", target=f"resource:{resource_id}"

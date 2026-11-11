@@ -42,6 +42,7 @@ REGIONAL_GRANTABLE = frozenset(
         Role.CONTENT_EDITOR,
         Role.MEDICAL_COORDINATOR,
         Role.PERSONNEL_OFFICER,
+        Role.MAINTENANCE_OFFICER,
         Role.TEAM_LEADER,
         Role.GOVERNOR,
     }

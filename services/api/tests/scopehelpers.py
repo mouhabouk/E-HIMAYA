@@ -99,10 +99,11 @@ async def unit_with_resource(
         headers=manager,
     )
     assert r.status_code == 201, r.text
+    # OS3: the vehicle card belongs to the maintenance department of the gouvernorat.
     r = await client.post(
         "/api/v1/staff/resources",
         json={"unit_id": r.json()["id"], "kind": kind, "label": f"FPT-{secrets.token_hex(3)}"},
-        headers=manager,
+        headers=staff(["maintenance_officer"], gouvernorat=gouvernorat),
     )
     assert r.status_code == 201, r.text
     return r.json()  # type: ignore[no-any-return]

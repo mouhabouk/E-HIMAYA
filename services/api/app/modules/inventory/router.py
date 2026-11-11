@@ -17,8 +17,9 @@ from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from geoalchemy2 import Geography, Geometry
-from sqlalchemy import and_, cast, delete, func, select, update
+from sqlalchemy import and_, cast, delete, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.core.db import as_system, get_session, get_system_sessionmaker
 from app.core.security import Principal, Role, require_roles
@@ -47,11 +48,25 @@ from app.modules.reports.staff_router import READ_ROLES
 
 router = APIRouter(prefix="/api/v1/staff/inventory", tags=["staff", "inventory"])
 Session = Annotated[AsyncSession, Depends(get_session)]
-Reader = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.SYSADMIN))]
-Viewer = Annotated[Principal, Depends(require_roles(*READ_ROLES, Role.SYSADMIN, Role.GOVERNOR, Role.MINISTER))]
+# OS3 (docs/phase-os3/design-os3.md §1): one department per register. The maintenance department keeps the vehicles
+# and the equipment, the personnel department the staff; the operations rooms read them, confirm the figures of their
+# units every month and set the operational state of a vehicle only (POST /vehicles/{id}/state).
+FLEET_ROLES = frozenset({Role.MAINTENANCE_OFFICER})
+STAFF_ROLES = frozenset({Role.PERSONNEL_OFFICER})
+Reader = Annotated[
+    Principal, Depends(require_roles(*READ_ROLES, Role.SYSADMIN, Role.MAINTENANCE_OFFICER, Role.PERSONNEL_OFFICER))
+]
+Viewer = Annotated[
+    Principal,
+    Depends(
+        require_roles(
+            *READ_ROLES, Role.SYSADMIN, Role.GOVERNOR, Role.MINISTER, Role.MAINTENANCE_OFFICER, Role.PERSONNEL_OFFICER
+        )
+    ),
+]
 ROOM_ROLES = frozenset({Role.OPERATOR, Role.OPS_MANAGER})
-NAME_ROLES = ROOM_ROLES | {Role.SYSADMIN}
-LIST_ROLES = frozenset({*READ_ROLES, Role.SYSADMIN})
+NAME_ROLES = ROOM_ROLES | STAFF_ROLES | {Role.SYSADMIN}
+LIST_ROLES = frozenset({*READ_ROLES, Role.SYSADMIN, *FLEET_ROLES, *STAFF_ROLES})
 OLD_KINDS = frozenset(ResourceKind.__args__)  # type: ignore[attr-defined]
 Entity = Literal["vehicles", "stock", "agents"]
 
@@ -63,13 +78,33 @@ def can_manage_catalogue(principal: Principal) -> bool:
     return principal.is_national and bool({Role.SYSADMIN, Role.OPS_MANAGER} & set(principal.roles))
 
 
-def can_edit(principal: Principal, gouvernorat: int | None = None) -> bool:
-    """The operations manager of the gouvernorat (the central one: all), or the national system administrator."""
+def _holds(principal: Principal, roles: frozenset[Role], gouvernorat: int | None) -> bool:
+    """One of ``roles`` in the gouvernorat (the central department: all), or the national system administrator."""
     if Role.SYSADMIN in principal.roles and principal.is_national:
         return True
-    if Role.OPS_MANAGER not in principal.roles:
+    if not roles & set(principal.roles):
         return False
     return gouvernorat is None or principal.can_access_gouvernorat(gouvernorat)
+
+
+def can_verify(principal: Principal, gouvernorat: int | None = None) -> bool:
+    """The operations manager confirms the monthly figures of the units of the gouvernorat."""
+    return _holds(principal, frozenset({Role.OPS_MANAGER}), gouvernorat)
+
+
+def can_edit_fleet(principal: Principal, gouvernorat: int | None = None) -> bool:
+    """Vehicle cards and equipment: the maintenance department of the gouvernorat (the central one: all)."""
+    return _holds(principal, FLEET_ROLES, gouvernorat)
+
+
+def can_edit_staff(principal: Principal, gouvernorat: int | None = None) -> bool:
+    """Staff cards and their transfers: the personnel department of the gouvernorat (the central one: all)."""
+    return _holds(principal, STAFF_ROLES, gouvernorat)
+
+
+def can_edit(principal: Principal, gouvernorat: int | None = None) -> bool:
+    """Any register of the gouvernorat (imports and their saved column mappings)."""
+    return can_edit_fleet(principal, gouvernorat) or can_edit_staff(principal, gouvernorat)
 
 
 def sees_names(principal: Principal) -> bool:
@@ -77,11 +112,11 @@ def sees_names(principal: Principal) -> bool:
 
 
 def exports_names(principal: Principal, gouvernorat: int | None) -> bool:
-    """Personal data leaves the system through the room that owns it only."""
+    """Personal data leaves the system through the room or the personnel department that owns it only."""
     return (
         gouvernorat is not None
         and principal.gouvernorat_code == gouvernorat
-        and bool(ROOM_ROLES & set(principal.roles))
+        and bool((ROOM_ROLES | STAFF_ROLES) & set(principal.roles))
     )
 
 
@@ -90,10 +125,22 @@ def _require_list(principal: Principal) -> None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "counts_only")
 
 
-def _require_edit(principal: Principal, gouvernorat: int | None) -> None:
-    if not can_edit(principal, gouvernorat):
-        code = "out_of_scope" if can_edit(principal) else "insufficient_role"
+def _require(check: Any, principal: Principal, gouvernorat: int | None) -> None:
+    if not check(principal, gouvernorat):
+        code = "out_of_scope" if check(principal) else "insufficient_role"
         raise HTTPException(status.HTTP_403_FORBIDDEN, code)
+
+
+def _require_edit(principal: Principal, gouvernorat: int | None) -> None:
+    _require(can_edit, principal, gouvernorat)
+
+
+def _require_fleet(principal: Principal, gouvernorat: int | None) -> None:
+    _require(can_edit_fleet, principal, gouvernorat)
+
+
+def _require_staff(principal: Principal, gouvernorat: int | None) -> None:
+    _require(can_edit_staff, principal, gouvernorat)
 
 
 def _reason(reason: str, *, required: bool = True) -> str | None:
@@ -322,7 +369,7 @@ async def _unit_rows(session: AsyncSession, principal: Principal, gouvernorat: i
                 verified_at=check.verified_at if check else None,
                 verified_by_name=check.verified_by_name if check else None,
                 stale=_stale(check.verified_at if check else None),
-                can_edit=can_edit(principal, u.gouvernorat_code),
+                can_edit=can_verify(principal, u.gouvernorat_code),
             )
         )
     return out
@@ -339,7 +386,7 @@ async def list_units(
 async def verify_unit(principal: Reader, session: Session, unit_id: uuid.UUID) -> schemas.UnitRow:
     """The regional room confirms that the unit's figures are up to date (the monthly reminder stops)."""
     unit = await _unit(session, unit_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require(can_verify, principal, unit.gouvernorat_code)
     check = await session.get(UnitCheck, unit.id, with_for_update=True)
     if check is None:
         check = UnitCheck(unit_id=unit.id, gouvernorat_code=unit.gouvernorat_code, verified_by="")
@@ -533,7 +580,7 @@ async def list_revisions(
 # ---------------------------------------------------------------- vehicles
 
 
-def _vehicle_out(r: Resource, unit: Unit) -> schemas.VehicleOut:
+def _vehicle_out(r: Resource, unit: Unit, host: Unit | None = None) -> schemas.VehicleOut:
     return schemas.VehicleOut(
         id=r.id,
         unit_id=unit.id,
@@ -544,16 +591,40 @@ def _vehicle_out(r: Resource, unit: Unit) -> schemas.VehicleOut:
         label=r.label,
         code=r.code,
         specs=r.specs or {},
-        state=domain.vehicle_state(r.status, r.out_reason),
+        state=domain.vehicle_state(r.status, r.out_reason, r.stationed_unit_id is not None),
         year=r.year,
         notes=r.notes,
+        plate=r.plate,
+        odometer_km=r.odometer_km,
+        acquired_on=r.acquired_on,
+        stationed_unit_id=r.stationed_unit_id,
+        stationed_unit_name=host.name_ar if host is not None else None,
+        stationed_gouvernorat_code=host.gouvernorat_code if host is not None else None,
+        stationed_since=r.stationed_since,
+        fault=r.fault,
+        workshop=r.workshop,
+        maint_reason=r.maint_reason,
+        maint_since=r.maint_since,
+        maint_until=r.maint_until,
+        retired_on=r.retired_on,
+        retire_decision=r.retire_decision,
+        retire_reason=r.retire_reason,
         version=r.version,
         updated_at=r.updated_at,
     )
 
 
 def _vehicle_snapshot(r: Resource, unit: Unit) -> dict[str, Any]:
-    return _vehicle_out(r, unit).model_dump(mode="json", exclude={"updated_at", "unit_name"})
+    return _vehicle_out(r, unit).model_dump(
+        mode="json", exclude={"updated_at", "unit_name", "stationed_unit_name", "stationed_gouvernorat_code"}
+    )
+
+
+def can_set_state(principal: Principal, gouvernorat: int | None = None) -> bool:
+    """The operations rooms set the operational state of the vehicles they see (the central room: all)."""
+    return _holds(principal, ROOM_ROLES, gouvernorat) and not (
+        Role.SYSADMIN in principal.roles and not ROOM_ROLES & set(principal.roles)
+    )
 
 
 @router.get("/vehicles", response_model=schemas.VehiclesOut)
@@ -564,17 +635,27 @@ async def list_vehicles(
     unit_id: Annotated[uuid.UUID | None, Query()] = None,
     category: Annotated[str | None, Query(max_length=40)] = None,
 ) -> schemas.VehiclesOut:
+    host = aliased(Unit)
+    # The vehicles of the caller's units, and those waiting at one of them as reinforcement (OS3).
     query = (
-        select(Resource, Unit).join(Unit, Unit.id == Resource.unit_id).where(_scope(principal, Unit.gouvernorat_code))
+        select(Resource, Unit, host)
+        .join(Unit, Unit.id == Resource.unit_id)
+        .outerjoin(host, host.id == Resource.stationed_unit_id)
+        .where(or_(_scope(principal, Unit.gouvernorat_code), _scope(principal, host.gouvernorat_code)))
     )
     if gouvernorat is not None:
-        query = query.where(Unit.gouvernorat_code == gouvernorat)
+        query = query.where(or_(Unit.gouvernorat_code == gouvernorat, host.gouvernorat_code == gouvernorat))
     if unit_id is not None:
-        query = query.where(Resource.unit_id == unit_id)
+        query = query.where(or_(Resource.unit_id == unit_id, Resource.stationed_unit_id == unit_id))
     if category:
         query = query.where(Resource.category_key == category)
     rows = (await session.execute(query.order_by(Unit.gouvernorat_code, Unit.name_ar, Resource.label))).all()
-    return schemas.VehiclesOut(items=[_vehicle_out(r, u) for r, u in rows], can_edit=can_edit(principal))
+    return schemas.VehiclesOut(
+        items=[_vehicle_out(r, u, h) for r, u, h in rows],
+        can_edit=can_edit_fleet(principal),
+        can_set_state=can_set_state(principal),
+        can_maintain=can_edit_fleet(principal),
+    )
 
 
 async def _vehicle(session: AsyncSession, vehicle_id: uuid.UUID) -> tuple[Resource, Unit]:
@@ -599,7 +680,40 @@ async def _label_free(session: AsyncSession, unit_id: uuid.UUID, label: str, own
         raise HTTPException(status.HTTP_409_CONFLICT, "label_taken")
 
 
-def _apply_vehicle(r: Resource, values: dict[str, Any], category: Category) -> None:
+async def _card_free(session: AsyncSession, r: Resource, code: str | None, plate: str | None) -> None:
+    """The administrative number and the plate number name one vehicle in the country."""
+    for column, value, error in ((Resource.code, code, "code_taken"), (Resource.plate, plate, "plate_taken")):
+        if value is None:
+            continue
+        query = select(Resource.id).where(column == value)
+        if r.id is not None:
+            query = query.where(Resource.id != r.id)
+        async with as_system(session):
+            taken = await session.scalar(query.limit(1))
+        if taken:
+            raise HTTPException(status.HTTP_409_CONFLICT, error)
+
+
+def _card(r: Resource, values: dict[str, Any]) -> None:
+    """The fields the maintenance department keeps on the card (OS3)."""
+    if "plate" in values:
+        try:
+            r.plate = domain.normal_plate(values.get("plate"))
+        except ValueError as exc:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "plate_invalid") from exc
+    odometer = values.get("odometer_km")
+    if odometer is not None:
+        if r.odometer_km is not None and odometer < r.odometer_km:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "odometer_decrease")
+        r.odometer_km = odometer
+    acquired = values.get("acquired_on")
+    if acquired is not None and acquired > _today():
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "acquired_in_future")
+    if "acquired_on" in values:
+        r.acquired_on = acquired
+
+
+def _apply_vehicle(r: Resource, values: dict[str, Any], category: Category, *, with_state: bool = True) -> None:
     r.category_key = category.key
     r.kind = category.key if category.key in OLD_KINDS else "other"
     r.label, r.code, r.specs, r.year, r.notes = (
@@ -609,21 +723,29 @@ def _apply_vehicle(r: Resource, values: dict[str, Any], category: Category) -> N
         values.get("year"),
         values.get("notes"),
     )
-    if r.status != "assigned":
-        # An engaged vehicle changes state through its assignment only.
-        r.status, r.out_reason = domain.state_columns(values["state"])
+    _card(r, values)
+    if not with_state or r.status == "assigned" or r.out_reason == "retired" or r.stationed_unit_id is not None:
+        # An engaged vehicle changes state through its assignment only; afterwards the rooms and the maintenance
+        # department set the state through their own actions (OS3).
+        return
+    r.status, r.out_reason = domain.state_columns(values["state"])
+    if r.out_reason != "broken":
+        r.fault = None
+    if r.out_reason == "maintenance" and r.maint_since is None:
+        r.maint_since = _now()
 
 
 @router.post("/vehicles", response_model=schemas.VehicleOut, status_code=status.HTTP_201_CREATED)
 async def create_vehicle(principal: Reader, session: Session, body: schemas.VehicleIn) -> schemas.VehicleOut:
     unit = await _unit(session, body.unit_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_fleet(principal, unit.gouvernorat_code)
     category = await _category(session, body.category_key, "vehicle")
     values = body.model_dump()
     values["specs"] = _specs(body.specs, category)
     await _label_free(session, unit.id, body.label, None)
     vehicle = Resource(unit_id=unit.id, status="available", updated_by=audit.actor_of(principal))
     _apply_vehicle(vehicle, values, category)
+    await _card_free(session, vehicle, vehicle.code, vehicle.plate)
     session.add(vehicle)
     await session.flush()
     await session.refresh(vehicle)
@@ -648,7 +770,7 @@ async def update_vehicle(
     principal: Reader, session: Session, vehicle_id: uuid.UUID, body: schemas.VehicleIn
 ) -> schemas.VehicleOut:
     vehicle, unit = await _vehicle(session, vehicle_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_fleet(principal, unit.gouvernorat_code)
     if body.version is not None and body.version != vehicle.version:
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     reason = _reason(body.reason)
@@ -656,7 +778,7 @@ async def update_vehicle(
         if vehicle.status == "assigned":
             raise HTTPException(status.HTTP_409_CONFLICT, "resource_busy")
         unit = await _unit(session, body.unit_id)
-        _require_edit(principal, unit.gouvernorat_code)
+        _require_fleet(principal, unit.gouvernorat_code)
         vehicle.unit_id = unit.id
         # The equipment it carries moves with it (R3).
         await session.execute(
@@ -668,7 +790,8 @@ async def update_vehicle(
     values = body.model_dump()
     values["specs"] = _specs(body.specs, category)
     await _label_free(session, unit.id, body.label, vehicle.id)
-    _apply_vehicle(vehicle, values, category)
+    _apply_vehicle(vehicle, values, category, with_state=False)
+    await _card_free(session, vehicle, vehicle.code, vehicle.plate)
     vehicle.version += 1
     vehicle.updated_at = _now()
     vehicle.updated_by = audit.actor_of(principal)
@@ -694,7 +817,7 @@ async def delete_vehicle(
 ) -> Response:
     """Removed from the register (sold, scrapped); a vehicle that served in an intervention stays, out of service."""
     vehicle, unit = await _vehicle(session, vehicle_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_fleet(principal, unit.gouvernorat_code)
     reason = _reason(body.reason)
     snapshot = _vehicle_snapshot(vehicle, unit)
     if vehicle.status == "assigned":
@@ -756,7 +879,7 @@ async def list_stock(
         )
     return schemas.StockListOut(
         items=[_stock_out(s, u, labels.get(s.vehicle_id) if s.vehicle_id else None) for s, u in rows],
-        can_edit=can_edit(principal),
+        can_edit=can_edit_fleet(principal),
     )
 
 
@@ -807,7 +930,7 @@ async def _carrier(session: AsyncSession, vehicle_id: uuid.UUID | None, unit: Un
 @router.post("/stock", response_model=schemas.StockOut, status_code=status.HTTP_201_CREATED)
 async def create_stock(principal: Reader, session: Session, body: schemas.StockIn) -> schemas.StockOut:
     unit = await _unit(session, body.unit_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_fleet(principal, unit.gouvernorat_code)
     category = await _category(session, body.category_key, "equipment")
     specs = _specs(body.specs, category)
     label = await _carrier(session, body.vehicle_id, unit)
@@ -839,13 +962,13 @@ async def update_stock(
     principal: Reader, session: Session, stock_id: uuid.UUID, body: schemas.StockIn
 ) -> schemas.StockOut:
     line, unit = await _stock(session, stock_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_fleet(principal, unit.gouvernorat_code)
     if body.version is not None and body.version != line.version:
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     reason = _reason(body.reason)
     if body.unit_id != line.unit_id:
         unit = await _unit(session, body.unit_id)
-        _require_edit(principal, unit.gouvernorat_code)
+        _require_fleet(principal, unit.gouvernorat_code)
     category = await _category(session, body.category_key, "equipment")
     specs = _specs(body.specs, category)
     label = await _carrier(session, body.vehicle_id, unit)
@@ -867,7 +990,7 @@ async def update_stock(
 @router.delete("/stock/{stock_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_stock(principal: Reader, session: Session, stock_id: uuid.UUID, body: schemas.ReasonIn) -> Response:
     line, unit = await _stock(session, stock_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_fleet(principal, unit.gouvernorat_code)
     reason = _reason(body.reason)
     snapshot = _stock_snapshot(line, unit)
     await session.delete(line)
@@ -954,7 +1077,7 @@ async def list_agents(
     today = _today()
     return schemas.AgentsOut(
         items=[_agent_out(a, u, skills[a.id], names, today) for a, u in rows],
-        can_edit=can_edit(principal),
+        can_edit=can_edit_staff(principal),
         can_see_names=names,
         can_export_names=exports_names(principal, principal.gouvernorat_code),
     )
@@ -1011,7 +1134,7 @@ async def _agent_response(session: AsyncSession, principal: Principal, agent: Ag
 @router.post("/agents", response_model=schemas.AgentOut, status_code=status.HTTP_201_CREATED)
 async def create_agent(principal: Reader, session: Session, body: schemas.AgentIn) -> schemas.AgentOut:
     unit = await _unit(session, body.unit_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_staff(principal, unit.gouvernorat_code)
     matricule = body.matricule.strip()
     if await _taken(session, [matricule], set()):
         raise HTTPException(status.HTTP_409_CONFLICT, "matricule_taken")
@@ -1046,13 +1169,13 @@ async def update_agent(
     principal: Reader, session: Session, agent_id: uuid.UUID, body: schemas.AgentIn
 ) -> schemas.AgentOut:
     agent, unit = await _agent(session, agent_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_staff(principal, unit.gouvernorat_code)
     if body.version is not None and body.version != agent.version:
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     reason = _reason(body.reason, required=False) or "تحيين"
     if body.unit_id != agent.unit_id:
         unit = await _unit(session, body.unit_id)
-        _require_edit(principal, unit.gouvernorat_code)
+        _require_staff(principal, unit.gouvernorat_code)
     matricule = body.matricule.strip()
     if matricule != agent.matricule and await _taken(session, [matricule], {agent.id}):
         raise HTTPException(status.HTTP_409_CONFLICT, "matricule_taken")
@@ -1077,7 +1200,7 @@ async def update_agent(
 async def delete_agent(principal: Reader, session: Session, agent_id: uuid.UUID, body: schemas.ReasonIn) -> Response:
     """Left the service or moved to another administration; a transfer between gouvernorats is a change of unit."""
     agent, unit = await _agent(session, agent_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_staff(principal, unit.gouvernorat_code)
     reason = _reason(body.reason)
     skills = [
         {"skill_key": s.skill_key, "level": s.level, "cert_expires": s.cert_expires}
@@ -1170,6 +1293,11 @@ async def import_register(
         parsed = domain.parse(file_name, data, entity, units, refs, chosen)
     except FileError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, exc.code) from exc
+    # Each sheet belongs to its department: vehicles and equipment to maintenance, staff to personnel.
+    if parsed.rows["vehicles"] or parsed.rows["stock"]:
+        _require_fleet(principal, code)
+    if parsed.rows["agents"]:
+        _require_staff(principal, code)
     why = _reason(reason) if apply else None
     elsewhere = await _taken(
         session,
@@ -1211,7 +1339,9 @@ async def import_register(
                 )
             continue
         before = _vehicle_snapshot(existing, unit)
-        _apply_vehicle(existing, row, categories[row["category_key"]])
+        # A file never takes a vehicle out of the workshop nor sends it there: the maintenance department does.
+        keeps = existing.out_reason in domain.WORKSHOP_STATES or row.get("state") == "maintenance"
+        _apply_vehicle(existing, row, categories[row["category_key"]], with_state=not keeps)
         after = _vehicle_snapshot(existing, unit)
         if before == after:
             counts["vehicles"].unchanged += 1
@@ -1762,8 +1892,8 @@ async def _transfer_out(session: AsyncSession, principal: Principal, rows: list[
                 requested_at=t.requested_at,
                 decided_by_name=t.decided_by_name,
                 decided_at=t.decided_at,
-                can_decide=t.status == "pending" and can_edit(principal, t.to_gouvernorat),
-                can_cancel=t.status == "pending" and can_edit(principal, t.from_gouvernorat),
+                can_decide=t.status == "pending" and can_edit_staff(principal, t.to_gouvernorat),
+                can_cancel=t.status == "pending" and can_edit_staff(principal, t.from_gouvernorat),
             )
         )
     return out
@@ -1789,7 +1919,7 @@ async def request_transfer(
 ) -> schemas.TransferOut:
     """The room of the gouvernorat the member of staff leaves sends the transfer; nothing moves until it is accepted."""
     agent, unit = await _agent(session, agent_id)
-    _require_edit(principal, unit.gouvernorat_code)
+    _require_staff(principal, unit.gouvernorat_code)
     if body.to_gouvernorat == agent.gouvernorat_code:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "same_gouvernorat")
     if await session.get(Gouvernorat, body.to_gouvernorat) is None:
@@ -1837,7 +1967,7 @@ async def accept_transfer(
 ) -> schemas.TransferOut:
     """The joining room accepts and names the new unit: the member of staff moves, with a revision on both sides."""
     row = await _pending(session, transfer_id)
-    _require_edit(principal, row.to_gouvernorat)
+    _require_staff(principal, row.to_gouvernorat)
     unit = await _unit(session, body.unit_id)
     if unit.gouvernorat_code != row.to_gouvernorat:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unit_not_in_gouvernorat")
@@ -1896,7 +2026,7 @@ async def _close_transfer(
     session: AsyncSession, principal: Principal, transfer_id: uuid.UUID, reason: str, refuse: bool
 ) -> schemas.TransferOut:
     row = await _pending(session, transfer_id)
-    _require_edit(principal, row.to_gouvernorat if refuse else row.from_gouvernorat)
+    _require_staff(principal, row.to_gouvernorat if refuse else row.from_gouvernorat)
     row.status = "refused" if refuse else "cancelled"
     row.decision_reason = reason.strip()
     row.decided_by_name, row.decided_at = audit.name_of(principal), _now()

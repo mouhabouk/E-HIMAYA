@@ -185,7 +185,7 @@ async def make_resource(
             "label": f"{kind[:3].upper()}-{secrets.token_hex(3)}",
             "location": {"lat": lat, "lon": lon},
         },
-        headers=staff(["ops_manager"], gouvernorat=unit["gouvernorat_code"]),
+        headers=staff(["maintenance_officer"], gouvernorat=unit["gouvernorat_code"]),
     )
     assert r.status_code == 201, r.text
     return r.json()  # type: ignore[no-any-return]

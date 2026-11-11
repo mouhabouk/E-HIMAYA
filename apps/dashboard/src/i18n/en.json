@@ -62,7 +62,8 @@
       "field_app": "Field app",
       "citizen_app": "Citizen app",
       "portal": "Organisations portal",
-      "dev": "System development"
+      "dev": "System development",
+      "fleet": "Fleet and maintenance"
     },
     "inventory": "Resources register",
     "plans": "Intervention plans",
@@ -87,7 +88,13 @@
     "sqlConsole": "SQL console",
     "repoMap": "System map",
     "roomGuide": "Room agent's guide",
-    "callCards": "Call-taking cards"
+    "callCards": "Call-taking cards",
+    "fleetDashboard": "Fleet dashboard",
+    "fleetVehicles": "Vehicles",
+    "fleetMaintenance": "In maintenance",
+    "fleetArchive": "Retired archive",
+    "fleetLog": "State log",
+    "coverage": "Live coverage"
   },
   "header": {
     "scope": "Geographic scope",
@@ -145,7 +152,8 @@
     "citizen": "Citizen",
     "volunteer": "Volunteer",
     "org_admin": "Organisation admin",
-    "org_member": "Organisation member"
+    "org_member": "Organisation member",
+    "maintenance_officer": "Maintenance and fleet directorate"
   },
   "status": {
     "received": "Received",
@@ -642,7 +650,22 @@
     "call_card_not_draft": "Only a draft can be edited. An approved or retired version is fixed.",
     "draft_exists": "This category already has a draft. Edit or discard it first.",
     "medical_validation_required": "This is a medical card: it needs a medical validation before approval.",
-    "no_call_card": "No call-taking card was used for this report."
+    "no_call_card": "No call-taking card was used for this report.",
+    "acquired_in_future": "The acquisition date is in the future.",
+    "fault_required": "Describe the fault.",
+    "host_unit_required": "Choose the host unit.",
+    "not_in_maintenance": "The vehicle is not in the workshop.",
+    "odometer_decrease": "The odometer cannot go down.",
+    "plate_invalid": "Invalid plate (example: 245 تونس 1234).",
+    "plate_taken": "This plate is already registered.",
+    "profile_builtin": "A built-in profile cannot be changed.",
+    "profile_in_use": "The profile is granted: revoke it first.",
+    "profile_grants_nothing": "This profile grants nothing to this target.",
+    "feature_profile_taken": "An access profile already has this name.",
+    "retired_in_future": "The retirement date is in the future.",
+    "until_in_past": "The expected date is in the past.",
+    "vehicle_retired": "The vehicle is retired.",
+    "vehicle_maintenance": "The vehicle is in the workshop: maintenance releases it."
   },
   "kpi": {
     "title": "Key indicators",
@@ -6122,7 +6145,9 @@
       "ready": "Ready",
       "assigned": "On a mission",
       "maintenance": "Maintenance",
-      "broken": "Broken"
+      "broken": "Broken",
+      "reinforcement": "On reinforcement",
+      "retired": "Retired"
     },
     "availability": {
       "on_duty": "On duty",
@@ -6377,7 +6402,8 @@
         "refused": "Refused",
         "cancelled": "Cancelled"
       }
-    }
+    },
+    "cancel": "Cancel"
   },
   "basemap": {
     "label": "Map background",
@@ -9310,5 +9336,169 @@
     "button": "Print",
     "office": "National Civil Protection Office",
     "printedBy": "Printed by {{name}} on {{at}}"
+  },
+  "fleet": {
+    "title": "Fleet and maintenance",
+    "tabs": {
+      "label": "Fleet sections",
+      "dashboard": "Dashboard",
+      "vehicles": "Vehicles",
+      "maintenance": "In maintenance",
+      "archive": "Archive",
+      "log": "Log"
+    },
+    "kpi": {
+      "active": "Vehicles in service"
+    },
+    "lateWorkshop": "{{n}} vehicle(s) past their expected workshop exit: {{labels}}",
+    "recent": "Latest changes",
+    "search": "Search by label, number or plate",
+    "allStates": "All states",
+    "add": "Add a vehicle",
+    "km": "{{n}} km",
+    "until": "until {{date}}",
+    "waitsAt": "waiting at {{unit}}",
+    "confirm": "Confirm",
+    "retireWarning": "Retirement is final: the vehicle leaves dispatch and coverage and moves to the archive.",
+    "archiveCount": "{{n}} retired vehicle(s)",
+    "archiveEmpty": "No retired vehicle.",
+    "logEmpty": "No change recorded.",
+    "action": {
+      "state": "State",
+      "workshop": "To the workshop",
+      "back": "Back from workshop",
+      "retire": "Retire",
+      "editTitle": "Edit the card of {{label}}",
+      "stateTitle": "State of {{label}}",
+      "workshopTitle": "Send {{label}} to the workshop",
+      "backTitle": "Take {{label}} back from the workshop",
+      "retireTitle": "Retire {{label}}"
+    },
+    "roomState": {
+      "ready": "At the unit",
+      "reinforcement": "On reinforcement",
+      "broken": "Broken down"
+    },
+    "event": {
+      "state": "State change",
+      "maintenance_start": "Into the workshop",
+      "maintenance_end": "Out of the workshop",
+      "retire": "Retirement",
+      "reinforce": "Sent as reinforcement",
+      "reinforce_end": "Back from reinforcement",
+      "gain": "{{n}} more residents covered"
+    },
+    "field": {
+      "plate": "Plate number",
+      "plateHelp": "Example: 245 تونس 1234",
+      "odometer": "Odometer (km)",
+      "odometerHelp": "Never lower than the previous reading.",
+      "acquired": "Acquisition date",
+      "stateNote": "The state is set by the room or the maintenance directorate, not on the card.",
+      "host": "Host unit",
+      "fault": "Fault description",
+      "workshop": "Workshop",
+      "decision": "Decision reference",
+      "until": "Expected exit",
+      "retiredOn": "Retirement date",
+      "maintReason": "Maintenance reason",
+      "retireReason": "Retirement reason",
+      "note": "Note",
+      "workshopInfo": "Workshop and reason",
+      "when": "When",
+      "change": "Change",
+      "what": "Details",
+      "by": "By"
+    },
+    "workshopEmpty": "No vehicle broken down or in the workshop.",
+    "introRoom": "Your gouvernorat’s vehicles and those waiting there as reinforcement. The room sets the state: at the unit, on reinforcement, broken down. The workshop and retirement belong to maintenance.",
+    "introMaintenance": "Vehicle cards (number, plate, odometer, acquisition), workshop entry and exit, retirement."
+  },
+  "coverage": {
+    "title": "Live coverage and repositioning",
+    "intro": "Share of the population a ready vehicle reaches in time, now, against the full fleet at home.",
+    "family": "Family",
+    "families": {
+      "medical": "Medical",
+      "road": "Road",
+      "fire": "Fire",
+      "rescue": "Rescue"
+    },
+    "zones": {
+      "urban": "Urban",
+      "periurban": "Peri-urban",
+      "rural": "Rural"
+    },
+    "planned": "baseline {{pct}}",
+    "readyOf": "{{ready}} ready of {{fleet}}",
+    "mapTitle": "Coverage map: {{family}}",
+    "mapLabel": "Map of the delegations by coverage",
+    "legend": "green covered, red out of time, circles the units",
+    "targets": "targets: urban {{urban}} min, peri-urban {{periurban}} min, rural {{rural}} min",
+    "alerts": "Areas that lost coverage",
+    "noAlert": "No area has lost coverage.",
+    "alert": "{{place}} ({{pop}} residents): {{now}} min against a {{target}} min target",
+    "suggestions": "Repositioning suggestions",
+    "noSuggestion": "No suggestion improves coverage.",
+    "move": "from {{from}} to {{to}}",
+    "gain": "+{{n}} residents covered",
+    "loses": "loses coverage: {{places}}",
+    "accept": "Send as reinforcement",
+    "accepted": "Vehicle sent as reinforcement.",
+    "acceptedNote": "Repositioning suggested by live coverage",
+    "byPlace": "By delegation",
+    "noPlaces": "No delegation in this gouvernorat.",
+    "place": "Delegation",
+    "zone": "Zone",
+    "population": "Population",
+    "time": "Time",
+    "from": "From unit",
+    "state": "State",
+    "minutes": "{{n}} min",
+    "out": "{{n}} out of service",
+    "method": "turnout: {{turnout}} min",
+    "computedAt": "computed at {{at}}",
+    "engineFallback": "straight-line estimate (road engine unavailable)",
+    "engineRoad": "actual road time",
+    "covered": "Covered",
+    "lost": "Coverage lost",
+    "notCovered": "Out of time even at full fleet"
+  },
+  "profiles": {
+    "title": "Access profiles",
+    "intro": "A set of pages granted at once to an account (the inspector general, say) or a role, read only or read and write. Each role’s fixed ceiling still holds.",
+    "new": "New profile",
+    "newTitle": "New access profile",
+    "editTitle": "Edit profile {{name}}",
+    "name": "Name",
+    "description": "Description",
+    "pages": "Pages",
+    "page": "Page",
+    "mode": "Access",
+    "modeOf": "Access to {{page}}",
+    "modes": {
+      "none": "None",
+      "read": "Read only",
+      "write": "Read and write"
+    },
+    "missing": "Enter a name of at least 3 characters and pick at least one page.",
+    "save": "Save the profile",
+    "cancel": "Cancel",
+    "assign": "Grant",
+    "assignTitle": "Grant profile {{name}}",
+    "assigned": "Profile granted: {{n}} item(s).",
+    "skipped": "Not granted, above the role’s ceiling: {{keys}}",
+    "grantsNothing": "This profile grants nothing to this target: every page is above its ceiling.",
+    "assignments": "Granted profiles",
+    "noAssignment": "No profile granted.",
+    "profile": "Profile",
+    "noEnd": "No end",
+    "revoke": "Revoke",
+    "revokeReason": "Profile revoked by the system administrator",
+    "builtin": "Built in",
+    "inUse": "granted {{n}}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "unknown": "unknown page"
   }
 }

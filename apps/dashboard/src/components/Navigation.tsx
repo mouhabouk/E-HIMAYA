@@ -51,6 +51,8 @@ import {
   isCommittee,
   canReadCallCards,
   canReadRoomGuide,
+  canReadCoverage,
+  canReadFleet,
 } from "../lib/roles";
 import type { MenuPosition, MenuShape } from "../lib/menu";
 import { allowed, featureOfPath, type FeatureAccess } from "../lib/features";
@@ -151,6 +153,7 @@ export function navGroups(
           "teal",
           "inventory",
         ),
+        ...e(canReadCoverage(roles), "/coverage", "crisisAlert", "red", "coverage"),
         ...e(canOpenCrew(roles), "/crew", "groups", "green", "crew"),
         ...e(
           canManageFieldAgents(roles),
@@ -166,6 +169,20 @@ export function navGroups(
           "teal",
           "schedule",
         ),
+      ],
+    },
+    {
+      // OS3 (Yamen 2026-11-11): the vehicles and their maintenance, a system of its own sharing the register.
+      key: "fleet",
+      icon: "localShipping",
+      tone: "amber",
+      label: t("nav.group.fleet"),
+      items: [
+        ...e(canReadFleet(roles), "/fleet", "dashboard", "amber", "fleetDashboard", true),
+        ...e(canReadFleet(roles), "/fleet/vehicles", "localShipping", "amber", "fleetVehicles"),
+        ...e(canReadFleet(roles), "/fleet/maintenance", "settings", "orange", "fleetMaintenance"),
+        ...e(canReadFleet(roles), "/fleet/archive", "folderOpen", "navy", "fleetArchive"),
+        ...e(canReadFleet(roles), "/fleet/log", "schedule", "teal", "fleetLog"),
       ],
     },
     {

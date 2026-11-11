@@ -78,6 +78,7 @@ fi
 STAFF_ROLES=(
   "personnel_officer|قسم التصرف في الأفراد (جهوي أو مركزي)"
   "inspector_general|المتفقّد العام: التفقّدات الدورية (وطني)"
+  "maintenance_officer|إدارة الصيانة والتصرف في الوسائل (جهوي أو مركزي)"
 )
 for entry in "${STAFF_ROLES[@]}"; do
   role=${entry%%|*}

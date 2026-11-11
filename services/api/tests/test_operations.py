@@ -219,7 +219,7 @@ async def make_resource(client: httpx.AsyncClient, staff: Staff, kind: str = "fi
     r = await client.post(
         "/api/v1/staff/resources",
         json={"unit_id": unit["id"], "kind": kind, "label": f"FPT-{secrets.token_hex(3)}"},
-        headers=manager,
+        headers=staff(["maintenance_officer"], gouvernorat=61),
     )
     assert r.status_code == 201, r.text
     return r.json()  # type: ignore[no-any-return]

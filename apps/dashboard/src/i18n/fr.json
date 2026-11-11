@@ -62,7 +62,8 @@
       "field_app": "Application de terrain",
       "citizen_app": "Application citoyenne",
       "portal": "Portail des établissements",
-      "dev": "Développement du système"
+      "dev": "Développement du système",
+      "fleet": "Parc et maintenance"
     },
     "inventory": "Registre des moyens",
     "plans": "Plans d'intervention",
@@ -87,7 +88,13 @@
     "sqlConsole": "Console SQL",
     "repoMap": "Carte du système",
     "roomGuide": "Guide de l'agent de salle",
-    "callCards": "Fiches d'appel"
+    "callCards": "Fiches d'appel",
+    "fleetDashboard": "Tableau du parc",
+    "fleetVehicles": "Véhicules",
+    "fleetMaintenance": "En maintenance",
+    "fleetArchive": "Archives des réformés",
+    "fleetLog": "Journal des états",
+    "coverage": "Couverture en direct"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -145,7 +152,8 @@
     "citizen": "Citoyen",
     "volunteer": "Bénévole",
     "org_admin": "Responsable d'établissement",
-    "org_member": "Membre d'établissement"
+    "org_member": "Membre d'établissement",
+    "maintenance_officer": "Direction de la maintenance et du parc"
   },
   "status": {
     "received": "Reçu",
@@ -642,7 +650,22 @@
     "call_card_not_draft": "Seul un brouillon se modifie. Une version approuvée ou retirée est figée.",
     "draft_exists": "Un brouillon existe déjà pour cette catégorie. Modifiez-le ou supprimez-le d'abord.",
     "medical_validation_required": "Fiche médicale : la validation médicale est requise avant l'approbation.",
-    "no_call_card": "Aucune fiche d'appel n'a servi pour ce signalement."
+    "no_call_card": "Aucune fiche d'appel n'a servi pour ce signalement.",
+    "acquired_in_future": "La date d’acquisition est dans le futur.",
+    "fault_required": "Décrivez la panne.",
+    "host_unit_required": "Choisissez l’unité d’accueil.",
+    "not_in_maintenance": "Le véhicule n’est pas en atelier.",
+    "odometer_decrease": "Le compteur ne peut pas diminuer.",
+    "plate_invalid": "Plaque invalide (exemple : 245 تونس 1234).",
+    "plate_taken": "Cette plaque est déjà enregistrée.",
+    "profile_builtin": "Un profil intégré ne se modifie pas.",
+    "profile_in_use": "Profil attribué : retirez-le d’abord.",
+    "profile_grants_nothing": "Ce profil n’accorde rien à cette cible.",
+    "feature_profile_taken": "Un profil d’accès porte déjà ce nom.",
+    "retired_in_future": "La date de réforme est dans le futur.",
+    "until_in_past": "La date prévue est passée.",
+    "vehicle_retired": "Le véhicule est réformé.",
+    "vehicle_maintenance": "Le véhicule est en atelier : la maintenance le libère."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -6122,7 +6145,9 @@
       "ready": "Prêt",
       "assigned": "En mission",
       "maintenance": "Entretien",
-      "broken": "En panne"
+      "broken": "En panne",
+      "reinforcement": "En renfort",
+      "retired": "Réformé"
     },
     "availability": {
       "on_duty": "En service",
@@ -6377,7 +6402,8 @@
         "refused": "Refusée",
         "cancelled": "Annulée"
       }
-    }
+    },
+    "cancel": "Annuler"
   },
   "basemap": {
     "label": "Fond de carte",
@@ -9310,5 +9336,169 @@
     "button": "Imprimer",
     "office": "Office national de la protection civile",
     "printedBy": "Imprimé par {{name}} le {{at}}"
+  },
+  "fleet": {
+    "title": "Parc et maintenance",
+    "tabs": {
+      "label": "Sections du parc",
+      "dashboard": "Tableau",
+      "vehicles": "Véhicules",
+      "maintenance": "En maintenance",
+      "archive": "Archives",
+      "log": "Journal"
+    },
+    "kpi": {
+      "active": "Véhicules en service"
+    },
+    "lateWorkshop": "{{n}} véhicule(s) au-delà de la sortie d’atelier prévue : {{labels}}",
+    "recent": "Derniers changements",
+    "search": "Rechercher par libellé, numéro ou plaque",
+    "allStates": "Tous les états",
+    "add": "Ajouter un véhicule",
+    "km": "{{n}} km",
+    "until": "jusqu’au {{date}}",
+    "waitsAt": "en attente à {{unit}}",
+    "confirm": "Confirmer",
+    "retireWarning": "La réforme est définitive : le véhicule sort de l’engagement et de la couverture et passe aux archives.",
+    "archiveCount": "{{n}} véhicule(s) réformé(s)",
+    "archiveEmpty": "Aucun véhicule réformé.",
+    "logEmpty": "Aucun changement enregistré.",
+    "action": {
+      "state": "État",
+      "workshop": "Vers l’atelier",
+      "back": "Sortie d’atelier",
+      "retire": "Réformer",
+      "editTitle": "Modifier la fiche de {{label}}",
+      "stateTitle": "État de {{label}}",
+      "workshopTitle": "Envoyer {{label}} à l’atelier",
+      "backTitle": "Sortie d’atelier de {{label}}",
+      "retireTitle": "Réformer {{label}}"
+    },
+    "roomState": {
+      "ready": "À l’unité",
+      "reinforcement": "En renfort",
+      "broken": "En panne"
+    },
+    "event": {
+      "state": "Changement d’état",
+      "maintenance_start": "Entrée en atelier",
+      "maintenance_end": "Sortie d’atelier",
+      "retire": "Réforme",
+      "reinforce": "Envoi en renfort",
+      "reinforce_end": "Retour de renfort",
+      "gain": "couverture de {{n}} habitants en plus"
+    },
+    "field": {
+      "plate": "Plaque minéralogique",
+      "plateHelp": "Exemple : 245 تونس 1234",
+      "odometer": "Compteur (km)",
+      "odometerHelp": "Jamais inférieur au relevé précédent.",
+      "acquired": "Date d’acquisition",
+      "stateNote": "L’état change depuis la salle ou la maintenance, pas depuis la fiche.",
+      "host": "Unité d’accueil",
+      "fault": "Description de la panne",
+      "workshop": "Atelier",
+      "decision": "Référence de la décision",
+      "until": "Sortie prévue",
+      "retiredOn": "Date de réforme",
+      "maintReason": "Motif de l’entretien",
+      "retireReason": "Motif de la réforme",
+      "note": "Note",
+      "workshopInfo": "Atelier et motif",
+      "when": "Date",
+      "change": "Changement",
+      "what": "Détails",
+      "by": "Par"
+    },
+    "workshopEmpty": "Aucun véhicule en panne ou en atelier.",
+    "introRoom": "Les véhicules de votre gouvernorat et ceux qui y attendent en renfort. La salle fixe l’état : à l’unité, en renfort, en panne. L’atelier et la réforme relèvent de la maintenance.",
+    "introMaintenance": "Les fiches des véhicules (numéro, plaque, compteur, acquisition), l’entrée et la sortie d’atelier, la réforme."
+  },
+  "coverage": {
+    "title": "Couverture en direct et repositionnement",
+    "intro": "Part de la population atteinte à temps par un véhicule prêt, maintenant, comparée au parc complet dans ses unités.",
+    "family": "Famille",
+    "families": {
+      "medical": "Secours médical",
+      "road": "Accidents de la route",
+      "fire": "Incendie",
+      "rescue": "Sauvetage"
+    },
+    "zones": {
+      "urban": "Urbain",
+      "periurban": "Périurbain",
+      "rural": "Rural"
+    },
+    "planned": "référence {{pct}}",
+    "readyOf": "{{ready}} prêts sur {{fleet}}",
+    "mapTitle": "Carte de couverture : {{family}}",
+    "mapLabel": "Carte des délégations selon la couverture",
+    "legend": "vert couvert, rouge hors délai, cercles les unités",
+    "targets": "délais : urbain {{urban}} min, périurbain {{periurban}} min, rural {{rural}} min",
+    "alerts": "Zones découvertes",
+    "noAlert": "Aucune zone découverte.",
+    "alert": "{{place}} ({{pop}} hab.) : {{now}} min pour un délai de {{target}} min",
+    "suggestions": "Propositions de repositionnement",
+    "noSuggestion": "Aucune proposition n’améliore la couverture.",
+    "move": "de {{from}} vers {{to}}",
+    "gain": "+{{n}} habitants couverts",
+    "loses": "perd la couverture : {{places}}",
+    "accept": "Envoyer en renfort",
+    "accepted": "Véhicule envoyé en renfort.",
+    "acceptedNote": "Repositionnement proposé par la couverture en direct",
+    "byPlace": "Par délégation",
+    "noPlaces": "Aucune délégation dans ce gouvernorat.",
+    "place": "Délégation",
+    "zone": "Milieu",
+    "population": "Population",
+    "time": "Délai",
+    "from": "Depuis l’unité",
+    "state": "État",
+    "minutes": "{{n}} min",
+    "out": "{{n}} hors service",
+    "method": "départ de l’unité : {{turnout}} min",
+    "computedAt": "calculée le {{at}}",
+    "engineFallback": "estimation à vol d’oiseau (moteur routier indisponible)",
+    "engineRoad": "temps de route réel",
+    "covered": "Couverte",
+    "lost": "Couverture perdue",
+    "notCovered": "Hors délai même au complet"
+  },
+  "profiles": {
+    "title": "Profils d’accès",
+    "intro": "Un ensemble de pages accordé d’un coup à un compte (l’inspecteur général par exemple) ou à un rôle, en lecture seule ou en lecture et écriture. Le plafond fixe de chaque rôle reste en vigueur.",
+    "new": "Nouveau profil",
+    "newTitle": "Nouveau profil d’accès",
+    "editTitle": "Modifier le profil {{name}}",
+    "name": "Nom",
+    "description": "Description",
+    "pages": "Pages",
+    "page": "Page",
+    "mode": "Accès",
+    "modeOf": "Accès à {{page}}",
+    "modes": {
+      "none": "Aucun",
+      "read": "Lecture seule",
+      "write": "Lecture et écriture"
+    },
+    "missing": "Saisissez un nom d’au moins 3 caractères et choisissez au moins une page.",
+    "save": "Enregistrer le profil",
+    "cancel": "Annuler",
+    "assign": "Attribuer",
+    "assignTitle": "Attribuer le profil {{name}}",
+    "assigned": "Profil attribué : {{n}} élément(s).",
+    "skipped": "Non accordés car au-delà du plafond du rôle : {{keys}}",
+    "grantsNothing": "Ce profil n’accorde rien à cette cible : toutes ses pages dépassent son plafond.",
+    "assignments": "Profils attribués",
+    "noAssignment": "Aucun profil attribué.",
+    "profile": "Profil",
+    "noEnd": "Sans fin",
+    "revoke": "Retirer",
+    "revokeReason": "Profil retiré par l’administrateur système",
+    "builtin": "Intégré",
+    "inUse": "attribué {{n}}",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "unknown": "page inconnue"
   }
 }

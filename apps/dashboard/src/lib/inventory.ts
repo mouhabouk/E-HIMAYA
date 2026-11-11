@@ -10,7 +10,9 @@ import type { Download } from "./layersApi";
 export type CategoryKind = "vehicle" | "equipment" | "skill";
 export const FAMILIES = ["vehicles", "equipment", "boats", "air", "ppe"] as const;
 export type Family = (typeof FAMILIES)[number];
-export const VEHICLE_STATES = ["ready", "assigned", "maintenance", "broken"] as const;
+/** OS3: "assigned" by the interventions; ready, reinforcement, broken by the rooms; maintenance, retired by the
+ * maintenance department. */
+export const VEHICLE_STATES = ["ready", "assigned", "reinforcement", "broken", "maintenance", "retired"] as const;
 export type VehicleState = (typeof VEHICLE_STATES)[number];
 export const WRITABLE_STATES = ["ready", "maintenance", "broken"] as const;
 export type WritableState = (typeof WRITABLE_STATES)[number];
@@ -23,8 +25,10 @@ export type SpecValue = number | boolean;
 export const STATE_TONE: Readonly<Record<VehicleState, string>> = {
   ready: "green",
   assigned: "sky",
+  reinforcement: "purple",
   maintenance: "amber",
   broken: "red",
+  retired: "navy",
 };
 
 export interface Names {
@@ -89,8 +93,10 @@ export interface UnitRow {
 export interface Tally {
   ready: number;
   assigned: number;
+  reinforcement?: number;
   maintenance: number;
   broken: number;
+  retired?: number;
 }
 
 export interface GouvernoratRow {
@@ -140,6 +146,22 @@ export interface Vehicle {
   state: VehicleState;
   year: number | null;
   notes: string | null;
+  /** OS3: the card of the maintenance department. */
+  plate?: string | null;
+  odometer_km?: number | null;
+  acquired_on?: string | null;
+  stationed_unit_id?: string | null;
+  stationed_unit_name?: string | null;
+  stationed_gouvernorat_code?: number | null;
+  stationed_since?: string | null;
+  fault?: string | null;
+  workshop?: string | null;
+  maint_reason?: string | null;
+  maint_since?: string | null;
+  maint_until?: string | null;
+  retired_on?: string | null;
+  retire_decision?: string | null;
+  retire_reason?: string | null;
   version: number;
   updated_at: string;
 }
@@ -153,6 +175,9 @@ export interface VehicleBody {
   state: WritableState;
   year: number | null;
   notes: string | null;
+  plate?: string | null;
+  odometer_km?: number | null;
+  acquired_on?: string | null;
   reason: string;
   version?: number;
 }
@@ -229,6 +254,9 @@ export interface AgentBody {
 export interface Listing<T> {
   items: T[];
   can_edit: boolean;
+  /** Vehicles (OS3): the rooms set the state, the maintenance department the workshop. */
+  can_set_state?: boolean;
+  can_maintain?: boolean;
 }
 
 export interface AgentListing extends Listing<Agent> {
