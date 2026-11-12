@@ -35,5 +35,6 @@ UC8 .> UC9 : <<include>>
 UC8 .> UC7 : <<include>>
 RM --> UC11
 SA --> UC12
-note bottom of UC8 : pas d'inspection sans ordre de mission\ndans le panier ; jamais avant son jour
+note "pas d'inspection sans ordre de mission\ndans le panier ; jamais avant son jour" as N1
+UC4 .. N1
 @enduml
