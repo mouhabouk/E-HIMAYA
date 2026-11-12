@@ -12,11 +12,19 @@ FROM postgres:17-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e86128
 COPY --from=gosu /out/gosu /usr/local/bin/gosu
 RUN gosu nobody true
 
-# postgresql-17 is listed so that apt raises the server to the minor release the PGDG extensions are built against
-# (pgvector 2026-11 needs > 17.12 while the pinned image carries 17.11); a minor release keeps the data format.
+# pgvector is built from its release tag against the server the image carries: the PGDG package (2026-11) now requires
+# postgresql-17 > 17.12, which the pinned image and its repository do not have yet. Return to postgresql-17-pgvector
+# from apt once the base image moves to 17.12 or later.
+ARG PGVECTOR_VERSION=v0.8.1
 RUN apt-get update \
- && apt-get install -y --no-install-recommends postgresql-17 postgresql-17-postgis-3 postgresql-17-pgvector \
- && rm -rf /var/lib/apt/lists/*
+ && apt-get install -y --no-install-recommends postgresql-17-postgis-3 \
+ && apt-get install -y --no-install-recommends build-essential git ca-certificates postgresql-server-dev-17 \
+ && git clone --branch "$PGVECTOR_VERSION" --depth 1 https://github.com/pgvector/pgvector.git /tmp/pgvector \
+ && make -C /tmp/pgvector OPTFLAGS="" \
+ && make -C /tmp/pgvector install \
+ && apt-mark manual postgresql-17-postgis-3 \
+ && apt-get purge -y --auto-remove build-essential git postgresql-server-dev-17 \
+ && rm -rf /tmp/pgvector /var/lib/apt/lists/*
 
 COPY ehimaya-roles.sh /usr/local/bin/ehimaya-roles.sh
 # WAL archiving (phase 10 §2.1), switched on by the production compose file.
