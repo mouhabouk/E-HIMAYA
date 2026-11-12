@@ -2531,6 +2531,116 @@
         "title": "AppDevice",
         "type": "object"
       },
+      "AppHistoryRow": {
+        "description": "One report of the inspector, for «my inspections» in the app.",
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "periodic",
+              "surprise"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "mission_ref": {
+            "title": "Mission Ref",
+            "type": "string"
+          },
+          "on_date": {
+            "format": "date",
+            "title": "On Date",
+            "type": "string"
+          },
+          "place": {
+            "title": "Place",
+            "type": "string"
+          },
+          "receipt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "site_id": {
+            "format": "uuid",
+            "title": "Site Id",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "in_progress",
+              "submitted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "id",
+          "site_id",
+          "mission_ref",
+          "on_date",
+          "kind",
+          "place",
+          "status",
+          "started_at",
+          "submitted_at",
+          "score",
+          "verdict",
+          "receipt"
+        ],
+        "title": "AppHistoryRow",
+        "type": "object"
+      },
       "AppInspectionOut": {
         "properties": {
           "answers": {
@@ -2673,6 +2783,16 @@
             "format": "date",
             "title": "On Date",
             "type": "string"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProfileConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "ref": {
             "title": "Ref",
@@ -31744,6 +31864,13 @@
           "central": {
             "$ref": "#/components/schemas/RoomDisclosure"
           },
+          "notice_days": {
+            "default": 15,
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Notice Days",
+            "type": "integer"
+          },
           "publish_programme": {
             "title": "Publish Programme",
             "type": "boolean"
@@ -31753,6 +31880,13 @@
           },
           "regional": {
             "$ref": "#/components/schemas/RoomDisclosure"
+          },
+          "reminder_days": {
+            "default": 2,
+            "maximum": 14.0,
+            "minimum": 0.0,
+            "title": "Reminder Days",
+            "type": "integer"
           }
         },
         "required": [
@@ -31769,6 +31903,13 @@
           "central": {
             "$ref": "#/components/schemas/RoomDisclosure"
           },
+          "notice_days": {
+            "default": 15,
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Notice Days",
+            "type": "integer"
+          },
           "publish_programme": {
             "title": "Publish Programme",
             "type": "boolean"
@@ -31778,6 +31919,13 @@
           },
           "regional": {
             "$ref": "#/components/schemas/RoomDisclosure"
+          },
+          "reminder_days": {
+            "default": 2,
+            "maximum": 14.0,
+            "minimum": 0.0,
+            "title": "Reminder Days",
+            "type": "integer"
           },
           "updated_at": {
             "format": "date-time",
@@ -31995,20 +32143,54 @@
         "title": "PrealertOut",
         "type": "object"
       },
-      "PresenceIn": {
+      "PresenceOut": {
         "properties": {
-          "token": {
-            "maxLength": 64,
-            "minLength": 16,
-            "pattern": "^[A-Za-z0-9_-]+$",
-            "title": "Token",
+          "arrived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrived At"
+          },
+          "arrived_offline": {
+            "title": "Arrived Offline",
+            "type": "boolean"
+          },
+          "left_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left At"
+          },
+          "left_offline": {
+            "title": "Left Offline",
+            "type": "boolean"
+          },
+          "site_id": {
+            "format": "uuid",
+            "title": "Site Id",
             "type": "string"
           }
         },
         "required": [
-          "token"
+          "site_id",
+          "arrived_at",
+          "arrived_offline",
+          "left_at",
+          "left_offline"
         ],
-        "title": "PresenceIn",
+        "title": "PresenceOut",
         "type": "object"
       },
       "PreviewPoint": {
@@ -39788,6 +39970,23 @@
       },
       "SiteOut": {
         "properties": {
+          "arrived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrived At"
+          },
+          "arrived_offline": {
+            "default": false,
+            "title": "Arrived Offline",
+            "type": "boolean"
+          },
           "gouvernorat_code": {
             "anyOf": [
               {
@@ -39830,6 +40029,23 @@
               }
             ],
             "title": "Inspection Status"
+          },
+          "left_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left At"
+          },
+          "left_offline": {
+            "default": false,
+            "title": "Left Offline",
+            "type": "boolean"
           },
           "name": {
             "title": "Name",
@@ -52956,6 +53172,22 @@
         "title": "Overview",
         "type": "object"
       },
+      "app__modules__coastal__schemas__PresenceIn": {
+        "properties": {
+          "token": {
+            "maxLength": 64,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "PresenceIn",
+        "type": "object"
+      },
       "app__modules__coastal__schemas__SettingsIn": {
         "properties": {
           "reason": {
@@ -55664,6 +55896,61 @@
           "created_at"
         ],
         "title": "MissionOut",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__PresenceIn": {
+        "description": "«Arrived» or «left» on a place, at the phone's time; ``offline`` when it was recorded without network.",
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "arrived",
+              "left"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "offline": {
+            "default": false,
+            "title": "Offline",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "at"
+        ],
+        "title": "PresenceIn",
         "type": "object"
       },
       "app__modules__inspections__schemas__ProfileIn": {
@@ -68145,7 +68432,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PresenceIn"
+                "$ref": "#/components/schemas/app__modules__coastal__schemas__PresenceIn"
               }
             }
           },
@@ -72596,6 +72883,34 @@
       }
     },
     "/api/v1/inspect/inspections": {
+      "get": {
+        "operationId": "my_inspections_api_v1_inspect_inspections_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AppHistoryRow"
+                  },
+                  "title": "Response My Inspections Api V1 Inspect Inspections Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Inspections",
+        "tags": [
+          "inspections"
+        ]
+      },
       "post": {
         "operationId": "start_api_v1_inspect_inspections_post",
         "requestBody": {
@@ -72823,6 +73138,64 @@
           }
         },
         "summary": "Register",
+        "tags": [
+          "inspections"
+        ]
+      }
+    },
+    "/api/v1/inspect/sites/{site_id}/presence": {
+      "post": {
+        "operationId": "presence_api_v1_inspect_sites__site_id__presence_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "site_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Site Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__inspections__schemas__PresenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Presence",
         "tags": [
           "inspections"
         ]
