@@ -95,7 +95,10 @@
     "fleetMaintenance": "En maintenance",
     "fleetArchive": "Archives des réformés",
     "fleetLog": "Journal des états",
-    "coverage": "Couverture en direct"
+    "coverage": "Couverture en direct",
+    "inspections": "Inspections périodiques",
+    "inspectionResults": "Résultats des inspections",
+    "inspectionAdmin": "Suppression des inspections"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -154,7 +157,8 @@
     "volunteer": "Bénévole",
     "org_admin": "Responsable d'établissement",
     "org_member": "Membre d'établissement",
-    "maintenance_officer": "Direction de la maintenance et du parc"
+    "maintenance_officer": "Direction de la maintenance et du parc",
+    "inspector_general": "Inspection générale"
   },
   "status": {
     "received": "Reçu",
@@ -666,7 +670,31 @@
     "retired_in_future": "La date de réforme est dans le futur.",
     "until_in_past": "La date prévue est passée.",
     "vehicle_retired": "Le véhicule est réformé.",
-    "vehicle_maintenance": "Le véhicule est en atelier : la maintenance le libère."
+    "vehicle_maintenance": "Le véhicule est en atelier : la maintenance le libère.",
+    "after_account_end": "La mission est après la fin du compte de l'inspecteur externe.",
+    "already_closed": "Le compte est déjà clôturé.",
+    "already_started": "L'inspection a commencé : la mission ne peut plus être annulée.",
+    "central_room_only": "Réservé à la salle centrale.",
+    "confirm_word": "Le mot de confirmation est incorrect.",
+    "date_past": "La date est passée.",
+    "duplicate_site": "Lieu en double dans la mission.",
+    "expires_on_past": "La date d'expiration est passée.",
+    "expires_on_required": "Indiquez la date d'expiration du compte externe.",
+    "inspection_required": "Indiquez le rapport.",
+    "inspector_not_active": "Le compte de l'inspecteur n'est pas actif.",
+    "no_active_profile": "Aucun modèle de calcul actif.",
+    "no_policy": "La politique de diffusion n'est pas définie.",
+    "not_a_room": "La diffusion ne concerne que les inspections des salles.",
+    "not_active": "Le compte n'est pas actif.",
+    "not_pending": "La demande n'est pas en attente.",
+    "not_renewable": "Le code de ce compte ne peut être renouvelé.",
+    "period_required": "Indiquez une période valide.",
+    "room_required": "Choisissez la salle.",
+    "axes_invalid": "Poids des axes invalides.",
+    "exit_invalid": "Paramètres du temps de sortie invalides.",
+    "items_invalid": "Points de contrôle invalides.",
+    "levels_invalid": "Niveaux d'appréciation invalides.",
+    "weights_invalid": "Le total des pondérations doit être 100."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -9637,5 +9665,240 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "unknown": "page inconnue"
+  },
+  "inspections": {
+    "title": "Inspections périodiques",
+    "intro": "Planifier les missions et leurs ordres, suivre les rapports, les comptes des inspecteurs, le modèle de calcul et la politique de diffusion aux salles.",
+    "tabs": {
+      "label": "Sections des inspections",
+      "overview": "Tableau de bord",
+      "missions": "Missions et ordres",
+      "records": "Rapports",
+      "accounts": "Comptes des inspecteurs",
+      "settings": "Modèle et politique"
+    },
+    "export": "Exporter CSV",
+    "filters": "Filtres",
+    "from": "Du",
+    "to": "Au",
+    "plan": "Planifier une mission",
+    "newMission": "Nouvelle mission d'inspection",
+    "noMissions": "Aucune mission sur cette période.",
+    "columns": {
+      "accountKind": "Type",
+      "contact": "Contact",
+      "date": "Date",
+      "expires": "Expire le",
+      "inspector": "Inspecteur",
+      "kind": "Type",
+      "lastOn": "Dernière inspection",
+      "lastSeen": "Dernière connexion",
+      "matricule": "Matricule",
+      "missionKind": "Type de mission",
+      "name": "Nom",
+      "nextOn": "Prochaine inspection",
+      "place": "Lieu",
+      "places": "Lieux",
+      "previous": "Précédent",
+      "receipt": "Reçu",
+      "ref": "Référence",
+      "score": "Score",
+      "status": "État",
+      "submittedAt": "Envoyé le",
+      "time": "Heure",
+      "verdict": "Appréciation"
+    },
+    "kind": {
+      "periodic": "Périodique",
+      "surprise": "Inopiné"
+    },
+    "missionState": {
+      "planned": "Planifiée",
+      "live": "En cours",
+      "done": "Terminée",
+      "cancelled": "Annulée"
+    },
+    "reportState": {
+      "in_progress": "Non envoyé",
+      "submitted": "Rapport envoyé"
+    },
+    "room": {
+      "central": "Salle centrale",
+      "regional": "Salle régionale"
+    },
+    "unitKind": {
+      "regional_directorate": "Direction régionale",
+      "brigade": "Brigade",
+      "centre": "Centre",
+      "advanced_centre": "Centre avancé",
+      "guard_post": "Poste de garde",
+      "beach": "Plage",
+      "other": "Autre"
+    },
+    "unitKindLabel": "Type d'unité",
+    "unitName": "Nom de l'unité",
+    "target": "Cible",
+    "targetKind": {
+      "unit": "Unité",
+      "room": "Salle d'opérations"
+    },
+    "roomLabel": "Salle",
+    "sections": "Sections demandées",
+    "sectionsHint": "Sans choix, toutes les sections sont inspectées.",
+    "addSite": "Ajouter un lieu",
+    "removeSite": "Retirer le lieu",
+    "publish": "Publier la mission dans le programme des salles",
+    "saveMission": "Enregistrer et émettre l'ordre",
+    "pickInspector": "Inspecteur",
+    "external": "Externe",
+    "internal": "Interne",
+    "noActiveInspector": "Aucun inspecteur actif.",
+    "published": "Publiée",
+    "cancelReason": "Motif de l'annulation",
+    "cancelMission": "Annuler la mission",
+    "confirmCancel": "Confirmer l'annulation",
+    "orderPdf": "Ordre de mission (PDF)",
+    "kpis": {
+      "label": "Indicateurs du mois",
+      "month": "Missions du mois",
+      "done": "Terminées",
+      "planned": "Planifiées",
+      "average": "Score moyen",
+      "roomsWithoutPlan": "Salles sans planification"
+    },
+    "levels": "Appréciations",
+    "places": "État des lieux",
+    "never": "Jamais inspecté",
+    "notPlanned": "Non planifié",
+    "search": "Recherche",
+    "any": "Tous",
+    "noRecords": "Aucun rapport correspondant.",
+    "record": "Rapport d'inspection",
+    "back": "Retour aux rapports",
+    "startedAt": "Début",
+    "signedAt": "Signé le",
+    "head": "Responsable du lieu",
+    "presence": "Présence",
+    "exit": "Temps de sortie",
+    "model": "Modèle",
+    "summary": "Synthèse",
+    "answers": "Réponses",
+    "answer": {
+      "ok": "Conforme",
+      "note": "Avec remarque",
+      "ko": "Non conforme"
+    },
+    "recommendations": "Recommandations",
+    "recommendation": "Recommandation",
+    "priority": {
+      "high": "Priorité haute",
+      "medium": "Priorité moyenne",
+      "low": "Priorité basse"
+    },
+    "disclosure": "Ce que voient les salles",
+    "disclosureHint": "Seules les inspections des salles leur sont montrées ; la salle centrale voit celles des salles régionales.",
+    "discloseInspection": "Montrer l'inspection",
+    "disclose": {
+      "inspection": "Inspection",
+      "verdict": "Appréciation",
+      "score": "Score"
+    },
+    "audience": "Destinataires",
+    "audienceKind": {
+      "none": "Personne",
+      "regional": "Salle régionale",
+      "central": "Salle centrale",
+      "both": "Les deux salles"
+    },
+    "unitNeverDisclosed": "Les inspections des unités restent dans le système d'inspection et ne sont pas montrées aux salles.",
+    "accountsIntro": "L'inspecteur demande son compte depuis l'application ; l'inspection l'active et il reçoit son code.",
+    "noAccounts": "Aucun compte.",
+    "accountState": {
+      "pending": "En attente",
+      "code_sent": "Code envoyé",
+      "active": "Actif",
+      "blocked": "Bloqué",
+      "rejected": "Refusé",
+      "closed": "Clôturé"
+    },
+    "via": {
+      "sms": "SMS",
+      "email": "Courriel"
+    },
+    "matchedAgent": "Agent reconnu",
+    "requestedAt": "Demandé le",
+    "codeUntil": "Code valable jusqu'au",
+    "rejectReason": "Motif du refus",
+    "activate": "Activer",
+    "reject": "Refuser",
+    "newCode": "Nouveau code",
+    "lost": "Appareil perdu",
+    "close": "Clôturer le compte",
+    "modelTitle": "Modèle de calcul",
+    "modelVersion": "{{name}}, version {{version}}",
+    "modelHint": "Chaque enregistrement crée une version ; les rapports passés gardent la leur.",
+    "weights": "Pondérations (total 100)",
+    "weight": {
+      "items": "Points de contrôle",
+      "presence": "Présence",
+      "exit": "Temps de sortie"
+    },
+    "axisWeight": "Poids de l'axe : {{name}}",
+    "itemWeight": "Poids du point : {{text}}",
+    "levelsTitle": "Niveaux d'appréciation",
+    "saveModel": "Enregistrer une nouvelle version",
+    "policyTitle": "Politique de diffusion aux salles",
+    "policyHint": "Ce que chaque salle voit par défaut de son inspection ; modifiable par rapport.",
+    "recRule": {
+      "high": "Recommandations prioritaires",
+      "medium": "Recommandations moyennes",
+      "low": "Recommandations basses",
+      "general": "Recommandations générales"
+    },
+    "publishProgramme": "Publier le programme à venir pour la salle centrale",
+    "applied": "Politique appliquée aux rapports passés ({{n}} changements).",
+    "savePolicy": "Enregistrer la politique",
+    "applyPolicy": "L'appliquer aux rapports passés",
+    "notesTitle": "Notes de l'ordre de mission",
+    "notesHint": "Une note par ligne ; imprimées au bas de chaque ordre.",
+    "saveNotes": "Enregistrer les notes",
+    "results": {
+      "title": "Résultats des inspections des salles",
+      "intro": "Ce que l'inspection générale a diffusé des inspections des salles d'opérations.",
+      "tabs": {
+        "results": "Résultats",
+        "upcoming": "Programme à venir",
+        "live": "Inspections en cours"
+      },
+      "reports": "Rapports envoyés",
+      "none": "Aucun résultat diffusé.",
+      "notDisclosed": "Non diffusé",
+      "noUpcoming": "Aucune inspection à venir publiée.",
+      "noLive": "Aucune inspection en cours.",
+      "progress": "Avancement"
+    },
+    "admin": {
+      "title": "Suppression et restauration des inspections",
+      "intro": "Un rapport supprimé va à la corbeille et peut être restauré ; chaque opération est journalisée.",
+      "deleteTitle": "Supprimer",
+      "scopeLabel": "Portée",
+      "scope": {
+        "one": "Un rapport",
+        "period": "Une période",
+        "all": "Tous les rapports"
+      },
+      "reportId": "Identifiant du rapport",
+      "allWarning": "Tous les rapports non supprimés iront à la corbeille.",
+      "reason": "Motif ({{n}} caractères au moins)",
+      "confirm": "Tapez « {{word}} » pour confirmer",
+      "delete": "Supprimer",
+      "deleted": "{{n}} rapport(s) mis à la corbeille.",
+      "bin": "Corbeille",
+      "binEmpty": "La corbeille est vide.",
+      "deletedAt": "Supprimé le",
+      "deletedBy": "Supprimé par",
+      "reasonColumn": "Motif",
+      "restore": "Restaurer"
+    }
   }
 }

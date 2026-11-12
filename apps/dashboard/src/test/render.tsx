@@ -17,6 +17,7 @@ import { fakeChecklistApi } from "./checklistFixtures";
 import { fakeModelCardsApi } from "./modelCardsFixtures";
 import { fakeLearningApi } from "./learningFixtures";
 import { fakeDronesApi } from "./dronesFixtures";
+import { fakeInspectionsApi } from "./inspectionsFixtures";
 import type { AuthService, AuthUser } from "../auth/authService";
 import { identityFromClaims } from "../auth/identity";
 import { AuthProvider } from "../context/auth";
@@ -365,6 +366,8 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ...fakeSensorsApi(),
     ...fakeTowersApi(),
     ...fakeDronesApi(),
+    // Phase I2: the periodic inspections.
+    ...fakeInspectionsApi(),
     ...fakeChecklistApi(),
     ...fakeModelCardsApi(),
     ...fakeLearningApi(),

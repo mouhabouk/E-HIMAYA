@@ -68,6 +68,9 @@ import {
   canReadResources,
   canManageMedicalCommittee,
   canReadPersonnel,
+  canManageInspections,
+  canReadInspectionResults,
+  canAdministerInspections,
   canReadCoverage,
   canReadFleet,
   canReviewDoctors,
@@ -248,6 +251,13 @@ const ProgrammeDetailPage = page(
 // OS3: the fleet and its maintenance, the live coverage.
 const FleetPage = lazy(() => import("./pages/FleetPage").then((m) => ({ default: m.FleetPage })));
 const CoveragePage = page(() => import("./pages/CoveragePage"), "CoveragePage");
+// Phase I2: the periodic inspections (the inspectorate, the rooms' results, the administrator's bin).
+const InspectionsPage = lazy(() => import("./pages/InspectionsPage").then((m) => ({ default: m.InspectionsPage })));
+const InspectionRecordPage = page(() => import("./pages/InspectionsPage"), "InspectionRecordPage");
+const InspectionResultsPage = lazy(() =>
+  import("./pages/InspectionResultsPage").then((m) => ({ default: m.InspectionResultsPage })),
+);
+const InspectionAdminPage = page(() => import("./pages/InspectionAdminPage"), "InspectionAdminPage");
 // Phase R1: resources register of every gouvernorat.
 const InventoryPage = page(
   () => import("./pages/InventoryPage"),
@@ -616,6 +626,19 @@ export function AppRoutes() {
         <Route path="personnel/absences" element={gated(canReadPersonnel, <PersonnelPage tab="absences" />)} />
         <Route path="personnel/strength" element={gated(canReadPersonnel, <PersonnelPage tab="strength" />)} />
         <Route path="personnel/agents/:id" element={gated(canReadPersonnel, <PersonnelFilePage />)} />
+        <Route path="inspections" element={gated(canManageInspections, <InspectionsPage tab="overview" />)} />
+        <Route path="inspections/missions" element={gated(canManageInspections, <InspectionsPage tab="missions" />)} />
+        <Route path="inspections/records" element={gated(canManageInspections, <InspectionsPage tab="records" />)} />
+        <Route path="inspections/records/:id" element={gated(canManageInspections, <InspectionRecordPage />)} />
+        <Route path="inspections/accounts" element={gated(canManageInspections, <InspectionsPage tab="accounts" />)} />
+        <Route path="inspections/settings" element={gated(canManageInspections, <InspectionsPage tab="settings" />)} />
+        <Route path="inspection-results" element={gated(canReadInspectionResults, <InspectionResultsPage tab="results" />)} />
+        <Route
+          path="inspection-results/upcoming"
+          element={gated(canReadInspectionResults, <InspectionResultsPage tab="upcoming" />)}
+        />
+        <Route path="inspection-results/live" element={gated(canReadInspectionResults, <InspectionResultsPage tab="live" />)} />
+        <Route path="inspection-admin" element={gated(canAdministerInspections, <InspectionAdminPage />)} />
         <Route
           path="doctors"
           element={gated(canReviewDoctors, <DoctorsPage />)}

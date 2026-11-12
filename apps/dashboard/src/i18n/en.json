@@ -95,7 +95,10 @@
     "fleetMaintenance": "In maintenance",
     "fleetArchive": "Retired archive",
     "fleetLog": "State log",
-    "coverage": "Live coverage"
+    "coverage": "Live coverage",
+    "inspections": "Periodic inspections",
+    "inspectionResults": "Room inspection results",
+    "inspectionAdmin": "Delete inspections"
   },
   "header": {
     "scope": "Geographic scope",
@@ -154,7 +157,8 @@
     "volunteer": "Volunteer",
     "org_admin": "Organisation admin",
     "org_member": "Organisation member",
-    "maintenance_officer": "Maintenance and fleet directorate"
+    "maintenance_officer": "Maintenance and fleet directorate",
+    "inspector_general": "General inspectorate"
   },
   "status": {
     "received": "Received",
@@ -666,7 +670,31 @@
     "retired_in_future": "The retirement date is in the future.",
     "until_in_past": "The expected date is in the past.",
     "vehicle_retired": "The vehicle is retired.",
-    "vehicle_maintenance": "The vehicle is in the workshop: maintenance releases it."
+    "vehicle_maintenance": "The vehicle is in the workshop: maintenance releases it.",
+    "after_account_end": "The mission falls after the external inspector's account ends.",
+    "already_closed": "The account is already closed.",
+    "already_started": "The inspection has started: the mission can no longer be cancelled.",
+    "central_room_only": "For the central room only.",
+    "confirm_word": "The confirmation word is wrong.",
+    "date_past": "The date is in the past.",
+    "duplicate_site": "The place is twice in the mission.",
+    "expires_on_past": "The expiry date is in the past.",
+    "expires_on_required": "Set the external account's expiry date.",
+    "inspection_required": "Name the report.",
+    "inspector_not_active": "The inspector's account is not active.",
+    "no_active_profile": "No active scoring model.",
+    "no_policy": "The disclosure policy is not set.",
+    "not_a_room": "Disclosure applies to room inspections only.",
+    "not_active": "The account is not active.",
+    "not_pending": "The request is not pending.",
+    "not_renewable": "This account's code cannot be renewed.",
+    "period_required": "Give a valid period.",
+    "room_required": "Choose the room.",
+    "axes_invalid": "The axis weights are invalid.",
+    "exit_invalid": "The exit time settings are invalid.",
+    "items_invalid": "The checklist items are invalid.",
+    "levels_invalid": "The verdict levels are invalid.",
+    "weights_invalid": "The weights must total 100."
   },
   "kpi": {
     "title": "Key indicators",
@@ -9637,5 +9665,240 @@
     "edit": "Edit",
     "delete": "Delete",
     "unknown": "unknown page"
+  },
+  "inspections": {
+    "title": "Periodic inspections",
+    "intro": "Plan missions and their orders, follow the reports, the inspectors' accounts, the scoring model and what the rooms are shown.",
+    "tabs": {
+      "label": "Inspection sections",
+      "overview": "Overview",
+      "missions": "Missions and orders",
+      "records": "Reports",
+      "accounts": "Inspector accounts",
+      "settings": "Model and policy"
+    },
+    "export": "Export CSV",
+    "filters": "Filters",
+    "from": "From",
+    "to": "To",
+    "plan": "Plan a mission",
+    "newMission": "New inspection mission",
+    "noMissions": "No missions in this period.",
+    "columns": {
+      "accountKind": "Type",
+      "contact": "Contact",
+      "date": "Date",
+      "expires": "Expires on",
+      "inspector": "Inspector",
+      "kind": "Kind",
+      "lastOn": "Last inspection",
+      "lastSeen": "Last seen",
+      "matricule": "Staff number",
+      "missionKind": "Mission type",
+      "name": "Name",
+      "nextOn": "Next inspection",
+      "place": "Place",
+      "places": "Places",
+      "previous": "Previous",
+      "receipt": "Receipt",
+      "ref": "Reference",
+      "score": "Score",
+      "status": "Status",
+      "submittedAt": "Submitted on",
+      "time": "Time",
+      "verdict": "Verdict"
+    },
+    "kind": {
+      "periodic": "Periodic",
+      "surprise": "Surprise"
+    },
+    "missionState": {
+      "planned": "Planned",
+      "live": "In progress",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    },
+    "reportState": {
+      "in_progress": "Not sent yet",
+      "submitted": "Report sent"
+    },
+    "room": {
+      "central": "Central room",
+      "regional": "Regional room"
+    },
+    "unitKind": {
+      "regional_directorate": "Regional directorate",
+      "brigade": "Brigade",
+      "centre": "Centre",
+      "advanced_centre": "Advanced centre",
+      "guard_post": "Guard post",
+      "beach": "Beach",
+      "other": "Other"
+    },
+    "unitKindLabel": "Unit kind",
+    "unitName": "Unit name",
+    "target": "Target",
+    "targetKind": {
+      "unit": "Unit",
+      "room": "Operations room"
+    },
+    "roomLabel": "Room",
+    "sections": "Sections",
+    "sectionsHint": "With none chosen, every section is inspected.",
+    "addSite": "Add a place",
+    "removeSite": "Remove the place",
+    "publish": "Publish the mission in the rooms' programme",
+    "saveMission": "Save and issue the order",
+    "pickInspector": "Inspector",
+    "external": "External",
+    "internal": "Internal",
+    "noActiveInspector": "No active inspector.",
+    "published": "Published",
+    "cancelReason": "Reason for cancelling",
+    "cancelMission": "Cancel the mission",
+    "confirmCancel": "Confirm the cancellation",
+    "orderPdf": "Mission order (PDF)",
+    "kpis": {
+      "label": "This month's indicators",
+      "month": "Missions this month",
+      "done": "Done",
+      "planned": "Planned",
+      "average": "Average score",
+      "roomsWithoutPlan": "Rooms without a plan"
+    },
+    "levels": "Verdicts",
+    "places": "State of the places",
+    "never": "Never inspected",
+    "notPlanned": "Not planned",
+    "search": "Search",
+    "any": "Any",
+    "noRecords": "No matching reports.",
+    "record": "Inspection report",
+    "back": "Back to the reports",
+    "startedAt": "Started at",
+    "signedAt": "Signed at",
+    "head": "Head of the place",
+    "presence": "Presence",
+    "exit": "Exit time",
+    "model": "Model",
+    "summary": "Summary",
+    "answers": "Answers",
+    "answer": {
+      "ok": "Compliant",
+      "note": "With a remark",
+      "ko": "Not compliant"
+    },
+    "recommendations": "Recommendations",
+    "recommendation": "Recommendation",
+    "priority": {
+      "high": "High priority",
+      "medium": "Medium priority",
+      "low": "Low priority"
+    },
+    "disclosure": "What the rooms see",
+    "disclosureHint": "Only room inspections are shown to the rooms; the central room sees the regional rooms' inspections.",
+    "discloseInspection": "Show the inspection",
+    "disclose": {
+      "inspection": "Inspection",
+      "verdict": "Verdict",
+      "score": "Score"
+    },
+    "audience": "Audience",
+    "audienceKind": {
+      "none": "Nobody",
+      "regional": "Regional room",
+      "central": "Central room",
+      "both": "Both rooms"
+    },
+    "unitNeverDisclosed": "Unit inspections stay in the inspections system and are never shown to the rooms.",
+    "accountsIntro": "The inspector asks for an account in the app; the inspectorate activates it and the code is sent.",
+    "noAccounts": "No accounts.",
+    "accountState": {
+      "pending": "Pending",
+      "code_sent": "Code sent",
+      "active": "Active",
+      "blocked": "Blocked",
+      "rejected": "Rejected",
+      "closed": "Closed"
+    },
+    "via": {
+      "sms": "SMS",
+      "email": "Email"
+    },
+    "matchedAgent": "Matches a staff member",
+    "requestedAt": "Requested on",
+    "codeUntil": "Code valid until",
+    "rejectReason": "Reason for rejecting",
+    "activate": "Activate",
+    "reject": "Reject",
+    "newCode": "New code",
+    "lost": "Device lost",
+    "close": "Close the account",
+    "modelTitle": "Scoring model",
+    "modelVersion": "{{name}}, version {{version}}",
+    "modelHint": "Each save creates a new version; past reports keep theirs.",
+    "weights": "Weights (total 100)",
+    "weight": {
+      "items": "Checklist items",
+      "presence": "Presence",
+      "exit": "Exit time"
+    },
+    "axisWeight": "Axis weight: {{name}}",
+    "itemWeight": "Item weight: {{text}}",
+    "levelsTitle": "Verdict levels",
+    "saveModel": "Save a new version",
+    "policyTitle": "Disclosure policy for the rooms",
+    "policyHint": "What each room sees of its inspection by default; it can be changed per report.",
+    "recRule": {
+      "high": "High priority recommendations",
+      "medium": "Medium priority recommendations",
+      "low": "Low priority recommendations",
+      "general": "General recommendations"
+    },
+    "publishProgramme": "Publish the upcoming programme to the central room",
+    "applied": "Policy applied to past reports ({{n}} changes).",
+    "savePolicy": "Save the policy",
+    "applyPolicy": "Apply it to past reports",
+    "notesTitle": "Mission order notes",
+    "notesHint": "One note per line; printed at the foot of every order.",
+    "saveNotes": "Save the notes",
+    "results": {
+      "title": "Room inspection results",
+      "intro": "What the general inspectorate disclosed of the operations rooms' inspections.",
+      "tabs": {
+        "results": "Results",
+        "upcoming": "Upcoming programme",
+        "live": "Inspections in progress"
+      },
+      "reports": "Submitted reports",
+      "none": "No disclosed results.",
+      "notDisclosed": "Not disclosed",
+      "noUpcoming": "No published upcoming inspections.",
+      "noLive": "No inspection in progress.",
+      "progress": "Progress"
+    },
+    "admin": {
+      "title": "Delete and restore inspections",
+      "intro": "A deleted report goes to the bin and can be restored; every action is audited.",
+      "deleteTitle": "Delete",
+      "scopeLabel": "Scope",
+      "scope": {
+        "one": "One report",
+        "period": "A period",
+        "all": "Every report"
+      },
+      "reportId": "Report identifier",
+      "allWarning": "Every report not yet deleted goes to the bin.",
+      "reason": "Reason ({{n}} characters at least)",
+      "confirm": "Type “{{word}}” to confirm",
+      "delete": "Delete",
+      "deleted": "{{n}} report(s) moved to the bin.",
+      "bin": "Bin",
+      "binEmpty": "The bin is empty.",
+      "deletedAt": "Deleted on",
+      "deletedBy": "Deleted by",
+      "reasonColumn": "Reason",
+      "restore": "Restore"
+    }
   }
 }

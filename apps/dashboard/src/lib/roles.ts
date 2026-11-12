@@ -40,6 +40,13 @@ export const FLEET_STATE_ROLES = ["operator", "ops_manager"] as const;
 export const FLEET_READ_ROLES = [...READ_ROLES, "maintenance_officer"] as const;
 /** The live coverage of a gouvernorat and its repositioning suggestions. */
 export const COVERAGE_ROLES = [...READ_ROLES, "maintenance_officer"] as const;
+/**
+ * Phase I (Yamen 2026-11-10): the general inspectorate plans the periodic inspections and decides what the rooms read
+ * of the rooms' reports; the operations rooms read what is disclosed to them; the system administrator deletes.
+ */
+export const INSPECTION_ROLES = ["inspector_general"] as const;
+export const INSPECTION_RESULT_ROLES = ["operator", "ops_manager"] as const;
+export const INSPECTION_ADMIN_ROLES = ["sysadmin"] as const;
 export const COMMITTEE_ROLES = ["local_committee", "central_committee"] as const;
 /** Committee performance: the committees and the operations manager. */
 export const MONITOR_ROLES = [...COMMITTEE_ROLES, "ops_manager"] as const;
@@ -90,7 +97,14 @@ export const FUNCTION_ROLES = {
   command: ["central_committee", "local_committee", "field_commander", "governor", "minister"],
   operations: ["operator", "ops_manager"],
   technical: TECHNICAL_ROLES,
-  support: ["content_editor", "org_auditor", "medical_coordinator", "personnel_officer", "maintenance_officer"],
+  support: [
+    "content_editor",
+    "org_auditor",
+    "medical_coordinator",
+    "personnel_officer",
+    "maintenance_officer",
+    "inspector_general",
+  ],
   /** Phase P4a: team leaders use the staff app only, never the dashboard. */
   field: ["team_leader"],
 } as const;
@@ -132,6 +146,8 @@ export const NATIONAL_GRANTABLE_ROLES = [
   "central_committee",
   "org_auditor",
   "minister",
+  // Phase I: a national account only.
+  "inspector_general",
 ] as const;
 
 /** Every role the dashboard knows (shown in the header). */
@@ -141,6 +157,7 @@ export const STAFF_ROLES = [
   "medical_coordinator",
   "personnel_officer",
   "maintenance_officer",
+  "inspector_general",
   ...TECHNICAL_ROLES,
   "team_leader",
   "governor",
@@ -179,6 +196,8 @@ export function hasDashboardAccess(roles: readonly string[]): boolean {
     canManagePersonnel(roles) ||
     // OS3: the maintenance department, its fleet.
     canManageFleet(roles) ||
+    // Phase I: the general inspectorate, its inspections.
+    canManageInspections(roles) ||
     PHASE9_TECHNICAL_ROLES.some((r) => roles.includes(r))
   );
 }
@@ -205,6 +224,21 @@ export function canSetVehicleState(roles: readonly string[]): boolean {
 
 export function canReadCoverage(roles: readonly string[]): boolean {
   return COVERAGE_ROLES.some((r) => roles.includes(r));
+}
+
+/** Phase I: the inspector general's page (planning, accounts, reports, disclosure). */
+export function canManageInspections(roles: readonly string[]): boolean {
+  return INSPECTION_ROLES.some((r) => roles.includes(r));
+}
+
+/** Phase I: what an operations room reads of the inspections of the rooms. */
+export function canReadInspectionResults(roles: readonly string[]): boolean {
+  return INSPECTION_RESULT_ROLES.some((r) => roles.includes(r));
+}
+
+/** Phase I: deleting and restoring inspection reports. */
+export function canAdministerInspections(roles: readonly string[]): boolean {
+  return INSPECTION_ADMIN_ROLES.some((r) => roles.includes(r));
 }
 
 /** Phase H1: reads the staff with the kind of their absence, and the general strength. */
@@ -409,6 +443,7 @@ export function landingPath(roles: readonly string[]): string {
   if (roles.includes("medical_coordinator")) return "/doctors";
   if (canManagePersonnel(roles)) return "/personnel";
   if (canManageFleet(roles)) return "/fleet";
+  if (canManageInspections(roles)) return "/inspections";
   if (canReadOrgs(roles)) return "/orgs";
   if (canUseNotifications(roles)) return "/notifications";
   if (canEditTips(roles)) return "/safety-tips";
