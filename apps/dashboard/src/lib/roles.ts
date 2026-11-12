@@ -31,6 +31,15 @@ export const DOCTOR_REVIEW_ROLES = ["medical_coordinator", ...VOLUNTEER_REVIEW_R
  */
 export const PERSONNEL_ROLES = ["personnel_officer"] as const;
 export const PERSONNEL_READ_ROLES = ["personnel_officer", "operator", "ops_manager"] as const;
+/**
+ * OS3 (Yamen 2026-11-11): the maintenance department keeps the vehicle cards, the workshop and the decommissioning;
+ * the operations rooms read the fleet and set the operational state only (at the unit, reinforcement, broken).
+ */
+export const FLEET_ROLES = ["maintenance_officer"] as const;
+export const FLEET_STATE_ROLES = ["operator", "ops_manager"] as const;
+export const FLEET_READ_ROLES = [...READ_ROLES, "maintenance_officer"] as const;
+/** The live coverage of a gouvernorat and its repositioning suggestions. */
+export const COVERAGE_ROLES = [...READ_ROLES, "maintenance_officer"] as const;
 export const COMMITTEE_ROLES = ["local_committee", "central_committee"] as const;
 /** Committee performance: the committees and the operations manager. */
 export const MONITOR_ROLES = [...COMMITTEE_ROLES, "ops_manager"] as const;
@@ -81,7 +90,7 @@ export const FUNCTION_ROLES = {
   command: ["central_committee", "local_committee", "field_commander", "governor", "minister"],
   operations: ["operator", "ops_manager"],
   technical: TECHNICAL_ROLES,
-  support: ["content_editor", "org_auditor", "medical_coordinator", "personnel_officer"],
+  support: ["content_editor", "org_auditor", "medical_coordinator", "personnel_officer", "maintenance_officer"],
   /** Phase P4a: team leaders use the staff app only, never the dashboard. */
   field: ["team_leader"],
 } as const;
@@ -113,6 +122,7 @@ export const REGIONAL_GRANTABLE_ROLES = [
   "content_editor",
   "medical_coordinator",
   "personnel_officer",
+  "maintenance_officer",
   "team_leader",
   "governor",
 ] as const;
@@ -130,6 +140,7 @@ export const STAFF_ROLES = [
   "content_editor",
   "medical_coordinator",
   "personnel_officer",
+  "maintenance_officer",
   ...TECHNICAL_ROLES,
   "team_leader",
   "governor",
@@ -166,6 +177,8 @@ export function hasDashboardAccess(roles: readonly string[]): boolean {
     canReviewDoctors(roles) ||
     // Phase H1: the personnel department sees its own space only.
     canManagePersonnel(roles) ||
+    // OS3: the maintenance department, its fleet.
+    canManageFleet(roles) ||
     PHASE9_TECHNICAL_ROLES.some((r) => roles.includes(r))
   );
 }
@@ -173,6 +186,25 @@ export function hasDashboardAccess(roles: readonly string[]): boolean {
 /** Phase H1: records the staff, their administrative file and their absences. */
 export function canManagePersonnel(roles: readonly string[]): boolean {
   return PERSONNEL_ROLES.some((r) => roles.includes(r));
+}
+
+/** OS3: the vehicle cards, the workshop and the decommissioning. */
+export function canManageFleet(roles: readonly string[]): boolean {
+  return FLEET_ROLES.some((r) => roles.includes(r));
+}
+
+/** OS3: reads the fleet (the rooms, the committees, the maintenance department). */
+export function canReadFleet(roles: readonly string[]): boolean {
+  return FLEET_READ_ROLES.some((r) => roles.includes(r));
+}
+
+/** OS3: sets the operational state of a vehicle (at its unit, reinforcement, broken). */
+export function canSetVehicleState(roles: readonly string[]): boolean {
+  return FLEET_STATE_ROLES.some((r) => roles.includes(r));
+}
+
+export function canReadCoverage(roles: readonly string[]): boolean {
+  return COVERAGE_ROLES.some((r) => roles.includes(r));
 }
 
 /** Phase H1: reads the staff with the kind of their absence, and the general strength. */
@@ -376,6 +408,7 @@ export function landingPath(roles: readonly string[]): string {
   if (roles.includes("ai_admin")) return "/settings/ai";
   if (roles.includes("medical_coordinator")) return "/doctors";
   if (canManagePersonnel(roles)) return "/personnel";
+  if (canManageFleet(roles)) return "/fleet";
   if (canReadOrgs(roles)) return "/orgs";
   if (canUseNotifications(roles)) return "/notifications";
   if (canEditTips(roles)) return "/safety-tips";

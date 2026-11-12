@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Stepper } from "./Stepper";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
+import { PLATE } from "../lib/fleet";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import {
   AVAILABILITY,
@@ -245,16 +246,26 @@ export function VehicleForm({
   const [label, setLabel] = useState(vehicle?.label ?? "");
   const [code, setCode] = useState(vehicle?.code ?? "");
   const [specs, setSpecs] = useState<Record<string, SpecValue>>(vehicle?.specs ?? {});
-  const [state, setState] = useState<WritableState>(
-    vehicle && vehicle.state !== "assigned" ? vehicle.state : "ready",
-  );
+  const [state, setState] = useState<WritableState>("ready");
+  const [plate, setPlate] = useState(vehicle?.plate ?? "");
+  const [odometer, setOdometer] = useState(vehicle?.odometer_km != null ? String(vehicle.odometer_km) : "");
+  const [acquired, setAcquired] = useState(vehicle?.acquired_on ?? "");
   const [year, setYear] = useState(vehicle?.year ? String(vehicle.year) : "");
   const [notes, setNotes] = useState(vehicle?.notes ?? "");
   const [reason, setReason] = useState("");
   const [tried, setTried] = useState(false);
   const types = categories.filter((c) => c.kind === "vehicle");
   const current = types.find((c) => c.key === category);
-  const missing = !unit || !category || label.trim() === "" || (vehicle !== null && reason.trim().length < MIN_REASON);
+  const plateWrong = plate.trim() !== "" && !PLATE.test(plate.trim().replace(/\s+/g, " "));
+  const odometerDown =
+    vehicle?.odometer_km != null && odometer !== "" && Number(odometer) < vehicle.odometer_km;
+  const missing =
+    !unit ||
+    !category ||
+    label.trim() === "" ||
+    plateWrong ||
+    odometerDown ||
+    (vehicle !== null && reason.trim().length < MIN_REASON);
   const mutation = useMutation({
     mutationFn: () =>
       api.saveVehicle(vehicle?.id ?? null, {
@@ -266,6 +277,9 @@ export function VehicleForm({
         state,
         year: year ? Number(year) : null,
         notes: notes.trim() || null,
+        plate: plate.trim() || null,
+        odometer_km: odometer ? Number(odometer) : null,
+        acquired_on: acquired || null,
         reason: reason.trim(),
         version: vehicle?.version,
       }),
@@ -296,10 +310,37 @@ export function VehicleForm({
         <Field id={`${id}-code`} label={t("inventory.field.code")}>
           <input id={`${id}-code`} dir="ltr" maxLength={40} value={code} onChange={(e) => setCode(e.target.value)} />
         </Field>
+        <Field id={`${id}-plate`} label={t("fleet.field.plate")} help={plateWrong ? t("fleet.field.plateHelp") : undefined}>
+          <input
+            id={`${id}-plate`}
+            dir="rtl"
+            maxLength={30}
+            placeholder="123 تونس 4567"
+            aria-invalid={plateWrong}
+            value={plate}
+            onChange={(e) => setPlate(e.target.value)}
+          />
+        </Field>
+        <Field id={`${id}-odometer`} label={t("fleet.field.odometer")} help={odometerDown ? t("fleet.field.odometerHelp") : undefined}>
+          <input
+            id={`${id}-odometer`}
+            type="number"
+            inputMode="numeric"
+            min={vehicle?.odometer_km ?? 0}
+            dir="ltr"
+            aria-invalid={odometerDown}
+            value={odometer}
+            onChange={(e) => setOdometer(e.target.value)}
+          />
+        </Field>
+        <Field id={`${id}-acquired`} label={t("fleet.field.acquired")}>
+          <input id={`${id}-acquired`} type="date" dir="ltr" value={acquired} onChange={(e) => setAcquired(e.target.value)} />
+        </Field>
         <Field id={`${id}-state`} label={t("inventory.field.state")}>
-          {vehicle?.state === "assigned" ? (
+          {vehicle ? (
+            // OS3: after the first card, the rooms set the state and the maintenance department the workshop.
             <p id={`${id}-state`} className="muted">
-              {t("inventory.vehicles.assignedNote")}
+              {t(`inventory.state.${vehicle.state}`)} — {t("fleet.field.stateNote")}
             </p>
           ) : (
             <select id={`${id}-state`} value={state} onChange={(e) => setState(e.target.value as WritableState)}>

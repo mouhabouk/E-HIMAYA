@@ -215,7 +215,8 @@ MATRIX: dict[Action, dict[Role, Rule]] = {
     Action.AUDIT_READ_SCOPED: _rules([((Role.OPS_MANAGER, Role.LOCAL_COMMITTEE, Role.SECURITY_ADMIN), ("any", None))]),
     Action.ACCOUNT_MANAGE: _rules([((Role.REGIONAL_ACCOUNT_ADMIN,), ("lead", "always"))]),
     Action.UNITS_WRITE: _rules([((Role.OPS_MANAGER,), ("lead", "always"))]),
-    Action.RESOURCES_WRITE: _rules([((Role.OPS_MANAGER,), ("lead", "always"))]),
+    # OS3: the vehicle register belongs to the maintenance department; the rooms set the operational state only.
+    Action.RESOURCES_WRITE: _rules([((Role.MAINTENANCE_OFFICER,), ("lead", "always"))]),
 }
 
 # Actions without an object: never 404, a regional caller of a national-only action gets national_scope_required.

@@ -118,6 +118,10 @@
         "description": "المتفقّد العام: التفقّدات الدورية (وطني)"
       },
       {
+        "name": "maintenance_officer",
+        "description": "إدارة الصيانة والتصرف في الوسائل (جهوي أو مركزي)"
+      },
+      {
         "name": "default-roles-ehimaya-staff",
         "description": "Default roles",
         "composite": true,

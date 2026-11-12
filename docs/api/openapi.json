@@ -2977,6 +2977,84 @@
         "title": "Area",
         "type": "object"
       },
+      "AssignIn": {
+        "properties": {
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "target": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "target_kind",
+          "target",
+          "reason"
+        ],
+        "title": "AssignIn",
+        "type": "object"
+      },
       "AssignmentIn": {
         "properties": {
           "contact_phone": {
@@ -3013,335 +3091,6 @@
           "resource_id"
         ],
         "title": "AssignmentIn",
-        "type": "object"
-      },
-      "AssignmentOut": {
-        "properties": {
-          "at_hospital_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "At Hospital At"
-          },
-          "available_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Available At"
-          },
-          "back_at_unit_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Back At Unit At"
-          },
-          "cancelled_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Cancelled At"
-          },
-          "consumables": {
-            "additionalProperties": {
-              "type": "number"
-            },
-            "propertyNames": {
-              "enum": [
-                "water_m3",
-                "foam_l",
-                "powder_kg",
-                "co2_kg",
-                "extinguishers",
-                "oxygen_l",
-                "fuel_l",
-                "sandbags",
-                "absorbent_kg"
-              ]
-            },
-            "title": "Consumables",
-            "type": "object"
-          },
-          "contact_phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Contact Phone"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "created_by": {
-            "title": "Created By",
-            "type": "string"
-          },
-          "crew": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CrewRef"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "crew_count": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Crew Count"
-          },
-          "crew_nature": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Crew Nature"
-          },
-          "damages": {
-            "items": {
-              "$ref": "#/components/schemas/DamageEntry"
-            },
-            "title": "Damages",
-            "type": "array"
-          },
-          "en_route_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "En Route At"
-          },
-          "field_initiated": {
-            "default": false,
-            "title": "Field Initiated",
-            "type": "boolean"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "incident_id": {
-            "format": "uuid",
-            "title": "Incident Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "resource",
-              "volunteer"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "left_scene_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Left Scene At"
-          },
-          "no_intervention_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "No Intervention Reason"
-          },
-          "on_scene_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "On Scene At"
-          },
-          "order": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Order"
-          },
-          "position": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/VehiclePosition"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "record_warnings": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Record Warnings",
-            "type": "array"
-          },
-          "released_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Released At"
-          },
-          "resource": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ResourceRef"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "skipped": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Skipped",
-            "type": "object"
-          },
-          "status": {
-            "enum": [
-              "ordered",
-              "en_route",
-              "on_scene",
-              "released",
-              "cancelled"
-            ],
-            "title": "Status",
-            "type": "string"
-          },
-          "target": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "target_note": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Target Note"
-          },
-          "time_sources": {
-            "additionalProperties": {
-              "enum": [
-                "app",
-                "sms",
-                "room"
-              ],
-              "type": "string"
-            },
-            "title": "Time Sources",
-            "type": "object"
-          },
-          "volunteer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/VolunteerRef"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "incident_id",
-          "kind",
-          "resource",
-          "volunteer",
-          "order",
-          "status",
-          "created_by",
-          "created_at",
-          "en_route_at",
-          "on_scene_at",
-          "released_at",
-          "cancelled_at"
-        ],
-        "title": "AssignmentOut",
         "type": "object"
       },
       "AssignmentStatusIn": {
@@ -6164,6 +5913,16 @@
             "default": 0,
             "title": "Ready",
             "type": "integer"
+          },
+          "reinforcement": {
+            "default": 0,
+            "title": "Reinforcement",
+            "type": "integer"
+          },
+          "retired": {
+            "default": 0,
+            "title": "Retired",
+            "type": "integer"
           }
         },
         "required": [
@@ -8769,6 +8528,94 @@
           "gouvernorat_code"
         ],
         "title": "CounterView",
+        "type": "object"
+      },
+      "CoverageOut": {
+        "properties": {
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__decision__coverage__AlertOut"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "delegations": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__decision__coverage__PlaceOut"
+            },
+            "title": "Delegations",
+            "type": "array"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "families": {
+            "items": {
+              "$ref": "#/components/schemas/FamilyOut"
+            },
+            "title": "Families",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__decision__coverage__SuggestionOut"
+            },
+            "title": "Suggestions",
+            "type": "array"
+          },
+          "targets": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "title": "Targets",
+            "type": "object"
+          },
+          "turnout_minutes": {
+            "title": "Turnout Minutes",
+            "type": "integer"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__decision__coverage__UnitOut"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "engine",
+          "turnout_minutes",
+          "targets",
+          "families",
+          "delegations",
+          "units",
+          "alerts",
+          "suggestions",
+          "computed_at",
+          "assumptions"
+        ],
+        "title": "CoverageOut",
         "type": "object"
       },
       "CredentialsOut": {
@@ -15959,6 +15806,53 @@
         "title": "Factor",
         "type": "object"
       },
+      "FamilyCell": {
+        "properties": {
+          "baseline_covered": {
+            "title": "Baseline Covered",
+            "type": "boolean"
+          },
+          "covered": {
+            "title": "Covered",
+            "type": "boolean"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "target": {
+            "title": "Target",
+            "type": "integer"
+          },
+          "unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Name"
+          }
+        },
+        "required": [
+          "minutes",
+          "target",
+          "covered",
+          "baseline_covered",
+          "unit_name"
+        ],
+        "title": "FamilyCell",
+        "type": "object"
+      },
       "FamilyFigures": {
         "properties": {
           "arrival_median": {
@@ -16061,6 +15955,60 @@
           "compliance_pct"
         ],
         "title": "FamilyFigures",
+        "type": "object"
+      },
+      "FamilyOut": {
+        "properties": {
+          "baseline_pct": {
+            "title": "Baseline Pct",
+            "type": "number"
+          },
+          "covered_pct": {
+            "title": "Covered Pct",
+            "type": "number"
+          },
+          "covered_population": {
+            "title": "Covered Population",
+            "type": "integer"
+          },
+          "family": {
+            "enum": [
+              "medical",
+              "road",
+              "fire",
+              "rescue"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "fleet": {
+            "title": "Fleet",
+            "type": "integer"
+          },
+          "out": {
+            "title": "Out",
+            "type": "integer"
+          },
+          "population": {
+            "title": "Population",
+            "type": "integer"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "family",
+          "population",
+          "covered_population",
+          "covered_pct",
+          "baseline_pct",
+          "ready",
+          "fleet",
+          "out"
+        ],
+        "title": "FamilyOut",
         "type": "object"
       },
       "FeaturePatch": {
@@ -21004,7 +20952,7 @@
           },
           "assignments": {
             "items": {
-              "$ref": "#/components/schemas/AssignmentOut"
+              "$ref": "#/components/schemas/app__modules__ops__schemas__AssignmentOut"
             },
             "title": "Assignments",
             "type": "array"
@@ -24810,25 +24758,8 @@
         "title": "LogSummary",
         "type": "object"
       },
-      "MaintenanceIn": {
+      "MaintenanceEndIn": {
         "properties": {
-          "document_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Document Id"
-          },
-          "done_on": {
-            "format": "date",
-            "title": "Done On",
-            "type": "string"
-          },
           "note": {
             "anyOf": [
               {
@@ -24840,12 +24771,33 @@
               }
             ],
             "title": "Note"
+          },
+          "odometer_km": {
+            "anyOf": [
+              {
+                "maximum": 5000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Odometer Km"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
           }
         },
-        "required": [
-          "done_on"
-        ],
-        "title": "MaintenanceIn",
+        "title": "MaintenanceEndIn",
         "type": "object"
       },
       "MaintenanceOut": {
@@ -31098,110 +31050,6 @@
         "title": "PlaceName",
         "type": "object"
       },
-      "PlaceOut": {
-        "properties": {
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "created_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Created By Name"
-          },
-          "delegation_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Delegation Id"
-          },
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "important",
-              "critical",
-              "other"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "lat": {
-            "title": "Lat",
-            "type": "number"
-          },
-          "lon": {
-            "title": "Lon",
-            "type": "number"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "note": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Note"
-          },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
-          },
-          "updated_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Updated By Name"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "kind",
-          "note",
-          "lat",
-          "lon",
-          "gouvernorat_code",
-          "delegation_id",
-          "created_by_name",
-          "created_at",
-          "updated_by_name",
-          "updated_at"
-        ],
-        "title": "PlaceOut",
-        "type": "object"
-      },
       "PlaceUpdate": {
         "properties": {
           "kind": {
@@ -32336,6 +32184,79 @@
           "sections"
         ],
         "title": "ProfileConfig",
+        "type": "object"
+      },
+      "ProfileItem": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "read",
+              "write"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "page": {
+            "maxLength": 80,
+            "minLength": 2,
+            "pattern": "^[a-z_]+$",
+            "title": "Page",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page",
+          "mode"
+        ],
+        "title": "ProfileItem",
+        "type": "object"
+      },
+      "ProfileItemOut": {
+        "properties": {
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "known": {
+            "title": "Known",
+            "type": "boolean"
+          },
+          "mode": {
+            "enum": [
+              "read",
+              "write"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "names": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__features__schemas__Names"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "page": {
+            "maxLength": 80,
+            "minLength": 2,
+            "pattern": "^[a-z_]+$",
+            "title": "Page",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page",
+          "mode",
+          "known",
+          "features"
+        ],
+        "title": "ProfileItemOut",
         "type": "object"
       },
       "ProgrammeDetail": {
@@ -37004,6 +36925,45 @@
         "title": "ResponseTimes",
         "type": "object"
       },
+      "RetireIn": {
+        "properties": {
+          "decision": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Decision",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "retired_on": {
+            "format": "date",
+            "title": "Retired On",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "decision",
+          "retired_on",
+          "reason"
+        ],
+        "title": "RetireIn",
+        "type": "object"
+      },
       "ReturnIn": {
         "properties": {
           "reason": {
@@ -37350,7 +37310,8 @@
           "personnel_officer",
           "inspector_general",
           "inspector",
-          "inspector_external"
+          "inspector_external",
+          "maintenance_officer"
         ],
         "title": "Role",
         "type": "string"
@@ -40202,6 +40163,24 @@
           "reason"
         ],
         "title": "SkipIn",
+        "type": "object"
+      },
+      "Skipped": {
+        "properties": {
+          "feature_key": {
+            "title": "Feature Key",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "feature_key",
+          "reason"
+        ],
+        "title": "Skipped",
         "type": "object"
       },
       "SlotIn": {
@@ -45742,6 +45721,16 @@
             "default": 0,
             "title": "Ready",
             "type": "integer"
+          },
+          "reinforcement": {
+            "default": 0,
+            "title": "Reinforcement",
+            "type": "integer"
+          },
+          "retired": {
+            "default": 0,
+            "title": "Retired",
+            "type": "integer"
           }
         },
         "title": "Tally",
@@ -49257,8 +49246,130 @@
         "title": "ValuesIn",
         "type": "object"
       },
+      "VehicleEventOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "from_state": {
+            "title": "From State",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "state",
+              "maintenance_start",
+              "maintenance_end",
+              "retire",
+              "reinforce",
+              "reinforce_end"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "to_state": {
+            "title": "To State",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "resource_id",
+          "label",
+          "plate",
+          "unit_name",
+          "gouvernorat_code",
+          "kind",
+          "from_state",
+          "to_state",
+          "details",
+          "created_by_name",
+          "created_at"
+        ],
+        "title": "VehicleEventOut",
+        "type": "object"
+      },
+      "VehicleEventsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VehicleEventOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "VehicleEventsOut",
+        "type": "object"
+      },
       "VehicleIn": {
         "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
           "category_key": {
             "maxLength": 40,
             "title": "Category Key",
@@ -49293,6 +49404,31 @@
               }
             ],
             "title": "Notes"
+          },
+          "odometer_km": {
+            "anyOf": [
+              {
+                "maximum": 5000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Odometer Km"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
           },
           "reason": {
             "default": "",
@@ -49367,6 +49503,18 @@
       },
       "VehicleOut": {
         "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
           "category_key": {
             "anyOf": [
               {
@@ -49389,6 +49537,17 @@
             ],
             "title": "Code"
           },
+          "fault": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fault"
+          },
           "gouvernorat_code": {
             "title": "Gouvernorat Code",
             "type": "integer"
@@ -49406,6 +49565,41 @@
             "title": "Label",
             "type": "string"
           },
+          "maint_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Reason"
+          },
+          "maint_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Since"
+          },
+          "maint_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Until"
+          },
           "notes": {
             "anyOf": [
               {
@@ -49417,6 +49611,62 @@
             ],
             "title": "Notes"
           },
+          "odometer_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Odometer Km"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "retire_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retire Decision"
+          },
+          "retire_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retire Reason"
+          },
+          "retired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retired On"
+          },
           "specs": {
             "additionalProperties": true,
             "title": "Specs",
@@ -49426,11 +49676,59 @@
             "enum": [
               "ready",
               "assigned",
+              "reinforcement",
+              "broken",
               "maintenance",
-              "broken"
+              "retired"
             ],
             "title": "State",
             "type": "string"
+          },
+          "stationed_gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Gouvernorat Code"
+          },
+          "stationed_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Since"
+          },
+          "stationed_unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Unit Id"
+          },
+          "stationed_unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Unit Name"
           },
           "unit_id": {
             "format": "uuid",
@@ -49449,6 +49747,17 @@
           "version": {
             "title": "Version",
             "type": "integer"
+          },
+          "workshop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workshop"
           },
           "year": {
             "anyOf": [
@@ -49516,10 +49825,98 @@
         "title": "VehiclePosition",
         "type": "object"
       },
+      "VehicleStateIn": {
+        "properties": {
+          "fault": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fault"
+          },
+          "host_unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Host Unit Id"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "state": {
+            "enum": [
+              "ready",
+              "reinforcement",
+              "broken"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "suggested_gain": {
+            "anyOf": [
+              {
+                "maximum": 20000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Gain"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "VehicleStateIn",
+        "type": "object"
+      },
       "VehiclesOut": {
         "properties": {
           "can_edit": {
             "title": "Can Edit",
+            "type": "boolean"
+          },
+          "can_maintain": {
+            "default": false,
+            "title": "Can Maintain",
+            "type": "boolean"
+          },
+          "can_set_state": {
+            "default": false,
+            "title": "Can Set State",
             "type": "boolean"
           },
           "items": {
@@ -53591,6 +53988,245 @@
         "title": "Point",
         "type": "object"
       },
+      "app__modules__decision__coverage__AlertOut": {
+        "properties": {
+          "baseline_minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Minutes"
+          },
+          "delegation": {
+            "title": "Delegation",
+            "type": "string"
+          },
+          "delegation_id": {
+            "title": "Delegation Id",
+            "type": "integer"
+          },
+          "family": {
+            "enum": [
+              "medical",
+              "road",
+              "fire",
+              "rescue"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "population": {
+            "title": "Population",
+            "type": "integer"
+          },
+          "target": {
+            "title": "Target",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "family",
+          "delegation_id",
+          "delegation",
+          "population",
+          "minutes",
+          "target",
+          "baseline_minutes"
+        ],
+        "title": "AlertOut",
+        "type": "object"
+      },
+      "app__modules__decision__coverage__PlaceOut": {
+        "properties": {
+          "families": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FamilyCell"
+            },
+            "title": "Families",
+            "type": "object"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "population": {
+            "title": "Population",
+            "type": "integer"
+          },
+          "zone": {
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr",
+          "population",
+          "zone",
+          "lat",
+          "lon",
+          "families"
+        ],
+        "title": "PlaceOut",
+        "type": "object"
+      },
+      "app__modules__decision__coverage__SuggestionOut": {
+        "properties": {
+          "family": {
+            "enum": [
+              "medical",
+              "road",
+              "fire",
+              "rescue"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "from_unit": {
+            "title": "From Unit",
+            "type": "string"
+          },
+          "from_unit_id": {
+            "format": "uuid",
+            "title": "From Unit Id",
+            "type": "string"
+          },
+          "gain_population": {
+            "title": "Gain Population",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "lost": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Lost",
+            "type": "array"
+          },
+          "newly_covered": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Newly Covered",
+            "type": "array"
+          },
+          "to_unit": {
+            "title": "To Unit",
+            "type": "string"
+          },
+          "to_unit_id": {
+            "format": "uuid",
+            "title": "To Unit Id",
+            "type": "string"
+          },
+          "vehicle_id": {
+            "format": "uuid",
+            "title": "Vehicle Id",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "family",
+          "vehicle_id",
+          "label",
+          "from_unit_id",
+          "from_unit",
+          "to_unit_id",
+          "to_unit",
+          "gain_population",
+          "newly_covered",
+          "lost",
+          "version"
+        ],
+        "title": "SuggestionOut",
+        "type": "object"
+      },
+      "app__modules__decision__coverage__UnitOut": {
+        "properties": {
+          "hosted": {
+            "title": "Hosted",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "ready": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Ready",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr",
+          "lat",
+          "lon",
+          "ready",
+          "hosted"
+        ],
+        "title": "UnitOut",
+        "type": "object"
+      },
       "app__modules__decision__schemas__DecideIn": {
         "properties": {
           "kept_actions": {
@@ -53881,6 +54517,142 @@
         "title": "TrackOut",
         "type": "object"
       },
+      "app__modules__features__schemas__AssignmentOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "profile_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Id"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "skipped": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Skipped"
+            },
+            "title": "Skipped",
+            "type": "array"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role",
+              "everyone"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "id",
+          "profile_id",
+          "target_kind",
+          "target",
+          "target_name",
+          "gouvernorat_code",
+          "reason",
+          "starts_at",
+          "ends_at",
+          "created_by_name",
+          "created_at",
+          "state",
+          "features"
+        ],
+        "title": "AssignmentOut",
+        "type": "object"
+      },
       "app__modules__features__schemas__FeatureOut": {
         "properties": {
           "act_as": {
@@ -54006,6 +54778,98 @@
           "en"
         ],
         "title": "Names",
+        "type": "object"
+      },
+      "app__modules__features__schemas__ProfileIn": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileItem"
+            },
+            "maxItems": 60,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "items"
+        ],
+        "title": "ProfileIn",
+        "type": "object"
+      },
+      "app__modules__features__schemas__ProfileOut": {
+        "properties": {
+          "active_assignments": {
+            "title": "Active Assignments",
+            "type": "integer"
+          },
+          "builtin": {
+            "title": "Builtin",
+            "type": "boolean"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "builtin",
+          "items",
+          "active_assignments",
+          "updated_at"
+        ],
+        "title": "ProfileOut",
         "type": "object"
       },
       "app__modules__features__schemas__RuleIn": {
@@ -55345,6 +56209,51 @@
           "warnings"
         ],
         "title": "ImportOut",
+        "type": "object"
+      },
+      "app__modules__inventory__schemas__MaintenanceIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "workshop": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Workshop",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workshop",
+          "reason"
+        ],
+        "title": "MaintenanceIn",
         "type": "object"
       },
       "app__modules__inventory__schemas__Names": {
@@ -57092,6 +58001,335 @@
         "title": "ApproveIn",
         "type": "object"
       },
+      "app__modules__ops__schemas__AssignmentOut": {
+        "properties": {
+          "at_hospital_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At Hospital At"
+          },
+          "available_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available At"
+          },
+          "back_at_unit_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Back At Unit At"
+          },
+          "cancelled_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancelled At"
+          },
+          "consumables": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "water_m3",
+                "foam_l",
+                "powder_kg",
+                "co2_kg",
+                "extinguishers",
+                "oxygen_l",
+                "fuel_l",
+                "sandbags",
+                "absorbent_kg"
+              ]
+            },
+            "title": "Consumables",
+            "type": "object"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "title": "Created By",
+            "type": "string"
+          },
+          "crew": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CrewRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crew_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Count"
+          },
+          "crew_nature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crew Nature"
+          },
+          "damages": {
+            "items": {
+              "$ref": "#/components/schemas/DamageEntry"
+            },
+            "title": "Damages",
+            "type": "array"
+          },
+          "en_route_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "En Route At"
+          },
+          "field_initiated": {
+            "default": false,
+            "title": "Field Initiated",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "resource",
+              "volunteer"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "left_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left Scene At"
+          },
+          "no_intervention_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "No Intervention Reason"
+          },
+          "on_scene_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Scene At"
+          },
+          "order": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VehiclePosition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "record_warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Warnings",
+            "type": "array"
+          },
+          "released_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Released At"
+          },
+          "resource": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResourceRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "skipped": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Skipped",
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "ordered",
+              "en_route",
+              "on_scene",
+              "released",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Note"
+          },
+          "time_sources": {
+            "additionalProperties": {
+              "enum": [
+                "app",
+                "sms",
+                "room"
+              ],
+              "type": "string"
+            },
+            "title": "Time Sources",
+            "type": "object"
+          },
+          "volunteer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VolunteerRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "incident_id",
+          "kind",
+          "resource",
+          "volunteer",
+          "order",
+          "status",
+          "created_by",
+          "created_at",
+          "en_route_at",
+          "on_scene_at",
+          "released_at",
+          "cancelled_at"
+        ],
+        "title": "AssignmentOut",
+        "type": "object"
+      },
       "app__modules__ops__schemas__AttachmentOut": {
         "properties": {
           "assignment_id": {
@@ -58675,6 +59913,44 @@
         "title": "InvitationPreview",
         "type": "object"
       },
+      "app__modules__orgs__schemas__MaintenanceIn": {
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "done_on": {
+            "format": "date",
+            "title": "Done On",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "done_on"
+        ],
+        "title": "MaintenanceIn",
+        "type": "object"
+      },
       "app__modules__orgs__schemas__Person": {
         "properties": {
           "email": {
@@ -59339,6 +60615,110 @@
           "gouvernorat_code"
         ],
         "title": "UnitOut",
+        "type": "object"
+      },
+      "app__modules__places__schemas__PlaceOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "important",
+              "critical",
+              "other"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "note",
+          "lat",
+          "lon",
+          "gouvernorat_code",
+          "delegation_id",
+          "created_by_name",
+          "created_at",
+          "updated_by_name",
+          "updated_at"
+        ],
+        "title": "PlaceOut",
         "type": "object"
       },
       "app__modules__privacy__router__DeleteIn": {
@@ -76437,7 +77817,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MaintenanceIn"
+                "$ref": "#/components/schemas/app__modules__orgs__schemas__MaintenanceIn"
               }
             }
           },
@@ -82516,7 +83896,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssignmentOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__AssignmentOut"
                 }
               }
             },
@@ -82694,7 +84074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssignmentOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__AssignmentOut"
                 }
               }
             },
@@ -82753,7 +84133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssignmentOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__AssignmentOut"
                 }
               }
             },
@@ -85408,6 +86788,64 @@
         "summary": "Act",
         "tags": [
           "contact"
+        ]
+      }
+    },
+    "/api/v1/staff/coverage": {
+      "get": {
+        "description": "The live coverage of a gouvernorat: the caller's own, or the one the central room names.",
+        "operationId": "coverage_api_v1_staff_coverage_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Coverage",
+        "tags": [
+          "staff",
+          "decision"
         ]
       }
     },
@@ -90436,6 +91874,356 @@
         ]
       }
     },
+    "/api/v1/staff/features/profile-assignments": {
+      "get": {
+        "operationId": "list_assignments_api_v1_staff_features_profile_assignments_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "profile_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Profile Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_ended",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Ended",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__features__schemas__AssignmentOut"
+                  },
+                  "title": "Response List Assignments Api V1 Staff Features Profile Assignments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Assignments",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/profile-assignments/{assignment_id}/revoke": {
+      "post": {
+        "operationId": "revoke_assignment_api_v1_staff_features_profile_assignments__assignment_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revoke Assignment",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/profiles": {
+      "get": {
+        "operationId": "list_profiles_api_v1_staff_features_profiles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__features__schemas__ProfileOut"
+                  },
+                  "title": "Response List Profiles Api V1 Staff Features Profiles Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Profiles",
+        "tags": [
+          "features"
+        ]
+      },
+      "post": {
+        "operationId": "create_profile_api_v1_staff_features_profiles_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__features__schemas__ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Profile",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/profiles/{profile_id}": {
+      "delete": {
+        "operationId": "delete_profile_api_v1_staff_features_profiles__profile_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Profile",
+        "tags": [
+          "features"
+        ]
+      },
+      "patch": {
+        "description": "A change applies to the next grants; the rules already written stay as granted until revoked.",
+        "operationId": "update_profile_api_v1_staff_features_profiles__profile_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__features__schemas__ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Profile",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/profiles/{profile_id}/assign": {
+      "post": {
+        "operationId": "assign_profile_api_v1_staff_features_profiles__profile_id__assign_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__AssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Assign Profile",
+        "tags": [
+          "features"
+        ]
+      }
+    },
     "/api/v1/staff/features/rules": {
       "get": {
         "operationId": "list_rules_api_v1_staff_features_rules_get",
@@ -91142,7 +92930,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssignmentOut"
+                  "$ref": "#/components/schemas/app__modules__ops__schemas__AssignmentOut"
                 }
               }
             },
@@ -95866,6 +97654,110 @@
         ]
       }
     },
+    "/api/v1/staff/inventory/vehicle-events": {
+      "get": {
+        "description": "What happened to the vehicles the caller sees, newest first.",
+        "operationId": "vehicle_events_api_v1_staff_inventory_vehicle_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "vehicle_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Vehicle Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleEventsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Vehicle Events",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
     "/api/v1/staff/inventory/vehicles": {
       "get": {
         "operationId": "list_vehicles_api_v1_staff_inventory_vehicles_get",
@@ -96106,6 +97998,246 @@
           }
         ],
         "summary": "Update Vehicle",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/vehicles/{vehicle_id}/maintenance": {
+      "post": {
+        "description": "Into the workshop: dispatch and the coverage leave it out until the department takes it back.",
+        "operationId": "start_maintenance_api_v1_staff_inventory_vehicles__vehicle_id__maintenance_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vehicle_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vehicle Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__inventory__schemas__MaintenanceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start Maintenance",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/vehicles/{vehicle_id}/maintenance/end": {
+      "post": {
+        "description": "Back from the workshop, ready at its unit.",
+        "operationId": "end_maintenance_api_v1_staff_inventory_vehicles__vehicle_id__maintenance_end_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vehicle_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vehicle Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceEndIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "End Maintenance",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/vehicles/{vehicle_id}/retire": {
+      "post": {
+        "description": "Decommissioned (طرح) after the decision: kept in the archive with its history, never dispatched again.",
+        "operationId": "retire_api_v1_staff_inventory_vehicles__vehicle_id__retire_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vehicle_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vehicle Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetireIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Retire",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/vehicles/{vehicle_id}/state": {
+      "post": {
+        "description": "At its unit, reinforcement at another unit, broken. The room of the vehicle's gouvernorat or of the unit where\nit waits as reinforcement (the central room: all).",
+        "operationId": "set_state_api_v1_staff_inventory_vehicles__vehicle_id__state_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vehicle_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vehicle Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehicleStateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set State",
         "tags": [
           "staff",
           "inventory"
@@ -101971,7 +104103,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/PlaceOut"
+                    "$ref": "#/components/schemas/app__modules__places__schemas__PlaceOut"
                   },
                   "title": "Response List Places Api V1 Staff Places Get",
                   "type": "array"
@@ -102018,7 +104150,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PlaceOut"
+                  "$ref": "#/components/schemas/app__modules__places__schemas__PlaceOut"
                 }
               }
             },
@@ -102115,7 +104247,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PlaceOut"
+                  "$ref": "#/components/schemas/app__modules__places__schemas__PlaceOut"
                 }
               }
             },

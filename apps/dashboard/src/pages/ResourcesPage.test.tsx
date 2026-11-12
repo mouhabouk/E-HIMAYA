@@ -5,7 +5,8 @@ import { makeResource, makeUnit } from "../test/opsFixtures";
 import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { ResourcesPage } from "./ResourcesPage";
 
-const MANAGER = { ...OPERATOR_CLAIMS, realm_access: { roles: ["ops_manager"] } };
+// OS3: the vehicle cards belong to the maintenance directorate; the units stay with the operations manager.
+const MANAGER = { ...OPERATOR_CLAIMS, realm_access: { roles: ["ops_manager", "maintenance_officer"] } };
 
 function setup(claims: Record<string, unknown> = MANAGER, overrides: Parameters<typeof fakeApi>[0] = {}) {
   const api = fakeApi({

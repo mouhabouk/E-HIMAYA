@@ -54,6 +54,7 @@ from app.modules.content.guide import router as guide_router
 from app.modules.content.router import router as content_router
 from app.modules.crisis.router import router as crisis_router
 from app.modules.crisis.worker import crisis_forever
+from app.modules.decision.coverage import router as coverage_router
 from app.modules.decision.procedures import procedures_forever
 from app.modules.decision.router import router as decision_router
 from app.modules.devtools.router import router as devtools_router
@@ -66,6 +67,7 @@ from app.modules.drones.router import router as drones_router
 from app.modules.evidence.router import router as evidence_router
 from app.modules.evidence.worker import evidence_forever
 from app.modules.features import registry as features_registry
+from app.modules.features.profiles import router as profiles_router
 from app.modules.features.router import public_router as features_public_router
 from app.modules.features.router import router as features_router
 from app.modules.forecast.router import router as forecast_router
@@ -80,6 +82,7 @@ from app.modules.inspections.router import app_router as inspections_app_router
 from app.modules.inspections.router import public_router as inspections_public_router
 from app.modules.inspections.router import rooms_router as inspections_rooms_router
 from app.modules.inspections.router import router as inspections_router
+from app.modules.inventory.fleet import router as fleet_router
 from app.modules.inventory.router import router as inventory_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
@@ -404,6 +407,9 @@ def create_app() -> FastAPI:
         register_router,
         schedule_router,
         inventory_router,
+        fleet_router,
+        coverage_router,
+        profiles_router,
         personnel_router,
         inspections_router,
         inspections_rooms_router,

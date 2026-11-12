@@ -256,8 +256,15 @@ async def save_resource(
         if resource.status == "assigned" and (body.status != "available" or body.unit_id != resource.unit_id):
             # An engaged resource changes state only through its assignment.
             raise HTTPException(status.HTTP_409_CONFLICT, "resource_busy")
-        if resource.status != "assigned":
+        workshop = resource.out_reason in ("maintenance", "retired")
+        if workshop and body.status != resource.status:
+            # OS3: out of the workshop or of the archive through the maintenance actions only.
+            raise HTTPException(status.HTTP_409_CONFLICT, f"vehicle_{resource.out_reason}")
+        if resource.status != "assigned" and not workshop:
             resource.status = body.status
+            resource.out_reason = "broken" if body.status == "out_of_service" else None
+            if body.status != "available":
+                resource.stationed_unit_id = resource.stationed_since = None
         resource.version += 1
     resource.unit_id, resource.kind, resource.label, resource.notes = body.unit_id, body.kind, body.label, body.notes
     resource.location = _point_wkt(body.location) if body.location else None

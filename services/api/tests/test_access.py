@@ -146,8 +146,11 @@ MATRIX_CASES: list[tuple[str, int | None, Action, Ctx, str]] = [
     ("regional_account_admin", 61, Action.ACCOUNT_MANAGE, PARTICIPANT, "404"),
     ("regional_account_admin", N, Action.ACCOUNT_MANAGE, OTHER, "allow"),
     ("ops_manager", 61, Action.UNITS_WRITE, OWN, "allow"),
-    ("ops_manager", 61, Action.RESOURCES_WRITE, OTHER, "404"),
-    ("ops_manager", N, Action.RESOURCES_WRITE, OTHER, "allow"),
+    # OS3: the vehicle cards belong to the maintenance department; the rooms set the state only.
+    ("maintenance_officer", 61, Action.RESOURCES_WRITE, OWN, "allow"),
+    ("maintenance_officer", 61, Action.RESOURCES_WRITE, OTHER, "404"),
+    ("maintenance_officer", N, Action.RESOURCES_WRITE, OTHER, "allow"),
+    ("ops_manager", 61, Action.RESOURCES_WRITE, OWN, "403 action_not_allowed"),
     ("sysadmin", N, Action.UNITS_WRITE, OWN, "403 action_not_allowed"),
     ("operator", 61, Action.RESOURCES_WRITE, OWN, "403 action_not_allowed"),
 ]
@@ -512,11 +515,11 @@ async def test_regional_404_other_gouvernorat(client: httpx.AsyncClient, staff: 
     r = await client.post(
         "/api/v1/staff/resources",
         json={"unit_id": unit["id"], "kind": "fire_engine", "label": f"FPT-{secrets.token_hex(3)}"},
-        headers=manager,
+        headers=staff(["maintenance_officer"], gouvernorat=61),
     )
     assert r.status_code == 201, r.text
     resource = r.json()
-    gabes = staff(["ops_manager"], gouvernorat=GABES)
+    gabes = staff(["ops_manager", "maintenance_officer"], gouvernorat=GABES)
     assert (
         await client.put(f"/api/v1/staff/units/{unit['id']}", json={**unit, "phone": "75 000 000"}, headers=gabes)
     ).status_code == 404

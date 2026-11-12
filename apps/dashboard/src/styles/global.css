@@ -12138,3 +12138,49 @@ body::after {
   text-align: center;
   font-weight: 700;
 }
+
+/* OS3: live coverage and the fleet (docs/phase-os3/design-os3.md). */
+.coverage-families {
+  align-self: end;
+}
+.coverage-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .coverage-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.coverage-map {
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.coverage-map__label {
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3px;
+}
+.coverage-alerts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.coverage-move {
+  border-block-start: 1px solid var(--border);
+  padding-block: 0.5rem;
+}
+.coverage-move:first-of-type {
+  border-block-start: 0;
+}
+.kpi--current {
+  outline: 2px solid var(--tone-navy);
+}

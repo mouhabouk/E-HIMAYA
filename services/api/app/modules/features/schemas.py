@@ -97,3 +97,67 @@ class PreviewRow(BaseModel):
     granted: bool
     refused: str | None
     open: bool
+
+
+# ---------------------------------------------------------------- profiles (OS3, Yamen 2026-11-11)
+
+ProfileMode = Literal["read", "write"]
+
+
+class ProfileItem(BaseModel):
+    page: str = Field(min_length=2, max_length=80, pattern=r"^[a-z_]+$")
+    mode: ProfileMode
+
+
+class ProfileIn(BaseModel):
+    name: str = Field(min_length=3, max_length=120)
+    description: str | None = Field(default=None, max_length=500)
+    items: list[ProfileItem] = Field(min_length=1, max_length=60)
+
+
+class ProfileItemOut(ProfileItem):
+    known: bool
+    names: Names | None = None
+    features: list[str]
+
+
+class ProfileOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    description: str | None
+    builtin: bool
+    items: list[ProfileItemOut]
+    active_assignments: int
+    updated_at: datetime
+
+
+class AssignIn(BaseModel):
+    target_kind: Literal["user", "role"]
+    target: str = Field(min_length=1, max_length=255)
+    target_name: str | None = Field(default=None, max_length=200)
+    gouvernorat_code: int | None = None
+    reason: str = Field(min_length=5, max_length=500)
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+
+
+class Skipped(BaseModel):
+    feature_key: str
+    reason: str
+
+
+class AssignmentOut(BaseModel):
+    id: uuid.UUID
+    profile_id: uuid.UUID | None
+    target_kind: TargetKind
+    target: str
+    target_name: str | None
+    gouvernorat_code: int | None
+    reason: str
+    starts_at: datetime | None
+    ends_at: datetime | None
+    created_by_name: str | None
+    created_at: datetime
+    state: str
+    features: list[str]
+    skipped: list[Skipped] = []

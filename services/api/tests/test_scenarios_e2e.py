@@ -760,7 +760,7 @@ async def test_s4_five_reports_grow_into_a_disaster_up_to_the_minister(
     vehicle = await client.post(
         f"{STAFF}/resources",
         json={"unit_id": unit.json()["id"], "kind": "fire_engine", "label": f"CCF-{secrets.token_hex(3)}"},
-        headers=manager,
+        headers=staff(["maintenance_officer"], JENDOUBA),
     )
     assert vehicle.status_code == 201, vehicle.text
     r = await leader.post("/shifts", write(resource_id=vehicle.json()["id"], crew_size=5, crew_names="مراد، نزار"))

@@ -3,6 +3,7 @@ import { useId, useMemo, useState, type SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
+import { ProfilesPanel } from "../components/ProfilesPanel";
 import { InlineDialog, ReasonField } from "../components/Phase9Bits";
 import { useServices } from "../context/services";
 import { errorMessageKey, isApiError } from "../lib/api";
@@ -22,6 +23,8 @@ const GROUPS = [
   "disasters",
   "alerts",
   "people",
+  // OS3: the fleet and its maintenance.
+  "fleet",
   "orgs",
   "knowledge",
   "system",
@@ -476,6 +479,7 @@ export function PermissionsPage() {
       {q.isError && <ErrorBox error={q.error} onRetry={() => void q.refetch()} />}
       {q.isSuccess && (
         <div className="perm-layout">
+          <ProfilesPanel features={q.data} />
           <RuleForm features={q.data} />
           <Rules features={q.data} />
           <Preview features={q.data} />

@@ -68,6 +68,8 @@ import {
   canReadResources,
   canManageMedicalCommittee,
   canReadPersonnel,
+  canReadCoverage,
+  canReadFleet,
   canReviewDoctors,
   canReviewWeatherSuggestions,
   canUseNotifications,
@@ -243,6 +245,9 @@ const ProgrammeDetailPage = page(
   () => import("./pages/ProgrammeDetailPage"),
   "ProgrammeDetailPage",
 );
+// OS3: the fleet and its maintenance, the live coverage.
+const FleetPage = lazy(() => import("./pages/FleetPage").then((m) => ({ default: m.FleetPage })));
+const CoveragePage = page(() => import("./pages/CoveragePage"), "CoveragePage");
 // Phase R1: resources register of every gouvernorat.
 const InventoryPage = page(
   () => import("./pages/InventoryPage"),
@@ -666,6 +671,12 @@ export function AppRoutes() {
           path="inventory"
           element={gated(canOpenInventory, <InventoryPage />)}
         />
+        <Route path="fleet" element={gated(canReadFleet, <FleetPage view="dashboard" />)} />
+        <Route path="fleet/vehicles" element={gated(canReadFleet, <FleetPage view="vehicles" />)} />
+        <Route path="fleet/maintenance" element={gated(canReadFleet, <FleetPage view="maintenance" />)} />
+        <Route path="fleet/archive" element={gated(canReadFleet, <FleetPage view="archive" />)} />
+        <Route path="fleet/log" element={gated(canReadFleet, <FleetPage view="log" />)} />
+        <Route path="coverage" element={gated(canReadCoverage, <CoveragePage />)} />
         <Route
           path="disasters"
           element={gated(canOpenDisasters, <DisastersPage />)}
