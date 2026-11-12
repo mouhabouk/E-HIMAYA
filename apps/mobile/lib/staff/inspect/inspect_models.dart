@@ -62,6 +62,10 @@ class InspectSite {
     this.sections = const [],
     this.inspectionId,
     this.inspectionStatus,
+    this.arrivedAt,
+    this.arrivedOffline = false,
+    this.leftAt,
+    this.leftOffline = false,
   });
 
   factory InspectSite.fromJson(Map<String, dynamic> j) => InspectSite(
@@ -75,6 +79,10 @@ class InspectSite {
     sections: [for (final s in (j['sections'] as List? ?? const [])) '$s'],
     inspectionId: j['inspection_id'] as String?,
     inspectionStatus: j['inspection_status'] as String?,
+    arrivedAt: _when(j['arrived_at']),
+    arrivedOffline: j['arrived_offline'] == true,
+    leftAt: _when(j['left_at']),
+    leftOffline: j['left_offline'] == true,
   );
 
   final String id;
@@ -94,6 +102,12 @@ class InspectSite {
   /// `in_progress`, `submitted` or null (not started).
   final String? inspectionStatus;
 
+  /// The inspector's «arrived» and «left» as the server holds them (Yamen 2026-11-12).
+  final DateTime? arrivedAt;
+  final bool arrivedOffline;
+  final DateTime? leftAt;
+  final bool leftOffline;
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'position': position,
@@ -105,6 +119,137 @@ class InspectSite {
     'sections': sections,
     'inspection_id': inspectionId,
     'inspection_status': inspectionStatus,
+    'arrived_at': arrivedAt?.toUtc().toIso8601String(),
+    'arrived_offline': arrivedOffline,
+    'left_at': leftAt?.toUtc().toIso8601String(),
+    'left_offline': leftOffline,
+  };
+}
+
+DateTime? _when(Object? v) => v is String ? DateTime.tryParse(v) : null;
+
+/// «Arrived» or «left» on one place, recorded on the phone at the moment of the tap, with or
+/// without network, and sent when the network is there (as the agents' app does).
+class PresenceMark {
+  const PresenceMark({
+    required this.siteId,
+    required this.kind,
+    required this.at,
+    this.lat,
+    this.lon,
+    this.offline = false,
+    this.sent = false,
+  });
+
+  factory PresenceMark.fromJson(Map<String, dynamic> j) => PresenceMark(
+    siteId: j['site_id'] as String,
+    kind: j['kind'] as String,
+    at: DateTime.parse(j['at'] as String),
+    lat: (j['lat'] as num?)?.toDouble(),
+    lon: (j['lon'] as num?)?.toDouble(),
+    offline: j['offline'] == true,
+    sent: j['sent'] == true,
+  );
+
+  final String siteId;
+
+  /// `arrived` or `left`.
+  final String kind;
+  final DateTime at;
+  final double? lat;
+  final double? lon;
+
+  /// Recorded while the phone had no network.
+  final bool offline;
+  final bool sent;
+
+  PresenceMark copyWith({bool? offline, bool? sent}) => PresenceMark(
+    siteId: siteId,
+    kind: kind,
+    at: at,
+    lat: lat,
+    lon: lon,
+    offline: offline ?? this.offline,
+    sent: sent ?? this.sent,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'site_id': siteId,
+    'kind': kind,
+    'at': at.toUtc().toIso8601String(),
+    'lat': lat,
+    'lon': lon,
+    'offline': offline,
+    'sent': sent,
+  };
+
+  Map<String, dynamic> body() => {
+    'kind': kind,
+    'at': at.toUtc().toIso8601String(),
+    'lat': ?lat,
+    'lon': ?lon,
+    'offline': offline,
+  };
+}
+
+/// One of the inspector's reports, for «my inspections» (Yamen 2026-11-12).
+class InspectHistoryRow {
+  const InspectHistoryRow({
+    required this.id,
+    required this.missionRef,
+    required this.onDate,
+    required this.place,
+    required this.status,
+    required this.startedAt,
+    this.kind = 'periodic',
+    this.submittedAt,
+    this.score,
+    this.verdict,
+    this.receipt,
+  });
+
+  factory InspectHistoryRow.fromJson(Map<String, dynamic> j) =>
+      InspectHistoryRow(
+        id: j['id'] as String,
+        missionRef: j['mission_ref'] as String? ?? '',
+        onDate: DateTime.parse(j['on_date'] as String),
+        place: j['place'] as String? ?? '',
+        status: j['status'] as String? ?? 'in_progress',
+        startedAt: DateTime.parse(j['started_at'] as String),
+        kind: j['kind'] as String? ?? 'periodic',
+        submittedAt: _when(j['submitted_at']),
+        score: (j['score'] as num?)?.toInt(),
+        verdict: j['verdict'] as String?,
+        receipt: j['receipt'] as String?,
+      );
+
+  final String id;
+  final String missionRef;
+  final DateTime onDate;
+  final String place;
+
+  /// `in_progress` or `submitted`.
+  final String status;
+  final DateTime startedAt;
+  final String kind;
+  final DateTime? submittedAt;
+  final int? score;
+  final String? verdict;
+  final String? receipt;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'mission_ref': missionRef,
+    'on_date':
+        '${onDate.year.toString().padLeft(4, '0')}-${onDate.month.toString().padLeft(2, '0')}-${onDate.day.toString().padLeft(2, '0')}',
+    'place': place,
+    'status': status,
+    'started_at': startedAt.toUtc().toIso8601String(),
+    'kind': kind,
+    'submitted_at': submittedAt?.toUtc().toIso8601String(),
+    'score': score,
+    'verdict': verdict,
+    'receipt': receipt,
   };
 }
 

@@ -12829,7 +12829,7 @@ abstract class AppLocalizations {
   /// No description provided for @inspNoMissions.
   ///
   /// In en, this message translates to:
-  /// **'No mission assigned to you.'**
+  /// **'Your inspections basket is empty: no inspection without a mission order. Your past inspections are in «My inspections».'**
   String get inspNoMissions;
 
   /// No description provided for @inspKindPeriodic.
@@ -12921,6 +12921,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sent'**
   String get inspStateSent;
+
+  /// No description provided for @inspArrive.
+  ///
+  /// In en, this message translates to:
+  /// **'I have arrived'**
+  String get inspArrive;
+
+  /// No description provided for @inspLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'I have left'**
+  String get inspLeave;
+
+  /// No description provided for @inspArrivedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived {time}'**
+  String inspArrivedAt(String time);
+
+  /// No description provided for @inspLeftAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Left {time}'**
+  String inspLeftAt(String time);
+
+  /// No description provided for @inspMarkedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'recorded offline'**
+  String get inspMarkedOffline;
+
+  /// No description provided for @inspMarksWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrivals and departures waiting: {count}'**
+  String inspMarksWaiting(int count);
+
+  /// No description provided for @inspHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'My inspections'**
+  String get inspHistory;
+
+  /// No description provided for @inspHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have made no inspection yet.'**
+  String get inspHistoryEmpty;
+
+  /// No description provided for @inspHistoryProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get inspHistoryProgress;
+
+  /// No description provided for @inspHistoryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{ref} · {day}'**
+  String inspHistoryLine(String ref, String day);
+
+  /// No description provided for @inspHistoryScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{verdict} · {score}% · receipt {receipt}'**
+  String inspHistoryScore(String verdict, int score, String receipt);
 
   /// No description provided for @inspOffline.
   ///

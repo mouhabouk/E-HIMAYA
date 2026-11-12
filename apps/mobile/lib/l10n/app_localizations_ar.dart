@@ -7184,7 +7184,8 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get inspNoMissions => 'لا مهمة مسندة إليك.';
+  String get inspNoMissions =>
+      'سلّة التفقّدات فارغة: لا تفقّد دون أمر مهمة. تفقّداتك السابقة في «تفقّداتي».';
 
   @override
   String get inspKindPeriodic => 'دوري';
@@ -7232,6 +7233,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get inspStateSent => 'أُرسل';
+
+  @override
+  String get inspArrive => 'وصلت';
+
+  @override
+  String get inspLeave => 'غادرت';
+
+  @override
+  String inspArrivedAt(String time) {
+    return 'الوصول $time';
+  }
+
+  @override
+  String inspLeftAt(String time) {
+    return 'المغادرة $time';
+  }
+
+  @override
+  String get inspMarkedOffline => 'سُجّل دون شبكة';
+
+  @override
+  String inspMarksWaiting(int count) {
+    return 'وصول ومغادرة تنتظر الإرسال: $count';
+  }
+
+  @override
+  String get inspHistory => 'تفقّداتي';
+
+  @override
+  String get inspHistoryEmpty => 'لم تُنجز أيّ تفقّد بعد.';
+
+  @override
+  String get inspHistoryProgress => 'قيد الإنجاز';
+
+  @override
+  String inspHistoryLine(String ref, String day) {
+    return '$ref · $day';
+  }
+
+  @override
+  String inspHistoryScore(String verdict, int score, String receipt) {
+    return '$verdict · $score٪ · وصل $receipt';
+  }
 
   @override
   String get inspOffline => 'بدون شبكة';

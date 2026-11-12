@@ -7334,7 +7334,8 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get inspNoMissions => 'Aucune mission ne vous est confiée.';
+  String get inspNoMissions =>
+      'Le panier des inspections est vide : pas d\'inspection sans ordre de mission. Vos inspections passées sont dans « Mes inspections ».';
 
   @override
   String get inspKindPeriodic => 'Périodique';
@@ -7382,6 +7383,49 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get inspStateSent => 'Envoyé';
+
+  @override
+  String get inspArrive => 'Je suis arrivé';
+
+  @override
+  String get inspLeave => 'Je suis parti';
+
+  @override
+  String inspArrivedAt(String time) {
+    return 'Arrivée $time';
+  }
+
+  @override
+  String inspLeftAt(String time) {
+    return 'Départ $time';
+  }
+
+  @override
+  String get inspMarkedOffline => 'enregistré hors réseau';
+
+  @override
+  String inspMarksWaiting(int count) {
+    return 'Arrivées et départs en attente : $count';
+  }
+
+  @override
+  String get inspHistory => 'Mes inspections';
+
+  @override
+  String get inspHistoryEmpty => 'Vous n\'avez encore fait aucune inspection.';
+
+  @override
+  String get inspHistoryProgress => 'En cours';
+
+  @override
+  String inspHistoryLine(String ref, String day) {
+    return '$ref · $day';
+  }
+
+  @override
+  String inspHistoryScore(String verdict, int score, String receipt) {
+    return '$verdict · $score % · reçu $receipt';
+  }
 
   @override
   String get inspOffline => 'Pas de réseau';

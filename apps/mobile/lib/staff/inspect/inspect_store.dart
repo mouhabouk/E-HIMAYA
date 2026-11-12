@@ -55,6 +55,8 @@ class InspectBox {
   final SealedBlobs _sealed;
 
   static const _missions = 'missions.bin';
+  static const _marks = 'presence.bin';
+  static const _history = 'history.bin';
   static String _draft(String id) => 'draft-$id.bin';
 
   Future<List<InspectMission>> missions() async {
@@ -68,6 +70,30 @@ class InspectBox {
 
   Future<void> saveMissions(List<InspectMission> missions) =>
       _sealed.writeJson(_missions, [for (final m in missions) m.toJson()]);
+
+  Future<List<PresenceMark>> marks() async {
+    if (!await _sealed.opened()) return const [];
+    final j = await _sealed.readJson(_marks);
+    return [
+      for (final m in (j as List? ?? const []))
+        PresenceMark.fromJson(m as Map<String, dynamic>),
+    ];
+  }
+
+  Future<void> saveMarks(List<PresenceMark> marks) =>
+      _sealed.writeJson(_marks, [for (final m in marks) m.toJson()]);
+
+  Future<List<InspectHistoryRow>> history() async {
+    if (!await _sealed.opened()) return const [];
+    final j = await _sealed.readJson(_history);
+    return [
+      for (final r in (j as List? ?? const []))
+        InspectHistoryRow.fromJson(r as Map<String, dynamic>),
+    ];
+  }
+
+  Future<void> saveHistory(List<InspectHistoryRow> rows) =>
+      _sealed.writeJson(_history, [for (final r in rows) r.toJson()]);
 
   Future<Map<String, InspectDraft>> drafts() async {
     if (!await _sealed.opened()) return {};

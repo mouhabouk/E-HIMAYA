@@ -10,7 +10,7 @@ import {
   hasDashboardAccess,
   landingPath,
 } from "../lib/roles";
-import { MISSION, RECORD_DETAIL } from "../test/inspectionsFixtures";
+import { INSPECTION_POLICY, MISSION, RECORD_DETAIL } from "../test/inspectionsFixtures";
 import { fakeApi, fakeAuth, OPERATOR_CLAIMS, renderApp } from "../test/render";
 import { deleteReady, InspectionAdminPage } from "./InspectionAdminPage";
 import { InspectionResultsPage } from "./InspectionResultsPage";
@@ -50,6 +50,8 @@ describe("Inspections", () => {
     const api = fakeApi({ createInspectionMission });
     renderApp(<InspectionsPage tab="missions" />, { api, auth: fakeAuth(GENERAL), lang: "fr" });
     expect(await screen.findByText("OM-2026-0001")).toBeInTheDocument();
+    // The inspector's arrival on the place, recorded on the phone without network.
+    expect(screen.getByText(/Arrivée .*\(enregistré hors réseau\)/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Planifier une mission/ }));
     const form = await screen.findByRole("form", { name: "Nouvelle mission d'inspection" });
     await waitFor(() => expect(within(form).getByRole("option", { name: "سامي المتفقد [SIM]" })).toBeInTheDocument());
@@ -67,6 +69,20 @@ describe("Inspections", () => {
           { target: "unit", gouvernorat_code: 61, unit_kind: "guard_post", unit_name: "نقطة حراسة الشاطئ", sections: [] },
         ],
       }),
+    );
+  });
+
+  it("sets how many days before a mission its inspector is told, then reminded", async () => {
+    const saveInspectionPolicy = vi.fn(() => Promise.resolve(INSPECTION_POLICY));
+    const api = fakeApi({ saveInspectionPolicy });
+    renderApp(<InspectionsPage tab="settings" />, { api, auth: fakeAuth(GENERAL), lang: "fr" });
+    const notice = await screen.findByLabelText("Premier avis (jours avant la date)");
+    expect(notice).toHaveValue(15);
+    fireEvent.change(notice, { target: { value: "10" } });
+    fireEvent.change(screen.getByLabelText("Rappel (jours avant la date, 0 : aucun)"), { target: { value: "1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer la politique" }));
+    await waitFor(() =>
+      expect(saveInspectionPolicy).toHaveBeenCalledWith(expect.objectContaining({ notice_days: 10, reminder_days: 1 })),
     );
   });
 

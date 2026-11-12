@@ -441,6 +441,7 @@ _last_digest: date | None = None
 async def housekeeping(sessionmaker: async_sessionmaker[AsyncSession]) -> None:
     global _last_digest
     from app.modules.doctors import service as doctors
+    from app.modules.inspections import service as inspections
     from app.modules.ops import interventions
     from app.modules.safety import service as safety
     from app.modules.volunteers import service as volunteers
@@ -456,6 +457,8 @@ async def housekeeping(sessionmaker: async_sessionmaker[AsyncSession]) -> None:
         await doctors.expire_committee(session)
         # Safety checks past their time (phase B2): checked every minute, so a check fires at most a minute late.
         await safety.fire_due_checks(session)
+        # Phase I3: the notice, then the reminder, of each mission order to its inspector (each sent once).
+        await inspections.mission_alerts(session)
         today = _now().date()
         if _last_digest != today:
             # Several API instances may run this; the digest row lock and fingerprint keep it to one e-mail.

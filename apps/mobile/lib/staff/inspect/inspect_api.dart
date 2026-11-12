@@ -187,6 +187,19 @@ class InspectApi {
           ))!
           as Map<String, dynamic>;
 
+  /// «Arrived» or «left» on a place, at the phone's time.
+  Future<void> presence(PresenceMark m) =>
+      _authed('POST', '/sites/${m.siteId}/presence', body: m.body());
+
+  /// The inspector's own reports, newest first.
+  Future<List<InspectHistoryRow>> history() async {
+    final j = await _authed('GET', '/inspections');
+    return [
+      for (final r in (j as List? ?? const []))
+        InspectHistoryRow.fromJson(r as Map<String, dynamic>),
+    ];
+  }
+
   Future<void> progress(InspectDraft d) =>
       _authed('PUT', '/inspections/${d.serverId}', body: d.progressJson());
 

@@ -3761,7 +3761,7 @@
       }
     }
   },
-  "inspNoMissions": "No mission assigned to you.",
+  "inspNoMissions": "Your inspections basket is empty: no inspection without a mission order. Your past inspections are in «My inspections».",
   "inspKindPeriodic": "Periodic",
   "inspKindSurprise": "Surprise",
   "inspRoomCentral": "Central operations room",
@@ -3787,6 +3787,61 @@
   },
   "inspStateQueued": "Waiting to send",
   "inspStateSent": "Sent",
+  "inspArrive": "I have arrived",
+  "inspLeave": "I have left",
+  "inspArrivedAt": "Arrived {time}",
+  "@inspArrivedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "inspLeftAt": "Left {time}",
+  "@inspLeftAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "inspMarkedOffline": "recorded offline",
+  "inspMarksWaiting": "Arrivals and departures waiting: {count}",
+  "@inspMarksWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inspHistory": "My inspections",
+  "inspHistoryEmpty": "You have made no inspection yet.",
+  "inspHistoryProgress": "In progress",
+  "inspHistoryLine": "{ref} · {day}",
+  "@inspHistoryLine": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "inspHistoryScore": "{verdict} · {score}% · receipt {receipt}",
+  "@inspHistoryScore": {
+    "placeholders": {
+      "verdict": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      },
+      "receipt": {
+        "type": "String"
+      }
+    }
+  },
   "inspOffline": "No network",
   "inspWaiting": "Reports waiting: {count}",
   "@inspWaiting": {

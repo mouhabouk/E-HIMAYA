@@ -16,6 +16,7 @@ class FakeInspectServer {
   final progresses = <Map<String, dynamic>>[];
   final applied = <String>{};
   final starts = <Map<String, dynamic>>[];
+  final presences = <(String, Map<String, dynamic>)>[];
   String onDate = '2026-01-05';
 
   static const profile = {
@@ -50,6 +51,20 @@ class FakeInspectServer {
         'inspection_id': null,
         'inspection_status': null,
       },
+      {
+        'id': 's-2',
+        'position': 2,
+        'target': 'room',
+        'unit_kind': null,
+        'unit_name': null,
+        'unit_id': null,
+        'room': 'regional',
+        'name': 'Salle régionale de Sfax',
+        'gouvernorat_code': 61,
+        'sections': <String>[],
+        'inspection_id': null,
+        'inspection_status': null,
+      },
     ],
     'profile': profile,
   };
@@ -61,7 +76,32 @@ class FakeInspectServer {
     if (gone && path != '/register' && path != '/activate') {
       return const FakeResponse(410, json: {'detail': 'account_inactive'});
     }
+    final presence = RegExp(r'^/sites/([^/]+)/presence$').firstMatch(path);
+    if (r.method == 'POST' && presence != null) {
+      presences.add((presence.group(1)!, body!));
+      return const FakeResponse(200, json: {});
+    }
     switch ((r.method, path)) {
+      case ('GET', '/inspections'):
+        return const FakeResponse(
+          200,
+          json: [
+            {
+              'id': 'x-9',
+              'site_id': 's-9',
+              'mission_ref': 'OM-2026-0003',
+              'on_date': '2026-01-02',
+              'kind': 'periodic',
+              'place': 'Centre de Sakiet',
+              'status': 'submitted',
+              'started_at': '2026-01-02T08:00:00Z',
+              'submitted_at': '2026-01-02T10:00:00Z',
+              'score': 91,
+              'verdict': 'Ready',
+              'receipt': 'T-20260102-04',
+            },
+          ],
+        );
       case ('POST', '/register'):
         registrations.add(body!);
         return const FakeResponse(
@@ -315,6 +355,55 @@ void main() {
       ]);
     },
   );
+
+  testWidgets(
+    'records the arrival and the departure of each place, with or without network',
+    (tester) async {
+      final store = await activatedStore();
+      final insp = await pumpInspector(tester, store: store);
+
+      // No network at the first place: the arrival is kept on the phone and marked so.
+      insp.down = true;
+      await tapKey(tester, 'insp-arrive-s-1');
+      expect(find.byKey(const Key('insp-arrived-s-1')), findsOneWidget);
+      expect(find.textContaining('recorded offline'), findsOneWidget);
+      expect(
+        find.textContaining('Arrivals and departures waiting: 1'),
+        findsOneWidget,
+      );
+      expect(insp.presences, isEmpty);
+
+      // The network is back: the arrival goes, with the phone's time and the offline mark.
+      insp.down = false;
+      await tapKey(tester, 'insp-leave-s-1');
+      expect(find.byKey(const Key('insp-left-s-1')), findsOneWidget);
+      expect(insp.presences.map((p) => (p.$1, p.$2['kind'])), [
+        ('s-1', 'arrived'),
+        ('s-1', 'left'),
+      ]);
+      expect(insp.presences.first.$2['offline'], isTrue);
+      expect(insp.presences.last.$2['offline'], isFalse);
+      expect(find.byKey(const Key('insp-leave-s-1')), findsNothing);
+
+      // The second place of the same mission has its own arrival.
+      await tapKey(tester, 'insp-arrive-s-2');
+      expect(insp.presences.last.$1, 's-2');
+      expect(find.byKey(const Key('insp-leave-s-2')), findsOneWidget);
+    },
+  );
+
+  testWidgets('shows the inspector the inspections already made', (
+    tester,
+  ) async {
+    final store = await activatedStore();
+    await pumpInspector(tester, store: store);
+    await tester.tap(find.byKey(const Key('insp-history')));
+    await tester.pumpAndSettle();
+    expect(find.text('My inspections'), findsOneWidget);
+    expect(find.text('Centre de Sakiet'), findsOneWidget);
+    expect(find.text('OM-2026-0003 · 02/01/2026'), findsOneWidget);
+    expect(find.text('Ready · 91% · receipt T-20260102-04'), findsOneWidget);
+  });
 
   testWidgets('does not open a mission before its day', (tester) async {
     final store = await activatedStore();

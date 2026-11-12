@@ -66,6 +66,11 @@ Tone _answerTone(String a) => switch (a) {
 String _day(DateTime d) =>
     '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
+String _clock(DateTime t) {
+  final l = t.toLocal();
+  return '${l.hour.toString().padLeft(2, '0')}:${l.minute.toString().padLeft(2, '0')}';
+}
+
 class _ErrorCard extends ConsumerWidget {
   const _ErrorCard();
 
@@ -91,7 +96,9 @@ class _OfflineStrip extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(inspectControllerProvider);
-    if (!s.offline && s.waiting == 0) return const SizedBox.shrink();
+    if (!s.offline && s.waiting == 0 && s.marksWaiting == 0) {
+      return const SizedBox.shrink();
+    }
     final l10n = AppLocalizations.of(context);
     final c = Tone.amber.colors(context);
     return Material(
@@ -106,6 +113,7 @@ class _OfflineStrip extends ConsumerWidget {
           [
             if (s.offline) l10n.inspOffline,
             if (s.waiting > 0) l10n.inspWaiting(s.waiting),
+            if (s.marksWaiting > 0) l10n.inspMarksWaiting(s.marksWaiting),
           ].join(' · '),
           style: TextStyle(color: c.onTint),
         ),
@@ -382,6 +390,18 @@ class InspectMissionsScreen extends ConsumerWidget {
         title: l10n.inspMissionsTitle,
         subtitle: s.name,
         actions: [
+          IconButton(
+            key: const Key('insp-history'),
+            tooltip: l10n.inspHistory,
+            icon: const Icon(Icons.history),
+            onPressed: () => unawaited(
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const InspectHistoryScreen(),
+                ),
+              ),
+            ),
+          ),
           PopupMenuButton<String>(
             key: const Key('insp-menu'),
             onSelected: (_) => unawaited(c.signOut()),
@@ -508,7 +528,7 @@ class _SiteTile extends ConsumerWidget {
       ),
       null => (l10n.inspStateNew, Tone.slate),
     };
-    return ListTile(
+    final tile = ListTile(
       key: Key('insp-site-${site.id}'),
       contentPadding: EdgeInsets.zero,
       leading: Icon(
@@ -530,6 +550,167 @@ class _SiteTile extends ConsumerWidget {
                 ),
               );
             },
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        tile,
+        _Presence(mission: mission, site: site),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
+
+/// «Arrived» then «left» on one place (Yamen 2026-11-12): each tap is recorded on the phone at
+/// once, with or without network, and the times are shown with a note when there was no network.
+class _Presence extends ConsumerWidget {
+  const _Presence({required this.mission, required this.site});
+
+  final InspectMission mission;
+  final InspectSite site;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final s = ref.watch(inspectControllerProvider);
+    final c = ref.read(inspectControllerProvider.notifier);
+    final n = Neutrals.of(context);
+    final arrived = s.arrivedAt(site);
+    final left = s.leftAt(site);
+    String stamp(String text, bool offline) =>
+        offline ? '$text (${l10n.inspMarkedOffline})' : text;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        if (arrived == null)
+          FilledButton.tonalIcon(
+            key: Key('insp-arrive-${site.id}'),
+            onPressed: () => unawaited(c.arrive(mission, site)),
+            icon: const Icon(Icons.place),
+            label: Text(l10n.inspArrive),
+          )
+        else
+          Text(
+            stamp(l10n.inspArrivedAt(_clock(arrived)), s.arrivedOffline(site)),
+            key: Key('insp-arrived-${site.id}'),
+            style: TextStyle(color: n.muted),
+          ),
+        if (arrived != null && left == null)
+          OutlinedButton.icon(
+            key: Key('insp-leave-${site.id}'),
+            onPressed: () => unawaited(c.leave(site)),
+            icon: const Icon(Icons.logout),
+            label: Text(l10n.inspLeave),
+          ),
+        if (left != null)
+          Text(
+            stamp(l10n.inspLeftAt(_clock(left)), s.leftOffline(site)),
+            key: Key('insp-left-${site.id}'),
+            style: TextStyle(color: n.muted),
+          ),
+      ],
+    );
+  }
+}
+
+/// «My inspections»: what the inspector did, sent or in progress, from the server (Yamen
+/// 2026-11-12). The basket of missions holds only what is assigned; this list only follows.
+class InspectHistoryScreen extends ConsumerStatefulWidget {
+  const InspectHistoryScreen({super.key});
+
+  @override
+  ConsumerState<InspectHistoryScreen> createState() =>
+      _InspectHistoryScreenState();
+}
+
+class _InspectHistoryScreenState extends ConsumerState<InspectHistoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(
+      Future.microtask(
+        () => ref.read(inspectControllerProvider.notifier).loadHistory(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final s = ref.watch(inspectControllerProvider);
+    final c = ref.read(inspectControllerProvider.notifier);
+    final n = Neutrals.of(context);
+    return Scaffold(
+      appBar: StaffAppBar(title: l10n.inspHistory, subtitle: s.name),
+      body: Column(
+        children: [
+          const _OfflineStrip(),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: c.loadHistory,
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  if (s.history.isEmpty)
+                    AppCard(
+                      key: const Key('insp-history-empty'),
+                      child: Text(l10n.inspHistoryEmpty),
+                    ),
+                  for (final r in s.history)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: AppCard(
+                        key: Key('insp-history-${r.id}'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    r.place,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium,
+                                  ),
+                                ),
+                                if (r.status == 'submitted')
+                                  Pill(l10n.inspStateSent, tone: Tone.green)
+                                else
+                                  Pill(
+                                    l10n.inspHistoryProgress,
+                                    tone: Tone.sky,
+                                  ),
+                              ],
+                            ),
+                            Text(
+                              l10n.inspHistoryLine(
+                                r.missionRef,
+                                _day(r.onDate),
+                              ),
+                              style: TextStyle(color: n.muted),
+                            ),
+                            if (r.score != null && r.receipt != null)
+                              Text(
+                                l10n.inspHistoryScore(
+                                  r.verdict ?? '',
+                                  r.score!,
+                                  r.receipt!,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

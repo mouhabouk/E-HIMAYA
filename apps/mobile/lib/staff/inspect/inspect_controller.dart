@@ -19,6 +19,8 @@ class InspectState {
     this.expiresOn,
     this.missions = const [],
     this.drafts = const {},
+    this.marks = const [],
+    this.history = const [],
     this.busy = false,
     this.offline = false,
     this.error,
@@ -35,6 +37,12 @@ class InspectState {
 
   /// The reports on the phone, by inspection id.
   final Map<String, InspectDraft> drafts;
+
+  /// «Arrived» and «left» taps, kept until the server has them (Yamen 2026-11-12).
+  final List<PresenceMark> marks;
+
+  /// «My inspections»: the reports the inspector made, from the server (a copy on the phone).
+  final List<InspectHistoryRow> history;
   final bool busy;
 
   /// The last call found no network: what is shown is the copy on the phone.
@@ -53,6 +61,29 @@ class InspectState {
   int get waiting =>
       drafts.values.where((d) => d.state == DraftState.queued).length;
 
+  PresenceMark? markOf(String siteId, String kind) {
+    for (final m in marks) {
+      if (m.siteId == siteId && m.kind == kind) return m;
+    }
+    return null;
+  }
+
+  /// When the inspector arrived at a place: the server's record, or the tap on the phone.
+  DateTime? arrivedAt(InspectSite s) =>
+      s.arrivedAt ?? markOf(s.id, 'arrived')?.at;
+
+  DateTime? leftAt(InspectSite s) => s.leftAt ?? markOf(s.id, 'left')?.at;
+
+  bool arrivedOffline(InspectSite s) => s.arrivedAt != null
+      ? s.arrivedOffline
+      : markOf(s.id, 'arrived')?.offline ?? false;
+
+  bool leftOffline(InspectSite s) =>
+      s.leftAt != null ? s.leftOffline : markOf(s.id, 'left')?.offline ?? false;
+
+  /// Taps not yet received by the server.
+  int get marksWaiting => marks.where((m) => !m.sent).length;
+
   InspectDraft? draftOfSite(String siteId) {
     for (final d in drafts.values) {
       if (d.siteId == siteId) return d;
@@ -67,6 +98,8 @@ class InspectState {
     DateTime? Function()? expiresOn,
     List<InspectMission>? missions,
     Map<String, InspectDraft>? drafts,
+    List<PresenceMark>? marks,
+    List<InspectHistoryRow>? history,
     bool? busy,
     bool? offline,
     String? Function()? error,
@@ -80,6 +113,8 @@ class InspectState {
     expiresOn: expiresOn == null ? this.expiresOn : expiresOn(),
     missions: missions ?? this.missions,
     drafts: drafts ?? this.drafts,
+    marks: marks ?? this.marks,
+    history: history ?? this.history,
     busy: busy ?? this.busy,
     offline: offline ?? this.offline,
     error: error == null ? this.error : error(),
@@ -134,6 +169,8 @@ class InspectController extends Notifier<InspectState> {
       matricule: () => matricule,
       missions: await _box.missions(),
       drafts: await _box.drafts(),
+      marks: await _box.marks(),
+      history: await _box.history(),
     );
     await refresh();
   }
@@ -168,8 +205,112 @@ class InspectController extends Notifier<InspectState> {
     if (missions != null) {
       await _box.saveMissions(missions);
       state = state.copyWith(missions: missions);
+      // A tap the server holds and whose place is no longer listed is not needed any more.
+      final listed = {
+        for (final m in missions)
+          for (final s in m.sites) s.id,
+      };
+      final kept = [
+        for (final m in state.marks)
+          if (!m.sent || listed.contains(m.siteId)) m,
+      ];
+      if (kept.length != state.marks.length) await _saveMarks(kept);
     }
+    if (state.phase == InspectPhase.active) await flushMarks();
     if (state.phase == InspectPhase.active) await flush();
+  }
+
+  /// «My inspections» from the server; the copy on the phone without network.
+  Future<void> loadHistory() async {
+    final rows = await _guard(_api.history);
+    if (rows != null) {
+      await _box.saveHistory(rows);
+      state = state.copyWith(history: rows);
+    }
+  }
+
+  bool _notToday(InspectMission mission) {
+    final now = _now();
+    return mission.onDate.isAfter(DateTime(now.year, now.month, now.day));
+  }
+
+  Future<({double? lat, double? lon})> _here() async {
+    try {
+      final here = await ref.read(locationServiceProvider).lastKnown();
+      return (lat: here?.lat, lon: here?.lon);
+    } on Object {
+      // The position is optional.
+      return (lat: null, lon: null);
+    }
+  }
+
+  Future<void> _saveMarks(List<PresenceMark> marks) async {
+    await _box.saveMarks(marks);
+    state = state.copyWith(marks: marks);
+  }
+
+  Future<void> _replaceMark(PresenceMark old, PresenceMark? now) => _saveMarks([
+    for (final m in state.marks)
+      if (!identical(m, old)) m else ?now,
+  ]);
+
+  Future<void> _mark(String siteId, String kind) async {
+    final here = await _here();
+    final m = PresenceMark(
+      siteId: siteId,
+      kind: kind,
+      at: _now().toUtc(),
+      lat: here.lat,
+      lon: here.lon,
+    );
+    await _saveMarks([...state.marks, m]);
+  }
+
+  /// «Arrived» at a place of the mission: recorded now on the phone, network or not, and sent
+  /// as soon as it can be. A mission with several places has an arrival for each.
+  Future<void> arrive(InspectMission mission, InspectSite site) async {
+    if (state.arrivedAt(site) != null) return;
+    if (_notToday(mission)) {
+      state = state.copyWith(error: () => 'mission_not_today');
+      return;
+    }
+    await _mark(site.id, 'arrived');
+    await flushMarks();
+  }
+
+  /// «Left» the place, after arriving there.
+  Future<void> leave(InspectSite site) async {
+    if (state.arrivedAt(site) == null || state.leftAt(site) != null) return;
+    await _mark(site.id, 'left');
+    await flushMarks();
+  }
+
+  /// Sends the taps that wait, in their order (an arrival before its departure). A tap that
+  /// meets no network is marked as recorded without network.
+  Future<void> flushMarks() async {
+    for (final m in [...state.marks]) {
+      if (m.sent) continue;
+      try {
+        await _api.presence(m);
+        await _replaceMark(m, m.copyWith(sent: true));
+        state = state.copyWith(offline: false);
+      } on InspectOffline {
+        if (!m.offline) await _replaceMark(m, m.copyWith(offline: true));
+        state = state.copyWith(offline: true);
+        return;
+      } on InspectGone {
+        await _wipe();
+        return;
+      } on InspectSignedOut {
+        await _vault.dropTokens();
+        state = state.copyWith(phase: InspectPhase.signedOut);
+        return;
+      } on InspectError catch (e) {
+        // Refused by the server (a cancelled mission…): the tap is dropped, with the reason.
+        await _replaceMark(m, null);
+        state = state.copyWith(error: () => e.code);
+      }
+    }
   }
 
   Future<bool> register({
@@ -234,21 +375,17 @@ class InspectController extends Notifier<InspectState> {
   Future<InspectDraft?> open(InspectMission mission, InspectSite site) async {
     final kept = state.draftOfSite(site.id);
     if (kept != null) return kept;
-    final now = _now();
-    if (mission.onDate.isAfter(DateTime(now.year, now.month, now.day))) {
+    if (_notToday(mission)) {
       state = state.copyWith(error: () => 'mission_not_today');
       return null;
     }
     state = state.copyWith(busy: true, error: () => null);
-    double? lat;
-    double? lon;
-    try {
-      final here = await ref.read(locationServiceProvider).lastKnown();
-      lat = here?.lat;
-      lon = here?.lon;
-    } on Object {
-      // The place's position is optional.
+    // Opening a report on a place means being there: the arrival is recorded if it was not.
+    if (state.arrivedAt(site) == null) {
+      await _mark(site.id, 'arrived');
+      unawaited(flushMarks());
     }
+    final (:lat, :lon) = await _here();
     final profile = mission.profile;
     if (profile != null && site.inspectionStatus == null) {
       final d = InspectDraft(

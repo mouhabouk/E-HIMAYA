@@ -114,6 +114,8 @@ class Mission(Base):
     created_by: Mapped[str] = mapped_column(Text)
     created_by_name: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    notice_sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reminder_sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class MissionSite(Base):
@@ -132,6 +134,16 @@ class MissionSite(Base):
     room: Mapped[str | None] = mapped_column(Text)
     gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
     sections: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
+    # The inspector's «arrived» and «left» on this place (Yamen 2026-11-12): the phone's time, whether it was
+    # recorded without network, when it reached the server, and where the phone was.
+    arrived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    arrived_offline: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    arrived_received_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    arrived_location: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
+    left_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    left_offline: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    left_received_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    left_location: Mapped[object | None] = mapped_column(Geography("POINT", srid=4326))
 
 
 class Inspection(Base):
