@@ -23,3 +23,11 @@ Checklist at the end of a phase:
    and deferred items moved in or out of `docs/backlog.md`.
 8. The system map of the «تطوير النظام» menu regenerated: `python3 -I scripts/repo_map.py . services/api/app/modules/devtools/repo_map.json`
    (`docs/dev/repo-map.md`).
+9. The living references rebuilt in one run (Yamen, 2026-11-13): `scripts/refresh-all.sh <out>` on a migrated
+   local database. It writes the request tracker, the mind maps of each phase, the UI reference workbook
+   (`ehimaya-ui-reference.xlsx`), the relational model (DBML, draw.io, PNG, Word and PDF, also written back to
+   `docs/data-model/`), the spider web of surfaces, screens, server modules and tables, and the flowchart atlas
+   (screenshots, regions, who opens each screen, narration). Republish each one to its artifact and copy them to
+   `tracking/`, `guides/`, `database/model/` and `atlas/` in the project files. New `docs/versions.md` items join
+   the tracker and the mind maps on their own; a request that changes status is edited in
+   `scripts/tracking/requests.py`, and the texts of the atlas are in `scripts/atlas/content.py`.
