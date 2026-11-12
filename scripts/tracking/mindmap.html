@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>خرائط ء-حماية الذهنية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#F2F5FB; --ink:#0E1426; --mute:#55607A; --line:#D5DCEB; --card:#FFFFFF; --brand:#1F3FA0; --gold:#C9A24A;
+  --grid:rgba(31,63,160,.07); --leaf:#2A3350; --glow:rgba(201,162,74,.35); --bar:#1F3FA0; --bar-ink:#FFFFFF;
+  --ok:#166B2E; --run:#1F3FA0; --wait:#7A4B00; --ext:#5B3FA0; --def:#55607A; --sup:#8A6D1F; --rej:#A0182A;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#0E1426; --ink:#EEF2FF; --mute:#9AA6C8; --line:#26304F; --card:#151D36; --brand:#8FA8FF;
+  --grid:rgba(143,168,255,.06); --leaf:#D7DEF5; --glow:rgba(201,162,74,.45); --bar:#0B1A3F;
+  --ok:#4CC772; --run:#8FA8FF; --wait:#FFC933; --ext:#C3A8FF; --def:#9AA6C8; --sup:#E2C26A; --rej:#FF8A95;
+}}
+:root[data-theme="dark"]{
+  --page:#0E1426; --ink:#EEF2FF; --mute:#9AA6C8; --line:#26304F; --card:#151D36; --brand:#8FA8FF;
+  --grid:rgba(143,168,255,.06); --leaf:#D7DEF5; --glow:rgba(201,162,74,.45); --bar:#0B1A3F;
+  --ok:#4CC772; --run:#8FA8FF; --wait:#FFC933; --ext:#C3A8FF; --def:#9AA6C8; --sup:#E2C26A; --rej:#FF8A95;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--page);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;overflow:hidden}
+header{position:fixed;inset:0 0 auto 0;z-index:5;background:var(--bar);color:var(--bar-ink);display:flex;flex-wrap:wrap;gap:8px;
+  align-items:center;padding:10px 16px;border-bottom:2px solid var(--gold)}
+header h1{font-size:17px;margin:0 0 0 8px;font-weight:700;white-space:nowrap}
+header h1 small{display:block;font-size:11px;font-weight:400;opacity:.8}
+select,button{font:inherit;font-size:14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);
+  color:#fff;padding:7px 14px;cursor:pointer}
+select{min-width:240px;max-width:100%}
+select option,select optgroup{color:#0E1426;background:#fff}
+button:hover,select:hover{background:rgba(255,255,255,.22)}
+button:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sp{flex:1}
+#legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;opacity:.95}
+#legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:4px;vertical-align:-1px}
+#stage{position:fixed;inset:64px 0 0 0;
+  background-image:radial-gradient(var(--grid) 1.2px,transparent 1.3px);background-size:22px 22px;cursor:grab;touch-action:none}
+#stage.drag{cursor:grabbing}
+svg{width:100%;height:100%;display:block}
+.branch{fill:none;stroke-linecap:round}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw .9s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fade{opacity:0;animation:fade .5s ease forwards}
+@keyframes fade{to{opacity:1}}
+.node{cursor:pointer}
+.node rect{transition:transform .15s}
+.node:hover rect.pill{filter:brightness(1.08)}
+.node:focus{outline:none}
+.node:focus-visible rect.pill{stroke:var(--gold);stroke-width:3}
+.leaf text{fill:var(--leaf);font-size:13px}
+.root-t{fill:#fff;font-weight:700}
+#card{position:fixed;z-index:6;inset-inline-start:16px;bottom:16px;width:min(380px,calc(100% - 32px));background:var(--card);color:var(--ink);
+  border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);padding:16px 18px;display:none}
+#card.on{display:block}
+#card h2{margin:0 0 6px;font-size:16px}
+#card .meta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+#card .pill{font-size:12px;border-radius:999px;padding:3px 10px;border:1px solid var(--line)}
+#card p{margin:6px 0;font-size:14px;line-height:1.7;color:var(--mute)}
+#card .row{display:flex;gap:8px;margin-top:10px}
+#card .row button{background:var(--brand);border-color:transparent;font-size:13px}
+#card .x{position:absolute;inset-inline-end:10px;top:8px;background:none;border:0;color:var(--mute);font-size:20px;padding:2px 8px}
+#hint{position:fixed;bottom:12px;pointer-events:none;inset-inline-end:16px;font-size:12px;color:var(--mute);z-index:4}
+@media (max-width:720px){header h1 small,#legend{display:none} select{min-width:0;flex:1}}
+</style>
+</head>
+<body>
+<header>
+  <h1>الخرائط الذهنية لمراحل ء-حماية<small id="sub"></small></h1>
+  <label class="sr" for="pick" style="position:absolute;width:1px;height:1px;overflow:hidden">المرحلة</label>
+  <select id="pick" aria-label="اختر المرحلة"></select>
+  <button id="prev" type="button" aria-label="المرحلة السابقة">›</button>
+  <button id="next" type="button" aria-label="المرحلة التالية">‹</button>
+  <button id="fit" type="button">ملاءمة</button>
+  <button id="all" type="button">طيّ الفروع</button>
+  <button id="say" type="button">🔊 استمع</button>
+  <span class="sp"></span>
+  <div id="legend"></div>
+</header>
+<div id="stage"><svg id="svg" role="img" aria-label="خريطة ذهنية"><g id="vp"></g></svg></div>
+<div id="card" role="dialog" aria-live="polite"><button class="x" type="button" aria-label="إغلاق">×</button><div id="cbody"></div></div>
+<div id="hint">اضغط على فرع لتكبيره وطيّه، واستعمل + و− للتكبير، واليد للتحريك أو التدوير</div>
+<script>
+const D = __DATA__;
+const ST = {done:['منجز ومعتمد','--ok'],approved:['معتمد، لم يُنفَّذ بعد','--run'],review:['ينتظر الموافقة','--wait'],
+  external:['ينتظر جهة أو معلومة','--ext'],deferred:['مؤجَّل للدراسة','--def'],superseded:['تم تجاوزه','--sup'],rejected:['مرفوض','--rej']};
+const SZ = {S:'صغير',M:'متوسط',L:'كبير',XL:'كبير جدا'}, IMP = {4:'حرجة',3:'عالية',2:'متوسطة',1:'منخفضة'};
+const PAL = ['#E8590C','#1F9D55','#7B3FD1','#0E8FA8','#D6336C','#C9A24A','#2F6FE0','#B5651D','#12A38A','#9C36B5','#E03131','#5C7CFA'];
+const $ = id => document.getElementById(id), NS = 'http://www.w3.org/2000/svg';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const keys = Object.keys(D.groups);
+const byG = g => D.rows.filter(r => r.g === g).sort((a, b) => b.imp - a.imp || ('SMLX'.indexOf(b.size[0]) - 'SMLX'.indexOf(a.size[0])));
+const clauses = s => String(s || '').split(/[،؛;]| ثم /).map(x => x.trim()).filter(Boolean).map(x => x.length > 54 ? x.slice(0, 52) + '…' : x).slice(0, 6);
+
+// ---- picker and legend
+$('pick').innerHTML = '<option value="all">نظرة شاملة: كل المراحل</option>' + keys.map((k, i) =>
+  `<option value="${k}">${i + 1}. ${esc(D.groups[k])} (${byG(k).length})</option>`).join('');
+$('legend').innerHTML = Object.entries(ST).map(([k, v]) => `<span><i style="background:var(${v[1]})"></i>${v[0]}</span>`).join('');
+$('sub').textContent = `${D.rows.length} عنصرا في ${keys.length} مراحل · حُيّنت ${D.built}`;
+
+// ---- measuring
+const mctx = document.createElement('canvas').getContext('2d');
+const tw = (t, size, w = 400) => { mctx.font = `${w} ${size}px "IBM Plex Sans Arabic", system-ui, sans-serif`; return mctx.measureText(t).width; };
+
+let model, collapsed = new Set();
+
+function build(g) {
+  if (g === 'all') {
+    return {title: 'ء-حماية', sub: `${D.rows.length} عنصرا`, kids: keys.map((k, i) => {
+      const rs = byG(k), done = rs.filter(r => r.status === 'done').length;
+      return {id: k, label: `${D.groups[k]}`, badge: `${done}/${rs.length}`, color: PAL[i % PAL.length], go: k,
+        leaves: rs.slice(0, 6).map(r => ({t: r.title, st: r.status})), info: {phase: true, k, rs}};
+    })};
+  }
+  return {title: D.groups[g], sub: `${byG(g).length} عنصرا`, kids: byG(g).map((r, i) => ({
+    id: r.code + i, label: (r.code ? r.code + ' · ' : '') + r.title, color: PAL[i % PAL.length], st: r.status, row: r,
+    badge: r.size, leaves: clauses(r.desc).map(t => ({t}))}))};
+}
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+function render(animate = true) {
+  const vp = $('vp'); vp.innerHTML = '';
+  const m = model, LH = 26, GAP = 18, KH = 34;
+  const rootR = Math.max(70, Math.min(110, tw(m.title, 18, 700) / 2 + 26));
+  const sides = [[], []];
+  m.kids.forEach((k, i) => sides[i < Math.ceil(m.kids.length / 2) ? 0 : 1].push(k));
+  const defs = el('defs', {}, vp);
+  const rg = el('radialGradient', {id: 'rg'}, defs);
+  el('stop', {offset: '0%', 'stop-color': '#2F55C8'}, rg); el('stop', {offset: '100%', 'stop-color': '#152D78'}, rg);
+  const glow = el('filter', {id: 'gl', x: '-50%', y: '-50%', width: '200%', height: '200%'}, defs);
+  el('feGaussianBlur', {stdDeviation: 10}, glow);
+  const gL = el('g', {}, vp), gN = el('g', {}, vp);
+  let delay = 0;
+  sides.forEach((list, si) => {
+    const s = si === 0 ? 1 : -1;   // right side first (reading order)
+    const blocks = list.map(k => Math.max(1, collapsed.has(k.id) ? 1 : k.leaves.length) * LH + GAP);
+    const H = blocks.reduce((a, b) => a + b, 0);
+    let y = -H / 2;
+    const X1 = rootR + 90;
+    const kidW = Math.max(...list.map(k => tw(k.label, 14, 600) + 64), 120);
+    list.forEach((k, i) => {
+      const h = blocks[i], cy = y + h / 2;
+      const w = tw(k.label, 14, 600) + 64, a = s * X1, b = s * (X1 + w);
+      // root → kid
+      const p = el('path', {class: 'branch' + (animate ? ' draw' : ''), d: `M${s * rootR * .6},0 C${s * (rootR + 40)},0 ${a - s * 60},${cy} ${a},${cy}`,
+        stroke: k.color, 'stroke-width': 5, opacity: .9}, gL);
+      if (animate) { const L = p.getTotalLength(); p.style.setProperty('--len', L); p.style.animationDelay = (delay * 40) + 'ms'; }
+      // kid node
+      const n = el('g', {class: 'node' + (animate ? ' fade' : ''), tabindex: 0, role: 'button', 'aria-label': k.label}, gN);
+      if (animate) n.style.animationDelay = (200 + delay * 40) + 'ms';
+      const x0 = Math.min(a, b);
+      k.cx = x0 + w / 2; k.cy = cy;
+      el('rect', {class: 'pill', x: x0, y: cy - KH / 2, width: w, height: KH, rx: KH / 2, fill: k.color}, n);
+      const t = el('text', {x: x0 + w / 2 + 10, y: cy + 5, 'text-anchor': 'middle', fill: '#fff', 'font-size': 14, 'font-weight': 600}, n);
+      t.textContent = k.label;
+      // status dot or badge
+      const bx = s > 0 ? x0 + w - 18 : x0 + 18;
+      if (k.st) el('circle', {cx: x0 + 18, cy, r: 6, fill: css(ST[k.st][1]), stroke: '#fff', 'stroke-width': 2}, n);
+      else { const bb = el('text', {x: x0 + 20, y: cy + 4, 'text-anchor': 'middle', fill: '#fff', 'font-size': 11, opacity: .9}, n); bb.textContent = k.badge; }
+      if (collapsed.has(k.id) && k.leaves.length) {
+        const c = el('text', {x: bx + s * 26, y: cy + 5, 'text-anchor': 'middle', fill: k.color, 'font-size': 13, 'font-weight': 700}, n);
+        c.textContent = '+' + k.leaves.length;
+      }
+      n.addEventListener('click', ev => { ev.stopPropagation(); select(k); });
+      n.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); select(k); } });
+      // leaves
+      if (!collapsed.has(k.id)) {
+        const lx = s * (X1 + kidW + 70);
+        k.leaves.forEach((lf, j) => {
+          const ly = y + GAP / 2 + LH * (j + .5) + (k.leaves.length ? 0 : 0);
+          const lw = tw(lf.t, 13) + 14;
+          const q = el('path', {class: 'branch' + (animate ? ' draw' : ''), d: `M${b},${cy} C${b + s * 40},${cy} ${lx - s * 40},${ly + 9} ${lx},${ly + 9} L${lx + s * lw},${ly + 9}`,
+            stroke: k.color, 'stroke-width': 1.6, opacity: .75}, gL);
+          if (animate) { const L = q.getTotalLength(); q.style.setProperty('--len', L); q.style.animationDelay = (300 + delay * 40 + j * 30) + 'ms'; }
+          const lg = el('g', {class: 'leaf' + (animate ? ' fade' : '')}, gN);
+          if (animate) lg.style.animationDelay = (450 + delay * 40 + j * 30) + 'ms';
+          const lt = el('text', {x: lx + s * lw / 2, y: ly + 4, 'text-anchor': 'middle'}, lg);
+          lt.textContent = lf.t;
+          if (lf.st) el('circle', {cx: lx + s * (lw + 7), cy: ly + 9, r: 4, fill: css(ST[lf.st][1])}, lg);
+        });
+      }
+      y += h; delay++;
+    });
+  });
+  // root
+  const r = el('g', {class: 'node', tabindex: 0, role: 'button', 'aria-label': m.title}, gN);
+  el('circle', {cx: 0, cy: 0, r: rootR + 8, fill: css('--glow'), filter: 'url(#gl)'}, r);
+  el('circle', {cx: 0, cy: 0, r: rootR, fill: 'url(#rg)', stroke: css('--gold'), 'stroke-width': 3}, r);
+  el('circle', {cx: 0, cy: 0, r: rootR - 8, fill: 'none', stroke: css('--gold'), 'stroke-width': .8, 'stroke-dasharray': '2 5'}, r);
+  const words = m.title.split(' '), lines = [];
+  let cur = '';
+  words.forEach(w => { if (tw(cur + ' ' + w, 17, 700) > rootR * 1.55 && cur) { lines.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; });
+  lines.push(cur);
+  lines.forEach((ln, i) => { const t = el('text', {class: 'root-t', x: 0, y: (i - (lines.length - 1) / 2) * 22 - 4, 'text-anchor': 'middle', 'font-size': 17}, r); t.textContent = ln; });
+  const st = el('text', {x: 0, y: lines.length * 11 + 14, 'text-anchor': 'middle', fill: css('--gold'), 'font-size': 12}, r);
+  st.textContent = m.sub;
+  r.addEventListener('click', ev => { ev.stopPropagation(); speak(phaseText()); });
+}
+
+function select(k) {
+  viewer.focus(k.cx, k.cy, 1.5);
+  if (k.go) { showCard(k); return; }
+  if (k.leaves.length) { collapsed.has(k.id) ? collapsed.delete(k.id) : collapsed.add(k.id); render(false); viewer.focus(k.cx, k.cy, 1.5); }
+  showCard(k);
+}
+
+function showCard(k) {
+  let h;
+  if (k.row) {
+    const r = k.row;
+    h = `<h2>${esc(r.title)}</h2><div class="meta"><span class="pill" style="color:var(${ST[r.status][1]})">● ${ST[r.status][0]}</span>
+      <span class="pill">الحجم: ${SZ[r.size] || r.size}</span><span class="pill">الأهمية: ${IMP[r.imp]}</span>${r.date ? `<span class="pill">${esc(r.date)}</span>` : ''}</div>
+      <p>${esc(r.desc)}</p>${r.ref ? `<p><b>المرجع:</b> ${esc(r.ref)}</p>` : ''}
+      <div class="row"><button type="button" id="cs">🔊 استمع</button></div>`;
+  } else {
+    const rs = k.info.rs, d = rs.filter(r => r.status === 'done').length;
+    h = `<h2>${esc(k.label)}</h2><p>${rs.length} عنصرا، منها ${d} منجزة.</p>
+      <div class="row"><button type="button" id="go">افتح خريطة المرحلة</button><button type="button" id="cs">🔊 استمع</button></div>`;
+  }
+  $('cbody').innerHTML = h; $('card').classList.add('on');
+  $('cs').onclick = () => speak(k.row ? itemText(k.row) : groupText(k.info.k));
+  if ($('go')) $('go').onclick = () => go(k.go);
+}
+
+// ---- speech
+let voice = null;
+function pickVoice() { const v = speechSynthesis.getVoices(); voice = v.find(x => /^ar(-|_)SA/i.test(x.lang)) || v.find(x => /^ar/i.test(x.lang)) || null; }
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(t) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t); u.lang = voice ? voice.lang : 'ar-SA'; if (voice) u.voice = voice; u.rate = .95;
+  speechSynthesis.speak(u);
+}
+const itemText = r => `${r.title}. ${r.desc}. الحالة: ${ST[r.status][0]}. الحجم ${SZ[r.size] || r.size}، والأهمية ${IMP[r.imp]}.`;
+function groupText(g) {
+  const rs = byG(g), d = rs.filter(r => r.status === 'done').length;
+  return `مرحلة ${D.groups[g]}. تضم ${rs.length} عنصرا، منها ${d} منجزة. أهمها: ${rs.slice(0, 4).map(r => r.title).join('، ')}.`;
+}
+function phaseText() {
+  const g = $('pick').value;
+  if (g !== 'all') return groupText(g);
+  return `منظومة ء-حماية في ${keys.length} مراحل و${D.rows.length} عنصرا: ${keys.map(k => D.groups[k]).join('، ')}.`;
+}
+
+// ---- pan, zoom and turn (scripts/atlas/viewer.js)
+__VIEWER__
+const stage = $('stage');
+const viewer = makeViewer(stage, $('vp'), () => $('vp').getBBox());
+const fit = () => viewer.fit();
+stage.addEventListener('click', e => { if (!viewer.moved && !e.target.closest('.node, .vctl')) $('card').classList.remove('on'); viewer.moved = false; });
+
+// ---- navigation
+function go(g) {
+  $('pick').value = g; collapsed = new Set(); model = build(g); $('card').classList.remove('on');
+  $('all').textContent = 'طيّ الفروع';
+  render(true); fit();
+  try { history.replaceState(null, '', '#' + g); } catch (e) {}
+}
+$('pick').onchange = () => go($('pick').value);
+const order = ['all', ...keys];
+$('prev').onclick = () => go(order[(order.indexOf($('pick').value) - 1 + order.length) % order.length]);
+$('next').onclick = () => go(order[(order.indexOf($('pick').value) + 1) % order.length]);
+$('fit').onclick = () => viewer.fit(true);
+$('all').onclick = () => {
+  if (collapsed.size) { collapsed = new Set(); $('all').textContent = 'طيّ الفروع'; }
+  else { collapsed = new Set(model.kids.map(k => k.id)); $('all').textContent = 'بسط الفروع'; }
+  render(false); fit();
+};
+$('say').onclick = () => speak(phaseText());
+document.querySelector('#card .x').onclick = () => $('card').classList.remove('on');
+function place() { stage.style.top = document.querySelector('header').offsetHeight + 'px'; }
+addEventListener('resize', () => { place(); fit(); }); place();
+const start = location.hash.slice(1);
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => go(order.includes(start) ? start : 'all'));
+</script>
+</body>
+</html>

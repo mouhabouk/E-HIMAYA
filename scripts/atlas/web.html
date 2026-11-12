@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شبكة ء-حماية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#F2F5FB; --ink:#0E1426; --mute:#55607A; --line:#D5DCEB; --card:#FFFFFF; --gold:#A8862F; --bar:#1F3FA0;
+  --web:rgba(31,63,160,.10); --thread:rgba(31,63,160,.2); --lbl:#2A3350; --dim:rgba(85,96,122,.35);
+  --c0:#1F3FA0; --c1:#0E8FA8; --c2:#E8590C; --c3:#1F9D55; --mod:#A8862F; --tab:#7B3FD1;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#0E1426; --ink:#EEF2FF; --mute:#9AA6C8; --line:#26304F; --card:#151D36; --gold:#C9A24A; --bar:#0B1A3F;
+  --web:rgba(143,168,255,.09); --thread:rgba(143,168,255,.2); --lbl:#C9D3F2; --dim:rgba(154,166,200,.3);
+  --c0:#8FA8FF; --c1:#3CC8E0; --c2:#FF9A4D; --c3:#4CC772; --mod:#E2C26A; --tab:#C3A8FF;
+}}
+:root[data-theme="dark"]{
+  --page:#0E1426; --ink:#EEF2FF; --mute:#9AA6C8; --line:#26304F; --card:#151D36; --gold:#C9A24A; --bar:#0B1A3F;
+  --web:rgba(143,168,255,.09); --thread:rgba(143,168,255,.2); --lbl:#C9D3F2; --dim:rgba(154,166,200,.3);
+  --c0:#8FA8FF; --c1:#3CC8E0; --c2:#FF9A4D; --c3:#4CC772; --mod:#E2C26A; --tab:#C3A8FF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--page);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;overflow:hidden}
+header{position:fixed;inset:0 0 auto 0;z-index:5;background:var(--bar);color:#fff;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:10px 16px;border-bottom:2px solid #C9A24A}
+header h1{font-size:17px;margin:0 0 0 8px;font-weight:700;white-space:nowrap}
+header h1 small{display:block;font-size:11px;font-weight:400;opacity:.85}
+input,button{font:inherit;font-size:14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:7px 14px}
+input::placeholder{color:rgba(255,255,255,.7)}
+button{cursor:pointer}
+button[aria-pressed="false"]{opacity:.5}
+button:hover{background:rgba(255,255,255,.22)}
+button:focus-visible,input:focus-visible{outline:2px solid #C9A24A;outline-offset:2px}
+.chip{font-size:12.5px;padding:5px 10px} #chips{display:flex;flex-wrap:wrap;gap:4px} .chip i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:6px;vertical-align:-1px}
+#stage{position:fixed;inset:64px 0 0 0;cursor:grab;touch-action:none}
+#stage.drag{cursor:grabbing}
+svg{width:100%;height:100%;display:block}
+.ringc{fill:none;stroke:var(--web)}
+.spoke{stroke:var(--web)}
+.lk{fill:none;stroke:var(--thread);stroke-width:1}
+.lk.on{stroke:var(--gold);stroke-width:1.8;opacity:1}
+.dimmed .lk:not(.on){opacity:.15}
+.dimmed .nd:not(.on){opacity:.18}
+.nd{cursor:pointer}
+.nd text{fill:var(--lbl);font-size:9px;direction:ltr;unicode-bidi:plaintext}
+.nd.table text{font-family:"IBM Plex Mono",monospace;font-size:8px}
+.nd.module text{font-size:11px;font-weight:600;fill:var(--mod)}
+.nd.surface text{font-size:15px;font-weight:700;fill:#fff;direction:rtl}
+.nd.on text{font-weight:700}
+.arc{fill:none;stroke-width:5;stroke-linecap:round;opacity:.55}
+.arct{font-size:11px;font-weight:700;fill:var(--tab)}
+#card{position:fixed;z-index:6;inset-inline-start:16px;bottom:16px;width:min(400px,calc(100% - 32px));max-height:60vh;overflow:auto;background:var(--card);
+  color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);padding:16px 18px;display:none}
+#card.on{display:block}
+#card h2{margin:0 0 4px;font-size:16px}
+#card .k{font-size:12px;color:var(--mute)}
+#card h3{font-size:13px;margin:12px 0 4px;color:var(--mute)}
+#card ul{margin:0;padding-inline-start:18px;font-size:13px;line-height:1.7}
+#card code{font-family:"IBM Plex Mono",monospace;font-size:11.5px;direction:ltr;unicode-bidi:plaintext}
+#card .x{position:absolute;inset-inline-end:10px;top:8px;background:none;border:0;color:var(--mute);font-size:20px;padding:2px 8px}
+#card .say{background:var(--bar);font-size:13px;margin-top:10px}
+#hint{position:fixed;bottom:12px;pointer-events:none;inset-inline-end:16px;font-size:12px;color:var(--mute);z-index:4;max-width:50%}
+@media (max-width:720px){header h1 small,#hint{display:none} input{flex:1;min-width:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>شبكة ء-حماية العنكبوتية<small id="sub"></small></h1>
+  <input id="q" type="search" placeholder="ابحث عن شاشة أو وحدة أو جدول" aria-label="بحث">
+  <span id="chips"></span>
+  <button id="fit" type="button">ملاءمة</button>
+  <button id="say" type="button">🔊 استمع</button>
+</header>
+<div id="stage"><svg id="svg" role="img" aria-label="شبكة الواجهات والشاشات والوحدات والجداول"><g id="vp"></g></svg></div>
+<div id="card" role="dialog" aria-live="polite"><button class="x" type="button" aria-label="إغلاق">×</button><div id="cbody"></div></div>
+<div id="hint">من الداخل إلى الخارج: الواجهات ← الشاشات ← وحدات الخادم ← جداول القاعدة. اضغط على أي عقدة لترى خيوطها كاملة.</div>
+<script>
+const D = __DATA__;
+const $ = id => document.getElementById(id), NS = 'http://www.w3.org/2000/svg';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SF = D.surfaces;
+const COL = ['#2F6FE0', '#0E8FA8', '#E8590C', '#D6336C', '#12A38A', '#9C36B5', '#1F9D55', '#B5651D', '#E03131'];
+const short = s => s.includes(' · ') ? s.split(' · ')[1] : s;
+const app = s => s.includes(' · ') ? s.split(' · ')[0] : '';
+const KIND = {surface: 'واجهة', screen: 'شاشة', module: 'وحدة في الخادم', table: 'جدول في القاعدة'};
+const C = D.counts;
+$('sub').textContent = `${C.screens} شاشة · ${C.modules} وحدة · ${C.tables} جدولا في ${C.schemas} مخططا · ${C.links} خيطا · حُيّنت ${D.built}`;
+const byId = Object.fromEntries(D.nodes.map(n => [n.id, n]));
+const out = {}, inn = {};
+D.links.forEach(([a, b]) => { (out[a] ||= []).push(b); (inn[b] ||= []).push(a); });
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const colorOf = n => n.k === 'surface' ? COL[SF.indexOf(n.l)] : n.k === 'screen' ? COL[n.sf] : n.k === 'module' ? 'var(--mod)' : 'var(--tab)';
+let hidden = new Set(), sel = null;
+
+function draw() {
+  const vp = $('vp'); vp.innerHTML = '';
+  const bg = el('g', {}, vp);
+  Object.values(D.R).forEach(r => el('circle', {class: 'ringc', r, 'stroke-width': 1}, bg));
+  [90, 320, 570, 840, 1120].forEach(r => el('circle', {class: 'ringc', r, 'stroke-dasharray': '2 6'}, bg));
+  for (let i = 0; i < 72; i++) { const t = i / 72 * 2 * Math.PI; el('line', {class: 'spoke', x1: 60 * Math.cos(t), y1: 60 * Math.sin(t), x2: 1120 * Math.cos(t), y2: 1120 * Math.sin(t)}, bg); }
+  // schema arcs
+  const R = D.R.table + 150;
+  D.arcs.forEach((a, i) => {
+    const a0 = a.a0 - .006, a1 = a.a1 + .006, large = a1 - a0 > Math.PI ? 1 : 0;
+    el('path', {class: 'arc', d: `M${R * Math.cos(a0)},${R * Math.sin(a0)} A${R},${R} 0 ${large} 1 ${R * Math.cos(a1)},${R * Math.sin(a1)}`, stroke: 'var(--tab)'}, bg);
+    const m = (a0 + a1) / 2, rr = R + 14, deg = m * 180 / Math.PI, flip = Math.cos(m) < 0;
+    const t = el('text', {class: 'arct', x: rr * Math.cos(m), y: rr * Math.sin(m), 'text-anchor': flip ? 'end' : 'start', 'dominant-baseline': 'middle',
+      transform: `rotate(${flip ? deg + 180 : deg} ${rr * Math.cos(m)} ${rr * Math.sin(m)})`, style: 'direction:ltr'}, bg);
+    t.textContent = a.s + (a.n > 1 ? ` (${a.n})` : '');
+  });
+  const gl = el('g', {id: 'links'}, vp), gn = el('g', {id: 'nodes'}, vp);
+  D.links.forEach(([a, b], i) => {
+    const A = byId[a], B = byId[b];
+    if (hiddenNode(A) || hiddenNode(B)) return;
+    const mx = (A.x + B.x) / 2 * .78, my = (A.y + B.y) / 2 * .78;
+    const p = el('path', {class: 'lk', d: `M${A.x},${A.y} Q${mx},${my} ${B.x},${B.y}`}, gl);
+    p.dataset.a = a; p.dataset.b = b;
+  });
+  D.nodes.forEach(n => {
+    if (hiddenNode(n)) return;
+    const g = el('g', {class: 'nd ' + n.k, tabindex: 0, role: 'button', 'aria-label': `${KIND[n.k]}: ${n.l}`}, gn);
+    g.dataset.id = n.id;
+    if (n.k === 'surface') {
+      el('circle', {cx: n.x, cy: n.y, r: 46, fill: colorOf(n), stroke: '#C9A24A', 'stroke-width': 2.5}, g);
+      if (app(n.l)) { const a = el('text', {x: n.x, y: n.y - 20, 'text-anchor': 'middle', style: 'font-size:9.5px;font-weight:400;opacity:.9'}, g); a.textContent = app(n.l); }
+      const lab = short(n.l), big = lab.length > 12;
+      const t = el('text', {x: n.x, y: n.y + 2, 'text-anchor': 'middle', style: big ? 'font-size:11px' : ''}, g); t.textContent = big ? lab.replace(' (تفقد مؤسسة)', '') : lab;
+      const s = el('text', {x: n.x, y: n.y + 19, 'text-anchor': 'middle', style: 'font-size:10.5px;font-weight:400'}, g); s.textContent = n.n + ' شاشة';
+    } else {
+      const r = n.k === 'module' ? 7 : n.k === 'screen' ? 4.5 : 3.4;
+      el('circle', {cx: n.x, cy: n.y, r, fill: n.k === 'table' && !n.used ? 'none' : colorOf(n), stroke: colorOf(n), 'stroke-width': 1.2}, g);
+      const deg = n.a * 180 / Math.PI, flip = Math.cos(n.a) < 0, off = r + 4;
+      const tx = n.x + off * Math.cos(n.a), ty = n.y + off * Math.sin(n.a);
+      const t = el('text', {x: tx, y: ty, 'text-anchor': flip ? 'end' : 'start', 'dominant-baseline': 'middle',
+        transform: `rotate(${flip ? deg + 180 : deg} ${tx} ${ty})`}, g);
+      t.textContent = n.k === 'table' ? n.l.split('.')[1] : (n.l.length > 30 ? n.l.slice(0, 29) + '…' : n.l);
+    }
+    g.addEventListener('click', e => { e.stopPropagation(); select(n.id); });
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(n.id); } });
+  });
+  if (sel) highlight(sel);
+}
+function hiddenNode(n) {
+  if (n.k === 'surface') return hidden.has(SF.indexOf(n.l));
+  if (n.k === 'screen') return hidden.has(n.sf);
+  return false;
+}
+
+// the full chain through a node: everything it reaches outward and everything that reaches it
+function chain(id) {
+  const on = new Set([id]);
+  const walk = (start, adj) => { const st = [start]; while (st.length) { const x = st.pop(); (adj[x] || []).forEach(y => { if (!on.has(y + '|' + adj.tag)) { on.add(y); on.add(y + '|' + adj.tag); st.push(y); } }); } };
+  out.tag = 'o'; inn.tag = 'i';
+  walk(id, out); walk(id, inn);
+  return on;
+}
+function highlight(id) {
+  const on = chain(id);
+  $('vp').classList.add('dimmed');
+  document.querySelectorAll('.nd').forEach(g => g.classList.toggle('on', on.has(g.dataset.id)));
+  document.querySelectorAll('.lk').forEach(p => p.classList.toggle('on', on.has(p.dataset.a) && on.has(p.dataset.b) && ((out[p.dataset.a] || []).includes(p.dataset.b))));
+  return on;
+}
+function clear() { sel = null; $('vp').classList.remove('dimmed'); document.querySelectorAll('.on').forEach(e => e.classList.remove('on')); $('card').classList.remove('on'); }
+
+function select(id, zoom = true) {
+  sel = id; if (zoom && typeof viewer !== 'undefined') { const z = byId[id]; viewer.focus(z.x, z.y, z.k === 'surface' ? 1.2 : 2.4); } const n = byId[id], on = highlight(id);
+  const near = k => [...on].filter(x => byId[x] && byId[x].k === k && x !== id).map(x => byId[x]);
+  const list = (title, arr, f) => arr.length ? `<h3>${title} (${arr.length})</h3><ul>${arr.slice(0, 40).map(f).join('')}${arr.length > 40 ? '<li>…</li>' : ''}</ul>` : '';
+  let h = `<h2>${esc(n.l)}</h2><div class="k">${KIND[n.k]}${n.k === 'screen' ? ' في ' + SF[n.sf] : ''}</div>`;
+  if (n.files && n.files.length) h += list('الملفات', n.files, f => `<li><code>${esc(f)}</code></li>`);
+  if (n.k !== 'surface') h += list('الواجهات', near('surface'), x => `<li>${esc(x.l)}</li>`);
+  if (n.k !== 'screen') h += list('الشاشات', near('screen'), x => `<li>${esc(x.l)} <span class="k">${SF[x.sf]}</span></li>`);
+  if (n.k !== 'module') h += list('وحدات الخادم', near('module'), x => `<li><code>${esc(x.l)}</code></li>`);
+  if (n.k !== 'table') h += list('الجداول', near('table'), x => `<li><code>${esc(x.l)}</code></li>`);
+  h += `<button class="say" type="button" id="cs">🔊 استمع</button>`;
+  $('cbody').innerHTML = h; $('card').classList.add('on');
+  $('cs').onclick = () => speak(`${KIND[n.k]} ${n.l}. ترتبط بـ ${near('screen').length} شاشة، و${near('module').length} وحدة في الخادم، و${near('table').length} جدولا في القاعدة.`);
+}
+
+// ---- speech
+let voice = null;
+function pickVoice() { const v = speechSynthesis.getVoices(); voice = v.find(x => /^ar(-|_)SA/i.test(x.lang)) || v.find(x => /^ar/i.test(x.lang)) || null; }
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(t) { if (!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = voice ? voice.lang : 'ar-SA'; if (voice) u.voice = voice; u.rate = .95; speechSynthesis.speak(u); }
+$('say').onclick = () => speak(`شبكة منظومة ء-حماية. في الوسط الواجهات: لوحة التحكم، والبوابة، والتطبيق الذكي بملفاته، مواطن ومتطوع وطبيب متطوع ومؤسسة، وتطبيق الأعوان بمهنه الثلاث، عون الميدان والتفقد وعون السلامة عند تفقد مؤسسة. حولها ${C.screens} شاشة، تستدعي ${C.modules} وحدة في الخادم، تقرأ وتكتب في ${C.tables} جدولا موزعة على ${C.schemas} مخططا. كل خيط يربط شاشة بما تستعمله، فإذا تغيّر جدول عرفنا الشاشات التي تتأثر به.`);
+
+// ---- filters and search
+$('chips').innerHTML = SF.map((s, i) => D.nodes.some(n => n.id === 'u:' + s) ? `<button type="button" class="chip" aria-pressed="true" data-i="${i}" title="${esc(s)}"><i style="background:${COL[i]}"></i>${esc(short(s))}</button>` : '').join(' ');
+document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+  const i = +b.dataset.i; hidden.has(i) ? hidden.delete(i) : hidden.add(i); b.setAttribute('aria-pressed', !hidden.has(i)); draw(); });
+$('q').addEventListener('input', () => {
+  const q = $('q').value.trim().toLowerCase(); if (!q) { clear(); return; }
+  const n = D.nodes.find(n => n.l.toLowerCase().includes(q) && !hiddenNode(n)); if (n) select(n.id, false);
+});
+
+// ---- pan, zoom and turn (scripts/atlas/viewer.js)
+__VIEWER__
+const stage = $('stage');
+const viewer = makeViewer(stage, $('vp'), () => { const S = 2 * (D.R.table + 260); return {x: -S / 2, y: -S / 2, width: S, height: S}; });
+const fit = () => viewer.fit(true);
+stage.addEventListener('click', e => { if (!viewer.moved && !e.target.closest('.nd, .vctl')) clear(); viewer.moved = false; });
+document.querySelector('#card .x').onclick = clear;
+$('fit').onclick = fit;
+function place() { stage.style.top = document.querySelector('header').offsetHeight + 'px'; }
+addEventListener('resize', () => { place(); viewer.fit(); });
+place(); draw(); viewer.fit();
+</script>
+</body>
+</html>

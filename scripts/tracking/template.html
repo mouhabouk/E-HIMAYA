@@ -1,0 +1,199 @@
+<title>سجل طلبات ء-حماية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a control-room ledger. Navy header band with the system's numbers, then tabs per phase group, filters,
+   and one of three views (ledger, size x importance matrix, documents to refresh). Tokens from docs/design-system.md. */
+:root{
+  --page:#F6F8FC; --card:#FFFFFF; --line:#E3E7EF; --ink:#182038; --muted:#5B6478;
+  --brand:#1F3FA0; --brand-deep:#152D78; --brand-night:#0B1A3F; --brand-tint:#E8EDFA; --gold:#C9A24A;
+  --ok:#166B2E; --ok-bg:#E6F4EA; --run:#1F3FA0; --run-bg:#E8EDFA; --wait:#7A4B00; --wait-bg:#FFF3D6;
+  --ext:#5E2A80; --ext-bg:#F2EAF8; --def:#3E4657; --def-bg:#EEF0F4; --sup:#00695A; --sup-bg:#E0F3EF;
+  --rej:#B3121A; --rej-bg:#FDE8E8; --orange:#F08C00;
+  --f-body:"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --page:#0E1426; --card:#161E35; --line:#26304D; --ink:#E8ECF5; --muted:#A6AFC4;
+  --brand:#8FA8FF; --brand-deep:#6F8BEA; --brand-night:#08102A; --brand-tint:#1D2850;
+  --ok:#4CC772; --ok-bg:#163223; --run:#8FA8FF; --run-bg:#1D2850; --wait:#FFC933; --wait-bg:#3A2E0E;
+  --ext:#C49BE6; --ext-bg:#2D2040; --def:#A6AFC4; --def-bg:#232B45; --sup:#4DD0B8; --sup-bg:#123630;
+  --rej:#FF6B6B; --rej-bg:#3D1A1F; --orange:#FFA733; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --page:#0E1426; --card:#161E35; --line:#26304D; --ink:#E8ECF5; --muted:#A6AFC4;
+  --brand:#8FA8FF; --brand-deep:#6F8BEA; --brand-night:#08102A; --brand-tint:#1D2850;
+  --ok:#4CC772; --ok-bg:#163223; --run:#8FA8FF; --run-bg:#1D2850; --wait:#FFC933; --wait-bg:#3A2E0E;
+  --ext:#C49BE6; --ext-bg:#2D2040; --def:#A6AFC4; --def-bg:#232B45; --sup:#4DD0B8; --sup-bg:#123630;
+  --rej:#FF6B6B; --rej-bg:#3D1A1F; --orange:#FFA733; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.band{background:#0B1A3F;color:#F2F5FC;padding-block:28px 22px;border-bottom:3px solid #C9A24A}
+.band h1{margin:0;font-size:clamp(22px,3.4vw,32px);font-weight:700;text-wrap:balance}
+.band p{margin:6px 0 0;color:#C3CBE0;max-width:70ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:20px}
+.stat{border:1px solid #2A3A6B;border-radius:10px;padding:10px 12px;background:#12224D}
+.stat b{display:block;font-family:var(--f-mono);font-size:22px;font-variant-numeric:tabular-nums;color:#FFFFFF}
+.stat span{font-size:12.5px;color:#C3CBE0}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-top:18px;background:#1A2A55}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12.5px;color:#C3CBE0}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-inline-end:5px;background:var(--c)}
+main{padding-block:18px 40px}
+.views{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.views button,.tabs button,.chip{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px}
+.views button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--card);font-weight:600}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.tabs button{white-space:nowrap;font-size:13.5px}
+.tabs button[aria-selected="true"]{background:var(--brand-tint);border-color:var(--brand);color:var(--brand);font-weight:600}
+.tabs button small{font-family:var(--f-mono);color:var(--muted);margin-inline-start:4px}
+.filters{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:12px 0 14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.fgroup{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.fgroup>span{font-size:12.5px;color:var(--muted);margin-inline-end:2px}
+.chip{padding:3px 10px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+input[type=search]{font:inherit;border:1px solid var(--line);background:var(--page);color:var(--ink);border-radius:8px;padding:6px 10px;min-width:0;width:220px;max-width:100%}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.count{font-size:13px;color:var(--muted);margin:0 0 8px}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:860px}
+th,td{padding:9px 10px;text-align:start;vertical-align:top;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:12.5px;color:var(--muted);font-weight:600;background:var(--page);position:sticky;top:0;cursor:pointer;user-select:none;white-space:nowrap}
+th[aria-sort]::after{content:" ▾";color:var(--brand)}
+th[aria-sort="ascending"]::after{content:" ▴"}
+tr:last-child td{border-bottom:0}
+td.code{font-family:var(--f-mono);font-size:12.5px;white-space:nowrap;color:var(--brand)}
+td .t{font-weight:600}
+td .d{color:var(--muted);font-size:13px}
+td.ref{font-size:12px;color:var(--muted);direction:ltr;text-align:right;max-width:200px;word-break:break-word}
+td.date{font-family:var(--f-mono);font-size:12px;white-space:nowrap;color:var(--muted)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;color:var(--fg);background:var(--bg)}
+.s-done{--fg:var(--ok);--bg:var(--ok-bg)} .s-approved{--fg:var(--run);--bg:var(--run-bg)} .s-review{--fg:var(--wait);--bg:var(--wait-bg)}
+.s-external{--fg:var(--ext);--bg:var(--ext-bg)} .s-deferred{--fg:var(--def);--bg:var(--def-bg)} .s-superseded{--fg:var(--sup);--bg:var(--sup-bg)} .s-rejected{--fg:var(--rej);--bg:var(--rej-bg)}
+.size{font-family:var(--f-mono);font-size:12px;font-weight:600;display:inline-grid;place-items:center;min-width:30px;height:22px;border-radius:6px;border:1px solid var(--line);color:var(--ink)}
+.imp{display:inline-flex;gap:3px;align-items:center}
+.imp i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.imp i.on{background:var(--orange)}
+.imp[data-v="4"] i.on{background:var(--rej)}
+.imp em{font-style:normal;font-size:12px;color:var(--muted);margin-inline-start:5px}
+.kind{font-size:12px;color:var(--muted)}
+/* matrix */
+.matrix{display:grid;grid-template-columns:auto repeat(4,minmax(0,1fr));gap:6px;overflow-x:auto}
+.matrix .h{font-size:12.5px;color:var(--muted);font-weight:600;display:flex;align-items:end;justify-content:center;padding:4px}
+.matrix .rh{font-size:13px;font-weight:600;display:flex;align-items:center;padding-inline-end:6px;white-space:nowrap}
+.cell{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px;min-height:92px;display:flex;flex-direction:column;gap:4px;cursor:pointer;text-align:start;font:inherit;color:inherit}
+.cell b{font-family:var(--f-mono);font-size:20px}
+.cell small{font-size:11.5px;color:var(--muted);line-height:1.45}
+.cell .mini{display:flex;flex-wrap:wrap;gap:3px}
+.cell .mini i{width:7px;height:7px;border-radius:2px;background:var(--c)}
+.cell.hot{border-color:var(--rej)}
+.note{font-size:13px;color:var(--muted);margin-top:10px;max-width:80ch}
+.docs td.gap{max-width:420px}
+.prio{font-family:var(--f-mono);font-weight:600}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.links a{color:var(--brand);font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:10px}
+.links a:hover{border-color:var(--brand)}
+footer{font-size:12.5px;color:var(--muted);padding-block:20px;border-top:1px solid var(--line)}
+@media (max-width:640px){input[type=search]{width:100%}.fgroup{width:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div dir="rtl" lang="ar">
+<header class="band"><div class="wrap">
+  <h1>سجل طلبات ء-حماية</h1>
+  <p>كل ما طلبته منذ 19 أكتوبر: المراحل والإضافات والمقترحات والوثائق والعروض والفيديو، مصنّفة حسب المرحلة، مع حالة كل طلب وحجمه وأهميته. الوضع في __DATE__، بعد دمج #__PR__.</p>
+  <div class="stats" id="stats"></div>
+  <div class="bar" id="bar" aria-hidden="true"></div>
+  <div class="legend" id="legend"></div>
+</div></header>
+<main class="wrap">
+  <div class="views" role="group" aria-label="العرض">
+    <button type="button" id="v-table" aria-pressed="true">جدول الطلبات</button>
+    <button type="button" id="v-matrix" aria-pressed="false">مصفوفة الحجم والأهمية</button>
+    <button type="button" id="v-docs" aria-pressed="false">وثائق تحتاج تحيينا</button>
+  </div>
+  <section id="sec-req">
+    <div class="tabs" role="tablist" id="tabs" aria-label="المراحل"></div>
+    <div class="filters">
+      <div class="fgroup" id="f-size"><span>الحجم</span></div>
+      <div class="fgroup" id="f-imp"><span>الأهمية</span></div>
+      <div class="fgroup" id="f-status"><span>الحالة</span></div>
+      <input type="search" id="q" placeholder="بحث في العنوان والوصف والمرجع" aria-label="بحث">
+    </div>
+    <p class="count" id="count"></p>
+    <div id="table-view" class="tablebox"><table>
+      <thead><tr>
+        <th data-k="code">الرمز</th><th data-k="title">الطلب والوصف</th><th data-k="kind">النوع</th>
+        <th data-k="status">الحالة</th><th data-k="size">الحجم</th><th data-k="imp" aria-sort="descending">الأهمية</th>
+        <th data-k="date">التاريخ</th><th data-k="ref">المرجع</th>
+      </tr></thead><tbody id="rows"></tbody></table></div>
+    <div id="matrix-view" hidden>
+      <div class="matrix" id="matrix"></div>
+      <p class="note">كل خانة تجمع طلبات بالحجم والأهمية نفسيهما في التبويب المختار. اضغط خانة لترى طلباتها في الجدول. الإطار الأحمر: طلبات حرجة لم تُنجز بعد.</p>
+    </div>
+  </section>
+  <section id="sec-docs" hidden>
+    <p class="count">الوثائق والمراجع التي سبقها تطوير المنظومة، مرتبة بالأولوية. القاعدة (docs/phase-end.md): تُحيَّن الخمس الكبرى معا في نهاية كل مرحلة، وOS20 هي المرحلة التي انتهت للتو.</p>
+    <div class="tablebox docs"><table>
+      <thead><tr><th>الأولوية</th><th>الوثيقة</th><th>المكان</th><th>آخر تحيين</th><th>ما ينقصها</th><th>طريقة التحيين</th></tr></thead>
+      <tbody id="docrows"></tbody></table></div>
+  </section>
+  <div class="links">
+    <a href="https://claude.ai/artifact/HXEWmHjTMabHfaLh73WZSC" target="_blank" rel="noopener">لوحة المتابعة اليومية</a>
+    <a href="https://claude.ai/code/artifact/165a7fac-2f68-453a-88e2-8bb2dd6d5886" target="_blank" rel="noopener">مسودة تقرير PFE</a>
+    <a href="https://github.com/mouhabouk/E-HIMAYA" target="_blank" rel="noopener">المستودع</a>
+  </div>
+</main>
+<footer class="wrap">المصادر: docs/versions.md (__VERS__ بندا)، docs/backlog.md، حوصلة المراحل، additions.md، open-source-ideas.md، قائمة الخيوط الـ23، ملفات المشروع وقاعدة البيانات بعد الترحيل __MIG__. يُعاد بناؤه آليا: scripts/tracking/build.py.</footer>
+</div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function(){
+const D=JSON.parse(document.getElementById('data').textContent);
+const ST={done:['منجز ومعتمد','--ok'],approved:['معتمد، لم يُنفَّذ بعد','--run'],review:['ينتظر موافقتك','--wait'],external:['ينتظر جهة أو معلومة','--ext'],deferred:['مؤجَّل للدراسة','--def'],superseded:['تم تجاوزه','--sup'],rejected:['مرفوض','--rej']};
+const SZ={S:'صغير',M:'متوسط',L:'كبير',XL:'كبير جدا'}; const SZO={S:1,M:2,L:3,XL:4};
+const IMP={4:'حرجة',3:'عالية',2:'متوسطة',1:'منخفضة'};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let state={g:'all',size:new Set(),imp:new Set(),status:new Set(),q:'',sort:'imp',dir:-1,view:'table'};
+try{const s=JSON.parse(localStorage.getItem('eh-track')||'{}');if(s.g)state.g=s.g;if(s.view)state.view=s.view}catch(e){}
+const save=()=>{try{localStorage.setItem('eh-track',JSON.stringify({g:state.g,view:state.view}))}catch(e){}};
+// stats and bar
+const S=D.stats, rows=D.rows;
+const by=k=>rows.filter(r=>r.status===k).length;
+$('stats').innerHTML=[[rows.length,'طلبا ومقترحا'],[by('done'),'منجز ومعتمد'],[by('approved')+by('review')+by('external'),'مفتوح'],[by('superseded')+by('rejected'),'تجاوزناه أو رفضناه'],[S.tables,'جدولا في '+S.schemas+' مخططا'],[S.ops,'عملية في الواجهة البرمجية'],[S.prs,'آخر طلب دمج']].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+$('bar').innerHTML=Object.keys(ST).map(k=>{const n=by(k);return n?`<i style="width:${n/rows.length*100}%;background:var(${ST[k][1]})" title="${ST[k][0]}: ${n}"></i>`:''}).join('');
+$('legend').innerHTML=Object.keys(ST).map(k=>`<span style="--c:var(${ST[k][1]})">${ST[k][0]} ${by(k)}</span>`).join('');
+// tabs
+const groups=[['all','الكل',rows.length],...Object.entries(D.groups).map(([k,v])=>[k,v,rows.filter(r=>r.g===k).length])];
+$('tabs').innerHTML=groups.map(([k,v,n])=>`<button type="button" role="tab" data-g="${k}" aria-selected="${state.g===k}">${v}<small>${n}</small></button>`).join('');
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;state.g=b.dataset.g;save();render()});
+// filter chips
+function chips(id,set,entries){const el=$(id);entries.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=l;b.setAttribute('aria-pressed','false');b.onclick=()=>{set.has(v)?set.delete(v):set.add(v);b.setAttribute('aria-pressed',set.has(v));render()};b.dataset.v=v;el.appendChild(b)})}
+chips('f-size',state.size,Object.entries(SZ));
+chips('f-imp',state.imp,[[4,'حرجة'],[3,'عالية'],[2,'متوسطة'],[1,'منخفضة']].map(([v,l])=>[String(v),l]));
+chips('f-status',state.status,Object.entries(ST).map(([k,v])=>[k,v[0]]));
+$('q').addEventListener('input',e=>{state.q=e.target.value.trim();render()});
+document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;state.dir=state.sort===k?-state.dir:(k==='imp'||k==='size'?-1:1);state.sort=k;render()}));
+// views
+function setView(v){state.view=v;save();['table','matrix','docs'].forEach(x=>$('v-'+x).setAttribute('aria-pressed',x===v));$('sec-req').hidden=v==='docs';$('sec-docs').hidden=v!=='docs';$('table-view').hidden=v!=='table';$('matrix-view').hidden=v!=='matrix';render()}
+['table','matrix','docs'].forEach(v=>$('v-'+v).onclick=()=>setView(v));
+function filtered(ignoreSI){const q=state.q.toLowerCase();return rows.filter(r=>(state.g==='all'||r.g===state.g)&&(ignoreSI||!state.size.size||state.size.has(r.size))&&(ignoreSI||!state.imp.size||state.imp.has(String(r.imp)))&&(!state.status.size||state.status.has(r.status))&&(!q||(r.title+' '+r.desc+' '+r.code+' '+r.ref+' '+r.kind).toLowerCase().includes(q)))}
+const stOrder={review:0,external:1,approved:2,deferred:3,done:4,superseded:5,rejected:6};
+function val(r,k){return k==='size'?SZO[r.size]:k==='imp'?r.imp*10+(SZO[r.size]||0)/10:k==='status'?stOrder[r.status]:(r[k]||'')}
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.g===state.g));
+  document.querySelectorAll('th[data-k]').forEach(th=>{if(th.dataset.k===state.sort)th.setAttribute('aria-sort',state.dir<0?'descending':'ascending');else th.removeAttribute('aria-sort')});
+  const list=filtered(false).sort((a,b)=>{const x=val(a,state.sort),y=val(b,state.sort);return (x>y?1:x<y?-1:0)*state.dir});
+  $('count').textContent=`${list.length} طلبا معروضا`+(state.g!=='all'?` في «${D.groups[state.g]}»`:'');
+  $('rows').innerHTML=list.map(r=>`<tr><td class="code">${esc(r.code)}</td><td><div class="t">${esc(r.title)}</div><div class="d">${esc(r.desc)}</div></td><td class="kind">${esc(r.kind)}${state.g==='all'?'<br>'+esc(D.groups[r.g]):''}</td><td><span class="pill s-${r.status}">${ST[r.status][0]}</span></td><td><span class="size" title="${SZ[r.size]}">${r.size}</span></td><td><span class="imp" data-v="${r.imp}" title="${IMP[r.imp]}">${[1,2,3,4].map(i=>`<i class="${i<=r.imp?'on':''}"></i>`).join('')}<em>${IMP[r.imp]}</em></span></td><td class="date">${esc(r.date||'—')}</td><td class="ref">${esc(r.ref)}</td></tr>`).join('')||'<tr><td colspan="8">لا طلب يطابق هذا الاختيار. أزل بعض المرشحات.</td></tr>';
+  // matrix (ignores size/importance chips, keeps tab, status and search)
+  const base=filtered(true); let h='<div class="h"></div>'+['S','M','L','XL'].map(s=>`<div class="h">${SZ[s]} ${s}</div>`).join('');
+  [4,3,2,1].forEach(i=>{h+=`<div class="rh">${IMP[i]}</div>`;['S','M','L','XL'].forEach(s=>{const c=base.filter(r=>r.imp===i&&r.size===s);const open=c.filter(r=>!['done','superseded','rejected'].includes(r.status));h+=`<button type="button" class="cell${i===4&&open.length?' hot':''}" data-i="${i}" data-s="${s}"><b>${c.length}</b><span class="mini">${c.map(r=>`<i style="--c:var(${ST[r.status][1]})" title="${esc(r.title)}"></i>`).join('')}</span><small>${c.slice(0,3).map(r=>esc(r.code)).join('، ')}${c.length>3?'…':''}</small></button>`})});
+  $('matrix').innerHTML=h;
+}
+$('matrix').addEventListener('click',e=>{const c=e.target.closest('.cell');if(!c)return;state.size.clear();state.imp.clear();state.size.add(c.dataset.s);state.imp.add(c.dataset.i);document.querySelectorAll('#f-size .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===c.dataset.s));document.querySelectorAll('#f-imp .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===c.dataset.i));setView('table')});
+$('docrows').innerHTML=D.docs.map(d=>`<tr><td class="prio"><span class="imp" data-v="${d[4]}">${[1,2,3,4].map(i=>`<i class="${i<=d[4]?'on':''}"></i>`).join('')}<em>${IMP[d[4]]}</em></span></td><td><div class="t">${esc(d[0])}</div></td><td class="ref">${esc(d[1])}</td><td class="date">${esc(d[2])}</td><td class="gap">${esc(d[3])}</td><td class="d">${esc(d[5])}</td></tr>`).join('');
+setView(state.view);
+})();
+</script>
