@@ -320,6 +320,9 @@ async function mockApi(page: Page): Promise<string[]> {
     if (pathname === "/api/v1/staff/features/catalogue") return json(route, FEATURES);
     if (pathname === "/api/v1/staff/features/rules") return json(route, FEATURE_RULES);
     if (pathname === "/api/v1/staff/features/preview") return json(route, PREVIEW);
+    // OS3: the access profiles panel at the top of the permissions page.
+    if (pathname === "/api/v1/staff/features/profiles") return json(route, FEATURE_PROFILES);
+    if (pathname === "/api/v1/staff/features/profile-assignments") return json(route, []);
     // The decision window (phase L4 §3 and §5), [SIM] data.
     const decisionWindow: Record<string, unknown> = {
       "/api/v1/staff/window/access": WINDOW_ACCESS_FULL,
@@ -498,6 +501,19 @@ test.describe("accessibility of the model cards (ar)", () => {
     });
   }
 });
+
+// OS3: one built-in read-only profile, granted to nobody yet.
+const FEATURE_PROFILES = [
+  {
+    id: "p-1",
+    name: "اطلاع على الوسائل",
+    description: "الأسطول والأعطاب والصيانة والأرشيف، دون تصرف",
+    builtin: true,
+    items: [{ page: "fleet", mode: "read", known: true, names: { ar: "الأسطول والصيانة", fr: "Parc", en: "Fleet" }, features: ["fleet"] }],
+    active_assignments: 0,
+    updated_at: "2026-11-11T08:00:00Z",
+  },
+];
 
 // Phase L4 §8: the permissions page of the system administrator, the catalogue open, in both modes.
 test.describe("accessibility of the permissions (ar)", () => {
