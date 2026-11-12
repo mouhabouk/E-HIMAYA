@@ -3720,5 +3720,163 @@
   "awConsentLocated": "Location set (tap to update)",
   "awConsentPrivacy": "Your name and phone are not shown. If the room needs them for an incident, it is recorded with the reason and you see it here. Renewed each year; withdraw any time.",
   "awConsentReveals": "When the room read your name",
-  "awConsentWithdraw": "Withdraw all my consent"
+  "awConsentWithdraw": "Withdraw all my consent",
+  "inspOpen": "Inspector's space",
+  "inspOpenHelp": "Periodic inspections: sign in with the code you received.",
+  "inspTitle": "Periodic inspections",
+  "inspEntryIntro": "Type your number and the code you received by SMS or email once the general inspectorate has activated your account.",
+  "inspWiped": "This phone was signed out of the inspector's space and its reports erased (account closed or phone reported lost).",
+  "inspRegistered": "Request sent. Once the general inspectorate accepts it, your code will be sent to {destination}.",
+  "@inspRegistered": {
+    "placeholders": {
+      "destination": {
+        "type": "String"
+      }
+    }
+  },
+  "inspMatricule": "Staff number",
+  "inspCode": "Activation code",
+  "inspCodeHelp": "Valid for a limited time; ask for a new one if it expired.",
+  "inspActivate": "Activate this phone",
+  "inspNoAccount": "No account yet? Ask for one",
+  "inspHaveCode": "I already have a code",
+  "inspRegisterTitle": "Ask for an account",
+  "inspInternal": "Civil protection",
+  "inspExternal": "External",
+  "inspName": "Full name",
+  "inspOrganisation": "Organisation",
+  "inspVia": "Send my code by",
+  "inspViaSms": "SMS",
+  "inspViaEmail": "Email",
+  "inspPhone": "Phone",
+  "inspEmail": "Email",
+  "inspRegister": "Send the request",
+  "inspMissionsTitle": "My missions",
+  "inspSignOut": "Leave the inspector's space",
+  "inspAccountUntil": "Account until {date}",
+  "@inspAccountUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "inspNoMissions": "No mission assigned to you.",
+  "inspKindPeriodic": "Periodic",
+  "inspKindSurprise": "Surprise",
+  "inspRoomCentral": "Central operations room",
+  "inspRoomRegional": "Regional operations room",
+  "inspUnitRegionalDirectorate": "Regional directorate",
+  "inspUnitBrigade": "Brigade",
+  "inspUnitCentre": "Centre",
+  "inspUnitAdvancedCentre": "Advanced centre",
+  "inspUnitGuardPost": "Guard post",
+  "inspUnitBeach": "Beach",
+  "inspUnitOther": "Other unit",
+  "inspStateNew": "To inspect",
+  "inspStateProgress": "{answered}/{total}",
+  "@inspStateProgress": {
+    "placeholders": {
+      "answered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "inspStateQueued": "Waiting to send",
+  "inspStateSent": "Sent",
+  "inspOffline": "No network",
+  "inspWaiting": "Reports waiting: {count}",
+  "@inspWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inspRetry": "Send now",
+  "inspAnswered": "{answered} of {total} items answered",
+  "@inspAnswered": {
+    "placeholders": {
+      "answered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "inspAnswerOk": "Compliant",
+  "inspAnswerNote": "Remark",
+  "inspAnswerKo": "Not compliant",
+  "inspPresenceTitle": "Presence",
+  "inspPresent": "Present",
+  "inspExpected": "Expected",
+  "inspExitTitle": "Exit drill",
+  "inspExitSeconds": "Seconds to the exit",
+  "inspExitStart": "Start",
+  "inspExitStop": "Stop ({seconds} s)",
+  "@inspExitStop": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "inspToSign": "Recommendations and signatures",
+  "inspSeeReport": "See the report",
+  "inspReceipt": "Received: {receipt}. Verdict {verdict}, {score}%.",
+  "@inspReceipt": {
+    "placeholders": {
+      "receipt": {
+        "type": "String"
+      },
+      "verdict": {
+        "type": "String"
+      },
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "inspQueuedNote": "Signed and sealed on the phone; it will be sent as soon as the network is back.",
+  "inspSignTitle": "Close the report",
+  "inspSummary": "Summary",
+  "inspSummaryHint": "What the inspection found, in a few lines",
+  "inspRecommendations": "Recommendations",
+  "inspRecDetailed": "On an item",
+  "inspRecGeneral": "General",
+  "inspRemove": "Remove",
+  "inspAddRec": "Add a recommendation",
+  "inspRecItem": "Item",
+  "inspRecText": "Recommendation",
+  "inspRecSave": "Add",
+  "inspPriorityHigh": "High",
+  "inspPriorityMedium": "Medium",
+  "inspPriorityLow": "Low",
+  "inspHeadTitle": "Head of the place",
+  "inspHeadName": "Name of the head of the place",
+  "inspSignInspector": "Inspector's signature",
+  "inspSignHead": "Signature of the head of the place",
+  "inspSignSend": "Sign and send",
+  "inspSignNeeds": "Needs the head's name, both signatures and a priority on every detailed recommendation.",
+  "inspErrActivationRefused": "Wrong number or code.",
+  "inspErrActivationExpired": "This code expired; ask the general inspectorate for a new one.",
+  "inspErrAlreadyRegistered": "A request already exists for this number.",
+  "inspErrNotToday": "This mission is not for today yet.",
+  "inspErrCancelled": "This mission was cancelled.",
+  "inspErrSealed": "This report is already sealed.",
+  "inspErrDeleted": "This report was deleted by the administration.",
+  "inspErrPriority": "Give a priority to every detailed recommendation.",
+  "inspErrRateLimited": "Too many attempts; try again later.",
+  "inspErrGeneric": "The server refused ({code}).",
+  "@inspErrGeneric": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  }
 }

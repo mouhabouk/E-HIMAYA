@@ -329,6 +329,9 @@ class AppMissionOut(BaseModel):
     at_time: time
     kind: Kind
     sites: list[SiteOut]
+    # The active model, so that the app opens a report on the place without network (Yamen 2026-11-12):
+    # the server keeps the version it holds when the report reaches it.
+    profile: ProfileConfig | None = None
 
 
 class AppInspectionOut(BaseModel):

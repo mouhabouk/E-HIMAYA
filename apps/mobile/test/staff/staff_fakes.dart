@@ -12,6 +12,7 @@ import 'package:ehimaya/features/live/live_controller.dart';
 import 'package:ehimaya/features/live/live_publisher.dart';
 import 'package:ehimaya/features/rewards/rewards_providers.dart'
     show fileOpenerProvider;
+import 'package:ehimaya/staff/inspect/inspect_store.dart';
 import 'package:ehimaya/staff/mission_box.dart';
 import 'package:ehimaya/staff/mission_sheet.dart';
 import 'package:ehimaya/staff/prevention/prevention_store.dart';
@@ -807,6 +808,7 @@ Future<void> pumpStaffApp(
   LocationService? location,
   MemoryBlobStore? blobs,
   MemoryBlobStore? missionBlobs,
+  MemoryBlobStore? inspectBlobs,
   SignatureEncoder? signature,
   StaffPush? push,
   String smsNumber = '',
@@ -845,6 +847,10 @@ Future<void> pumpStaffApp(
         blobStoreProvider.overrideWithValue(blobs ?? MemoryBlobStore()),
         missionBlobStoreProvider.overrideWithValue(
           missionBlobs ?? MemoryBlobStore(),
+        ),
+        // Phase I3: the inspector's sealed box.
+        inspectBlobStoreProvider.overrideWithValue(
+          inspectBlobs ?? MemoryBlobStore(),
         ),
         staffPushProvider.overrideWithValue(push ?? const NoStaffPush()),
         if (smsNumber.isNotEmpty)

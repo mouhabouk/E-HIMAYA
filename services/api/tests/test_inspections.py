@@ -311,6 +311,8 @@ async def test_a_unit_is_named_by_gouvernorat_kind_and_name(
         assert r.status_code == 422, (sites, r.text)
     mine = (await client.get(f"{APP}/missions", headers=inspector.h)).json()
     assert [m["ref"] for m in mine] == [mission["ref"]]
+    # The model comes with the missions: the app opens a place's report without network.
+    assert [i["key"] for i in mine[0]["profile"]["items"]]
     r = await client.get(f"/api/v1/verify/om/{mission['ref']}")
     assert r.status_code == 200
     assert r.json()["places"] == 2 and "unit_name" not in r.text

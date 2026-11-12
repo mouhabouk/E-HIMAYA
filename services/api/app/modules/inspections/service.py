@@ -863,8 +863,12 @@ async def my_missions(session: AsyncSession, inspector: Inspector) -> list[schem
         )
     )
     full = await missions_out(session, rows)
+    active = await session.scalar(select(Profile).where(Profile.active))
+    profile = schemas.ProfileConfig.model_validate(active.config) if active is not None else None
     return [
-        schemas.AppMissionOut(id=m.id, ref=m.ref, on_date=m.on_date, at_time=m.at_time, kind=m.kind, sites=m.sites)
+        schemas.AppMissionOut(
+            id=m.id, ref=m.ref, on_date=m.on_date, at_time=m.at_time, kind=m.kind, sites=m.sites, profile=profile
+        )
         for m in full
         if m.status != "done"
     ]
