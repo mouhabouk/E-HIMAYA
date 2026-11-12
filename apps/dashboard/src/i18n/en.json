@@ -87,7 +87,8 @@
     "sqlConsole": "SQL console",
     "repoMap": "System map",
     "roomGuide": "Room agent's guide",
-    "callCards": "Call-taking cards"
+    "callCards": "Call-taking cards",
+    "addressWarnings": "Address warnings"
   },
   "header": {
     "scope": "Geographic scope",
@@ -9310,5 +9311,141 @@
     "button": "Print",
     "office": "National Civil Protection Office",
     "printedBy": "Printed by {{name}} on {{at}}"
+  },
+  "addressWarnings": {
+    "title": "Address warnings",
+    "intro": "Marks on dangerous addresses: a gas store, hazardous materials, a building at risk of collapse, a dangerous animal, a difficult access, or a resident who needs help and agreed to be shown. When a report falls within a mark's circle, the room and the team see it at once.",
+    "tab": {
+      "register": "Register of marks",
+      "settings": "Category settings",
+      "reveals": "Personal data read"
+    },
+    "kpi": {
+      "active": "active marks",
+      "pending": "awaiting approval",
+      "reviewDue": "past review date",
+      "personal": "personal marks with consent"
+    },
+    "queue": {
+      "title": "Awaiting approval",
+      "incident": "The incident"
+    },
+    "action": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "archive": "Archive",
+      "confirm": "Still there: confirm"
+    },
+    "ask": {
+      "reject": "Reason for rejecting",
+      "archive": "Reason for archiving (the danger is gone, for example)"
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active",
+      "archived": "Archived",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn by its owner",
+      "review_due": "Review overdue"
+    },
+    "source": {
+      "room": "The room",
+      "team": "Team proposal",
+      "org": "Institutions register",
+      "municipality": "Municipality",
+      "report": "Intervention report",
+      "citizen": "Medical file, with consent"
+    },
+    "filter": "Show",
+    "filterOption": {
+      "current": "Active and pending",
+      "pending": "Pending",
+      "review_due": "Review overdue",
+      "archived": "Archived",
+      "rejected": "Rejected"
+    },
+    "empty": "No mark here.",
+    "personalNote": "Personal marks are never listed nor searched: they only show for a nearby report, without a name. Their owner adds them from the citizen app and withdraws them at any time.",
+    "col": {
+      "category": "Category",
+      "address": "Address and description",
+      "source": "Source",
+      "shownTo": "Shown to",
+      "review": "Review",
+      "status": "Status",
+      "actions": "Action"
+    },
+    "import": {
+      "button": "Import from the institutions register",
+      "done": "{{n}} marks added, awaiting approval"
+    },
+    "add": {
+      "button": "New mark",
+      "category": "Category",
+      "personal": "Personal categories (disability, oxygen, deafness) are not added here: their owner adds them from their medical file in the citizen app.",
+      "place": "Location",
+      "pick": "Click the map to place the address.",
+      "picked": "Location: {{lat}}, {{lon}}",
+      "address": "Address",
+      "description": "Description",
+      "other": "Other",
+      "note": "A short detail for the team (quantity, place, way in)",
+      "hours": "Active hours",
+      "from": "From",
+      "to": "To",
+      "source": "Source",
+      "teamVisible": "Shown to the team too",
+      "save": "Save the mark"
+    },
+    "settings": {
+      "intro": "Each category's circle, review period, visibility to the team, and the incident kinds that make it critical. Set by the Office; every change is logged.",
+      "readOnly": "Settings of the central room, read only here.",
+      "radius": "Circle",
+      "review": "Review every",
+      "team": "Shown to the team",
+      "critical": "Critical with",
+      "personal": "Personal",
+      "metres": "{{n}} m",
+      "months": "{{n}} months",
+      "less": "Less",
+      "more": "More"
+    },
+    "reveals": {
+      "intro": "Every time the name and phone of a personal mark were shown: when, by whom, for which incident and why. The owner is told in their app.",
+      "none": "No name shown.",
+      "at": "Time",
+      "by": "By",
+      "incident": "Incident",
+      "reason": "Reason"
+    },
+    "panel": {
+      "title": "Address warnings",
+      "count": "{{n}} · {{unread}} unread",
+      "critical": "{{n}} critical",
+      "ackAll": "Mark all read",
+      "none": "No mark around this incident.",
+      "note": "A mark shows when the incident is inside its circle. Critical ones for this kind of incident first. Personal marks come with consent and without a name; showing the name is logged under your name.",
+      "criticalWith": "Critical with {{kind}}",
+      "distance": "{{m}} m away",
+      "team": "Room and team",
+      "roomOnly": "Room only",
+      "consent": "With consent",
+      "offHours": "Outside hours ({{from}}–{{to}})",
+      "onHours": "Active now ({{from}}–{{to}})",
+      "roomRead": "Read by {{who}} {{at}}",
+      "teamRead": "Read by the team {{at}}",
+      "ack": "Read"
+    },
+    "reveal": {
+      "button": "Name and phone",
+      "explain": "For this incident's need only. Logged under your name with the reason; the owner is told.",
+      "confirm": "Show",
+      "noName": "No name on the account",
+      "reason": {
+        "call": "Call to check they are at home",
+        "name": "Give the team their name to call out",
+        "team": "Asked by the team on site"
+      }
+    }
   }
 }

@@ -183,6 +183,43 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPS_MANAGER,
         ),
     ),
+    # Address warnings (OS8, Yamen 2026-11-12): the marks on dangerous addresses shown when a report falls near.
+    page(
+        "address_warnings",
+        "ops",
+        "/address-warnings",
+        ("تحذيرات العناوين", "Alertes d'adresse", "Address warnings"),
+        ("* /address-warnings",),
+        button(
+            "address_warnings.edit",
+            ("إضافة العلامات وتعديلها والبتّ فيها", "Ajouter, modifier et valider les marques", "Add, edit, decide"),
+            "POST /address-warnings/markers",
+            "PATCH /address-warnings/markers/{marker_id}",
+            "POST /address-warnings/markers/{marker_id}/{action}",
+            "POST /address-warnings/import-orgs",
+            act_as=R.OPERATOR,
+        ),
+        button(
+            "address_warnings.ack",
+            ("الاطلاع على تحذيرات البلاغ", "Lu : alertes de l'incident", "Read the incident's warnings"),
+            "POST /address-warnings/incidents/{incident_id}/ack",
+            act_as=R.OPERATOR,
+        ),
+        button(
+            "address_warnings.reveal",
+            ("كشف اسم صاحب علامة شخصية وهاتفه", "Nom et téléphone d'une marque personnelle", "Personal mark's owner"),
+            "POST /address-warnings/incidents/{incident_id}/reveal/{marker_id}",
+            flags="personal",
+            act_as=R.OPERATOR,
+        ),
+        button(
+            "address_warnings.settings",
+            ("إعدادات الأصناف", "Réglages des catégories", "Category settings"),
+            "PUT /address-warnings/categories/{key}",
+            flags="national",
+            act_as=R.OPS_MANAGER,
+        ),
+    ),
     page(
         "incidents",
         "ops",
@@ -1729,6 +1766,13 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /@crew/missions/{assignment_id}/report",
             # The call-taking card completed from the scene (OS2): a report from the field like the others.
             "POST /@crew/missions/{assignment_id}/call-card",
+            act_as=R.TEAM_LEADER,
+        ),
+        button(
+            "field_missions.address_warnings",
+            ("تحذيرات العنوان واقتراح علامة", "Alertes d'adresse et proposition", "Address warnings and proposals"),
+            "POST /@crew/missions/{assignment_id}/address-warnings/ack",
+            "POST /@crew/missions/{assignment_id}/address-warnings/propose",
             act_as=R.TEAM_LEADER,
         ),
         button(

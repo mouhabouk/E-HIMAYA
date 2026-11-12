@@ -17,6 +17,7 @@ import '../staff_config.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
 import '../staff_models.dart';
+import 'address_warnings_screen.dart';
 import 'call_card_screen.dart';
 import 'detailed_report_screen.dart';
 import 'field_flow.dart';
@@ -74,6 +75,8 @@ class MissionScreen extends ConsumerWidget {
               children: [
                 _MissionCard(mission: m, away: away),
                 const SizedBox(height: 12),
+                // OS8: what the room knows about this address, read before going in.
+                AddressWarningsCard(missionId: m.id),
                 for (final a in m.alerts) AlertLine(alert: a),
                 _Timeline(mission: m, away: away),
                 const SizedBox(height: 12),

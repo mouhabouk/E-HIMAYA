@@ -499,4 +499,48 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'the leader reads the address warnings and proposes a mark (OS8)',
+    (tester) async {
+      final server = await onMission();
+      server.addressWarnings.add({
+        'marker_id': 'w-1',
+        'category': 'gas',
+        'category_name': 'Gas store',
+        'personal': false,
+        'address': '12 rue de Tunis',
+        'description': 'Gas bottles on the ground floor',
+        'distance_m': 40,
+        'critical': true,
+        'off_hours': false,
+        'team_ack_at': null,
+      });
+      await openMission(tester, server);
+
+      expect(find.text('Address warnings: 1'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('open-address-warnings')));
+      await tester.pumpAndSettle();
+      expect(find.text('Gas bottles on the ground floor'), findsOneWidget);
+      expect(find.text('Critical with Fire'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('aw-ack')));
+      await tester.pumpAndSettle();
+      expect(server.addressWarnings.single['team_ack_at'], isNotNull);
+      expect(find.byKey(const Key('aw-ack')), findsNothing);
+
+      await tester.tap(find.byKey(const Key('aw-propose')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('aw-cat-dog')));
+      await tester.enterText(
+        find.byKey(const Key('aw-text')),
+        'A dog in the yard',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('aw-send')));
+      await tester.pumpAndSettle();
+      expect(server.proposals.single['category'], 'dog');
+      expect(server.proposals.single['description'], 'A dog in the yard');
+    },
+  );
 }

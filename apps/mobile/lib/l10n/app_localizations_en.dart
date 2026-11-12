@@ -7045,4 +7045,140 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffMissionSheetFailed =>
       'Could not download the mission sheet, and no copy is saved yet';
+
+  @override
+  String get awCatGas => 'Gas store';
+
+  @override
+  String get awCatChem => 'Hazardous materials';
+
+  @override
+  String get awCatFuel => 'Fuel tank';
+
+  @override
+  String get awCatBatt => 'Batteries and power';
+
+  @override
+  String get awCatColl => 'Unsafe building';
+
+  @override
+  String get awCatAcc => 'Hard to reach';
+
+  @override
+  String get awCatDog => 'Dangerous animal';
+
+  @override
+  String get awCatOcc => 'Many people';
+
+  @override
+  String get awCatMob => 'Needs help to evacuate';
+
+  @override
+  String get awCatOxy => 'Home oxygen';
+
+  @override
+  String get awCatDeaf => 'Cannot hear the alarm';
+
+  @override
+  String get awTitle => 'Address warnings';
+
+  @override
+  String get awNone => 'No warning at this address';
+
+  @override
+  String awCardTitle(int n) {
+    return 'Address warnings: $n';
+  }
+
+  @override
+  String get awAllRead => 'Read by the team';
+
+  @override
+  String get awProposeHint =>
+      'Saw a danger here? Propose a mark; the room approves it';
+
+  @override
+  String get awAcked => 'Recorded: the warnings were read';
+
+  @override
+  String get awFailed => 'Could not reach the server, try again';
+
+  @override
+  String get awAck => 'I read the warnings';
+
+  @override
+  String get awPropose => 'Propose a mark';
+
+  @override
+  String get awNote =>
+      'A mark shows when the incident is inside its circle. Personal marks are given by their owners, without names.';
+
+  @override
+  String awCriticalWith(String kind) {
+    return 'Critical with $kind';
+  }
+
+  @override
+  String awDistance(int m) {
+    return '$m m away';
+  }
+
+  @override
+  String get awOffHours => 'Outside its hours';
+
+  @override
+  String get awConsent => 'With its owner\'s consent';
+
+  @override
+  String awReadAt(String time) {
+    return 'Read at $time';
+  }
+
+  @override
+  String get awProposed => 'Sent; the room will approve it';
+
+  @override
+  String get awProposeText => 'What did you see?';
+
+  @override
+  String get awProposeSend => 'Send the proposal';
+
+  @override
+  String get awConsentTitle => 'Tell rescuers about my home';
+
+  @override
+  String get awConsentCard => 'If someone at home needs help to evacuate';
+
+  @override
+  String get awConsentRegistered =>
+      'This needs a registered account, so the room knows whom to call.';
+
+  @override
+  String get awConsentSaved => 'Your consent was saved';
+
+  @override
+  String get awConsentIntro =>
+      'If an incident happens near your home, the operations room and the team see that someone at this address needs help, without your name. Choose what applies.';
+
+  @override
+  String get awConsentNote => 'What helps the team (optional)';
+
+  @override
+  String get awConsentAddress => 'The address as the team finds it';
+
+  @override
+  String get awConsentLocate => 'Set the home from my location now';
+
+  @override
+  String get awConsentLocated => 'Location set (tap to update)';
+
+  @override
+  String get awConsentPrivacy =>
+      'Your name and phone are not shown. If the room needs them for an incident, it is recorded with the reason and you see it here. Renewed each year; withdraw any time.';
+
+  @override
+  String get awConsentReveals => 'When the room read your name';
+
+  @override
+  String get awConsentWithdraw => 'Withdraw all my consent';
 }

@@ -346,6 +346,11 @@ async function mockApi(page: Page, creds: SipCredentials) {
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/volunteer-suggestions") return json(route, []);
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/conference") return json(route, []);
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/hospitals") return json(route, []);
+    // OS8: the address warnings of the incident (none here).
+    if (verb === "GET" && pathname === "/api/v1/staff/address-warnings/categories") return json(route, []);
+    if (verb === "GET" && pathname === "/api/v1/staff/address-warnings/incidents/i-1") {
+      return json(route, { incident_id: "i-1", incident_kind: "fire", location: null, items: [], unread: 0 });
+    }
     // The incident's media gallery (phase D, review point 21): empty.
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1/media") return json(route, { counts: {}, live_streams: 0, items: [] });
     if (verb === "POST" && pathname === "/api/v1/staff/incidents/i-1/conference") {

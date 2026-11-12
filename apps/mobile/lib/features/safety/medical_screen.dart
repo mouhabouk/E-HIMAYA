@@ -4,12 +4,16 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/config/providers.dart';
 import '../../core/db/app_database.dart';
 import '../../core/db/open_database.dart';
 import '../../core/platform/device_services.dart';
+import '../../core/routing/app_router.dart';
+import '../../core/ui/components.dart';
 import '../../core/ui/emergency_action.dart';
+import '../../core/ui/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import 'safety_models.dart';
 import 'safety_providers.dart';
@@ -473,6 +477,15 @@ class _MedicalFormState extends ConsumerState<_MedicalForm> {
           onChanged: _setLock,
           title: Text(l10n.medicalLock),
           subtitle: Text(l10n.medicalLockHint),
+        ),
+        // OS8: the rescuers know, at this address, that someone needs help to leave.
+        NavCard(
+          key: const Key('medical-address-warnings'),
+          icon: Icons.accessible,
+          tone: Tone.green,
+          title: l10n.awConsentTitle,
+          subtitle: l10n.awConsentCard,
+          onTap: () => context.push(Routes.safetyAddressWarnings),
         ),
         const Divider(),
         OutlinedButton.icon(

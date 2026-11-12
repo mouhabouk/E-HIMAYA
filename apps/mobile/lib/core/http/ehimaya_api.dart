@@ -1202,6 +1202,34 @@ class EHimayaApi {
     return SafetyLink.fromJson(r.data!);
   });
 
+  /// OS8: the citizen's consent to an address warning (registered accounts only).
+  Future<Map<String, Object?>> myAddressWarnings() => guardApi(() async {
+    final r = await _dio.get<Map<String, Object?>>(
+      '/api/v1/me/address-warnings',
+    );
+    return r.data!;
+  });
+
+  /// OS8: the address and the needs; a need left out is withdrawn at once.
+  Future<Map<String, Object?>> saveMyAddressWarnings(
+    Map<String, Object?> body,
+  ) => guardApi(() async {
+    final r = await _dio.put<Map<String, Object?>>(
+      '/api/v1/me/address-warnings',
+      data: body,
+    );
+    return r.data!;
+  });
+
+  /// OS8: every need withdrawn in one tap.
+  Future<Map<String, Object?>> withdrawMyAddressWarnings() =>
+      guardApi(() async {
+        final r = await _dio.delete<Map<String, Object?>>(
+          '/api/v1/me/address-warnings',
+        );
+        return r.data!;
+      });
+
   Future<List<SafetyLink>> safetyLinks() => guardApi(() async {
     final r = await _dio.get<Map<String, Object?>>('/api/v1/safety/links');
     return [

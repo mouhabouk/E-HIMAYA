@@ -596,24 +596,6 @@
         "title": "AccountPatch",
         "type": "object"
       },
-      "AckIn": {
-        "properties": {
-          "note": {
-            "anyOf": [
-              {
-                "maxLength": 1000,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Note"
-          }
-        },
-        "title": "AckIn",
-        "type": "object"
-      },
       "Action": {
         "description": "A button wired to an existing flow of the dashboard; nothing is applied until the operator confirms it.",
         "properties": {
@@ -6035,74 +6017,6 @@
         ],
         "title": "Category",
         "type": "string"
-      },
-      "CategoryIn": {
-        "properties": {
-          "family": {
-            "anyOf": [
-              {
-                "enum": [
-                  "vehicles",
-                  "equipment",
-                  "boats",
-                  "air",
-                  "ppe"
-                ],
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Family"
-          },
-          "key": {
-            "pattern": "^[a-z][a-z0-9_]{1,39}$",
-            "title": "Key",
-            "type": "string"
-          },
-          "kind": {
-            "enum": [
-              "vehicle",
-              "equipment",
-              "skill"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "levels": {
-            "default": 0,
-            "maximum": 5.0,
-            "minimum": 0.0,
-            "title": "Levels",
-            "type": "integer"
-          },
-          "name": {
-            "$ref": "#/components/schemas/app__modules__inventory__schemas__Names"
-          },
-          "position": {
-            "default": 0,
-            "maximum": 999.0,
-            "minimum": 0.0,
-            "title": "Position",
-            "type": "integer"
-          },
-          "specs": {
-            "items": {
-              "$ref": "#/components/schemas/SpecDef"
-            },
-            "maxItems": 8,
-            "title": "Specs",
-            "type": "array"
-          }
-        },
-        "required": [
-          "key",
-          "kind",
-          "name"
-        ],
-        "title": "CategoryIn",
-        "type": "object"
       },
       "CategoryOption": {
         "properties": {
@@ -20536,6 +20450,28 @@
         "title": "HourOut",
         "type": "object"
       },
+      "Hours": {
+        "properties": {
+          "end": {
+            "maximum": 1440.0,
+            "minimum": 0.0,
+            "title": "End",
+            "type": "integer"
+          },
+          "start": {
+            "maximum": 1440.0,
+            "minimum": 0.0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "Hours",
+        "type": "object"
+      },
       "IceServer": {
         "properties": {
           "urls": {
@@ -21839,6 +21775,49 @@
           "merged_into"
         ],
         "title": "IncidentSummary",
+        "type": "object"
+      },
+      "IncidentWarnings": {
+        "properties": {
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "incident_kind": {
+            "title": "Incident Kind",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Warning"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__address_warnings__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unread": {
+            "title": "Unread",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "incident_id",
+          "incident_kind",
+          "location",
+          "items",
+          "unread"
+        ],
+        "title": "IncidentWarnings",
         "type": "object"
       },
       "InjectIn": {
@@ -24950,6 +24929,372 @@
         "title": "MaintenanceOut",
         "type": "object"
       },
+      "MarkerIn": {
+        "properties": {
+          "address": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Address",
+            "type": "string"
+          },
+          "category": {
+            "maxLength": 20,
+            "minLength": 2,
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Description",
+            "type": "string"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Hours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          },
+          "review_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review On"
+          },
+          "source": {
+            "default": "room",
+            "enum": [
+              "room",
+              "org",
+              "municipality",
+              "report"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "source_ref": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ref"
+          },
+          "team_visible": {
+            "default": true,
+            "title": "Team Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "category",
+          "location",
+          "address",
+          "description"
+        ],
+        "title": "MarkerIn",
+        "type": "object"
+      },
+      "MarkerOut": {
+        "properties": {
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "decided_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided By Name"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Hours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "location": {
+            "$ref": "#/components/schemas/app__modules__address_warnings__schemas__Point"
+          },
+          "org_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Id"
+          },
+          "review_due": {
+            "title": "Review Due",
+            "type": "boolean"
+          },
+          "review_on": {
+            "format": "date",
+            "title": "Review On",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ref"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "active",
+              "archived",
+              "rejected",
+              "withdrawn"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "team_visible": {
+            "title": "Team Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "gouvernorat_code",
+          "location",
+          "address",
+          "description",
+          "source",
+          "source_ref",
+          "org_id",
+          "incident_id",
+          "team_visible",
+          "hours",
+          "review_on",
+          "review_due",
+          "status",
+          "created_at",
+          "created_by_name",
+          "decided_at",
+          "decided_by_name",
+          "decision_reason",
+          "confirmed_at"
+        ],
+        "title": "MarkerOut",
+        "type": "object"
+      },
+      "MarkerPage": {
+        "properties": {
+          "counts": {
+            "$ref": "#/components/schemas/app__modules__address_warnings__schemas__Counts"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MarkerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "counts"
+        ],
+        "title": "MarkerPage",
+        "type": "object"
+      },
+      "MarkerPatch": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "clear_hours": {
+            "default": false,
+            "title": "Clear Hours",
+            "type": "boolean"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Hours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LocationIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "team_visible": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Visible"
+          }
+        },
+        "title": "MarkerPatch",
+        "type": "object"
+      },
       "MeOut": {
         "properties": {
           "gouvernorat_code": {
@@ -26729,6 +27074,36 @@
         "title": "MyCertificate",
         "type": "object"
       },
+      "MyNeed": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "review_on": {
+            "format": "date",
+            "title": "Review On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "description",
+          "review_on"
+        ],
+        "title": "MyNeed",
+        "type": "object"
+      },
       "MyOrg": {
         "properties": {
           "alerts_count": {
@@ -26763,6 +27138,30 @@
           "alerts_count"
         ],
         "title": "MyOrg",
+        "type": "object"
+      },
+      "MyReveal": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "category",
+          "reason"
+        ],
+        "title": "MyReveal",
         "type": "object"
       },
       "MyRewards": {
@@ -26862,6 +27261,89 @@
           "safety_notice"
         ],
         "title": "MyRewards",
+        "type": "object"
+      },
+      "MyWarningsIn": {
+        "properties": {
+          "address": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Address",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationIn"
+          },
+          "needs": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__address_warnings__schemas__NeedIn"
+            },
+            "maxItems": 3,
+            "title": "Needs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "location",
+          "address",
+          "needs"
+        ],
+        "title": "MyWarningsIn",
+        "type": "object"
+      },
+      "MyWarningsOut": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__address_warnings__schemas__CategoryOut"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__address_warnings__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "needs": {
+            "items": {
+              "$ref": "#/components/schemas/MyNeed"
+            },
+            "title": "Needs",
+            "type": "array"
+          },
+          "reveals": {
+            "items": {
+              "$ref": "#/components/schemas/MyReveal"
+            },
+            "title": "Reveals",
+            "type": "array"
+          }
+        },
+        "required": [
+          "location",
+          "address",
+          "needs",
+          "reveals",
+          "categories"
+        ],
+        "title": "MyWarningsOut",
         "type": "object"
       },
       "NatureIn": {
@@ -27050,28 +27532,6 @@
           "report_count"
         ],
         "title": "NearbyIncident",
-        "type": "object"
-      },
-      "NeedIn": {
-        "properties": {
-          "label": {
-            "maxLength": 200,
-            "minLength": 2,
-            "title": "Label",
-            "type": "string"
-          },
-          "quantity": {
-            "maximum": 1000000.0,
-            "minimum": 1.0,
-            "title": "Quantity",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "label",
-          "quantity"
-        ],
-        "title": "NeedIn",
         "type": "object"
       },
       "NeedOut": {
@@ -32599,6 +33059,51 @@
         "title": "ProofStep",
         "type": "object"
       },
+      "ProposalIn": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "category": {
+            "maxLength": 20,
+            "minLength": 2,
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Description",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LocationIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "category",
+          "description"
+        ],
+        "title": "ProposalIn",
+        "type": "object"
+      },
       "PublicAlert": {
         "properties": {
           "area": {
@@ -36517,6 +37022,107 @@
           "reason"
         ],
         "title": "ReturnIn",
+        "type": "object"
+      },
+      "RevealIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "RevealIn",
+        "type": "object"
+      },
+      "RevealOut": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "required": [
+          "name",
+          "phone"
+        ],
+        "title": "RevealOut",
+        "type": "object"
+      },
+      "RevealRow": {
+        "properties": {
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Name"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "by_name",
+          "category",
+          "address",
+          "incident_id",
+          "reason"
+        ],
+        "title": "RevealRow",
         "type": "object"
       },
       "ReviewItem": {
@@ -50121,6 +50727,154 @@
         "title": "VolunteerSuggestion",
         "type": "object"
       },
+      "Warning": {
+        "properties": {
+          "address": {
+            "title": "Address",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "category_name": {
+            "default": "",
+            "title": "Category Name",
+            "type": "string"
+          },
+          "critical": {
+            "title": "Critical",
+            "type": "boolean"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "distance_m": {
+            "title": "Distance M",
+            "type": "integer"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Hours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location": {
+            "$ref": "#/components/schemas/app__modules__address_warnings__schemas__Point"
+          },
+          "marker_id": {
+            "format": "uuid",
+            "title": "Marker Id",
+            "type": "string"
+          },
+          "off_hours": {
+            "title": "Off Hours",
+            "type": "boolean"
+          },
+          "personal": {
+            "title": "Personal",
+            "type": "boolean"
+          },
+          "revealed": {
+            "default": false,
+            "title": "Revealed",
+            "type": "boolean"
+          },
+          "review_on": {
+            "format": "date",
+            "title": "Review On",
+            "type": "string"
+          },
+          "room_ack_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room Ack At"
+          },
+          "room_ack_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room Ack By"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ref"
+          },
+          "team_ack_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Ack At"
+          },
+          "team_ack_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Ack By"
+          },
+          "team_visible": {
+            "title": "Team Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "marker_id",
+          "category",
+          "personal",
+          "location",
+          "address",
+          "description",
+          "source",
+          "source_ref",
+          "team_visible",
+          "distance_m",
+          "critical",
+          "off_hours",
+          "hours",
+          "review_on"
+        ],
+        "title": "Warning",
+        "type": "object"
+      },
       "WeatherOut": {
         "description": "GET /api/v1/weather (public).",
         "properties": {
@@ -50516,6 +51270,247 @@
           "outcome"
         ],
         "title": "ReviewIn",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__AckIn": {
+        "description": "The warnings read; empty = every warning shown.",
+        "properties": {
+          "marker_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Marker Ids",
+            "type": "array"
+          }
+        },
+        "title": "AckIn",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__CategoryIn": {
+        "properties": {
+          "critical_with": {
+            "items": {
+              "enum": [
+                "fire",
+                "chemical_leak",
+                "landslide",
+                "flood",
+                "traffic_accident",
+                "drowning",
+                "medical",
+                "sos",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 9,
+            "title": "Critical With",
+            "type": "array"
+          },
+          "radius_m": {
+            "maximum": 1000.0,
+            "minimum": 20.0,
+            "title": "Radius M",
+            "type": "integer"
+          },
+          "review_months": {
+            "maximum": 36.0,
+            "minimum": 1.0,
+            "title": "Review Months",
+            "type": "integer"
+          },
+          "team": {
+            "title": "Team",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "radius_m",
+          "review_months",
+          "team",
+          "critical_with"
+        ],
+        "title": "CategoryIn",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__CategoryOut": {
+        "properties": {
+          "colour": {
+            "title": "Colour",
+            "type": "string"
+          },
+          "critical_with": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Critical With",
+            "type": "array"
+          },
+          "examples": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Examples",
+            "type": "array"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "personal": {
+            "title": "Personal",
+            "type": "boolean"
+          },
+          "radius_m": {
+            "title": "Radius M",
+            "type": "integer"
+          },
+          "review_months": {
+            "title": "Review Months",
+            "type": "integer"
+          },
+          "team": {
+            "title": "Team",
+            "type": "boolean"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "icon",
+          "colour",
+          "personal",
+          "radius_m",
+          "review_months",
+          "team",
+          "critical_with",
+          "examples"
+        ],
+        "title": "CategoryOut",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__Counts": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "integer"
+          },
+          "pending": {
+            "title": "Pending",
+            "type": "integer"
+          },
+          "personal": {
+            "title": "Personal",
+            "type": "integer"
+          },
+          "review_due": {
+            "title": "Review Due",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "active",
+          "pending",
+          "review_due",
+          "personal"
+        ],
+        "title": "Counts",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__DecisionIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "DecisionIn",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__ImportOut": {
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "created"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__NeedIn": {
+        "properties": {
+          "category": {
+            "enum": [
+              "mob",
+              "oxy",
+              "deaf"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "description"
+        ],
+        "title": "NeedIn",
+        "type": "object"
+      },
+      "app__modules__address_warnings__schemas__Point": {
+        "properties": {
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "Point",
         "type": "object"
       },
       "app__modules__analytics__schemas__Overview": {
@@ -52552,6 +53547,28 @@
         "title": "Figures",
         "type": "object"
       },
+      "app__modules__crisis__schemas__NeedIn": {
+        "properties": {
+          "label": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "quantity": {
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Quantity",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "quantity"
+        ],
+        "title": "NeedIn",
+        "type": "object"
+      },
       "app__modules__crisis__schemas__Point": {
         "properties": {
           "lat": {
@@ -54101,6 +55118,74 @@
           "can_export_names"
         ],
         "title": "AgentsOut",
+        "type": "object"
+      },
+      "app__modules__inventory__schemas__CategoryIn": {
+        "properties": {
+          "family": {
+            "anyOf": [
+              {
+                "enum": [
+                  "vehicles",
+                  "equipment",
+                  "boats",
+                  "air",
+                  "ppe"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{1,39}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "vehicle",
+              "equipment",
+              "skill"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "levels": {
+            "default": 0,
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Levels",
+            "type": "integer"
+          },
+          "name": {
+            "$ref": "#/components/schemas/app__modules__inventory__schemas__Names"
+          },
+          "position": {
+            "default": 0,
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "specs": {
+            "items": {
+              "$ref": "#/components/schemas/SpecDef"
+            },
+            "maxItems": 8,
+            "title": "Specs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "name"
+        ],
+        "title": "CategoryIn",
         "type": "object"
       },
       "app__modules__inventory__schemas__CategoryOut": {
@@ -55800,6 +56885,24 @@
           "active"
         ],
         "title": "InboxItem",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__AckIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "AckIn",
         "type": "object"
       },
       "app__modules__ops__schemas__AlertIn": {
@@ -66336,6 +67439,224 @@
         ]
       }
     },
+    "/api/v1/crew/missions/{assignment_id}/address-warnings": {
+      "get": {
+        "operationId": "crew_warnings_api_v1_crew_missions__assignment_id__address_warnings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentWarnings"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Warnings",
+        "tags": [
+          "crew",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/address-warnings/ack": {
+      "post": {
+        "operationId": "crew_ack_api_v1_crew_missions__assignment_id__address_warnings_ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__address_warnings__schemas__AckIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentWarnings"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Ack",
+        "tags": [
+          "crew",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/address-warnings/propose": {
+      "post": {
+        "operationId": "crew_propose_api_v1_crew_missions__assignment_id__address_warnings_propose_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposalIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Propose",
+        "tags": [
+          "crew",
+          "address-warnings"
+        ]
+      }
+    },
     "/api/v1/crew/missions/{assignment_id}/alerts": {
       "post": {
         "operationId": "alert_api_v1_crew_missions__assignment_id__alerts_post",
@@ -70618,6 +71939,178 @@
         "summary": "Me",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/me/address-warnings": {
+      "delete": {
+        "description": "Withdraw every need at once: the marks disappear from the rooms and the phones immediately.",
+        "operationId": "withdraw_my_warnings_api_v1_me_address_warnings_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyWarningsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Withdraw My Warnings",
+        "tags": [
+          "address-warnings"
+        ]
+      },
+      "get": {
+        "operationId": "my_warnings_api_v1_me_address_warnings_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyWarningsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "My Warnings",
+        "tags": [
+          "address-warnings"
+        ]
+      },
+      "put": {
+        "operationId": "save_my_warnings_api_v1_me_address_warnings_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MyWarningsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyWarningsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save My Warnings",
+        "tags": [
+          "address-warnings"
         ]
       }
     },
@@ -79072,6 +80565,606 @@
         ]
       }
     },
+    "/api/v1/staff/address-warnings/categories": {
+      "get": {
+        "operationId": "get_categories_api_v1_staff_address_warnings_categories_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__address_warnings__schemas__CategoryOut"
+                  },
+                  "title": "Response Get Categories Api V1 Staff Address Warnings Categories Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Categories",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/categories/{key}": {
+      "put": {
+        "description": "The central room's settings: circle, review period, team, critical kinds.",
+        "operationId": "put_category_api_v1_staff_address_warnings_categories__key__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__address_warnings__schemas__CategoryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__address_warnings__schemas__CategoryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Category",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/import-orgs": {
+      "post": {
+        "description": "Pending marks from the institutions that declared hazardous materials.",
+        "operationId": "import_orgs_api_v1_staff_address_warnings_import_orgs_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__address_warnings__schemas__ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import Orgs",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/incidents/{incident_id}": {
+      "get": {
+        "operationId": "incident_warnings_api_v1_staff_address_warnings_incidents__incident_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentWarnings"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Incident Warnings",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/incidents/{incident_id}/ack": {
+      "post": {
+        "operationId": "acknowledge_api_v1_staff_address_warnings_incidents__incident_id__ack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__address_warnings__schemas__AckIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentWarnings"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Acknowledge",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/incidents/{incident_id}/reveal/{marker_id}": {
+      "post": {
+        "operationId": "reveal_api_v1_staff_address_warnings_incidents__incident_id__reveal__marker_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "marker_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Marker Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevealIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevealOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reveal",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/markers": {
+      "get": {
+        "operationId": "list_markers_api_v1_staff_address_warnings_markers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pending",
+                    "active",
+                    "review_due",
+                    "archived",
+                    "rejected"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 20,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 20,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkerPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Markers",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      },
+      "post": {
+        "operationId": "create_marker_api_v1_staff_address_warnings_markers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Marker",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/markers/{marker_id}": {
+      "patch": {
+        "operationId": "patch_marker_api_v1_staff_address_warnings_markers__marker_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "marker_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Marker Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkerPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Patch Marker",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/markers/{marker_id}/{action}": {
+      "post": {
+        "operationId": "decide_api_v1_staff_address_warnings_markers__marker_id___action__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "marker_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Marker Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "action",
+            "required": true,
+            "schema": {
+              "enum": [
+                "approve",
+                "reject",
+                "archive",
+                "confirm"
+              ],
+              "title": "Action",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__address_warnings__schemas__DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/reveals": {
+      "get": {
+        "operationId": "reveals_api_v1_staff_address_warnings_reveals_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RevealRow"
+                  },
+                  "title": "Response Reveals Api V1 Staff Address Warnings Reveals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reveals",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
     "/api/v1/staff/ai/models": {
       "get": {
         "operationId": "list_cards_api_v1_staff_ai_models_get",
@@ -84476,7 +86569,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NeedIn"
+                "$ref": "#/components/schemas/app__modules__crisis__schemas__NeedIn"
               }
             }
           },
@@ -85611,7 +87704,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AckIn"
+                "$ref": "#/components/schemas/app__modules__ops__schemas__AckIn"
               }
             }
           },
@@ -92479,7 +94572,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CategoryIn"
+                "$ref": "#/components/schemas/app__modules__inventory__schemas__CategoryIn"
               }
             }
           },

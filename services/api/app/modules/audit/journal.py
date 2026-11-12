@@ -35,6 +35,8 @@ EXCLUDED: frozenset[str] = frozenset(
     {
         "audit.log",
         "audit.change",
+        "aw.ack",
+        "aw.reveal",
         "events.outbox",
         "notify.outbox",
         "notify.dispatch",
