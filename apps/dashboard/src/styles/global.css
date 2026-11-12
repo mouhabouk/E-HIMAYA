@@ -12184,3 +12184,87 @@ body::after {
 .kpi--current {
   outline: 2px solid var(--tone-navy);
 }
+
+/* Phase I2: the periodic inspections (docs/phase-i/design-i.md); tones follow docs/design-system.md. */
+.chip--insp-green { color: var(--tone-green-ink); background: var(--tone-green-tint); }
+.chip--insp-amber { color: var(--tone-amber-ink); background: var(--tone-amber-tint); }
+.chip--insp-red { color: var(--tone-red-ink); background: var(--tone-red-tint); }
+.chip--insp-slate { color: var(--tone-slate-ink); background: var(--tone-slate-tint); }
+.chip--insp-mission-planned { color: var(--tone-sky-ink); background: var(--tone-sky-tint); }
+.chip--insp-mission-live { color: var(--tone-amber-ink); background: var(--tone-amber-tint); }
+.chip--insp-mission-done { color: var(--tone-green-ink); background: var(--tone-green-tint); }
+.chip--insp-mission-cancelled { color: var(--tone-slate-ink); background: var(--tone-slate-tint); }
+.chip--insp-prio-high { color: var(--tone-red-ink); background: var(--tone-red-tint); }
+.chip--insp-prio-medium { color: var(--tone-amber-ink); background: var(--tone-amber-tint); }
+.chip--insp-prio-low { color: var(--tone-slate-ink); background: var(--tone-slate-tint); }
+.kpi--insp { border-inline-start-color: var(--tone-navy); }
+
+.inspections-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-block-end: 0.75rem;
+}
+.inspections-head h2 { margin: 0; }
+
+.inspections-levels,
+.inspections-sites,
+.inspections-answers,
+.inspections-recs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inspections-answers,
+.inspections-recs { flex-direction: column; }
+.inspections-recs { gap: 0.25rem; }
+
+.inspections-mission,
+.inspections-account { display: grid; gap: 0.5rem; }
+
+.inspections-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.inspections-form,
+.inspections-sitesform { display: grid; gap: 0.75rem; }
+.inspections-site {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.5rem;
+  align-items: end;
+  background: var(--tone-slate-tint);
+}
+
+.inspections-sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.facts,
+.inspections-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+.facts dt { color: var(--muted); font-size: 0.85rem; }
+.facts dd { margin: 0; font-weight: 600; }
+
+@media print {
+  .inspections-page .tabs,
+  .inspections-inline { display: none; }
+  .inspections-site { background: none; }
+}

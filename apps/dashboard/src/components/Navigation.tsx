@@ -38,6 +38,9 @@ import {
   canReadKnowledge,
   canReadOrgs,
   canReadPersonnel,
+  canManageInspections,
+  canReadInspectionResults,
+  canAdministerInspections,
   canReviewOrgs,
   canReadPlatformSettings,
   canReadResources,
@@ -330,6 +333,8 @@ export function navGroups(
       label: t("nav.group.people"),
       items: [
         ...e(canReadPersonnel(roles), "/personnel", "manageAccounts", "navy", "personnel"),
+        ...e(canManageInspections(roles), "/inspections", "verified", "navy", "inspections"),
+        ...e(canReadInspectionResults(roles), "/inspection-results", "verified", "teal", "inspectionResults"),
         ...e(reads, "/volunteers", "volunteerActivism", "green", "volunteers"),
         ...e(
           canReviewDoctors(roles),
@@ -417,6 +422,7 @@ export function navGroups(
       items: [
         ...e(canOpenLayers(roles), "/layers", "layers", "teal", "layers"),
         ...e(reads, "/references", "menuBook", "slate", "references"),
+        ...e(canAdministerInspections(roles), "/inspection-admin", "delete", "red", "inspectionAdmin"),
         ...e(
           canReadPlatformSettings(roles),
           "/settings",

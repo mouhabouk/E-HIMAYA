@@ -41,6 +41,7 @@ import { safetyApi } from "./safetyApi";
 import { streamsApi } from "./streamsApi";
 import { normalizeOrgFilters, orgFiltersToQuery, type OrgFilters } from "./orgs";
 import { doctorsApi } from "./doctorsApi";
+import { inspectionsApi } from "./inspectionsApi";
 import { personnelApi } from "./personnelApi";
 import { fleetApi } from "./fleet";
 import { preventionApi } from "./preventionApi";
@@ -315,6 +316,7 @@ export function staffApi(api: ApiClient) {
     ...safetyApi(api),
     ...doctorsApi(api),
     ...personnelApi(api),
+    ...inspectionsApi(api),
     ...fleetApi(api),
     ...appFeedbackApi(api),
   };
