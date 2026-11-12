@@ -135,9 +135,9 @@ async function main() {
       let info = await page.evaluate(regions);
       // The dashboard scrolls inside its frame, so a long page is shown whole by making the window as tall as it.
       if (info.height > 900) {
-        await page.setViewportSize({ width: 1440, height: info.height });
+        await page.setViewportSize({ width: 1440, height: Math.ceil(info.height) });
         await page.waitForTimeout(700);
-        info = { ...(await page.evaluate(regions)), height: info.height };
+        info = { ...(await page.evaluate(regions)), height: Math.ceil(info.height) };
       }
       const file = `shots/${id}.jpg`;
       await page.screenshot({ path: join(OUT, file), type: "jpeg", quality: 72 });

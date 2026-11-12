@@ -64,7 +64,7 @@ svg{width:100%;height:100%;display:block}
 #card .row{display:flex;gap:8px;margin-top:10px}
 #card .row button{background:var(--brand);border-color:transparent;font-size:13px}
 #card .x{position:absolute;inset-inline-end:10px;top:8px;background:none;border:0;color:var(--mute);font-size:20px;padding:2px 8px}
-#hint{position:fixed;bottom:12px;inset-inline-end:16px;font-size:12px;color:var(--mute);z-index:4}
+#hint{position:fixed;bottom:12px;pointer-events:none;inset-inline-end:16px;font-size:12px;color:var(--mute);z-index:4}
 @media (max-width:720px){header h1 small,#legend{display:none} select{min-width:0;flex:1}}
 </style>
 </head>
@@ -83,7 +83,7 @@ svg{width:100%;height:100%;display:block}
 </header>
 <div id="stage"><svg id="svg" role="img" aria-label="خريطة ذهنية"><g id="vp"></g></svg></div>
 <div id="card" role="dialog" aria-live="polite"><button class="x" type="button" aria-label="إغلاق">×</button><div id="cbody"></div></div>
-<div id="hint">اسحب للتنقل، والعجلة للتكبير، واضغط على فرع لطيّه أو لسماعه</div>
+<div id="hint">اضغط على فرع لتكبيره وطيّه، واستعمل + و− للتكبير، واليد للتحريك أو التدوير</div>
 <script>
 const D = __DATA__;
 const ST = {done:['منجز ومعتمد','--ok'],approved:['معتمد، لم يُنفَّذ بعد','--run'],review:['ينتظر الموافقة','--wait'],
@@ -107,7 +107,7 @@ $('sub').textContent = `${D.rows.length} عنصرا في ${keys.length} مراح
 const mctx = document.createElement('canvas').getContext('2d');
 const tw = (t, size, w = 400) => { mctx.font = `${w} ${size}px "IBM Plex Sans Arabic", system-ui, sans-serif`; return mctx.measureText(t).width; };
 
-let model, collapsed = new Set(), view = {x: 0, y: 0, k: 1};
+let model, collapsed = new Set();
 
 function build(g) {
   if (g === 'all') {
@@ -160,6 +160,7 @@ function render(animate = true) {
       const n = el('g', {class: 'node' + (animate ? ' fade' : ''), tabindex: 0, role: 'button', 'aria-label': k.label}, gN);
       if (animate) n.style.animationDelay = (200 + delay * 40) + 'ms';
       const x0 = Math.min(a, b);
+      k.cx = x0 + w / 2; k.cy = cy;
       el('rect', {class: 'pill', x: x0, y: cy - KH / 2, width: w, height: KH, rx: KH / 2, fill: k.color}, n);
       const t = el('text', {x: x0 + w / 2 + 10, y: cy + 5, 'text-anchor': 'middle', fill: '#fff', 'font-size': 14, 'font-weight': 600}, n);
       t.textContent = k.label;
@@ -208,8 +209,9 @@ function render(animate = true) {
 }
 
 function select(k) {
+  viewer.focus(k.cx, k.cy, 1.5);
   if (k.go) { showCard(k); return; }
-  if (k.leaves.length) { collapsed.has(k.id) ? collapsed.delete(k.id) : collapsed.add(k.id); render(false); }
+  if (k.leaves.length) { collapsed.has(k.id) ? collapsed.delete(k.id) : collapsed.add(k.id); render(false); viewer.focus(k.cx, k.cy, 1.5); }
   showCard(k);
 }
 
@@ -252,25 +254,12 @@ function phaseText() {
   return `منظومة ء-حماية في ${keys.length} مراحل و${D.rows.length} عنصرا: ${keys.map(k => D.groups[k]).join('، ')}.`;
 }
 
-// ---- pan and zoom
-const svg = $('svg'), stage = $('stage');
-function apply() { $('vp').setAttribute('transform', `translate(${view.x},${view.y}) scale(${view.k})`); }
-function fit() {
-  const bb = $('vp').getBBox(), W = stage.clientWidth, H = stage.clientHeight;
-  const k = Math.min(W / (bb.width + 60), H / (bb.height + 60), 1.4);
-  view = {k, x: W / 2 - (bb.x + bb.width / 2) * k, y: H / 2 - (bb.y + bb.height / 2) * k}; apply();
-}
-let drag = null;
-stage.addEventListener('pointerdown', e => { if (e.target.closest('.node')) return; drag = {x: e.clientX, y: e.clientY, vx: view.x, vy: view.y}; stage.classList.add('drag'); stage.setPointerCapture(e.pointerId); });
-stage.addEventListener('pointermove', e => { if (!drag) return; view.x = drag.vx + e.clientX - drag.x; view.y = drag.vy + e.clientY - drag.y; apply(); });
-stage.addEventListener('pointerup', () => { drag = null; stage.classList.remove('drag'); });
-stage.addEventListener('wheel', e => {
-  e.preventDefault();
-  const r = svg.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, f = Math.exp(-e.deltaY * .0015);
-  const k = Math.max(.15, Math.min(4, view.k * f));
-  view.x = mx - (mx - view.x) * (k / view.k); view.y = my - (my - view.y) * (k / view.k); view.k = k; apply();
-}, {passive: false});
-stage.addEventListener('click', e => { if (!e.target.closest('.node')) $('card').classList.remove('on'); });
+// ---- pan, zoom and turn (scripts/atlas/viewer.js)
+__VIEWER__
+const stage = $('stage');
+const viewer = makeViewer(stage, $('vp'), () => $('vp').getBBox());
+const fit = () => viewer.fit();
+stage.addEventListener('click', e => { if (!viewer.moved && !e.target.closest('.node, .vctl')) $('card').classList.remove('on'); viewer.moved = false; });
 
 // ---- navigation
 function go(g) {
@@ -283,7 +272,7 @@ $('pick').onchange = () => go($('pick').value);
 const order = ['all', ...keys];
 $('prev').onclick = () => go(order[(order.indexOf($('pick').value) - 1 + order.length) % order.length]);
 $('next').onclick = () => go(order[(order.indexOf($('pick').value) + 1) % order.length]);
-$('fit').onclick = fit;
+$('fit').onclick = () => viewer.fit(true);
 $('all').onclick = () => {
   if (collapsed.size) { collapsed = new Set(); $('all').textContent = 'طيّ الفروع'; }
   else { collapsed = new Set(model.kids.map(k => k.id)); $('all').textContent = 'بسط الفروع'; }

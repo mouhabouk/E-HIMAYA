@@ -20,8 +20,79 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 HERE = Path(__file__).resolve().parent
-SURFACES = ["لوحة التحكم", "البوابة", "تطبيق المواطن", "تطبيق الأعوان"]
+REPO = HERE.parents[1]
+MOBILE = REPO / "apps/mobile/lib"
+# The smart app is one app with several profiles, and the staff app holds three trades (Yamen, 2026-11-13).
+SURFACES = ["لوحة التحكم", "البوابة",
+            "التطبيق الذكي · مواطن", "التطبيق الذكي · متطوع", "التطبيق الذكي · طبيب متطوع", "التطبيق الذكي · مؤسسة",
+            "تطبيق الأعوان · عون الميدان", "تطبيق الأعوان · تطبيق التفقد", "تطبيق الأعوان · عون السلامة (تفقد مؤسسة)"]
+SHEET = {"لوحة التحكم": "لوحة التحكم", "البوابة": "البوابة", "تطبيق المواطن": "citizen", "تطبيق الأعوان": "staff"}
+CITIZEN = {"volunteer": [3], "doctor": [4], "institution": [5], "availability": [3, 4]}
 MOD = re.compile(r"app/modules/([^/]+)/")
+MEMBER = re.compile(r"^(?:  |)(?!//|@|return|if|for|switch|case|final _)[^=;{}]*?\b([A-Za-z_]\w{3,})\s*(?:<[^()]*>)?\s*\(")
+TOP = re.compile(r"^(?:final|const|late)\s+(?:[\w<>?, ]+\s+)?([A-Za-z_]\w{3,})\s*=")
+STOP = {"build", "copyWith", "toJson", "fromJson", "dispose", "initState", "toString", "guardApi", "Future", "Text",
+        "setState", "watch", "read", "listen", "List", "Map", "then", "when", "call", "main", "super", "this"}
+
+
+class Mobile:
+    """Finds the screens of the Flutter app that reach each API call: the method that holds the call, then the files
+    that use that method (through a controller or a provider, up to three steps)."""
+
+    def __init__(self) -> None:
+        self.files = {p: p.read_text(encoding="utf-8").splitlines() for p in MOBILE.rglob("*.dart")}
+        self.text = {p: "\n".join(v) for p, v in self.files.items()}
+        self.memo: dict[str, set[tuple[int, str]]] = {}
+
+    def enclosing(self, path: Path, line: int) -> str | None:
+        lines = self.files.get(path, [])
+        for i in range(min(line, len(lines)) - 1, -1, -1):
+            ln = lines[i]
+            if ln.startswith("    ") or not ln.strip():
+                continue
+            m = TOP.match(ln) or MEMBER.match(ln)
+            if m and m.group(1) not in STOP:
+                return m.group(1)
+        return None
+
+    @staticmethod
+    def is_screen(path: Path) -> bool:
+        rel = path.relative_to(MOBILE).parts
+        if rel[0] == "features":
+            return rel[1] != "admin"
+        return rel[0] == "staff" and re.search(r"_(screens?|sheet|flow|box)$", path.stem) is not None
+
+    @staticmethod
+    def place(path: Path) -> list[tuple[int, str]]:
+        rel = path.relative_to(MOBILE).parts
+        if rel[0] == "features":
+            return [(i, rel[1]) for i in CITIZEN.get(rel[1], [2])]
+        if rel[0] == "staff":
+            trade = 7 if rel[1] == "inspect" else 8 if rel[1] == "prevention" else 6
+            return [(trade, path.stem)]
+        return []
+
+    def screens(self, path: Path, line: int, depth: int = 0, seen: set | None = None) -> set[tuple[int, str]]:
+        seen = seen if seen is not None else set()
+        name = self.enclosing(path, line)
+        if not name or name in seen or depth > 3:
+            return set()
+        if name in self.memo:
+            return self.memo[name]
+        seen.add(name)
+        pat = re.compile(r"\b" + re.escape(name) + r"\b")
+        found: set[tuple[int, str]] = set()
+        for f, lines in self.files.items():
+            if f == path or not pat.search(self.text[f]):
+                continue
+            if self.is_screen(f) or depth == 3:
+                found.update(self.place(f) if self.is_screen(f) else [])
+                continue
+            for i, ln in enumerate(lines, 1):
+                if pat.search(ln):
+                    found |= self.screens(f, i, depth + 1, seen)
+        self.memo[name] = found
+        return found
 
 
 def main() -> None:
@@ -43,27 +114,36 @@ def main() -> None:
         mod_tables[m.group(1)].update(t for t in r.get("tables", []) if t in tables)
 
     ws = load_workbook(a.xlsx, read_only=True)["الشاشات والبيانات"]
+    mob = Mobile()
     scr_mod: dict[tuple[str, str], set[str]] = defaultdict(set)
     scr_files: dict[tuple[str, str], set[str]] = defaultdict(set)
     scr_calls: dict[tuple[str, str], int] = defaultdict(int)
     for row in list(ws.iter_rows(values_only=True))[1:]:
         _, surface, screen, call, verb, path, fn, tbls, _fields = (list(row) + [None] * 9)[:9]
-        if surface not in SURFACES or not screen:
+        kind = SHEET.get(surface)
+        if not kind or not screen:
             continue
-        key = (surface, screen)
-        scr_calls[key] += 1
-        if call:
-            scr_files[key].add(call.rsplit(":", 1)[0])
+        if kind in ("citizen", "staff") and call:
+            f, ln = call.rsplit(":", 1)
+            keys = {(SURFACES[i], label) for i, label in mob.screens(REPO / f, int(ln))}
+            if not keys:
+                keys = {(SURFACES[2 if kind == "citizen" else 6], "خدمات مشتركة")}
+        else:
+            keys = {(surface, screen)}
         m = MOD.search(fn or "")
-        if m:
-            scr_mod[key].add(m.group(1))
-            if tbls and "على مستوى الوحدة" not in tbls:
-                mod_tables[m.group(1)].update(t.strip() for t in tbls.split("،") if t.strip() in tables)
+        for key in keys:
+            scr_calls[key] += 1
+            if call:
+                scr_files[key].add(call.rsplit(":", 1)[0])
+            if m:
+                scr_mod[key].add(m.group(1))
+        if m and tbls and "على مستوى الوحدة" not in tbls:
+            mod_tables[m.group(1)].update(t.strip() for t in tbls.split("،") if t.strip() in tables)
 
     # ---- nodes on rings, ordered so threads cross as little as possible (barycentre of the ring inside)
     screens = sorted(scr_calls, key=lambda k: (SURFACES.index(k[0]), k[1]))
     used_mods = sorted({m for s in screens for m in scr_mod[s]} | {m for m in mod_tables if mod_tables[m]})
-    R = {"surface": 150, "screen": 430, "module": 700, "table": 980}
+    R = {"surface": 215, "screen": 430, "module": 700, "table": 980}
     ang: dict[str, float] = {}
 
     def ring(ids: list[str], weight: dict[str, float] | None = None) -> None:
@@ -75,13 +155,14 @@ def main() -> None:
             acc += w
 
     sid = {s: f"s:{s[0]}|{s[1]}" for s in screens}
-    # each surface gets a sector of at least 15 % of the circle, so the small apps stay readable beside the dashboard
+    # each surface gets a sector of at least 6 % of the circle, so the small apps stay readable beside the dashboard
     count = {sf: sum(1 for s in screens if s[0] == sf) for sf in SURFACES}
-    share = {sf: max(count[sf] / len(screens), 0.15) for sf in SURFACES if count[sf]}
+    share = {sf: max(count[sf] / len(screens), 0.06) for sf in SURFACES if count[sf]}
     ring([sid[s] for s in screens], {sid[s]: share[s[0]] / count[s[0]] for s in screens})
-    for sf in share:
-        xs = [ang[sid[s]] for s in screens if s[0] == sf]
-        ang[f"u:{sf}"] = math.atan2(sum(map(math.sin, xs)), sum(map(math.cos, xs)))
+    # the surfaces sit evenly on the inner ring, in the order of their sectors, so none hides another
+    order = sorted(share, key=lambda sf: SURFACES.index(sf))
+    for i, sf in enumerate(order):
+        ang[f"u:{sf}"] = (i + .5) / len(order) * 2 * math.pi - math.pi / 2
 
     def bary(ids: list[str], links: dict[str, list[str]]) -> list[str]:
         def a_of(i: str) -> float:
@@ -118,7 +199,8 @@ def main() -> None:
                       "a": round(t, 4), **extra})
 
     for sf in SURFACES:
-        add(f"u:{sf}", "surface", sf, n=sum(1 for s in screens if s[0] == sf))
+        if count[sf]:
+            add(f"u:{sf}", "surface", sf, n=count[sf])
     for s in screens:
         add(sid[s], "screen", s[1], sf=SURFACES.index(s[0]), files=sorted(scr_files[s]), calls=scr_calls[s])
         links.append([f"u:{s[0]}", sid[s]])
@@ -136,10 +218,10 @@ def main() -> None:
         xs = [ang[t] for t in by_schema[s]]
         arcs.append({"s": s, "a0": min(xs), "a1": max(xs), "n": len(xs)})
 
-    data = {"nodes": nodes, "links": links, "arcs": arcs, "R": R, "built": date.today().isoformat(),
+    data = {"surfaces": SURFACES, "nodes": nodes, "links": links, "arcs": arcs, "R": R, "built": date.today().isoformat(),
             "counts": {"surfaces": len(SURFACES), "screens": len(screens), "modules": len(mids), "tables": len(tids),
                        "schemas": len(by_schema), "links": len(links)}}
-    html = (HERE / "web.html").read_text(encoding="utf-8")
+    html = (HERE / "web.html").read_text(encoding="utf-8").replace("__VIEWER__", (HERE / "viewer.js").read_text(encoding="utf-8"))
     a.out.write_text(html.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8")
     print(f"web: {data['counts']} → {a.out}")
 

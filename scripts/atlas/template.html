@@ -56,8 +56,14 @@ svg.flow{display:block;width:100%;height:auto}
 .n:not(.nolink):hover .sh{stroke-width:3}
 .e{stroke:var(--line);stroke-width:2;fill:none}
 .shotbox{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;min-width:0}
-.shotwrap{position:relative;max-height:calc(100vh - 140px);overflow:auto;border-radius:10px;border:1px solid var(--line)}
-.shotwrap img{display:block;width:100%;height:auto}
+.shotwrap{position:relative;max-height:calc(100vh - 190px);overflow:auto;border-radius:10px;border:1px solid var(--line);direction:ltr}
+.shotwrap img{display:block;width:100%;height:auto;max-width:none}
+.shotwrap .inner{position:relative;width:100%}
+.zbar{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.zbar button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:17px;cursor:pointer;padding:0}
+.zbar button:hover{border-color:var(--hi)}
+.zbar button:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+.zbar span{font-size:12.5px;color:var(--mute)}
 .spot{position:absolute;border:3px solid var(--hi);border-radius:10px;box-shadow:0 0 0 9999px var(--shade);transition:all .45s cubic-bezier(.2,.8,.2,1);pointer-events:none}
 .spot[hidden]{display:none}
 .spot b{position:absolute;top:-30px;inset-inline-start:-3px;background:var(--hi);color:#1B1405;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:8px;white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis}
@@ -102,7 +108,7 @@ footer{color:var(--muted);font-size:12.5px;padding-block:18px;border-top:1px sol
   </div>
   <div class="grid">
     <section class="flowbox" aria-label="المخطط الانسيابي"><h2>المخطط الانسيابي · اضغط مربعا</h2><svg class="flow" id="flow" role="img" aria-label="المخطط الانسيابي للصفحة"></svg></section>
-    <section class="shotbox" aria-label="لقطة الشاشة"><div class="shotwrap" id="shotwrap"><img id="shot" alt=""><div class="spot" id="spot" hidden><b id="spotlabel"></b></div></div>
+    <section class="shotbox" aria-label="لقطة الشاشة"><div class="zbar" role="toolbar" aria-label="تكبير اللقطة"><button type="button" id="zin" aria-label="تكبير">+</button><button type="button" id="zout" aria-label="تصغير">−</button><button type="button" id="zhome" aria-label="اللقطة كاملة">⌂</button><span id="zlbl">100٪ · الضغط على مربع يكبّر موضعه</span></div><div class="shotwrap" id="shotwrap"><div class="inner" id="shotin"><img id="shot" alt=""><div class="spot" id="spot" hidden><b id="spotlabel"></b></div></div></div>
       <p class="hint" id="hint">لقطة حقيقية من المنظومة بمعطيات [SIM]، بحساب مدير النظام.</p></section>
   </div>
   <div class="cards">
@@ -146,7 +152,7 @@ function render(i){cur=(i+D.screens.length)%D.screens.length;const s=D.screens[c
   $('files').innerHTML=`${esc(s.page)}${s.components.length?'<br>'+s.components.map(esc).join('<br>'):''}`;
   $('api').innerHTML=s.api.slice(0,24).map(a=>`<tr><td class="verb">${a.verb}</td><td class="mono">${esc(a.path)}</td><td class="mono">${esc(a.tables.join(', '))}</td></tr>`).join('')||'<tr><td>لا نداء مباشر للخادم من هذه الصفحة.</td></tr>';
   $('tables').textContent=s.tables.length?`الجداول: ${s.tables.length} (${s.tables.slice(0,10).join('، ')}${s.tables.length>10?'…':''})`:'';
-  $('shot').src=BASE+s.shot;$('shot').alt='لقطة شاشة: '+s.title;$('spot').hidden=true;sel=null;
+  $('shot').src=BASE+s.shot;$('shot').alt='لقطة شاشة: '+s.title;$('spot').hidden=true;sel=null;setZoom(1,true);
   drawFlow(s);$('foot').textContent=`بُني آليا من المستودع والمنظومة يوم ${D.meta.built} (scripts/atlas). اللقطة بمعطيات [SIM].`}
 function drawFlow(s){const svg=$('flow');svg.innerHTML='';const W=400,gap=84;const nodes=s.flow;svg.setAttribute('viewBox',`0 0 ${W} ${nodes.length*gap+20}`);
   nodes.forEach((n,k)=>{if(k)el('line',{x1:W/2,y1:(k-1)*gap+40+30,x2:W/2,y2:k*gap+40-30,class:'e','marker-end':'url(#ah)'},svg)});
@@ -160,12 +166,18 @@ function drawFlow(s){const svg=$('flow');svg.innerHTML='';const W=400,gap=84;con
     const t=el('text',{x,y:n.s?y-8:y},g);t.textContent=n.l.length>40?n.l.slice(0,39)+'…':n.l;
     if(n.s){const t2=el('text',{x,y:y+11,class:'s'},g);t2.textContent=n.s.length>48?n.s.slice(0,47)+'…':n.s}
     const go=()=>{select(k,true)};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})})}
+let zoom=1;
+function setZoom(z,quiet){const wrap=$('shotwrap'),img=$('shot');const cx=(wrap.scrollLeft+wrap.clientWidth/2)/Math.max(img.clientWidth,1),cy=(wrap.scrollTop+wrap.clientHeight/2)/Math.max(img.clientHeight,1);
+  zoom=Math.min(4,Math.max(1,z));$('shotin').style.width=(zoom*100)+'%';$('zlbl').textContent=Math.round(zoom*100)+'٪'+(zoom===1?' · الضغط على مربع يكبّر موضعه':'');
+  if(!quiet){wrap.scrollLeft=cx*img.clientWidth-wrap.clientWidth/2;wrap.scrollTop=cy*img.clientHeight-wrap.clientHeight/2}
+  if(sel!=null&&!quiet){const s=D.screens[cur],n=s.flow[sel],r=n.r!=null?s.regions[n.r]:null;if(r){const sc=img.clientWidth/img.naturalWidth;Object.assign($('spot').style,{transition:'none',left:(r.x*sc-4)+'px',top:(r.y*sc-4)+'px',width:(r.w*sc+8)+'px',height:(r.h*sc+8)+'px'});requestAnimationFrame(()=>$('spot').style.transition='')}}}
 function select(k,speak,done){const s=D.screens[cur];const n=s.flow[k];sel=k;document.querySelectorAll('#flow .n').forEach((g,j)=>g.classList.toggle('on',j===k));
   const r=n.r!=null?s.regions[n.r]:null;const img=$('shot'),spot=$('spot');
-  if(r&&img.naturalWidth){const sc=img.clientWidth/img.naturalWidth;spot.hidden=false;Object.assign(spot.style,{left:(r.x*sc-4)+'px',top:(r.y*sc-4)+'px',width:(r.w*sc+8)+'px',height:(r.h*sc+8)+'px'});$('spotlabel').textContent=n.l;
-    spot.classList.remove('pulse');void spot.offsetWidth;spot.classList.add('pulse');const wrap=$('shotwrap');wrap.scrollTo({top:Math.max(0,r.y*sc-80),behavior:'smooth'})}else spot.hidden=true;
+  if(r&&img.naturalWidth){setZoom(Math.min(2.6,Math.max(1,.8*img.naturalWidth/Math.max(r.w,1))),true);const sc=img.clientWidth/img.naturalWidth;spot.hidden=false;Object.assign(spot.style,{left:(r.x*sc-4)+'px',top:(r.y*sc-4)+'px',width:(r.w*sc+8)+'px',height:(r.h*sc+8)+'px'});$('spotlabel').textContent=n.l;
+    spot.classList.remove('pulse');void spot.offsetWidth;spot.classList.add('pulse');const wrap=$('shotwrap');wrap.scrollTo({top:Math.max(0,r.y*sc-80),left:Math.max(0,(r.x+r.w/2)*sc-wrap.clientWidth/2),behavior:'smooth'})}else spot.hidden=true;
   if(speak)say(nodeText(s,n),done);else done&&done()}
 $('pick').addEventListener('change',e=>{stopTour();render(+e.target.value)});
+$('zin').onclick=()=>setZoom(zoom*1.3);$('zout').onclick=()=>setZoom(zoom/1.3);$('zhome').onclick=()=>{setZoom(1,true);$('shotwrap').scrollTo({top:0,left:0,behavior:'smooth'});if(sel!=null){const s=D.screens[cur],r=s.regions[s.flow[sel].r];if(r){const img=$('shot'),sc=img.clientWidth/img.naturalWidth;Object.assign($('spot').style,{left:(r.x*sc-4)+'px',top:(r.y*sc-4)+'px',width:(r.w*sc+8)+'px',height:(r.h*sc+8)+'px'})}}};
 $('prev').onclick=()=>{stopTour();render(cur-1)};$('next').onclick=()=>{stopTour();render(cur+1)};
 $('listen').onclick=()=>{stopTour();say(screenText(D.screens[cur]))};
 function stopTour(){tour=null;$('auto').setAttribute('aria-pressed','false');$('auto').textContent='▶ جولة';synth&&synth.cancel()}

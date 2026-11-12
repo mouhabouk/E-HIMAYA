@@ -23,7 +23,8 @@ def main() -> None:
     out = Path(sys.argv[1])
     rows, nitems = collect()
     data = {"groups": cur.G, "rows": rows, "built": date.today().isoformat(), "versions": nitems}
-    html = (HERE / "mindmap.html").read_text(encoding="utf-8")
+    viewer = (HERE.parent / "atlas" / "viewer.js").read_text(encoding="utf-8")
+    html = (HERE / "mindmap.html").read_text(encoding="utf-8").replace("__VIEWER__", viewer)
     out.write_text(html.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8")
     print(f"{len(cur.G)} mind maps, {len(rows)} items → {out}")
 
