@@ -90,6 +90,7 @@ from app.modules.layers.router import public_router as layers_router
 from app.modules.layers.router import router as layers_staff_router
 from app.modules.learning.router import router as learning_router
 from app.modules.learning.worker import learning_forever
+from app.modules.liaison.router import router as liaison_router
 from app.modules.medical.router import me_router as medical_me_router
 from app.modules.medical.router import router as medical_router
 from app.modules.modelcards.router import router as modelcards_router
@@ -419,6 +420,7 @@ def create_app() -> FastAPI:
         address_warnings_router,
         address_warnings_crew_router,
         address_warnings_me_router,
+        liaison_router,
         basemap_router,
         basemap_tiles_router,
         appdownload_router,

@@ -499,6 +499,21 @@ export const ERROR_CODES = [
   "items_invalid",
   "levels_invalid",
   "weights_invalid",
+  // Informing the partner bodies by phone (OS20).
+  "not_owner",
+  "agency_exists",
+  "level_room_only",
+  "parties_informed",
+  "party_called",
+  "official_not_of_body",
+  "body_archived",
+  "internal_body",
+  "telephony_call_not_found",
+  "party_removed",
+  "no_follow_up",
+  "body_not_found",
+  "official_not_found",
+  "party_not_found",
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
 

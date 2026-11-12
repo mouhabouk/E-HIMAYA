@@ -98,7 +98,8 @@
     "coverage": "Live coverage",
     "inspections": "Periodic inspections",
     "inspectionResults": "Room inspection results",
-    "inspectionAdmin": "Delete inspections"
+    "inspectionAdmin": "Delete inspections",
+    "liaison": "Contact system"
   },
   "header": {
     "scope": "Geographic scope",
@@ -695,7 +696,21 @@
     "exit_invalid": "The exit time settings are invalid.",
     "items_invalid": "The checklist items are invalid.",
     "levels_invalid": "The verdict levels are invalid.",
-    "weights_invalid": "The weights must total 100."
+    "weights_invalid": "The weights must total 100.",
+    "not_owner": "This body is kept by its own room.",
+    "agency_exists": "This service is already recorded in the gouvernorat.",
+    "level_room_only": "Level 1 report: no body is informed.",
+    "parties_informed": "Bodies were informed: level 1 is no longer possible.",
+    "party_called": "This body was called: it stays in the history.",
+    "official_not_of_body": "This official is not of the body.",
+    "body_archived": "Body archived.",
+    "internal_body": "An internal body is never archived.",
+    "telephony_call_not_found": "Call unknown to the softphone.",
+    "party_removed": "Body removed from the report.",
+    "no_follow_up": "No reminder for this call.",
+    "body_not_found": "Body not found.",
+    "official_not_found": "Official not found.",
+    "party_not_found": "Body not in the report."
   },
   "kpi": {
     "title": "Key indicators",
@@ -9907,6 +9922,166 @@
       "deletedBy": "Deleted by",
       "reasonColumn": "Reason",
       "restore": "Restore"
+    }
+  },
+  "liaison": {
+    "title": "Contact system",
+    "intro": "Central and regional contact system: bodies, ministries, structures and their officials. A regional room sees its gouvernorat and the national bodies and keeps its own; the central room sees all and keeps the national bodies. Bodies are reached by phone only.",
+    "tab": {
+      "contacts": "Bodies and officials",
+      "history": "Reports history",
+      "calls": "Call log",
+      "followUps": "Follow-ups"
+    },
+    "national": "National",
+    "internal": "Internal",
+    "allGouvernorats": "All gouvernorats",
+    "allCategories": "All categories",
+    "allLevels": "All levels",
+    "allResults": "All results",
+    "addBody": "Add a body",
+    "addOfficial": "Add an official",
+    "archiveBody": "Archive the body",
+    "archiveOfficial": "Archive",
+    "noOfficials": "No official recorded yet.",
+    "publicPhone": "Public number",
+    "readOnly": "Read only: kept by its own room",
+    "actions": "Actions",
+    "updated": "Updated {{date}} · {{name}}",
+    "scope": {
+      "regional": "{{gov}} and the national bodies",
+      "regionalRule": "You see your gouvernorat and the national bodies, and update your gouvernorat's only.",
+      "centralRule": "You see every body and update the national ones; the gouvernorats' bodies are kept by their regional rooms."
+    },
+    "category": {
+      "civil": "Civil protection",
+      "security": "Security and rescue",
+      "ministry": "Ministries",
+      "regional": "Regional and local structures",
+      "public": "Public institutions"
+    },
+    "level": {
+      "legend": "Report level",
+      "title1": "Level 1 · in the room",
+      "hint1": "Handled in the room and closed without informing anyone.",
+      "title2": "Level 2 · inform bodies",
+      "hint2": "Inform one or more bodies by phone: internal, external or both.",
+      "short1": "1 · in the room",
+      "short2": "2 · inform",
+      "by": "Set by {{name}}",
+      "roomOnly": "Handled in the room: no body informed.",
+      "unset": "Choose the report's level."
+    },
+    "panel": {
+      "title": "Inform bodies by phone",
+      "parties": "{{n}} body(ies) informed",
+      "noParties": "No body chosen yet."
+    },
+    "suggestions": {
+      "title": "Decision engine suggestions",
+      "add": "Add",
+      "inReport": "In the report",
+      "missing": "Not in the contact system"
+    },
+    "party": {
+      "noOfficial": "No official",
+      "notCalled": "Not called",
+      "suggested": "Suggested",
+      "remove": "Remove"
+    },
+    "result": {
+      "answered": "Answered",
+      "no_answer": "No answer",
+      "busy": "Busy",
+      "wrong_number": "Wrong number"
+    },
+    "via": {
+      "softphone": "From the softphone",
+      "manual": "Dialled by hand"
+    },
+    "call": {
+      "title": "Call · {{body}}",
+      "soft": "Call from the softphone",
+      "manual": "Dial by hand, then record",
+      "dial": "Dial",
+      "manualHint": "Dial the number on your phone, then record the result.",
+      "official": "Official",
+      "result": "Call result",
+      "asked": "Asked",
+      "promised": "Promised",
+      "eta": "Expected arrival",
+      "etaShort": "in {{n}} min",
+      "minutes": "min",
+      "note": "Note",
+      "followUp": "Remind me to call back",
+      "noFollowUp": "No reminder",
+      "inMinutes": "In {{n}} min",
+      "save": "Record the call",
+      "next": "Next official: {{name}} {{role}}",
+      "useNext": "Call the next one"
+    },
+    "followUps": {
+      "title": "Call-back reminders",
+      "now": "Call {{body}} ({{who}}) back now",
+      "later": "Call {{body}} ({{who}}) back later",
+      "done": "Done",
+      "dueNow": "Due",
+      "none": "No pending reminder."
+    },
+    "picker": {
+      "open": "Choose the bodies",
+      "title": "Choose the bodies to inform",
+      "gouvernorat": "Gouvernorat",
+      "search": "Search: body, ministry, name, role, phone…",
+      "view": "View",
+      "list": "Suggestions and list",
+      "history": "From the reports history",
+      "suggestedSection": "Suggested for this report (engine and earlier reports of the same kind)",
+      "all": "All bodies",
+      "results": "Results for “{{q}}” ({{n}})",
+      "none": "No result. Add it with “Missing?”.",
+      "historySection": "Bodies informed in earlier reports",
+      "noHistory": "No earlier report with bodies.",
+      "lastIn": "Last time: {{kind}} · {{date}}",
+      "inReport": "In the report",
+      "suggested": "Suggested",
+      "usedBefore": "Used {{n}} times",
+      "noOfficial": "No official: public number",
+      "addMissing": "Missing? Add a contact",
+      "selected": "{{n}} selected",
+      "confirm": "Done · back to the report"
+    },
+    "form": {
+      "title": "Add a body or an official",
+      "body": "Body",
+      "newBody": "New body…",
+      "gouvernorat": "Gouvernorat",
+      "name": "Body name",
+      "category": "Category",
+      "domain": "Field of activity",
+      "address": "Address",
+      "publicPhone": "Public number",
+      "person": "Name",
+      "role": "Role",
+      "phone": "Phone",
+      "email": "Email",
+      "duty": "Duty hours",
+      "save": "Add",
+      "keeperCentral": "Entered in your name, kept by the central room.",
+      "keeperRegional": "Entered in your name, kept by the regional room of {{gov}}."
+    },
+    "history": {
+      "report": "Report",
+      "parties": "Bodies informed",
+      "roomOnly": "Handled in the room",
+      "calls": "{{n}} calls",
+      "none": "No report yet."
+    },
+    "calls": {
+      "at": "Time",
+      "who": "Body and official",
+      "detail": "Asked and promised",
+      "none": "No call yet."
     }
   }
 }

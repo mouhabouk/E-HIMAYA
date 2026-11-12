@@ -36,6 +36,7 @@ import { canManageIncidents } from "../lib/roles";
 import { promoteLink } from "../lib/crisisText";
 import { NearHospitals } from "../components/NearHospitals";
 import { AddressWarningsPanel } from "../components/AddressWarningsPanel";
+import { LiaisonPanel } from "../components/LiaisonPanel";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
@@ -339,6 +340,9 @@ export function IncidentDetailPage() {
 
       {/* OS8: the marks on dangerous addresses around the incident, first in the file. */}
       <AddressWarningsPanel incident={incident} />
+
+      {/* OS20: the level of the report and the bodies informed by phone. */}
+      <LiaisonPanel incident={incident} />
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-summary">

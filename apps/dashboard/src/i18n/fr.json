@@ -98,7 +98,8 @@
     "coverage": "Couverture en direct",
     "inspections": "Inspections périodiques",
     "inspectionResults": "Résultats des inspections",
-    "inspectionAdmin": "Suppression des inspections"
+    "inspectionAdmin": "Suppression des inspections",
+    "liaison": "Système de contact"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -695,7 +696,21 @@
     "exit_invalid": "Paramètres du temps de sortie invalides.",
     "items_invalid": "Points de contrôle invalides.",
     "levels_invalid": "Niveaux d'appréciation invalides.",
-    "weights_invalid": "Le total des pondérations doit être 100."
+    "weights_invalid": "Le total des pondérations doit être 100.",
+    "not_owner": "Cet organisme est tenu par sa propre salle.",
+    "agency_exists": "Ce service est déjà enregistré dans le gouvernorat.",
+    "level_room_only": "Signalement de niveau 1 : aucun organisme n'est informé.",
+    "parties_informed": "Des organismes ont été informés : retour au niveau 1 impossible.",
+    "party_called": "Organisme déjà appelé : il reste dans l'historique.",
+    "official_not_of_body": "Ce responsable n'appartient pas à l'organisme.",
+    "body_archived": "Organisme archivé.",
+    "internal_body": "Un organisme interne ne s'archive pas.",
+    "telephony_call_not_found": "Appel inconnu du softphone.",
+    "party_removed": "Organisme retiré du signalement.",
+    "no_follow_up": "Pas de rappel pour cet appel.",
+    "body_not_found": "Organisme introuvable.",
+    "official_not_found": "Responsable introuvable.",
+    "party_not_found": "Organisme absent du signalement."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -9907,6 +9922,166 @@
       "deletedBy": "Supprimé par",
       "reasonColumn": "Motif",
       "restore": "Restaurer"
+    }
+  },
+  "liaison": {
+    "title": "Système de contact",
+    "intro": "Système de contact central et régional : organismes, ministères, structures et leurs responsables. La salle régionale voit son gouvernorat et les organismes nationaux et tient les siens ; la salle centrale voit tout et tient les organismes nationaux. Le lien avec les organismes se fait par téléphone uniquement.",
+    "tab": {
+      "contacts": "Organismes et responsables",
+      "history": "Historique des signalements",
+      "calls": "Journal des appels",
+      "followUps": "Rappels"
+    },
+    "national": "National",
+    "internal": "Interne",
+    "allGouvernorats": "Tous les gouvernorats",
+    "allCategories": "Toutes les catégories",
+    "allLevels": "Tous les niveaux",
+    "allResults": "Tous les résultats",
+    "addBody": "Ajouter un organisme",
+    "addOfficial": "Ajouter un responsable",
+    "archiveBody": "Archiver l'organisme",
+    "archiveOfficial": "Archiver",
+    "noOfficials": "Aucun responsable enregistré.",
+    "publicPhone": "Numéro public",
+    "readOnly": "Lecture : tenu par la salle concernée",
+    "actions": "Actions",
+    "updated": "Mis à jour {{date}} · {{name}}",
+    "scope": {
+      "regional": "Gouvernorat de {{gov}} et organismes nationaux",
+      "regionalRule": "Vous voyez votre gouvernorat et les organismes nationaux, et ne mettez à jour que ceux de votre gouvernorat.",
+      "centralRule": "Vous voyez tous les organismes et mettez à jour les organismes nationaux ; ceux des gouvernorats sont tenus par leurs salles régionales."
+    },
+    "category": {
+      "civil": "Protection civile",
+      "security": "Sécurité et secours",
+      "ministry": "Ministères",
+      "regional": "Structures régionales et locales",
+      "public": "Établissements publics"
+    },
+    "level": {
+      "legend": "Niveau du signalement",
+      "title1": "Niveau 1 · en salle",
+      "hint1": "Traité en salle et clôturé sans informer aucun organisme.",
+      "title2": "Niveau 2 · informer",
+      "hint2": "Informer un ou plusieurs organismes par téléphone : internes, externes ou les deux.",
+      "short1": "1 · en salle",
+      "short2": "2 · informer",
+      "by": "Fixé par {{name}}",
+      "roomOnly": "Traité en salle : aucun organisme informé.",
+      "unset": "Choisissez le niveau du signalement."
+    },
+    "panel": {
+      "title": "Informer les organismes par téléphone",
+      "parties": "{{n}} organisme(s) informé(s)",
+      "noParties": "Aucun organisme choisi."
+    },
+    "suggestions": {
+      "title": "Suggestions du moteur de décision",
+      "add": "Ajouter",
+      "inReport": "Dans le signalement",
+      "missing": "Absent du système de contact"
+    },
+    "party": {
+      "noOfficial": "Aucun responsable",
+      "notCalled": "Non appelé",
+      "suggested": "Suggéré",
+      "remove": "Retirer"
+    },
+    "result": {
+      "answered": "Répondu",
+      "no_answer": "Pas de réponse",
+      "busy": "Occupé",
+      "wrong_number": "Faux numéro"
+    },
+    "via": {
+      "softphone": "Depuis le softphone",
+      "manual": "Appel manuel"
+    },
+    "call": {
+      "title": "Appel · {{body}}",
+      "soft": "Appeler depuis le softphone",
+      "manual": "Appel manuel puis saisie",
+      "dial": "Composer",
+      "manualHint": "Composez le numéro depuis votre poste, puis saisissez le résultat.",
+      "official": "Responsable",
+      "result": "Résultat de l'appel",
+      "asked": "Demandé",
+      "promised": "Engagement",
+      "eta": "Arrivée prévue",
+      "etaShort": "dans {{n}} min",
+      "minutes": "min",
+      "note": "Note",
+      "followUp": "Me rappeler de rappeler",
+      "noFollowUp": "Sans rappel",
+      "inMinutes": "Dans {{n}} min",
+      "save": "Enregistrer l'appel",
+      "next": "Responsable suivant : {{name}} {{role}}",
+      "useNext": "Appeler le suivant"
+    },
+    "followUps": {
+      "title": "Rappels",
+      "now": "Rappeler {{body}} ({{who}}) maintenant",
+      "later": "Rappeler {{body}} ({{who}}) plus tard",
+      "done": "Fait",
+      "dueNow": "À faire",
+      "none": "Aucun rappel en cours."
+    },
+    "picker": {
+      "open": "Choisir les organismes",
+      "title": "Choisir les organismes du signalement",
+      "gouvernorat": "Gouvernorat",
+      "search": "Rechercher : organisme, ministère, nom, fonction, téléphone…",
+      "view": "Affichage",
+      "list": "Suggestions et liste",
+      "history": "Depuis l'historique",
+      "suggestedSection": "Suggérés pour ce signalement (moteur et signalements du même type)",
+      "all": "Tous les organismes",
+      "results": "Résultats pour « {{q}} » ({{n}})",
+      "none": "Aucun résultat. Ajoutez-le avec « Absent ? ».",
+      "historySection": "Organismes informés dans des signalements précédents",
+      "noHistory": "Aucun signalement précédent avec des organismes.",
+      "lastIn": "Dernière fois : {{kind}} · {{date}}",
+      "inReport": "Dans le signalement",
+      "suggested": "Suggéré",
+      "usedBefore": "Utilisé {{n}} fois",
+      "noOfficial": "Sans responsable : numéro public",
+      "addMissing": "Absent ? Ajouter un contact",
+      "selected": "{{n}} choisi(s)",
+      "confirm": "Choix terminé · retour au signalement"
+    },
+    "form": {
+      "title": "Ajouter un organisme ou un responsable",
+      "body": "Organisme",
+      "newBody": "Nouvel organisme…",
+      "gouvernorat": "Gouvernorat",
+      "name": "Nom de l'organisme",
+      "category": "Catégorie",
+      "domain": "Domaine d'activité",
+      "address": "Adresse",
+      "publicPhone": "Numéro public",
+      "person": "Nom",
+      "role": "Fonction",
+      "phone": "Téléphone",
+      "email": "Courriel",
+      "duty": "Permanence",
+      "save": "Ajouter",
+      "keeperCentral": "Saisi à votre nom, tenu par la salle centrale.",
+      "keeperRegional": "Saisi à votre nom, tenu par la salle régionale de {{gov}}."
+    },
+    "history": {
+      "report": "Signalement",
+      "parties": "Organismes informés",
+      "roomOnly": "Traité en salle",
+      "calls": "{{n}} appels",
+      "none": "Aucun signalement."
+    },
+    "calls": {
+      "at": "Heure",
+      "who": "Organisme et responsable",
+      "detail": "Demande et engagement",
+      "none": "Aucun appel."
     }
   }
 }

@@ -12268,3 +12268,282 @@ body::after {
   .inspections-inline { display: none; }
   .inspections-site { background: none; }
 }
+
+/* ---------- Informing the partner bodies by phone (OS20, docs/phase-os20/design-os20.md) ---------- */
+.liaison-panel__head,
+.liaison-party__head,
+.liaison-panel__actions,
+.liaison-party__actions,
+.liaison-filters,
+.liaison-picker__bar,
+.liaison-picker__foot,
+.liaison-pick-body__head,
+.liaison-body__head,
+.liaison-body__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.liaison-panel__head h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  margin-inline-end: auto;
+}
+.liaison-levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+  border: 0;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+.liaison-levels legend {
+  font-weight: 600;
+  margin-block-end: 0.5rem;
+}
+.liaison-level {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  cursor: pointer;
+  min-height: 48px;
+}
+.liaison-level span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.liaison-level--on {
+  border: 2px solid var(--tone-teal);
+  background: var(--tone-teal-tint);
+}
+.liaison-by {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+}
+.liaison-sugg h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.5rem;
+}
+.liaison-sugg ul,
+.liaison-parties,
+.liaison-due {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.liaison-sugg__item,
+.liaison-due__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.liaison-sugg__item--missing {
+  border-style: dashed;
+  border-color: var(--tone-amber);
+}
+.liaison-sugg__body,
+.liaison-party__who,
+.liaison-pick-body__name,
+.liaison-body__title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.liaison-due__item > span {
+  flex: 1 1 220px;
+}
+.liaison-due__item--now {
+  border: 2px solid var(--tone-red);
+  background: var(--tone-red-tint);
+}
+.liaison-panel__actions {
+  margin: 0.75rem 0;
+}
+.liaison-party {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.liaison-party__actions {
+  margin-block-start: 0.5rem;
+}
+.liaison-calls {
+  margin: 0.5rem 0 0;
+  padding-inline-start: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+}
+.liaison-call,
+.liaison-picker,
+.liaison-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.liaison-call__number {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1.05rem;
+}
+.liaison-call__next {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  background: var(--tone-amber-tint);
+}
+.liaison-call__grid,
+.liaison-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+.liaison-form__grid input,
+.liaison-form__grid select,
+.liaison-call__grid input {
+  min-width: 0;
+  width: 100%;
+}
+.liaison-form h4 {
+  margin: 0;
+}
+.liaison-form__note {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.liaison-picker__search {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.liaison-picker__list {
+  max-height: 52vh;
+  overflow: auto;
+  padding-inline-end: 0.25rem;
+}
+.liaison-picker__sect {
+  margin: 0.75rem 0 0.4rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.liaison-picker__count {
+  margin-inline-start: auto;
+}
+.liaison-pick-body {
+  padding: 0.6rem;
+  margin-block-end: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.liaison-pick,
+.liaison-pick-hist .liaison-pick {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.25rem 0.4rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.liaison-pick:hover {
+  background: var(--surface-2);
+}
+.liaison-pick input {
+  width: 20px;
+  height: 20px;
+}
+.liaison-pick__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.liaison-pick--locked {
+  opacity: 0.7;
+  cursor: default;
+}
+.liaison-pick mark,
+.liaison-pick-body mark {
+  background: var(--tone-amber-tint);
+  color: inherit;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+.liaison-pick-hist {
+  margin-block-end: 0.35rem;
+}
+.liaison-bodies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+  gap: 1rem;
+  margin-block-start: 1rem;
+}
+.liaison-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.liaison-body__public {
+  margin: 0;
+}
+.liaison-body__foot {
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+.liaison-officials {
+  font-size: 0.9rem;
+  overflow-x: auto;
+  display: block;
+}
+.liaison-history__parties {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.liaison-filters {
+  margin: 0.75rem 0;
+}
+.liaison-filters input[type="search"] {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+:is(.liaison-panel, .liaison-form, .liaison-filters, .liaison-picker)
+  input:not([type="checkbox"], [type="radio"], [type="search"], [type="tel"]) {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.75rem;
+}
+:is(.liaison-panel, .liaison-form, .liaison-filters, .liaison-picker) :is(input[type="search"], select) {
+  min-block-size: 2.75rem;
+}
+:is(.liaison-panel, .liaison-form) .required {
+  color: var(--error-text);
+  font-weight: 700;
+}

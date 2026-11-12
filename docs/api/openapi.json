@@ -1788,7 +1788,7 @@
           "suggestion": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Suggestion"
+                "$ref": "#/components/schemas/app__modules__reports__schemas__Suggestion"
               },
               {
                 "type": "null"
@@ -4662,6 +4662,376 @@
         "title": "BinRow",
         "type": "object"
       },
+      "BodyIn": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "agency": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z_]{2,30}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agency"
+          },
+          "category": {
+            "enum": [
+              "civil",
+              "security",
+              "ministry",
+              "regional",
+              "public"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "maximum": 99.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "kind": {
+            "default": "external",
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__liaison__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "maxLength": 160,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "officials": {
+            "items": {
+              "$ref": "#/components/schemas/OfficialIn"
+            },
+            "maxItems": 10,
+            "title": "Officials",
+            "type": "array"
+          },
+          "origin_incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Incident Id"
+          },
+          "public_phone": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9+ ]{3,20}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Phone"
+          }
+        },
+        "required": [
+          "category",
+          "name"
+        ],
+        "title": "BodyIn",
+        "type": "object"
+      },
+      "BodyOut": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "agency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agency"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "editable": {
+            "title": "Editable",
+            "type": "boolean"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__liaison__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "officials": {
+            "items": {
+              "$ref": "#/components/schemas/OfficialOut"
+            },
+            "title": "Officials",
+            "type": "array"
+          },
+          "public_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Phone"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "gouvernorat_code",
+          "category",
+          "kind",
+          "agency",
+          "name",
+          "domain",
+          "address",
+          "location",
+          "public_phone",
+          "status",
+          "created_by_name",
+          "updated_at",
+          "updated_by_name",
+          "version",
+          "editable",
+          "officials"
+        ],
+        "title": "BodyOut",
+        "type": "object"
+      },
+      "BodyPatch": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "enum": [
+                  "civil",
+                  "security",
+                  "ministry",
+                  "regional",
+                  "public"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__liaison__schemas__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "public_phone": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9+ ]{3,20}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Phone"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "BodyPatch",
+        "type": "object"
+      },
       "BookingOut": {
         "properties": {
           "kind": {
@@ -5142,43 +5512,26 @@
         "title": "CallDetail",
         "type": "object"
       },
-      "CallOut": {
+      "CallIn": {
         "properties": {
-          "answered_at": {
+          "asked": {
             "anyOf": [
               {
-                "format": "date-time",
+                "maxLength": 500,
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Answered At"
-          },
-          "caller_masked": {
-            "title": "Caller Masked",
-            "type": "boolean"
-          },
-          "caller_number": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Caller Number"
-          },
-          "direction": {
-            "title": "Direction",
-            "type": "string"
+            "title": "Asked"
           },
           "duration_s": {
             "anyOf": [
               {
-                "type": "number"
+                "maximum": 86400.0,
+                "minimum": 0.0,
+                "type": "integer"
               },
               {
                 "type": "null"
@@ -5186,46 +5539,44 @@
             ],
             "title": "Duration S"
           },
-          "end_reason": {
+          "eta_min": {
             "anyOf": [
               {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "End Reason"
-          },
-          "ended_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Ended At"
-          },
-          "gouvernorat_code": {
-            "anyOf": [
-              {
+                "maximum": 1440.0,
+                "minimum": 0.0,
                 "type": "integer"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Gouvernorat Code"
+            "title": "Eta Min"
           },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
+          "follow_up_min": {
+            "default": 0,
+            "maximum": 240.0,
+            "minimum": 0.0,
+            "title": "Follow Up Min",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "number": {
+            "pattern": "^[0-9+ ]{3,20}$",
+            "title": "Number",
             "type": "string"
           },
-          "incident_id": {
+          "official_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -5235,31 +5586,31 @@
                 "type": "null"
               }
             ],
-            "title": "Incident Id"
+            "title": "Official Id"
           },
-          "operator_user_id": {
+          "promised": {
             "anyOf": [
               {
+                "maxLength": 500,
                 "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Operator User Id"
+            "title": "Promised"
           },
-          "queue": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+          "result": {
+            "enum": [
+              "answered",
+              "no_answer",
+              "busy",
+              "wrong_number"
             ],
-            "title": "Queue"
+            "title": "Result",
+            "type": "string"
           },
-          "recording_media_id": {
+          "telephony_call_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -5269,90 +5620,30 @@
                 "type": "null"
               }
             ],
-            "title": "Recording Media Id"
+            "title": "Telephony Call Id"
           },
-          "report_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+          "via": {
+            "enum": [
+              "softphone",
+              "manual"
             ],
-            "title": "Report Id"
-          },
-          "simulated": {
-            "title": "Simulated",
-            "type": "boolean"
-          },
-          "source": {
-            "title": "Source",
+            "title": "Via",
             "type": "string"
-          },
-          "started_at": {
-            "format": "date-time",
-            "title": "Started At",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "tracking_code": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tracking Code"
-          },
-          "transferred_to": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Transferred To"
           }
         },
         "required": [
-          "id",
-          "direction",
-          "source",
-          "caller_number",
-          "caller_masked",
-          "started_at",
-          "answered_at",
-          "ended_at",
-          "duration_s",
-          "operator_user_id",
-          "queue",
-          "status",
-          "end_reason",
-          "report_id",
-          "incident_id",
-          "tracking_code",
-          "gouvernorat_code",
-          "recording_media_id",
-          "transferred_to",
-          "simulated"
+          "number",
+          "via",
+          "result"
         ],
-        "title": "CallOut",
+        "title": "CallIn",
         "type": "object"
       },
       "CallPage": {
         "properties": {
           "items": {
             "items": {
-              "$ref": "#/components/schemas/CallOut"
+              "$ref": "#/components/schemas/app__modules__telephony__schemas__CallOut"
             },
             "title": "Items",
             "type": "array"
@@ -20196,6 +20487,79 @@
         "title": "HistoryPage",
         "type": "object"
       },
+      "HistoryParty": {
+        "properties": {
+          "body_id": {
+            "format": "uuid",
+            "title": "Body Id",
+            "type": "string"
+          },
+          "body_name": {
+            "title": "Body Name",
+            "type": "string"
+          },
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "last_result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Result"
+          },
+          "official_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Id"
+          },
+          "official_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Name"
+          },
+          "official_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Role"
+          }
+        },
+        "required": [
+          "body_id",
+          "official_id",
+          "body_name",
+          "official_name",
+          "official_role",
+          "last_result",
+          "calls"
+        ],
+        "title": "HistoryParty",
+        "type": "object"
+      },
       "HistoryPatch": {
         "properties": {
           "pinned": {
@@ -20236,6 +20600,80 @@
           }
         },
         "title": "HistoryPatch",
+        "type": "object"
+      },
+      "HistoryRow": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "parties": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryParty"
+            },
+            "title": "Parties",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "incident_id",
+          "title",
+          "category",
+          "gouvernorat_code",
+          "status",
+          "opened_at",
+          "level",
+          "parties"
+        ],
+        "title": "HistoryRow",
         "type": "object"
       },
       "Hit": {
@@ -21324,6 +21762,59 @@
           "timeline"
         ],
         "title": "IncidentDetail",
+        "type": "object"
+      },
+      "IncidentLiaison": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__liaison__schemas__LevelOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parties": {
+            "items": {
+              "$ref": "#/components/schemas/PartyOut"
+            },
+            "title": "Parties",
+            "type": "array"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__liaison__schemas__Suggestion"
+            },
+            "title": "Suggestions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "incident_id",
+          "gouvernorat_code",
+          "level",
+          "parties",
+          "suggestions"
+        ],
+        "title": "IncidentLiaison",
         "type": "object"
       },
       "IncidentLinkIn": {
@@ -24281,53 +24772,6 @@
           "colour"
         ],
         "title": "LevelIn",
-        "type": "object"
-      },
-      "LevelOut": {
-        "properties": {
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
-          },
-          "level": {
-            "$ref": "#/components/schemas/OpLevel"
-          },
-          "reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reason"
-          },
-          "set_by": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Set By"
-          },
-          "since": {
-            "format": "date-time",
-            "title": "Since",
-            "type": "string"
-          }
-        },
-        "required": [
-          "gouvernorat_code",
-          "level",
-          "since",
-          "reason",
-          "set_by"
-        ],
-        "title": "LevelOut",
         "type": "object"
       },
       "LinkList": {
@@ -28320,6 +28764,257 @@
         "title": "Objective",
         "type": "object"
       },
+      "OfficialIn": {
+        "properties": {
+          "duty": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duty"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "phones": {
+            "items": {
+              "pattern": "^[0-9+ ]{3,20}$",
+              "type": "string"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Phones",
+            "type": "array"
+          },
+          "position": {
+            "default": 1,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          }
+        },
+        "required": [
+          "name",
+          "phones"
+        ],
+        "title": "OfficialIn",
+        "type": "object"
+      },
+      "OfficialOut": {
+        "properties": {
+          "body_id": {
+            "format": "uuid",
+            "title": "Body Id",
+            "type": "string"
+          },
+          "duty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duty"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phones": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Phones",
+            "type": "array"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          }
+        },
+        "required": [
+          "id",
+          "body_id",
+          "name",
+          "role",
+          "phones",
+          "email",
+          "duty",
+          "position",
+          "status",
+          "updated_at",
+          "updated_by_name"
+        ],
+        "title": "OfficialOut",
+        "type": "object"
+      },
+      "OfficialPatch": {
+        "properties": {
+          "duty": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duty"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "phones": {
+            "anyOf": [
+              {
+                "items": {
+                  "pattern": "^[0-9+ ]{3,20}$",
+                  "type": "string"
+                },
+                "maxItems": 4,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phones"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          }
+        },
+        "title": "OfficialPatch",
+        "type": "object"
+      },
       "OpLevel": {
         "enum": [
           "normal",
@@ -30327,6 +31022,255 @@
         "title": "ParticipantOut",
         "type": "object"
       },
+      "PartiesIn": {
+        "properties": {
+          "parties": {
+            "items": {
+              "$ref": "#/components/schemas/PartyIn"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Parties",
+            "type": "array"
+          }
+        },
+        "required": [
+          "parties"
+        ],
+        "title": "PartiesIn",
+        "type": "object"
+      },
+      "PartyIn": {
+        "properties": {
+          "body_id": {
+            "format": "uuid",
+            "title": "Body Id",
+            "type": "string"
+          },
+          "official_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Id"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "suggested": {
+            "default": false,
+            "title": "Suggested",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "body_id"
+        ],
+        "title": "PartyIn",
+        "type": "object"
+      },
+      "PartyOut": {
+        "properties": {
+          "added_at": {
+            "format": "date-time",
+            "title": "Added At",
+            "type": "string"
+          },
+          "added_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Added By Name"
+          },
+          "agency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agency"
+          },
+          "body_id": {
+            "format": "uuid",
+            "title": "Body Id",
+            "type": "string"
+          },
+          "body_name": {
+            "title": "Body Name",
+            "type": "string"
+          },
+          "calls": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__liaison__schemas__CallOut"
+            },
+            "title": "Calls",
+            "type": "array"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Result"
+          },
+          "official_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Id"
+          },
+          "official_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Name"
+          },
+          "official_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Role"
+          },
+          "phones": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Phones",
+            "type": "array"
+          },
+          "public_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Phone"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "removed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Removed At"
+          },
+          "suggested": {
+            "title": "Suggested",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "body_id",
+          "official_id",
+          "body_name",
+          "official_name",
+          "official_role",
+          "phones",
+          "public_phone",
+          "agency",
+          "category",
+          "suggested",
+          "reason",
+          "added_by_name",
+          "added_at",
+          "removed_at",
+          "last_result",
+          "calls"
+        ],
+        "title": "PartyOut",
+        "type": "object"
+      },
+      "PartyPatch": {
+        "properties": {
+          "official_id": {
+            "format": "uuid",
+            "title": "Official Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "official_id"
+        ],
+        "title": "PartyPatch",
+        "type": "object"
+      },
       "PendingMember": {
         "properties": {
           "doctor_id": {
@@ -30976,6 +31920,38 @@
           }
         },
         "title": "Person",
+        "type": "object"
+      },
+      "PickerOut": {
+        "properties": {
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryRow"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__liaison__schemas__Suggestion"
+            },
+            "title": "Suggestions",
+            "type": "array"
+          },
+          "used_before": {
+            "items": {
+              "$ref": "#/components/schemas/UsedBefore"
+            },
+            "title": "Used Before",
+            "type": "array"
+          }
+        },
+        "required": [
+          "suggestions",
+          "used_before",
+          "history"
+        ],
+        "title": "PickerOut",
         "type": "object"
       },
       "PingOut": {
@@ -45490,87 +46466,6 @@
         "title": "SuggestIn",
         "type": "object"
       },
-      "Suggestion": {
-        "properties": {
-          "distance_m": {
-            "title": "Distance M",
-            "type": "number"
-          },
-          "incident_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Incident Id"
-          },
-          "kind": {
-            "enum": [
-              "incident",
-              "report"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "matching_reports": {
-            "title": "Matching Reports",
-            "type": "integer"
-          },
-          "minutes": {
-            "title": "Minutes",
-            "type": "number"
-          },
-          "reasons": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Reasons",
-            "type": "array"
-          },
-          "report_id": {
-            "format": "uuid",
-            "title": "Report Id",
-            "type": "string"
-          },
-          "score": {
-            "title": "Score",
-            "type": "number"
-          },
-          "similarity": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Similarity"
-          },
-          "tracking_code": {
-            "title": "Tracking Code",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "incident_id",
-          "report_id",
-          "tracking_code",
-          "score",
-          "distance_m",
-          "minutes",
-          "similarity",
-          "reasons",
-          "matching_reports"
-        ],
-        "title": "Suggestion",
-        "type": "object"
-      },
       "SuggestionAccept": {
         "properties": {
           "lang": {
@@ -49317,6 +50212,67 @@
           "rows"
         ],
         "title": "UnmatchedName",
+        "type": "object"
+      },
+      "UsedBefore": {
+        "properties": {
+          "body_id": {
+            "format": "uuid",
+            "title": "Body Id",
+            "type": "string"
+          },
+          "body_name": {
+            "title": "Body Name",
+            "type": "string"
+          },
+          "last_at": {
+            "format": "date-time",
+            "title": "Last At",
+            "type": "string"
+          },
+          "last_incident_id": {
+            "format": "uuid",
+            "title": "Last Incident Id",
+            "type": "string"
+          },
+          "official_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Id"
+          },
+          "official_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Name"
+          },
+          "times": {
+            "title": "Times",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "body_id",
+          "official_id",
+          "body_name",
+          "official_name",
+          "times",
+          "last_incident_id",
+          "last_at"
+        ],
+        "title": "UsedBefore",
         "type": "object"
       },
       "UserChannels": {
@@ -57639,6 +58595,381 @@
         "title": "RevisionsOut",
         "type": "object"
       },
+      "app__modules__liaison__schemas__CallOut": {
+        "properties": {
+          "asked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asked"
+          },
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "body_name": {
+            "title": "Body Name",
+            "type": "string"
+          },
+          "by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Name"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "eta_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eta Min"
+          },
+          "follow_up_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Follow Up At"
+          },
+          "follow_up_done_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Follow Up Done At"
+          },
+          "follow_up_due": {
+            "title": "Follow Up Due",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Category"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "incident_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Title"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "official_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Id"
+          },
+          "official_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Name"
+          },
+          "party_id": {
+            "format": "uuid",
+            "title": "Party Id",
+            "type": "string"
+          },
+          "promised": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promised"
+          },
+          "result": {
+            "title": "Result",
+            "type": "string"
+          },
+          "telephony_call_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telephony Call Id"
+          },
+          "via": {
+            "title": "Via",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "incident_id",
+          "party_id",
+          "body_name",
+          "official_id",
+          "official_name",
+          "number",
+          "via",
+          "telephony_call_id",
+          "duration_s",
+          "result",
+          "asked",
+          "promised",
+          "eta_min",
+          "note",
+          "follow_up_at",
+          "follow_up_done_at",
+          "follow_up_due",
+          "by_name",
+          "at"
+        ],
+        "title": "CallOut",
+        "type": "object"
+      },
+      "app__modules__liaison__schemas__LevelIn": {
+        "properties": {
+          "level": {
+            "enum": [
+              1,
+              2
+            ],
+            "title": "Level",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "level"
+        ],
+        "title": "LevelIn",
+        "type": "object"
+      },
+      "app__modules__liaison__schemas__LevelOut": {
+        "properties": {
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "set_at": {
+            "format": "date-time",
+            "title": "Set At",
+            "type": "string"
+          },
+          "set_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Set By Name"
+          }
+        },
+        "required": [
+          "level",
+          "note",
+          "set_by_name",
+          "set_at"
+        ],
+        "title": "LevelOut",
+        "type": "object"
+      },
+      "app__modules__liaison__schemas__Point": {
+        "properties": {
+          "lat": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "Point",
+        "type": "object"
+      },
+      "app__modules__liaison__schemas__Suggestion": {
+        "properties": {
+          "agency": {
+            "title": "Agency",
+            "type": "string"
+          },
+          "body_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Id"
+          },
+          "in_report": {
+            "title": "In Report",
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "missing": {
+            "title": "Missing",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "public_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Phone"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Bilingual"
+          }
+        },
+        "required": [
+          "agency",
+          "kind",
+          "body_id",
+          "name",
+          "public_phone",
+          "reason",
+          "missing",
+          "in_report"
+        ],
+        "title": "Suggestion",
+        "type": "object"
+      },
       "app__modules__medical__schemas__InboxItem": {
         "properties": {
           "category": {
@@ -58997,6 +60328,53 @@
           "reason"
         ],
         "title": "LevelIn",
+        "type": "object"
+      },
+      "app__modules__ops__schemas__LevelOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "level": {
+            "$ref": "#/components/schemas/OpLevel"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "set_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Set By"
+          },
+          "since": {
+            "format": "date-time",
+            "title": "Since",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "level",
+          "since",
+          "reason",
+          "set_by"
+        ],
+        "title": "LevelOut",
         "type": "object"
       },
       "app__modules__ops__schemas__MissionOut": {
@@ -63376,6 +64754,87 @@
         "title": "ReportPage",
         "type": "object"
       },
+      "app__modules__reports__schemas__Suggestion": {
+        "properties": {
+          "distance_m": {
+            "title": "Distance M",
+            "type": "number"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "kind": {
+            "enum": [
+              "incident",
+              "report"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "matching_reports": {
+            "title": "Matching Reports",
+            "type": "integer"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "number"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "report_id": {
+            "format": "uuid",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "similarity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Similarity"
+          },
+          "tracking_code": {
+            "title": "Tracking Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "incident_id",
+          "report_id",
+          "tracking_code",
+          "score",
+          "distance_m",
+          "minutes",
+          "similarity",
+          "reasons",
+          "matching_reports"
+        ],
+        "title": "Suggestion",
+        "type": "object"
+      },
       "app__modules__reports__schemas__TrackOut": {
         "properties": {
           "history": {
@@ -65821,6 +67280,212 @@
           "lon"
         ],
         "title": "Point",
+        "type": "object"
+      },
+      "app__modules__telephony__schemas__CallOut": {
+        "properties": {
+          "answered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answered At"
+          },
+          "caller_masked": {
+            "title": "Caller Masked",
+            "type": "boolean"
+          },
+          "caller_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caller Number"
+          },
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "end_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Reason"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "operator_user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operator User Id"
+          },
+          "queue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queue"
+          },
+          "recording_media_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recording Media Id"
+          },
+          "report_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report Id"
+          },
+          "simulated": {
+            "title": "Simulated",
+            "type": "boolean"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "tracking_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracking Code"
+          },
+          "transferred_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transferred To"
+          }
+        },
+        "required": [
+          "id",
+          "direction",
+          "source",
+          "caller_number",
+          "caller_masked",
+          "started_at",
+          "answered_at",
+          "ended_at",
+          "duration_s",
+          "operator_user_id",
+          "queue",
+          "status",
+          "end_reason",
+          "report_id",
+          "incident_id",
+          "tracking_code",
+          "gouvernorat_code",
+          "recording_media_id",
+          "transferred_to",
+          "simulated"
+        ],
+        "title": "CallOut",
         "type": "object"
       },
       "app__modules__telephony__schemas__LinkIn": {
@@ -85624,7 +87289,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CallOut"
+                  "$ref": "#/components/schemas/app__modules__telephony__schemas__CallOut"
                 }
               }
             },
@@ -85732,7 +87397,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CallOut"
+                  "$ref": "#/components/schemas/app__modules__telephony__schemas__CallOut"
                 }
               }
             },
@@ -85829,7 +87494,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CallOut"
+                  "$ref": "#/components/schemas/app__modules__telephony__schemas__CallOut"
                 }
               }
             },
@@ -100701,7 +102366,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/LevelOut"
+                    "$ref": "#/components/schemas/app__modules__ops__schemas__LevelOut"
                   },
                   "title": "Response Get Levels Api V1 Staff Levels Get",
                   "type": "array"
@@ -100739,7 +102404,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/LevelOut"
+                    "$ref": "#/components/schemas/app__modules__ops__schemas__LevelOut"
                   },
                   "title": "Response Set Levels Api V1 Staff Levels Post",
                   "type": "array"
@@ -100767,6 +102432,1189 @@
         "summary": "Set Levels",
         "tags": [
           "command"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/bodies": {
+      "get": {
+        "operationId": "list_bodies_api_v1_staff_liaison_bodies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "national",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "National",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "civil",
+                    "security",
+                    "ministry",
+                    "regional",
+                    "public"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BodyOut"
+                  },
+                  "title": "Response List Bodies Api V1 Staff Liaison Bodies Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Bodies",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      },
+      "post": {
+        "operationId": "create_body_api_v1_staff_liaison_bodies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Body",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/bodies/{body_id}": {
+      "get": {
+        "operationId": "get_body_api_v1_staff_liaison_bodies__body_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "body_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Body Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Body",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_body_api_v1_staff_liaison_bodies__body_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "body_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Body Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Patch Body",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/bodies/{body_id}/archive": {
+      "post": {
+        "operationId": "archive_body_api_v1_staff_liaison_bodies__body_id__archive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "body_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Body Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Archive Body",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/bodies/{body_id}/officials": {
+      "post": {
+        "operationId": "add_official_api_v1_staff_liaison_bodies__body_id__officials_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "body_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Body Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfficialIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Official",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/calls": {
+      "get": {
+        "operationId": "call_log_api_v1_staff_liaison_calls_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "incident_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Incident Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "result",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "answered",
+                    "no_answer",
+                    "busy",
+                    "wrong_number"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Result"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__liaison__schemas__CallOut"
+                  },
+                  "title": "Response Call Log Api V1 Staff Liaison Calls Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Call Log",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/calls/{call_id}/follow-up-done": {
+      "post": {
+        "operationId": "follow_up_done_api_v1_staff_liaison_calls__call_id__follow_up_done_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "call_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Call Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__liaison__schemas__CallOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Follow Up Done",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/follow-ups": {
+      "get": {
+        "operationId": "follow_ups_api_v1_staff_liaison_follow_ups_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "incident_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Incident Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__liaison__schemas__CallOut"
+                  },
+                  "title": "Response Follow Ups Api V1 Staff Liaison Follow Ups Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Follow Ups",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/history": {
+      "get": {
+        "operationId": "history_api_v1_staff_liaison_history_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "level",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 2,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Level"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoryRow"
+                  },
+                  "title": "Response History Api V1 Staff Liaison History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "History",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/incidents/{incident_id}": {
+      "get": {
+        "operationId": "incident_view_api_v1_staff_liaison_incidents__incident_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentLiaison"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Incident View",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/incidents/{incident_id}/level": {
+      "put": {
+        "operationId": "set_level_api_v1_staff_liaison_incidents__incident_id__level_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__liaison__schemas__LevelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentLiaison"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Level",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/incidents/{incident_id}/parties": {
+      "post": {
+        "operationId": "add_parties_api_v1_staff_liaison_incidents__incident_id__parties_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartiesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentLiaison"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Parties",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/incidents/{incident_id}/parties/{party_id}": {
+      "delete": {
+        "operationId": "remove_party_api_v1_staff_liaison_incidents__incident_id__parties__party_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "party_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Party Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentLiaison"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Remove Party",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_party_api_v1_staff_liaison_incidents__incident_id__parties__party_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "party_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Party Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartyPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidentLiaison"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Patch Party",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/incidents/{incident_id}/parties/{party_id}/calls": {
+      "post": {
+        "operationId": "add_call_api_v1_staff_liaison_incidents__incident_id__parties__party_id__calls_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "party_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Party Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CallIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__liaison__schemas__CallOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Call",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/incidents/{incident_id}/picker": {
+      "get": {
+        "operationId": "picker_api_v1_staff_liaison_incidents__incident_id__picker_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Picker",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      }
+    },
+    "/api/v1/staff/liaison/officials/{official_id}": {
+      "delete": {
+        "operationId": "archive_official_api_v1_staff_liaison_officials__official_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "official_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Official Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Archive Official",
+        "tags": [
+          "staff",
+          "liaison"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_official_api_v1_staff_liaison_officials__official_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "official_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Official Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfficialPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Patch Official",
+        "tags": [
+          "staff",
+          "liaison"
         ]
       }
     },

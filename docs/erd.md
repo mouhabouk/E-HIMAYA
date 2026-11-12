@@ -1776,6 +1776,108 @@ erDiagram
     knowledge__memory_entry ||--o{ knowledge__memory_entry_version : "entry_id"
 ```
 
+## liaison
+
+```mermaid
+erDiagram
+    liaison__body {
+        uuid id PK
+        smallint gouvernorat_code FK
+        text category
+        text kind
+        text agency
+        text name
+        text domain
+        text address
+        geography_point_4326 location
+        text public_phone
+        text status
+        uuid origin_incident_id FK
+        datetime created_at
+        text created_by_name
+        datetime updated_at
+        text updated_by_name
+        integer version
+    }
+    liaison__call {
+        uuid id PK
+        uuid incident_id FK
+        uuid party_id FK
+        smallint gouvernorat_code FK
+        uuid official_id FK
+        text official_name
+        text number
+        text via
+        uuid telephony_call_id FK
+        integer duration_s
+        text result
+        text asked
+        text promised
+        smallint eta_min
+        text note
+        datetime follow_up_at
+        datetime follow_up_done_at
+        text follow_up_done_by_name
+        text by_subject
+        text by_name
+        datetime at
+    }
+    liaison__incident_level {
+        uuid incident_id PK,FK
+        smallint gouvernorat_code FK
+        smallint level
+        text note
+        text set_by_name
+        datetime set_at
+    }
+    liaison__official {
+        uuid id PK
+        uuid body_id FK
+        smallint gouvernorat_code FK
+        text name
+        text role
+        array phones
+        text email
+        text duty
+        smallint position
+        text status
+        datetime created_at
+        datetime updated_at
+        text updated_by_name
+    }
+    liaison__party {
+        uuid id PK
+        uuid incident_id FK
+        smallint gouvernorat_code FK
+        uuid body_id FK
+        uuid official_id FK
+        text body_name
+        text official_name
+        text official_role
+        boolean suggested
+        text reason
+        text added_by_name
+        datetime added_at
+        datetime removed_at
+        text removed_by_name
+    }
+    geo__gouvernorat ||--o{ liaison__body : "gouvernorat_code"
+    geo__gouvernorat ||--o{ liaison__call : "gouvernorat_code"
+    geo__gouvernorat ||--o{ liaison__incident_level : "gouvernorat_code"
+    geo__gouvernorat ||--o{ liaison__official : "gouvernorat_code"
+    geo__gouvernorat ||--o{ liaison__party : "gouvernorat_code"
+    liaison__body ||--o{ liaison__official : "body_id"
+    liaison__body ||--o{ liaison__party : "body_id"
+    liaison__official ||--o{ liaison__call : "official_id"
+    liaison__official ||--o{ liaison__party : "official_id"
+    liaison__party ||--o{ liaison__call : "party_id"
+    ops__incident ||--o{ liaison__body : "origin_incident_id"
+    ops__incident ||--o{ liaison__call : "incident_id"
+    ops__incident ||--o{ liaison__incident_level : "incident_id"
+    ops__incident ||--o{ liaison__party : "incident_id"
+    telephony__call ||--o{ liaison__call : "telephony_call_id"
+```
+
 ## medical
 
 ```mermaid

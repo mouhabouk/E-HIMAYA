@@ -726,6 +726,11 @@ export function canReadAddressWarnings(roles: readonly string[]): boolean {
   return any(READ_ROLES, roles);
 }
 
+/** Informing the partner bodies by phone (OS20): every room reads the contact system and the reports' history. */
+export function canReadLiaison(roles: readonly string[]): boolean {
+  return any(READ_ROLES, roles);
+}
+
 /** Guided call-taking cards (OS2): the rooms read them, the Office writes, validates and approves them. */
 export const CALL_CARD_READ_ROLES = ["operator", "ops_manager", "content_editor", "medical_coordinator"] as const;
 
