@@ -49,6 +49,7 @@ import {
   canUseNotifications,
   hasReadAccess,
   isCommittee,
+  canReadAddressWarnings,
   canReadCallCards,
   canReadRoomGuide,
 } from "../lib/roles";
@@ -109,6 +110,7 @@ export function navGroups(
         ...e(canReadRoomGuide(roles), "/room-guide", "menuBook", "navy", "roomGuide"),
         ...e(canReadCallCards(roles), "/call-cards", "call", "red", "callCards"),
         ...e(reads, "/incidents", "localFireDepartment", "red", "incidents"),
+        ...e(canReadAddressWarnings(roles), "/address-warnings", "warning", "amber", "addressWarnings"),
         ...e(reads, "/map", "map", "teal", "map"),
         ...e(reads, "/map/room", "monitoring", "red", "opsRoom"),
         ...e(reads, "/streams", "videocam", "red", "streams"),

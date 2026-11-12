@@ -12423,6 +12423,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not download the mission sheet, and no copy is saved yet'**
   String get staffMissionSheetFailed;
+
+  /// No description provided for @awCatGas.
+  ///
+  /// In en, this message translates to:
+  /// **'Gas store'**
+  String get awCatGas;
+
+  /// No description provided for @awCatChem.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazardous materials'**
+  String get awCatChem;
+
+  /// No description provided for @awCatFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel tank'**
+  String get awCatFuel;
+
+  /// No description provided for @awCatBatt.
+  ///
+  /// In en, this message translates to:
+  /// **'Batteries and power'**
+  String get awCatBatt;
+
+  /// No description provided for @awCatColl.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsafe building'**
+  String get awCatColl;
+
+  /// No description provided for @awCatAcc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard to reach'**
+  String get awCatAcc;
+
+  /// No description provided for @awCatDog.
+  ///
+  /// In en, this message translates to:
+  /// **'Dangerous animal'**
+  String get awCatDog;
+
+  /// No description provided for @awCatOcc.
+  ///
+  /// In en, this message translates to:
+  /// **'Many people'**
+  String get awCatOcc;
+
+  /// No description provided for @awCatMob.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs help to evacuate'**
+  String get awCatMob;
+
+  /// No description provided for @awCatOxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Home oxygen'**
+  String get awCatOxy;
+
+  /// No description provided for @awCatDeaf.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot hear the alarm'**
+  String get awCatDeaf;
+
+  /// No description provided for @awTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Address warnings'**
+  String get awTitle;
+
+  /// No description provided for @awNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No warning at this address'**
+  String get awNone;
+
+  /// No description provided for @awCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Address warnings: {n}'**
+  String awCardTitle(int n);
+
+  /// No description provided for @awAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read by the team'**
+  String get awAllRead;
+
+  /// No description provided for @awProposeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Saw a danger here? Propose a mark; the room approves it'**
+  String get awProposeHint;
+
+  /// No description provided for @awAcked.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded: the warnings were read'**
+  String get awAcked;
+
+  /// No description provided for @awFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server, try again'**
+  String get awFailed;
+
+  /// No description provided for @awAck.
+  ///
+  /// In en, this message translates to:
+  /// **'I read the warnings'**
+  String get awAck;
+
+  /// No description provided for @awPropose.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose a mark'**
+  String get awPropose;
+
+  /// No description provided for @awNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A mark shows when the incident is inside its circle. Personal marks are given by their owners, without names.'**
+  String get awNote;
+
+  /// No description provided for @awCriticalWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical with {kind}'**
+  String awCriticalWith(String kind);
+
+  /// No description provided for @awDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'{m} m away'**
+  String awDistance(int m);
+
+  /// No description provided for @awOffHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Outside its hours'**
+  String get awOffHours;
+
+  /// No description provided for @awConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'With its owner\'s consent'**
+  String get awConsent;
+
+  /// No description provided for @awReadAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Read at {time}'**
+  String awReadAt(String time);
+
+  /// No description provided for @awProposed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent; the room will approve it'**
+  String get awProposed;
+
+  /// No description provided for @awProposeText.
+  ///
+  /// In en, this message translates to:
+  /// **'What did you see?'**
+  String get awProposeText;
+
+  /// No description provided for @awProposeSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the proposal'**
+  String get awProposeSend;
+
+  /// No description provided for @awConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell rescuers about my home'**
+  String get awConsentTitle;
+
+  /// No description provided for @awConsentCard.
+  ///
+  /// In en, this message translates to:
+  /// **'If someone at home needs help to evacuate'**
+  String get awConsentCard;
+
+  /// No description provided for @awConsentRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'This needs a registered account, so the room knows whom to call.'**
+  String get awConsentRegistered;
+
+  /// No description provided for @awConsentSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your consent was saved'**
+  String get awConsentSaved;
+
+  /// No description provided for @awConsentIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'If an incident happens near your home, the operations room and the team see that someone at this address needs help, without your name. Choose what applies.'**
+  String get awConsentIntro;
+
+  /// No description provided for @awConsentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'What helps the team (optional)'**
+  String get awConsentNote;
+
+  /// No description provided for @awConsentAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'The address as the team finds it'**
+  String get awConsentAddress;
+
+  /// No description provided for @awConsentLocate.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the home from my location now'**
+  String get awConsentLocate;
+
+  /// No description provided for @awConsentLocated.
+  ///
+  /// In en, this message translates to:
+  /// **'Location set (tap to update)'**
+  String get awConsentLocated;
+
+  /// No description provided for @awConsentPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name and phone are not shown. If the room needs them for an incident, it is recorded with the reason and you see it here. Renewed each year; withdraw any time.'**
+  String get awConsentPrivacy;
+
+  /// No description provided for @awConsentReveals.
+  ///
+  /// In en, this message translates to:
+  /// **'When the room read your name'**
+  String get awConsentReveals;
+
+  /// No description provided for @awConsentWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw all my consent'**
+  String get awConsentWithdraw;
 }
 
 class _AppLocalizationsDelegate

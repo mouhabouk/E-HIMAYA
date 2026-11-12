@@ -404,6 +404,21 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     validateCardMedical: vi.fn(),
     approveCard: vi.fn(),
     reportCallCard: vi.fn(() => Promise.reject(new ApiError(404, "no_call_card"))),
+    // OS8: address warnings.
+    awCategories: vi.fn(() => Promise.resolve([])),
+    awSaveCategory: vi.fn(),
+    awMarkers: vi.fn(() =>
+      Promise.resolve({ items: [], counts: { active: 0, pending: 0, review_due: 0, personal: 0 } }),
+    ),
+    awCreate: vi.fn(),
+    awDecide: vi.fn(),
+    awImportOrgs: vi.fn(() => Promise.resolve({ created: 0 })),
+    awReveals: vi.fn(() => Promise.resolve([])),
+    awIncident: vi.fn((id: string) =>
+      Promise.resolve({ incident_id: id, incident_kind: "fire", location: null, items: [], unread: 0 }),
+    ),
+    awAck: vi.fn(),
+    awReveal: vi.fn(),
     ...overrides,
   };
 }

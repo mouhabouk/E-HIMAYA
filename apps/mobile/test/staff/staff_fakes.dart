@@ -48,6 +48,10 @@ class FakeCrewServer {
   bool shiftOpen = false;
   final missions = <Map<String, dynamic>>[];
 
+  /// OS8: the address warnings every mission shows, their reading and the marks proposed from the scene.
+  final addressWarnings = <Map<String, dynamic>>[];
+  final proposals = <Map<String, dynamic>>[];
+
   /// The account's field roles (phase P4c: `org_auditor` for inspectors).
   List<String> roles = ['team_leader'];
 
@@ -407,6 +411,29 @@ class FakeCrewServer {
     }
     if (m != null && r.method == 'GET' && m.group(2) == 'hospitals') {
       return const FakeResponse(200, json: hospitals);
+    }
+    if (m != null && m.group(2)!.startsWith('address-warnings')) {
+      switch ((r.method, m.group(2))) {
+        case ('POST', 'address-warnings/ack'):
+          for (final w in addressWarnings) {
+            w['team_ack_at'] = '2026-10-26T09:12:00Z';
+          }
+        case ('POST', 'address-warnings/propose'):
+          proposals.add(r.json! as Map<String, dynamic>);
+          return const FakeResponse(201, json: {'status': 'pending'});
+      }
+      return FakeResponse(
+        200,
+        json: {
+          'incident_id': 'i-1',
+          'incident_kind': 'fire',
+          'location': null,
+          'items': addressWarnings,
+          'unread': addressWarnings
+              .where((w) => w['team_ack_at'] == null)
+              .length,
+        },
+      );
     }
     if (m != null && r.method == 'POST') {
       final i = missions.indexWhere((x) => x['id'] == m.group(1));

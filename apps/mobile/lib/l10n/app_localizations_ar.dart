@@ -6962,4 +6962,140 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get staffMissionSheetFailed =>
       'تعذر تنزيل أمر المهمة ولا نسخة محفوظة بعد';
+
+  @override
+  String get awCatGas => 'مخزن غاز';
+
+  @override
+  String get awCatChem => 'مواد خطرة';
+
+  @override
+  String get awCatFuel => 'خزان وقود';
+
+  @override
+  String get awCatBatt => 'بطاريات وكهرباء';
+
+  @override
+  String get awCatColl => 'مبنى آيل للسقوط';
+
+  @override
+  String get awCatAcc => 'صعوبة الوصول';
+
+  @override
+  String get awCatDog => 'حيوان خطر';
+
+  @override
+  String get awCatOcc => 'أشخاص كثيرون';
+
+  @override
+  String get awCatMob => 'يحتاج مساعدة على الإخلاء';
+
+  @override
+  String get awCatOxy => 'جهاز أكسجين منزلي';
+
+  @override
+  String get awCatDeaf => 'لا يسمع الإنذار';
+
+  @override
+  String get awTitle => 'تحذيرات العنوان';
+
+  @override
+  String get awNone => 'لا تحذير على هذا العنوان';
+
+  @override
+  String awCardTitle(int n) {
+    return 'تحذيرات العنوان: $n';
+  }
+
+  @override
+  String get awAllRead => 'قرأها الفريق';
+
+  @override
+  String get awProposeHint =>
+      'رأيت خطرا في المكان؟ اقترح علامة وتعتمدها القاعة';
+
+  @override
+  String get awAcked => 'سُجّل أنكم قرأتم التحذيرات';
+
+  @override
+  String get awFailed => 'تعذّر الاتصال بالخادم، أعد المحاولة';
+
+  @override
+  String get awAck => 'قرأت التحذيرات';
+
+  @override
+  String get awPropose => 'اقترح علامة';
+
+  @override
+  String get awNote =>
+      'تظهر العلامة إذا وقع الحادث داخل دائرتها. العلامات الشخصية بموافقة أصحابها ودون أسمائهم.';
+
+  @override
+  String awCriticalWith(String kind) {
+    return 'حرج مع $kind';
+  }
+
+  @override
+  String awDistance(int m) {
+    return 'على $m م';
+  }
+
+  @override
+  String get awOffHours => 'خارج أوقات النشاط';
+
+  @override
+  String get awConsent => 'بموافقة صاحبه';
+
+  @override
+  String awReadAt(String time) {
+    return 'قرأتموها $time';
+  }
+
+  @override
+  String get awProposed => 'أُرسل الاقتراح، وتعتمده القاعة';
+
+  @override
+  String get awProposeText => 'ماذا رأيت؟';
+
+  @override
+  String get awProposeSend => 'أرسل الاقتراح';
+
+  @override
+  String get awConsentTitle => 'تنبيه فرق الإنقاذ عند عنواني';
+
+  @override
+  String get awConsentCard => 'إن كان في بيتك من يحتاج مساعدة على الإخلاء';
+
+  @override
+  String get awConsentRegistered =>
+      'هذه الخدمة للحسابات المسجّلة فقط، حتى تعرف القاعة بمن تتصل عند الحاجة.';
+
+  @override
+  String get awConsentSaved => 'حُفظت موافقتك';
+
+  @override
+  String get awConsentIntro =>
+      'إن وقع حادث قرب بيتك، ترى قاعة العمليات والفريق أن في هذا العنوان من يحتاج مساعدة، دون اسمك. اختر ما ينطبق.';
+
+  @override
+  String get awConsentNote => 'ما يفيد الفريق (اختياري)';
+
+  @override
+  String get awConsentAddress => 'العنوان كما يجده الفريق';
+
+  @override
+  String get awConsentLocate => 'حدّد موقع البيت من موقعي الآن';
+
+  @override
+  String get awConsentLocated => 'حُدّد الموقع (اضغط لتحديثه)';
+
+  @override
+  String get awConsentPrivacy =>
+      'لا يظهر اسمك ولا هاتفك. إن احتاجت القاعة إليهما في حادث، يُسجَّل ذلك مع السبب وتراه هنا. تُجدَّد الموافقة كل سنة، وتسحبها متى شئت.';
+
+  @override
+  String get awConsentReveals => 'متى اطّلعت القاعة على اسمك';
+
+  @override
+  String get awConsentWithdraw => 'اسحب موافقتي كلها';
 }

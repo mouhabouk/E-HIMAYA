@@ -35,6 +35,7 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/reports/geo-queue", "reports.geo_queue"],
   ["/reports", "reports"],
   ["/incidents", "incidents"],
+  ["/address-warnings", "address_warnings"],
   ["/map", "map"],
   ["/streams", "streams"],
   ["/calls", "calls"],

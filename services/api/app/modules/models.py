@@ -1,5 +1,9 @@
 """Import every module's models so they register on ``Base.metadata`` (used by Alembic)."""
 
+from app.modules.address_warnings.models import Ack as AddressWarningAck
+from app.modules.address_warnings.models import Category as AddressWarningCategory
+from app.modules.address_warnings.models import Marker as AddressWarningMarker
+from app.modules.address_warnings.models import Reveal as AddressWarningReveal
 from app.modules.ai.models import AiSettingsRow, Analysis, Anomaly, ModelDecision
 from app.modules.analytics.models import Notification, Scenario, Schedule
 from app.modules.analytics.models import Report as AnalyticsReport
@@ -146,6 +150,10 @@ from app.modules.window.models import WindowDelegation, WindowEvent
 
 __all__ = [
     "Account",
+    "AddressWarningAck",
+    "AddressWarningCategory",
+    "AddressWarningMarker",
+    "AddressWarningReveal",
     "Agent",
     "AgentSkill",
     "AiSettingsRow",
