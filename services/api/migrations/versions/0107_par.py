@@ -134,6 +134,14 @@ ALTER TABLE par.event ENABLE ROW LEVEL SECURITY;
 CREATE POLICY event_own ON par.event USING ({_OWN}) WITH CHECK ({_OWN});
 ALTER TABLE par.closure ENABLE ROW LEVEL SECURITY;
 CREATE POLICY closure_own ON par.closure USING ({_OWN}) WITH CHECK ({_OWN});
+
+-- The change journal (migration 0097): the tables that hold names or the word from the scene keep no value.
+SELECT audit.journal_attach('par.setting', false);
+SELECT audit.journal_attach('par.team', true);
+SELECT audit.journal_attach('par.missing', true);
+SELECT audit.journal_attach('par.sitrep', true);
+SELECT audit.journal_attach('par.event', true);
+SELECT audit.journal_attach('par.closure', true);
 """
 
 DOWNGRADE = """
