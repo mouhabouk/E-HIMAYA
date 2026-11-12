@@ -487,6 +487,7 @@ export const ERROR_CODES = [
   "inspector_not_active",
   "no_active_profile",
   "no_policy",
+  "reminder_after_notice",
   "not_a_room",
   "not_active",
   "not_pending",

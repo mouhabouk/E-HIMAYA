@@ -7098,4 +7098,339 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get awConsentWithdraw => 'اسحب موافقتي كلها';
+
+  @override
+  String get inspOpen => 'فضاء المتفقّد';
+
+  @override
+  String get inspOpenHelp => 'التفقّدات الدورية: الدخول بالرمز الذي وصلك.';
+
+  @override
+  String get inspTitle => 'التفقّدات الدورية';
+
+  @override
+  String get inspEntryIntro =>
+      'اكتب معرّفك والرمز الذي وصلك بإرسالية قصيرة أو بالبريد بعد أن تفعّل المتفقّدية العامة حسابك.';
+
+  @override
+  String get inspWiped =>
+      'خرج هذا الهاتف من فضاء المتفقّد ومُحيت تقاريره (حساب مغلق أو هاتف مُبلّغ عن ضياعه).';
+
+  @override
+  String inspRegistered(String destination) {
+    return 'أُرسل الطلب. بعد أن تقبله المتفقّدية العامة يصلك الرمز على $destination.';
+  }
+
+  @override
+  String get inspMatricule => 'المعرّف';
+
+  @override
+  String get inspCode => 'رمز التفعيل';
+
+  @override
+  String get inspCodeHelp => 'صالح لمدة محدودة؛ اطلب رمزًا جديدًا إن انتهى.';
+
+  @override
+  String get inspActivate => 'تفعيل هذا الهاتف';
+
+  @override
+  String get inspNoAccount => 'لا حساب لك؟ اطلب حسابًا';
+
+  @override
+  String get inspHaveCode => 'لديّ رمز';
+
+  @override
+  String get inspRegisterTitle => 'طلب حساب';
+
+  @override
+  String get inspInternal => 'من الحماية المدنية';
+
+  @override
+  String get inspExternal => 'خارجي';
+
+  @override
+  String get inspName => 'الاسم واللقب';
+
+  @override
+  String get inspOrganisation => 'الهيكل';
+
+  @override
+  String get inspVia => 'يصلني الرمز عبر';
+
+  @override
+  String get inspViaSms => 'إرسالية قصيرة';
+
+  @override
+  String get inspViaEmail => 'البريد الإلكتروني';
+
+  @override
+  String get inspPhone => 'الهاتف';
+
+  @override
+  String get inspEmail => 'البريد الإلكتروني';
+
+  @override
+  String get inspRegister => 'إرسال الطلب';
+
+  @override
+  String get inspMissionsTitle => 'مهامّي';
+
+  @override
+  String get inspSignOut => 'الخروج من فضاء المتفقّد';
+
+  @override
+  String inspAccountUntil(String date) {
+    return 'الحساب صالح إلى $date';
+  }
+
+  @override
+  String get inspNoMissions =>
+      'سلّة التفقّدات فارغة: لا تفقّد دون أمر مهمة. تفقّداتك السابقة في «تفقّداتي».';
+
+  @override
+  String get inspKindPeriodic => 'دوري';
+
+  @override
+  String get inspKindSurprise => 'فجئي';
+
+  @override
+  String get inspRoomCentral => 'القاعة المركزية';
+
+  @override
+  String get inspRoomRegional => 'القاعة الجهوية';
+
+  @override
+  String get inspUnitRegionalDirectorate => 'إدارة جهوية';
+
+  @override
+  String get inspUnitBrigade => 'فرقة';
+
+  @override
+  String get inspUnitCentre => 'مركز';
+
+  @override
+  String get inspUnitAdvancedCentre => 'مركز مقدّم';
+
+  @override
+  String get inspUnitGuardPost => 'نقطة حراسة';
+
+  @override
+  String get inspUnitBeach => 'شاطئ';
+
+  @override
+  String get inspUnitOther => 'وحدة أخرى';
+
+  @override
+  String get inspStateNew => 'للتفقّد';
+
+  @override
+  String inspStateProgress(int answered, int total) {
+    return '$answered/$total';
+  }
+
+  @override
+  String get inspStateQueued => 'ينتظر الإرسال';
+
+  @override
+  String get inspStateSent => 'أُرسل';
+
+  @override
+  String get inspArrive => 'وصلت';
+
+  @override
+  String get inspLeave => 'غادرت';
+
+  @override
+  String inspArrivedAt(String time) {
+    return 'الوصول $time';
+  }
+
+  @override
+  String inspLeftAt(String time) {
+    return 'المغادرة $time';
+  }
+
+  @override
+  String get inspMarkedOffline => 'سُجّل دون شبكة';
+
+  @override
+  String inspMarksWaiting(int count) {
+    return 'وصول ومغادرة تنتظر الإرسال: $count';
+  }
+
+  @override
+  String get inspHistory => 'تفقّداتي';
+
+  @override
+  String get inspHistoryEmpty => 'لم تُنجز أيّ تفقّد بعد.';
+
+  @override
+  String get inspHistoryProgress => 'قيد الإنجاز';
+
+  @override
+  String inspHistoryLine(String ref, String day) {
+    return '$ref · $day';
+  }
+
+  @override
+  String inspHistoryScore(String verdict, int score, String receipt) {
+    return '$verdict · $score٪ · وصل $receipt';
+  }
+
+  @override
+  String get inspOffline => 'بدون شبكة';
+
+  @override
+  String inspWaiting(int count) {
+    return 'تقارير تنتظر الإرسال: $count';
+  }
+
+  @override
+  String get inspRetry => 'أرسل الآن';
+
+  @override
+  String inspAnswered(int answered, int total) {
+    return 'أُجيب عن $answered من $total بندًا';
+  }
+
+  @override
+  String get inspAnswerOk => 'مطابق';
+
+  @override
+  String get inspAnswerNote => 'ملاحظة';
+
+  @override
+  String get inspAnswerKo => 'غير مطابق';
+
+  @override
+  String get inspPresenceTitle => 'الحضور';
+
+  @override
+  String get inspPresent => 'الحاضرون';
+
+  @override
+  String get inspExpected => 'المطلوبون';
+
+  @override
+  String get inspExitTitle => 'تمرين الخروج';
+
+  @override
+  String get inspExitSeconds => 'الثواني حتى الخروج';
+
+  @override
+  String get inspExitStart => 'ابدأ';
+
+  @override
+  String inspExitStop(int seconds) {
+    return 'أوقف ($seconds ث)';
+  }
+
+  @override
+  String get inspToSign => 'التوصيات والإمضاءات';
+
+  @override
+  String get inspSeeReport => 'عرض التقرير';
+
+  @override
+  String inspReceipt(String receipt, String verdict, String score) {
+    return 'استُلم: $receipt. التقييم $verdict، $score٪.';
+  }
+
+  @override
+  String get inspQueuedNote =>
+      'مُوقَّع ومختوم في الهاتف؛ يُرسل حال عودة الشبكة.';
+
+  @override
+  String get inspSignTitle => 'ختم التقرير';
+
+  @override
+  String get inspSummary => 'الخلاصة';
+
+  @override
+  String get inspSummaryHint => 'ما خلص إليه التفقّد في أسطر';
+
+  @override
+  String get inspRecommendations => 'التوصيات';
+
+  @override
+  String get inspRecDetailed => 'على بند';
+
+  @override
+  String get inspRecGeneral => 'عامة';
+
+  @override
+  String get inspRemove => 'حذف';
+
+  @override
+  String get inspAddRec => 'إضافة توصية';
+
+  @override
+  String get inspRecItem => 'البند';
+
+  @override
+  String get inspRecText => 'التوصية';
+
+  @override
+  String get inspRecSave => 'إضافة';
+
+  @override
+  String get inspPriorityHigh => 'عالية';
+
+  @override
+  String get inspPriorityMedium => 'متوسطة';
+
+  @override
+  String get inspPriorityLow => 'ضعيفة';
+
+  @override
+  String get inspHeadTitle => 'المسؤول عن المكان';
+
+  @override
+  String get inspHeadName => 'اسم المسؤول';
+
+  @override
+  String get inspSignInspector => 'إمضاء المتفقّد';
+
+  @override
+  String get inspSignHead => 'إمضاء المسؤول';
+
+  @override
+  String get inspSignSend => 'إمضاء وإرسال';
+
+  @override
+  String get inspSignNeeds =>
+      'يلزم اسم المسؤول والإمضاءان وأولوية لكل توصية على بند.';
+
+  @override
+  String get inspErrActivationRefused => 'المعرّف أو الرمز غير صحيح.';
+
+  @override
+  String get inspErrActivationExpired =>
+      'انتهت صلاحية الرمز؛ اطلب رمزًا جديدًا من المتفقّدية العامة.';
+
+  @override
+  String get inspErrAlreadyRegistered => 'يوجد طلب سابق بهذا المعرّف.';
+
+  @override
+  String get inspErrNotToday => 'هذه المهمة ليست لليوم بعد.';
+
+  @override
+  String get inspErrCancelled => 'أُلغيت هذه المهمة.';
+
+  @override
+  String get inspErrSealed => 'هذا التقرير مختوم مسبقًا.';
+
+  @override
+  String get inspErrDeleted => 'حُذف هذا التقرير من الإدارة.';
+
+  @override
+  String get inspErrPriority => 'حدّد أولوية لكل توصية على بند.';
+
+  @override
+  String get inspErrRateLimited => 'محاولات كثيرة؛ أعد لاحقًا.';
+
+  @override
+  String inspErrGeneric(String code) {
+    return 'رفض الخادم ($code).';
+  }
 }

@@ -311,6 +311,8 @@ async def test_a_unit_is_named_by_gouvernorat_kind_and_name(
         assert r.status_code == 422, (sites, r.text)
     mine = (await client.get(f"{APP}/missions", headers=inspector.h)).json()
     assert [m["ref"] for m in mine] == [mission["ref"]]
+    # The model comes with the missions: the app opens a place's report without network.
+    assert [i["key"] for i in mine[0]["profile"]["items"]]
     r = await client.get(f"/api/v1/verify/om/{mission['ref']}")
     assert r.status_code == 200
     assert r.json()["places"] == 2 and "unit_name" not in r.text
@@ -443,3 +445,116 @@ async def test_only_the_system_administrator_deletes_and_restores(
     r = await client.post(f"{ADMIN}/bin/{report['id']}/restore", headers=sysadmin)
     assert r.status_code == 204
     assert (await client.get(f"{STAFF}/records/{report['id']}", headers=general(staff))).status_code == 200
+
+
+# ---------------------------------------------------------------- the inspector's list and alerts (Yamen 2026-11-12)
+
+
+async def test_the_inspector_follows_their_own_inspections(
+    client: httpx.AsyncClient, staff: Any, session: AsyncSession
+) -> None:
+    inspector = await Inspector(client, staff, session).ready()
+    name = f"[SIM] مركز {secrets.token_hex(3)}"
+    mission = await plan(client, staff, inspector, unit_site(name), unit_site(f"{name} ب"))
+    _, receipt = await inspect(client, inspector, mission["sites"][0]["id"])
+    started = await client.post(f"{APP}/inspections", json={"site_id": mission["sites"][1]["id"]}, headers=inspector.h)
+    assert started.status_code == 200, started.text
+    rows = (await client.get(f"{APP}/inspections", headers=inspector.h)).json()
+    assert {r["status"] for r in rows} == {"submitted", "in_progress"}
+    sent = next(r for r in rows if r["status"] == "submitted")
+    assert sent["receipt"] == receipt["receipt"] and sent["score"] == 100
+    assert sent["mission_ref"] == mission["ref"] and name in sent["place"]
+    stranger = await Inspector(client, staff, session).ready()
+    assert (await client.get(f"{APP}/inspections", headers=stranger.h)).json() == []
+
+
+async def test_a_notice_then_a_reminder_reach_the_inspector_once(
+    client: httpx.AsyncClient, staff: Any, session: AsyncSession
+) -> None:
+    policy = (await client.get(f"{STAFF}/policy", headers=general(staff))).json()
+    assert policy["notice_days"] == 15 and policy["reminder_days"] == 2
+    body = {k: v for k, v in policy.items() if k not in ("updated_by_name", "updated_at")}
+    bad = await client.put(f"{STAFF}/policy", json=body | {"reminder_days": 15}, headers=general(staff))
+    assert bad.status_code == 422
+    inspector = await Inspector(client, staff, session).ready()
+    day = service.today()
+    refs = {}
+    for ahead in (20, 10, 1):
+        r = await client.post(
+            f"{STAFF}/missions",
+            json={
+                "on_date": str(day + timedelta(days=ahead)),
+                "at_time": "09:00",
+                "kind": "periodic",
+                "inspector_id": inspector.id,
+                "sites": [unit_site(f"[SIM] مركز {secrets.token_hex(3)}")],
+                "publish": False,
+            },
+            headers=general(staff),
+        )
+        assert r.status_code == 201, r.text
+        refs[ahead] = r.json()["ref"]
+
+    async def texts() -> list[str]:
+        async with get_system_sessionmaker()() as fresh:
+            rows = await fresh.scalars(select(Outbox).where(Outbox.address == inspector.phone).order_by(Outbox.id))
+            return [str(o.payload["text"]) for o in rows if "أمر المهمة" in str(o.payload["text"])]
+
+    async def run(on: Any) -> None:
+        async with get_system_sessionmaker()() as fresh, fresh.begin():
+            await service.mission_alerts(fresh, on)
+
+    await run(day)
+    first = await texts()
+    # The mission in 10 days gets its notice; the one tomorrow only its reminder; the one in 20 days nothing yet.
+    assert len(first) == 2
+    assert any(refs[10] in t and "تذكير" not in t for t in first)
+    assert any(refs[1] in t and t.startswith("ء-حماية: تذكير") for t in first)
+    assert not any(refs[20] in t for t in first)
+    await run(day)
+    assert await texts() == first
+    # Eight days on, the mission in 10 days is two days away: its reminder; the one in 20 days enters its notice.
+    await run(day + timedelta(days=8))
+    later = (await texts())[len(first) :]
+    assert len(later) == 2
+    assert any(refs[10] in t and "تذكير" in t for t in later)
+    assert any(refs[20] in t and "تذكير" not in t for t in later)
+
+
+async def test_arrived_and_left_on_each_place_even_without_network(
+    client: httpx.AsyncClient, staff: Any, session: AsyncSession
+) -> None:
+    inspector = await Inspector(client, staff, session).ready()
+    name = f"[SIM] مركز {secrets.token_hex(3)}"
+    mission = await plan(client, staff, inspector, unit_site(name), unit_site(f"{name} ب"))
+    first, second = (s["id"] for s in mission["sites"])
+    url = f"{APP}/sites/{first}/presence"
+    earlier = datetime.now(UTC) - timedelta(minutes=40)
+    # Leaving a place before arriving is refused.
+    r = await client.post(url, json={"kind": "left", "at": earlier.isoformat()}, headers=inspector.h)
+    assert r.status_code == 409 and r.json()["detail"] == "not_arrived"
+    # The arrival recorded without network forty minutes ago keeps the phone's time; a repeat changes nothing.
+    arrived = {"kind": "arrived", "at": earlier.isoformat(), "lat": 34.74, "lon": 10.76, "offline": True}
+    r = await client.post(url, json=arrived, headers=inspector.h)
+    assert r.status_code == 200, r.text
+    assert r.json()["arrived_offline"] is True
+    assert datetime.fromisoformat(r.json()["arrived_at"]) == earlier
+    again = await client.post(url, json=arrived | {"at": datetime.now(UTC).isoformat()}, headers=inspector.h)
+    assert datetime.fromisoformat(again.json()["arrived_at"]) == earlier
+    r = await client.post(url, json={"kind": "left", "at": datetime.now(UTC).isoformat()}, headers=inspector.h)
+    assert r.status_code == 200 and r.json()["left_at"] is not None and r.json()["left_offline"] is False
+    # The second place of the same mission has its own arrival; another inspector reaches neither.
+    r = await client.post(
+        f"{APP}/sites/{second}/presence",
+        json={"kind": "arrived", "at": datetime.now(UTC).isoformat()},
+        headers=inspector.h,
+    )
+    assert r.status_code == 200
+    stranger = await Inspector(client, staff, session).ready()
+    assert (await client.post(url, json=arrived, headers=stranger.h)).status_code == 404
+    rows = (await client.get(f"{STAFF}/missions", headers=general(staff))).json()
+    sites = next(m for m in rows if m["id"] == mission["id"])["sites"]
+    assert sites[0]["arrived_offline"] is True and sites[0]["left_at"] is not None
+    assert sites[1]["arrived_at"] is not None and sites[1]["left_at"] is None
+    mine = (await client.get(f"{APP}/missions", headers=inspector.h)).json()
+    assert next(m for m in mine if m["id"] == mission["id"])["sites"][0]["arrived_at"] is not None

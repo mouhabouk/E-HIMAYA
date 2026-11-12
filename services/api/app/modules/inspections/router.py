@@ -324,10 +324,26 @@ async def my_missions(principal: InspectorApp, session: Session) -> list[schemas
     return await service.my_missions(session, inspector)
 
 
+@app_router.get("/inspections", response_model=list[schemas.AppHistoryRow])
+async def my_inspections(principal: InspectorApp, session: Session) -> list[schemas.AppHistoryRow]:
+    inspector = await service.me(session, principal)
+    return await service.my_inspections(session, inspector)
+
+
 @app_router.post("/inspections", response_model=schemas.AppInspectionOut)
 async def start(principal: InspectorApp, session: Session, body: schemas.StartIn) -> schemas.AppInspectionOut:
     inspector = await service.me(session, principal)
     out = await service.start(session, inspector, body)
+    await session.commit()
+    return out
+
+
+@app_router.post("/sites/{site_id}/presence", response_model=schemas.PresenceOut)
+async def presence(
+    principal: InspectorApp, session: Session, site_id: uuid.UUID, body: schemas.PresenceIn
+) -> schemas.PresenceOut:
+    inspector = await service.me(session, principal)
+    out = await service.presence(session, inspector, site_id, body)
     await session.commit()
     return out
 

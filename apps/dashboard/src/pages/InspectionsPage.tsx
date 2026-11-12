@@ -409,6 +409,20 @@ function MissionCard({ mission }: { mission: Mission }) {
                 </Link>
               </>
             )}
+            {s.arrived_at && (
+              <span className="muted">
+                {" · "}
+                {t("inspections.arrivedAt", { time: fmt.dateTime(s.arrived_at) })}
+                {s.arrived_offline && <> ({t("inspections.offlineMark")})</>}
+              </span>
+            )}
+            {s.left_at && (
+              <span className="muted">
+                {" · "}
+                {t("inspections.leftAt", { time: fmt.dateTime(s.left_at) })}
+                {s.left_offline && <> ({t("inspections.offlineMark")})</>}
+              </span>
+            )}
           </li>
         ))}
       </ol>
@@ -1426,6 +1440,30 @@ function PolicySettings() {
             />{" "}
             {t("inspections.publishProgramme")}
           </label>
+          <h3>{t("inspections.alertsTitle")}</h3>
+          <p className="muted">{t("inspections.alertsHint")}</p>
+          <div className="form-grid">
+            <Field id={`${id}-notice`} label={t("inspections.noticeDays")}>
+              <input
+                id={`${id}-notice`}
+                type="number"
+                min={1}
+                max={60}
+                value={p.notice_days}
+                onChange={(e) => edit((x) => ({ ...x, notice_days: Number(e.target.value) }))}
+              />
+            </Field>
+            <Field id={`${id}-reminder`} label={t("inspections.reminderDays")}>
+              <input
+                id={`${id}-reminder`}
+                type="number"
+                min={0}
+                max={14}
+                value={p.reminder_days}
+                onChange={(e) => edit((x) => ({ ...x, reminder_days: Number(e.target.value) }))}
+              />
+            </Field>
+          </div>
           <Problem error={save.error ?? apply.error} />
           {apply.isSuccess && <p className="alert">{t("inspections.applied", { n: apply.data.deleted })}</p>}
           <div className="actions no-print">

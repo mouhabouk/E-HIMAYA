@@ -7181,4 +7181,343 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get awConsentWithdraw => 'Withdraw all my consent';
+
+  @override
+  String get inspOpen => 'Inspector\'s space';
+
+  @override
+  String get inspOpenHelp =>
+      'Periodic inspections: sign in with the code you received.';
+
+  @override
+  String get inspTitle => 'Periodic inspections';
+
+  @override
+  String get inspEntryIntro =>
+      'Type your number and the code you received by SMS or email once the general inspectorate has activated your account.';
+
+  @override
+  String get inspWiped =>
+      'This phone was signed out of the inspector\'s space and its reports erased (account closed or phone reported lost).';
+
+  @override
+  String inspRegistered(String destination) {
+    return 'Request sent. Once the general inspectorate accepts it, your code will be sent to $destination.';
+  }
+
+  @override
+  String get inspMatricule => 'Staff number';
+
+  @override
+  String get inspCode => 'Activation code';
+
+  @override
+  String get inspCodeHelp =>
+      'Valid for a limited time; ask for a new one if it expired.';
+
+  @override
+  String get inspActivate => 'Activate this phone';
+
+  @override
+  String get inspNoAccount => 'No account yet? Ask for one';
+
+  @override
+  String get inspHaveCode => 'I already have a code';
+
+  @override
+  String get inspRegisterTitle => 'Ask for an account';
+
+  @override
+  String get inspInternal => 'Civil protection';
+
+  @override
+  String get inspExternal => 'External';
+
+  @override
+  String get inspName => 'Full name';
+
+  @override
+  String get inspOrganisation => 'Organisation';
+
+  @override
+  String get inspVia => 'Send my code by';
+
+  @override
+  String get inspViaSms => 'SMS';
+
+  @override
+  String get inspViaEmail => 'Email';
+
+  @override
+  String get inspPhone => 'Phone';
+
+  @override
+  String get inspEmail => 'Email';
+
+  @override
+  String get inspRegister => 'Send the request';
+
+  @override
+  String get inspMissionsTitle => 'My missions';
+
+  @override
+  String get inspSignOut => 'Leave the inspector\'s space';
+
+  @override
+  String inspAccountUntil(String date) {
+    return 'Account until $date';
+  }
+
+  @override
+  String get inspNoMissions =>
+      'Your inspections basket is empty: no inspection without a mission order. Your past inspections are in «My inspections».';
+
+  @override
+  String get inspKindPeriodic => 'Periodic';
+
+  @override
+  String get inspKindSurprise => 'Surprise';
+
+  @override
+  String get inspRoomCentral => 'Central operations room';
+
+  @override
+  String get inspRoomRegional => 'Regional operations room';
+
+  @override
+  String get inspUnitRegionalDirectorate => 'Regional directorate';
+
+  @override
+  String get inspUnitBrigade => 'Brigade';
+
+  @override
+  String get inspUnitCentre => 'Centre';
+
+  @override
+  String get inspUnitAdvancedCentre => 'Advanced centre';
+
+  @override
+  String get inspUnitGuardPost => 'Guard post';
+
+  @override
+  String get inspUnitBeach => 'Beach';
+
+  @override
+  String get inspUnitOther => 'Other unit';
+
+  @override
+  String get inspStateNew => 'To inspect';
+
+  @override
+  String inspStateProgress(int answered, int total) {
+    return '$answered/$total';
+  }
+
+  @override
+  String get inspStateQueued => 'Waiting to send';
+
+  @override
+  String get inspStateSent => 'Sent';
+
+  @override
+  String get inspArrive => 'I have arrived';
+
+  @override
+  String get inspLeave => 'I have left';
+
+  @override
+  String inspArrivedAt(String time) {
+    return 'Arrived $time';
+  }
+
+  @override
+  String inspLeftAt(String time) {
+    return 'Left $time';
+  }
+
+  @override
+  String get inspMarkedOffline => 'recorded offline';
+
+  @override
+  String inspMarksWaiting(int count) {
+    return 'Arrivals and departures waiting: $count';
+  }
+
+  @override
+  String get inspHistory => 'My inspections';
+
+  @override
+  String get inspHistoryEmpty => 'You have made no inspection yet.';
+
+  @override
+  String get inspHistoryProgress => 'In progress';
+
+  @override
+  String inspHistoryLine(String ref, String day) {
+    return '$ref · $day';
+  }
+
+  @override
+  String inspHistoryScore(String verdict, int score, String receipt) {
+    return '$verdict · $score% · receipt $receipt';
+  }
+
+  @override
+  String get inspOffline => 'No network';
+
+  @override
+  String inspWaiting(int count) {
+    return 'Reports waiting: $count';
+  }
+
+  @override
+  String get inspRetry => 'Send now';
+
+  @override
+  String inspAnswered(int answered, int total) {
+    return '$answered of $total items answered';
+  }
+
+  @override
+  String get inspAnswerOk => 'Compliant';
+
+  @override
+  String get inspAnswerNote => 'Remark';
+
+  @override
+  String get inspAnswerKo => 'Not compliant';
+
+  @override
+  String get inspPresenceTitle => 'Presence';
+
+  @override
+  String get inspPresent => 'Present';
+
+  @override
+  String get inspExpected => 'Expected';
+
+  @override
+  String get inspExitTitle => 'Exit drill';
+
+  @override
+  String get inspExitSeconds => 'Seconds to the exit';
+
+  @override
+  String get inspExitStart => 'Start';
+
+  @override
+  String inspExitStop(int seconds) {
+    return 'Stop ($seconds s)';
+  }
+
+  @override
+  String get inspToSign => 'Recommendations and signatures';
+
+  @override
+  String get inspSeeReport => 'See the report';
+
+  @override
+  String inspReceipt(String receipt, String verdict, String score) {
+    return 'Received: $receipt. Verdict $verdict, $score%.';
+  }
+
+  @override
+  String get inspQueuedNote =>
+      'Signed and sealed on the phone; it will be sent as soon as the network is back.';
+
+  @override
+  String get inspSignTitle => 'Close the report';
+
+  @override
+  String get inspSummary => 'Summary';
+
+  @override
+  String get inspSummaryHint => 'What the inspection found, in a few lines';
+
+  @override
+  String get inspRecommendations => 'Recommendations';
+
+  @override
+  String get inspRecDetailed => 'On an item';
+
+  @override
+  String get inspRecGeneral => 'General';
+
+  @override
+  String get inspRemove => 'Remove';
+
+  @override
+  String get inspAddRec => 'Add a recommendation';
+
+  @override
+  String get inspRecItem => 'Item';
+
+  @override
+  String get inspRecText => 'Recommendation';
+
+  @override
+  String get inspRecSave => 'Add';
+
+  @override
+  String get inspPriorityHigh => 'High';
+
+  @override
+  String get inspPriorityMedium => 'Medium';
+
+  @override
+  String get inspPriorityLow => 'Low';
+
+  @override
+  String get inspHeadTitle => 'Head of the place';
+
+  @override
+  String get inspHeadName => 'Name of the head of the place';
+
+  @override
+  String get inspSignInspector => 'Inspector\'s signature';
+
+  @override
+  String get inspSignHead => 'Signature of the head of the place';
+
+  @override
+  String get inspSignSend => 'Sign and send';
+
+  @override
+  String get inspSignNeeds =>
+      'Needs the head\'s name, both signatures and a priority on every detailed recommendation.';
+
+  @override
+  String get inspErrActivationRefused => 'Wrong number or code.';
+
+  @override
+  String get inspErrActivationExpired =>
+      'This code expired; ask the general inspectorate for a new one.';
+
+  @override
+  String get inspErrAlreadyRegistered =>
+      'A request already exists for this number.';
+
+  @override
+  String get inspErrNotToday => 'This mission is not for today yet.';
+
+  @override
+  String get inspErrCancelled => 'This mission was cancelled.';
+
+  @override
+  String get inspErrSealed => 'This report is already sealed.';
+
+  @override
+  String get inspErrDeleted => 'This report was deleted by the administration.';
+
+  @override
+  String get inspErrPriority =>
+      'Give a priority to every detailed recommendation.';
+
+  @override
+  String get inspErrRateLimited => 'Too many attempts; try again later.';
+
+  @override
+  String inspErrGeneric(String code) {
+    return 'The server refused ($code).';
+  }
 }

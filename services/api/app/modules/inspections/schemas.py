@@ -113,6 +113,10 @@ class PolicyIn(BaseModel):
     regional: RoomDisclosure
     recommendations: RecommendationRules
     publish_programme: bool
+    # The inspector's alerts on a mission order (Yamen 2026-11-12): a first notice so many days before the date,
+    # then a reminder (0: none). Defaults so that a policy saved before them stays valid.
+    notice_days: int = Field(15, ge=1, le=60)
+    reminder_days: int = Field(2, ge=0, le=14)
 
 
 class PolicyOut(PolicyIn):
@@ -245,6 +249,10 @@ class SiteOut(BaseModel):
     sections: list[str]
     inspection_id: uuid.UUID | None
     inspection_status: Literal["in_progress", "submitted"] | None
+    arrived_at: datetime | None = None
+    arrived_offline: bool = False
+    left_at: datetime | None = None
+    left_offline: bool = False
 
 
 class MissionOut(BaseModel):
@@ -281,6 +289,24 @@ class StartIn(BaseModel):
     lat: float | None = Field(default=None, ge=-90, le=90)
     lon: float | None = Field(default=None, ge=-180, le=180)
     started_at: datetime | None = None
+
+
+class PresenceIn(BaseModel):
+    """«Arrived» or «left» on a place, at the phone's time; ``offline`` when it was recorded without network."""
+
+    kind: Literal["arrived", "left"]
+    at: datetime
+    lat: float | None = Field(default=None, ge=-90, le=90)
+    lon: float | None = Field(default=None, ge=-180, le=180)
+    offline: bool = False
+
+
+class PresenceOut(BaseModel):
+    site_id: uuid.UUID
+    arrived_at: datetime | None
+    arrived_offline: bool
+    left_at: datetime | None
+    left_offline: bool
 
 
 class ProgressIn(BaseModel):
@@ -329,6 +355,26 @@ class AppMissionOut(BaseModel):
     at_time: time
     kind: Kind
     sites: list[SiteOut]
+    # The active model, so that the app opens a report on the place without network (Yamen 2026-11-12):
+    # the server keeps the version it holds when the report reaches it.
+    profile: ProfileConfig | None = None
+
+
+class AppHistoryRow(BaseModel):
+    """One report of the inspector, for «my inspections» in the app."""
+
+    id: uuid.UUID
+    site_id: uuid.UUID
+    mission_ref: str
+    on_date: date
+    kind: Kind
+    place: str
+    status: Literal["in_progress", "submitted"]
+    started_at: datetime
+    submitted_at: datetime | None
+    score: int | None
+    verdict: str | None
+    receipt: str | None
 
 
 class AppInspectionOut(BaseModel):

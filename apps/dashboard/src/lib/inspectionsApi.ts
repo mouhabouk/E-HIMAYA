@@ -63,6 +63,9 @@ export interface Policy {
   regional: RoomDisclosure;
   recommendations: { high: Audience; medium: Audience; low: Audience; general: Audience };
   publish_programme: boolean;
+  /** Days before a mission order that its inspector is told, then reminded (0: no reminder). */
+  notice_days: number;
+  reminder_days: number;
   updated_by_name?: string | null;
   updated_at?: string;
 }
@@ -122,6 +125,11 @@ export interface Site {
   sections: string[];
   inspection_id: string | null;
   inspection_status: "in_progress" | "submitted" | null;
+  /** The inspector's «arrived» and «left» on this place, at the phone's time (offline: recorded without network). */
+  arrived_at?: string | null;
+  arrived_offline?: boolean;
+  left_at?: string | null;
+  left_offline?: boolean;
 }
 
 export interface Mission {
@@ -336,10 +344,10 @@ export function inspectionsApi(api: ApiClient) {
     saveOrderNotes: (notes: string[]) => api.request<{ notes: string[] }>(`${S}/order-notes`, { method: "PUT", body: { notes } }),
     inspectionPolicy: (signal?: AbortSignal) => api.request<Policy>(`${S}/policy`, { signal }),
     saveInspectionPolicy: (body: Policy) => {
-      const { central, regional, recommendations, publish_programme } = body;
+      const { central, regional, recommendations, publish_programme, notice_days, reminder_days } = body;
       return api.request<Policy>(`${S}/policy`, {
         method: "PUT",
-        body: { central, regional, recommendations, publish_programme },
+        body: { central, regional, recommendations, publish_programme, notice_days, reminder_days },
       });
     },
     applyInspectionPolicy: () => api.request<{ deleted: number }>(`${S}/policy/apply`, { method: "POST" }),

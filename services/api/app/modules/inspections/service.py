@@ -197,6 +197,8 @@ def policy_out(row: Policy) -> schemas.PolicyOut:
 
 
 async def save_policy(session: AsyncSession, principal: Principal, body: schemas.PolicyIn) -> schemas.PolicyOut:
+    if body.reminder_days >= body.notice_days:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "reminder_after_notice")
     row = await session.get(Policy, 1, with_for_update=True)
     if row is None:
         row = Policy(id=1, config={})
@@ -635,6 +637,10 @@ def _site_out(site: MissionSite, name: str, report: Inspection | None) -> schema
         sections=list(site.sections or []),
         inspection_id=report.id if report else None,
         inspection_status=report.status if report else None,
+        arrived_at=site.arrived_at,
+        arrived_offline=site.arrived_offline,
+        left_at=site.left_at,
+        left_offline=site.left_offline,
     )
 
 
@@ -863,10 +869,46 @@ async def my_missions(session: AsyncSession, inspector: Inspector) -> list[schem
         )
     )
     full = await missions_out(session, rows)
+    active = await session.scalar(select(Profile).where(Profile.active))
+    profile = schemas.ProfileConfig.model_validate(active.config) if active is not None else None
     return [
-        schemas.AppMissionOut(id=m.id, ref=m.ref, on_date=m.on_date, at_time=m.at_time, kind=m.kind, sites=m.sites)
+        schemas.AppMissionOut(
+            id=m.id, ref=m.ref, on_date=m.on_date, at_time=m.at_time, kind=m.kind, sites=m.sites, profile=profile
+        )
         for m in full
         if m.status != "done"
+    ]
+
+
+async def my_inspections(session: AsyncSession, inspector: Inspector) -> list[schemas.AppHistoryRow]:
+    """The inspector's own reports, newest first (Yamen 2026-11-12): they follow what they did, in progress or
+    sent; a report deleted by the administrator is gone from the list."""
+    rows = (
+        await session.execute(
+            select(Inspection, Mission)
+            .join(Mission, Mission.id == Inspection.mission_id)
+            .where(Inspection.inspector_id == inspector.id, Inspection.deleted_at.is_(None))
+            .order_by(Inspection.started_at.desc())
+            .limit(200)
+        )
+    ).all()
+    names = await place_names(session, [r for r, _ in rows])
+    return [
+        schemas.AppHistoryRow(
+            id=r.id,
+            site_id=r.site_id,
+            mission_ref=m.ref,
+            on_date=m.on_date,
+            kind=m.kind,
+            place=names[r.id],
+            status=r.status,
+            started_at=r.started_at,
+            submitted_at=r.submitted_at,
+            score=r.score,
+            verdict=r.verdict,
+            receipt=r.receipt,
+        )
+        for r, m in rows
     ]
 
 
@@ -884,6 +926,61 @@ def app_inspection_out(report: Inspection) -> schemas.AppInspectionOut:
         verdict=report.verdict,
         receipt=report.receipt,
     )
+
+
+def _presence_out(site: MissionSite) -> schemas.PresenceOut:
+    return schemas.PresenceOut(
+        site_id=site.id,
+        arrived_at=site.arrived_at,
+        arrived_offline=site.arrived_offline,
+        left_at=site.left_at,
+        left_offline=site.left_offline,
+    )
+
+
+async def presence(
+    session: AsyncSession, inspector: Inspector, site_id: uuid.UUID, body: schemas.PresenceIn
+) -> schemas.PresenceOut:
+    """The inspector arrived at, or left, one place of their mission (Yamen 2026-11-12). The phone's time is kept,
+    since the app records it without network and sends it later; the first one of each kind counts, so a send
+    repeated by the app's queue changes nothing."""
+    site = await session.get(MissionSite, site_id, with_for_update=True)
+    mission = await session.get(Mission, site.mission_id) if site else None
+    if site is None or mission is None or mission.inspector_id != inspector.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    if mission.status == "cancelled":
+        raise HTTPException(status.HTTP_409_CONFLICT, "mission_cancelled")
+    received = now()
+    at = min(body.at, received)
+    if at.astimezone(TUNIS_TZ).date() < mission.on_date:
+        raise HTTPException(status.HTTP_409_CONFLICT, "mission_not_today")
+    point = (
+        WKTElement(f"POINT({body.lon} {body.lat})", srid=4326)
+        if body.lat is not None and body.lon is not None
+        else None
+    )
+    if body.kind == "arrived":
+        if site.arrived_at is not None:
+            return _presence_out(site)
+        site.arrived_at, site.arrived_offline = at, body.offline
+        site.arrived_received_at, site.arrived_location = received, point
+    else:
+        if site.arrived_at is None:
+            raise HTTPException(status.HTTP_409_CONFLICT, "not_arrived")
+        if site.left_at is not None:
+            return _presence_out(site)
+        site.left_at, site.left_offline = max(at, site.arrived_at), body.offline
+        site.left_received_at, site.left_location = received, point
+    await session.flush()
+    await audit.record(
+        session,
+        actor=f"staff:{subject_of(inspector)}",
+        action=f"inspection.{body.kind}",
+        target=f"mission_site:{site.id}",
+        details={"mission": mission.ref, "offline": body.offline},
+        gouvernorats=[site.gouvernorat_code] if site.gouvernorat_code else None,
+    )
+    return _presence_out(site)
 
 
 async def start(session: AsyncSession, inspector: Inspector, body: schemas.StartIn) -> schemas.AppInspectionOut:
@@ -1603,3 +1700,65 @@ async def restore(session: AsyncSession, principal: Principal, inspection_id: uu
     await audit.record(
         session, actor=actor_of(principal), action="inspection.restore", target=f"inspection:{report.id}"
     )
+
+
+# ---------------------------------------------------------------- the inspector's alerts
+
+
+def _alert_text(mission: Mission, places: int, reminder: bool) -> str:
+    when = f"{mission.on_date:%d/%m/%Y} على الساعة {mission.at_time:%H:%M}"
+    head = "تذكير: " if reminder else ""
+    return f"ء-حماية: {head}أمر المهمة {mission.ref} للتفقّد يوم {when} ({places} موقع). التفاصيل في تطبيق التفقّد."
+
+
+async def mission_alerts(session: AsyncSession, on: date | None = None) -> int:
+    """Tell each inspector of their mission orders (Yamen 2026-11-12): a notice ``notice_days`` before the date,
+    then a reminder ``reminder_days`` before it, each once, by the inspector's channel (SMS or e-mail). A mission
+    created inside a window gets its message at the next pass; when both fall due together, only the reminder goes.
+    Run every minute by the delivery loop; the row locks keep two instances from sending twice."""
+    day = on or today()
+    row = await session.get(Policy, 1)
+    rules = schemas.PolicyIn.model_validate(row.config) if row is not None else None
+    notice_days = rules.notice_days if rules is not None else 15
+    reminder_days = rules.reminder_days if rules is not None else 2
+    pending = (
+        await session.execute(
+            select(Mission, Inspector)
+            .join(Inspector, Inspector.id == Mission.inspector_id)
+            .where(
+                Mission.status == "planned",
+                Mission.reminder_sent_at.is_(None),
+                Mission.on_date >= day,
+                Mission.on_date <= day + timedelta(days=notice_days),
+                Inspector.status.in_(("code_sent", "active")),
+            )
+            .order_by(Mission.on_date)
+            .with_for_update(of=Mission, skip_locked=True)
+        )
+    ).all()
+    sent = 0
+    for mission, inspector in pending:
+        left = (mission.on_date - day).days
+        if reminder_days and left <= reminder_days:
+            reminder = True
+        elif mission.notice_sent_at is None:
+            reminder = False
+        else:
+            continue
+        places = await session.scalar(select(func.count()).where(MissionSite.mission_id == mission.id)) or 0
+        message = _alert_text(mission, places, reminder)
+        if inspector.via == "sms" and inspector.phone:
+            session.add(Outbox(channel="sms", address=inspector.phone, payload={"text": message}))
+        elif inspector.via == "email" and inspector.email:
+            subject = "ء-حماية: تذكير بأمر مهمة تفقّد" if reminder else "ء-حماية: أمر مهمة تفقّد"
+            session.add(Outbox(channel="email", address=inspector.email, payload={"subject": subject, "text": message}))
+        at = now()
+        if reminder:
+            mission.reminder_sent_at = at
+            mission.notice_sent_at = mission.notice_sent_at or at
+        else:
+            mission.notice_sent_at = at
+        sent += 1
+    if sent:
+        await session.flush()
+    return sent

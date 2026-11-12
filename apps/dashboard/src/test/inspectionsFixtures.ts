@@ -49,6 +49,8 @@ export const INSPECTION_POLICY: Policy = {
   regional: { inspection: true, verdict: false, score: false },
   recommendations: { high: "both", medium: "regional", low: "none", general: "regional" },
   publish_programme: false,
+  notice_days: 15,
+  reminder_days: 2,
 };
 
 export const INSPECTORS: Inspector[] = [
@@ -127,6 +129,9 @@ export const MISSION: Mission = {
       sections: ["القيادة والإدارة"],
       inspection_id: null,
       inspection_status: null,
+      arrived_at: "2026-11-12T08:05:00Z",
+      arrived_offline: true,
+      left_at: null,
     },
   ],
   created_by_name: "المتفقد العام [SIM]",

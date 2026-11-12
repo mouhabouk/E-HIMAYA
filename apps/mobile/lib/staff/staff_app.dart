@@ -12,6 +12,7 @@ import '../core/ui/components.dart';
 import '../core/ui/theme.dart';
 import '../core/ui/tokens.dart';
 import '../l10n/app_localizations.dart';
+import 'inspect/inspect_screens.dart';
 import 'prevention/visits_screen.dart';
 import 'screens/field_flow.dart';
 import 'screens/missions_screen.dart';
@@ -176,6 +177,17 @@ class SignInScreen extends ConsumerWidget {
               onPressed: s.busy ? null : () => unawaited(c.signIn()),
               icon: const Icon(Icons.login),
               label: Text(l10n.staffSignIn),
+            ),
+            // Phase I3: the inspectors of the general inspectorate have their own account.
+            const SizedBox(height: 24),
+            const Divider(),
+            ListTile(
+              key: const Key('open-inspector'),
+              leading: const IconTile(Icons.verified, tone: Tone.navy),
+              title: Text(l10n.inspOpen),
+              subtitle: Text(l10n.inspOpenHelp),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => openInspector(context),
             ),
           ] else ...[
             Text(l10n.staffCodeIntro, textAlign: TextAlign.center),

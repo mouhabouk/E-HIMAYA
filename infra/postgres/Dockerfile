@@ -12,8 +12,11 @@ FROM postgres:17-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e86128
 COPY --from=gosu /out/gosu /usr/local/bin/gosu
 RUN gosu nobody true
 
+# postgresql-17 is listed so that apt raises the server to the minor release the PGDG extensions are built against:
+# on 2026-11-12 (PostgreSQL 17.12 release day) PGDG published PostGIS and pgvector built for > 17.12 while the pinned
+# image carries 17.11. A minor release keeps the data format.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends postgresql-17-postgis-3 postgresql-17-pgvector \
+ && apt-get install -y --no-install-recommends postgresql-17 postgresql-17-postgis-3 postgresql-17-pgvector \
  && rm -rf /var/lib/apt/lists/*
 
 COPY ehimaya-roles.sh /usr/local/bin/ehimaya-roles.sh

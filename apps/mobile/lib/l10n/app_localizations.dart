@@ -12669,6 +12669,612 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Withdraw all my consent'**
   String get awConsentWithdraw;
+
+  /// No description provided for @inspOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector\'s space'**
+  String get inspOpen;
+
+  /// No description provided for @inspOpenHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Periodic inspections: sign in with the code you received.'**
+  String get inspOpenHelp;
+
+  /// No description provided for @inspTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Periodic inspections'**
+  String get inspTitle;
+
+  /// No description provided for @inspEntryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your number and the code you received by SMS or email once the general inspectorate has activated your account.'**
+  String get inspEntryIntro;
+
+  /// No description provided for @inspWiped.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone was signed out of the inspector\'s space and its reports erased (account closed or phone reported lost).'**
+  String get inspWiped;
+
+  /// No description provided for @inspRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent. Once the general inspectorate accepts it, your code will be sent to {destination}.'**
+  String inspRegistered(String destination);
+
+  /// No description provided for @inspMatricule.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff number'**
+  String get inspMatricule;
+
+  /// No description provided for @inspCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Activation code'**
+  String get inspCode;
+
+  /// No description provided for @inspCodeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for a limited time; ask for a new one if it expired.'**
+  String get inspCodeHelp;
+
+  /// No description provided for @inspActivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate this phone'**
+  String get inspActivate;
+
+  /// No description provided for @inspNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'No account yet? Ask for one'**
+  String get inspNoAccount;
+
+  /// No description provided for @inspHaveCode.
+  ///
+  /// In en, this message translates to:
+  /// **'I already have a code'**
+  String get inspHaveCode;
+
+  /// No description provided for @inspRegisterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for an account'**
+  String get inspRegisterTitle;
+
+  /// No description provided for @inspInternal.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil protection'**
+  String get inspInternal;
+
+  /// No description provided for @inspExternal.
+  ///
+  /// In en, this message translates to:
+  /// **'External'**
+  String get inspExternal;
+
+  /// No description provided for @inspName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get inspName;
+
+  /// No description provided for @inspOrganisation.
+  ///
+  /// In en, this message translates to:
+  /// **'Organisation'**
+  String get inspOrganisation;
+
+  /// No description provided for @inspVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Send my code by'**
+  String get inspVia;
+
+  /// No description provided for @inspViaSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get inspViaSms;
+
+  /// No description provided for @inspViaEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get inspViaEmail;
+
+  /// No description provided for @inspPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get inspPhone;
+
+  /// No description provided for @inspEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get inspEmail;
+
+  /// No description provided for @inspRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the request'**
+  String get inspRegister;
+
+  /// No description provided for @inspMissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My missions'**
+  String get inspMissionsTitle;
+
+  /// No description provided for @inspSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave the inspector\'s space'**
+  String get inspSignOut;
+
+  /// No description provided for @inspAccountUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Account until {date}'**
+  String inspAccountUntil(String date);
+
+  /// No description provided for @inspNoMissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inspections basket is empty: no inspection without a mission order. Your past inspections are in «My inspections».'**
+  String get inspNoMissions;
+
+  /// No description provided for @inspKindPeriodic.
+  ///
+  /// In en, this message translates to:
+  /// **'Periodic'**
+  String get inspKindPeriodic;
+
+  /// No description provided for @inspKindSurprise.
+  ///
+  /// In en, this message translates to:
+  /// **'Surprise'**
+  String get inspKindSurprise;
+
+  /// No description provided for @inspRoomCentral.
+  ///
+  /// In en, this message translates to:
+  /// **'Central operations room'**
+  String get inspRoomCentral;
+
+  /// No description provided for @inspRoomRegional.
+  ///
+  /// In en, this message translates to:
+  /// **'Regional operations room'**
+  String get inspRoomRegional;
+
+  /// No description provided for @inspUnitRegionalDirectorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Regional directorate'**
+  String get inspUnitRegionalDirectorate;
+
+  /// No description provided for @inspUnitBrigade.
+  ///
+  /// In en, this message translates to:
+  /// **'Brigade'**
+  String get inspUnitBrigade;
+
+  /// No description provided for @inspUnitCentre.
+  ///
+  /// In en, this message translates to:
+  /// **'Centre'**
+  String get inspUnitCentre;
+
+  /// No description provided for @inspUnitAdvancedCentre.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced centre'**
+  String get inspUnitAdvancedCentre;
+
+  /// No description provided for @inspUnitGuardPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Guard post'**
+  String get inspUnitGuardPost;
+
+  /// No description provided for @inspUnitBeach.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach'**
+  String get inspUnitBeach;
+
+  /// No description provided for @inspUnitOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other unit'**
+  String get inspUnitOther;
+
+  /// No description provided for @inspStateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'To inspect'**
+  String get inspStateNew;
+
+  /// No description provided for @inspStateProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{answered}/{total}'**
+  String inspStateProgress(int answered, int total);
+
+  /// No description provided for @inspStateQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to send'**
+  String get inspStateQueued;
+
+  /// No description provided for @inspStateSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get inspStateSent;
+
+  /// No description provided for @inspArrive.
+  ///
+  /// In en, this message translates to:
+  /// **'I have arrived'**
+  String get inspArrive;
+
+  /// No description provided for @inspLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'I have left'**
+  String get inspLeave;
+
+  /// No description provided for @inspArrivedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived {time}'**
+  String inspArrivedAt(String time);
+
+  /// No description provided for @inspLeftAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Left {time}'**
+  String inspLeftAt(String time);
+
+  /// No description provided for @inspMarkedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'recorded offline'**
+  String get inspMarkedOffline;
+
+  /// No description provided for @inspMarksWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrivals and departures waiting: {count}'**
+  String inspMarksWaiting(int count);
+
+  /// No description provided for @inspHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'My inspections'**
+  String get inspHistory;
+
+  /// No description provided for @inspHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have made no inspection yet.'**
+  String get inspHistoryEmpty;
+
+  /// No description provided for @inspHistoryProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get inspHistoryProgress;
+
+  /// No description provided for @inspHistoryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{ref} · {day}'**
+  String inspHistoryLine(String ref, String day);
+
+  /// No description provided for @inspHistoryScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{verdict} · {score}% · receipt {receipt}'**
+  String inspHistoryScore(String verdict, int score, String receipt);
+
+  /// No description provided for @inspOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No network'**
+  String get inspOffline;
+
+  /// No description provided for @inspWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports waiting: {count}'**
+  String inspWaiting(int count);
+
+  /// No description provided for @inspRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Send now'**
+  String get inspRetry;
+
+  /// No description provided for @inspAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'{answered} of {total} items answered'**
+  String inspAnswered(int answered, int total);
+
+  /// No description provided for @inspAnswerOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliant'**
+  String get inspAnswerOk;
+
+  /// No description provided for @inspAnswerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remark'**
+  String get inspAnswerNote;
+
+  /// No description provided for @inspAnswerKo.
+  ///
+  /// In en, this message translates to:
+  /// **'Not compliant'**
+  String get inspAnswerKo;
+
+  /// No description provided for @inspPresenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Presence'**
+  String get inspPresenceTitle;
+
+  /// No description provided for @inspPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get inspPresent;
+
+  /// No description provided for @inspExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected'**
+  String get inspExpected;
+
+  /// No description provided for @inspExitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit drill'**
+  String get inspExitTitle;
+
+  /// No description provided for @inspExitSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Seconds to the exit'**
+  String get inspExitSeconds;
+
+  /// No description provided for @inspExitStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get inspExitStart;
+
+  /// No description provided for @inspExitStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop ({seconds} s)'**
+  String inspExitStop(int seconds);
+
+  /// No description provided for @inspToSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations and signatures'**
+  String get inspToSign;
+
+  /// No description provided for @inspSeeReport.
+  ///
+  /// In en, this message translates to:
+  /// **'See the report'**
+  String get inspSeeReport;
+
+  /// No description provided for @inspReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Received: {receipt}. Verdict {verdict}, {score}%.'**
+  String inspReceipt(String receipt, String verdict, String score);
+
+  /// No description provided for @inspQueuedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed and sealed on the phone; it will be sent as soon as the network is back.'**
+  String get inspQueuedNote;
+
+  /// No description provided for @inspSignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the report'**
+  String get inspSignTitle;
+
+  /// No description provided for @inspSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get inspSummary;
+
+  /// No description provided for @inspSummaryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What the inspection found, in a few lines'**
+  String get inspSummaryHint;
+
+  /// No description provided for @inspRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get inspRecommendations;
+
+  /// No description provided for @inspRecDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'On an item'**
+  String get inspRecDetailed;
+
+  /// No description provided for @inspRecGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get inspRecGeneral;
+
+  /// No description provided for @inspRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get inspRemove;
+
+  /// No description provided for @inspAddRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a recommendation'**
+  String get inspAddRec;
+
+  /// No description provided for @inspRecItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get inspRecItem;
+
+  /// No description provided for @inspRecText.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get inspRecText;
+
+  /// No description provided for @inspRecSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get inspRecSave;
+
+  /// No description provided for @inspPriorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get inspPriorityHigh;
+
+  /// No description provided for @inspPriorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get inspPriorityMedium;
+
+  /// No description provided for @inspPriorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get inspPriorityLow;
+
+  /// No description provided for @inspHeadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Head of the place'**
+  String get inspHeadTitle;
+
+  /// No description provided for @inspHeadName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name of the head of the place'**
+  String get inspHeadName;
+
+  /// No description provided for @inspSignInspector.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector\'s signature'**
+  String get inspSignInspector;
+
+  /// No description provided for @inspSignHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature of the head of the place'**
+  String get inspSignHead;
+
+  /// No description provided for @inspSignSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign and send'**
+  String get inspSignSend;
+
+  /// No description provided for @inspSignNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs the head\'s name, both signatures and a priority on every detailed recommendation.'**
+  String get inspSignNeeds;
+
+  /// No description provided for @inspErrActivationRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong number or code.'**
+  String get inspErrActivationRefused;
+
+  /// No description provided for @inspErrActivationExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This code expired; ask the general inspectorate for a new one.'**
+  String get inspErrActivationExpired;
+
+  /// No description provided for @inspErrAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'A request already exists for this number.'**
+  String get inspErrAlreadyRegistered;
+
+  /// No description provided for @inspErrNotToday.
+  ///
+  /// In en, this message translates to:
+  /// **'This mission is not for today yet.'**
+  String get inspErrNotToday;
+
+  /// No description provided for @inspErrCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'This mission was cancelled.'**
+  String get inspErrCancelled;
+
+  /// No description provided for @inspErrSealed.
+  ///
+  /// In en, this message translates to:
+  /// **'This report is already sealed.'**
+  String get inspErrSealed;
+
+  /// No description provided for @inspErrDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'This report was deleted by the administration.'**
+  String get inspErrDeleted;
+
+  /// No description provided for @inspErrPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Give a priority to every detailed recommendation.'**
+  String get inspErrPriority;
+
+  /// No description provided for @inspErrRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts; try again later.'**
+  String get inspErrRateLimited;
+
+  /// No description provided for @inspErrGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'The server refused ({code}).'**
+  String inspErrGeneric(String code);
 }
 
 class _AppLocalizationsDelegate
