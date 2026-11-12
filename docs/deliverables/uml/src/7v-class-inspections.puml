@@ -1,0 +1,57 @@
+@startuml
+!include style.iuml
+title Classes : schéma insp (inspections périodiques, I)
+class Inspector {
+  matricule
+  kind : internal | external
+  via : sms | email
+  status : pending | code_sent | active | blocked | rejected | closed
+  expires_on
+}
+class Profile {
+  name
+  version
+  config : axes, items, poids
+  active
+}
+class Policy {
+  central / regional : divulgation
+  recommendations : audience
+  publish_programme
+  notice_days = 15
+  reminder_days = 2
+}
+class Mission {
+  ref : OM-AAAA-NNNN
+  on_date, at_time
+  kind : periodic | surprise
+  status : planned | cancelled
+  notice_sent_at
+  reminder_sent_at
+}
+class MissionSite {
+  target : unit | room
+  gouvernorat, unit_kind, unit_name
+  room : central | regional
+  arrived_at, arrived_offline
+  left_at, left_offline
+}
+class Inspection {
+  answers, present, expected
+  exit_seconds, score, verdict
+  signatures, receipt, client_id
+  status : in_progress | submitted
+  deleted_at
+}
+class Recommendation {
+  kind : detailed | general
+  item_key, priority
+  to_central, to_regional
+}
+Inspector "1" -- "*" Mission
+Mission "1" *-- "1..*" MissionSite
+MissionSite "1" -- "0..1" Inspection
+Inspection "1" *-- "*" Recommendation
+Inspection "*" --> "1" Profile : version figée
+note right of Inspection : scellé une fois envoyé\n(contrainte en base)
+@enduml

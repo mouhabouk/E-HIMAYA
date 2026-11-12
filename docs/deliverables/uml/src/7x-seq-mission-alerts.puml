@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Séquence : ordre de mission, avis puis rappel à l'inspecteur (I)
+autonumber
+actor "Inspecteur général" as IG
+participant "Tableau de bord" as UI
+participant "API" as API
+database "PostgreSQL" as DB
+participant "Boucle d'envoi\n(chaque minute)" as LOOP
+participant "SMS / e-mail" as OUT
+actor "Inspecteur" as IN
+IG -> UI : politique : avis 15 j, rappel 2 j
+UI -> API : PUT /staff/inspections/policy
+IG -> UI : nouvel ordre de mission
+UI -> API : POST /staff/inspections/missions
+API -> DB : mission planifiée
+API --> UI : ordre PDF avec QR
+loop chaque minute
+  LOOP -> DB : missions planifiées dans la fenêtre\n(verrou de ligne, SKIP LOCKED)
+  alt J-2 ou moins, rappel non envoyé
+    LOOP -> DB : reminder_sent_at (et notice_sent_at)
+    LOOP -> OUT : « تذكير : أمر المهمة ... »
+  else J-15 ou moins, avis non envoyé
+    LOOP -> DB : notice_sent_at
+    LOOP -> OUT : « أمر المهمة ... »
+  end
+end
+OUT -> IN : par le canal choisi à l'inscription
+@enduml

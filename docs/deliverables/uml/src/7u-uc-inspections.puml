@@ -1,0 +1,39 @@
+@startuml
+!include style.iuml
+title Cas d'utilisation : inspections périodiques des unités et des salles (I)
+left to right direction
+actor "Inspecteur général" as IG
+actor "Inspecteur\n(interne ou externe)" as IN
+actor "Salle d'opérations\n(centrale ou régionale)" as RM
+actor "Administrateur système" as SA
+rectangle "Inspections (I1, I2, I3)" {
+  usecase "Régler le modèle\n(axes, poids, items)" as UC1
+  usecase "Régler la politique\n(divulgation, avis, rappel)" as UC2
+  usecase "Activer un compte\nd'inspecteur" as UC3
+  usecase "Émettre un ordre de mission\n(unité ou salle, PDF + QR)" as UC4
+  usecase "Suivre les lieux\net les rapports" as UC5
+  usecase "Demander un compte\net activer le téléphone" as UC6
+  usecase "Arrivé / parti\nsur chaque lieu" as UC7
+  usecase "Remplir le rapport\nhors réseau" as UC8
+  usecase "Signer et envoyer\n(une seule fois)" as UC9
+  usecase "Mes inspections" as UC10
+  usecase "Lire les résultats\ndivulgués des salles" as UC11
+  usecase "Supprimer et restaurer\n(motif + « حذف »)" as UC12
+  usecase "Recevoir l'avis\npuis le rappel (SMS / e-mail)" as UC13
+}
+IG --> UC1
+IG --> UC2
+IG --> UC3
+IG --> UC4
+IG --> UC5
+IN --> UC6
+IN --> UC7
+IN --> UC8
+IN --> UC10
+IN --> UC13
+UC8 .> UC9 : <<include>>
+UC8 .> UC7 : <<include>>
+RM --> UC11
+SA --> UC12
+note bottom of UC8 : pas d'inspection sans ordre de mission\ndans le panier ; jamais avant son jour
+@enduml

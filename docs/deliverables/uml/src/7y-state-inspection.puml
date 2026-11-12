@@ -1,0 +1,24 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : mission et rapport d'inspection (I)
+state Mission {
+  [*] --> Planifiée
+  Planifiée --> Annulée : motif
+  Planifiée --> EnCours : premier rapport ouvert
+  EnCours --> Terminée : tous les lieux envoyés
+  Annulée --> [*]
+  Terminée --> [*]
+}
+state Rapport {
+  [*] --> SurLeTéléphone : ouvert hors réseau
+  SurLeTéléphone --> EnCoursServeur : premier contact
+  [*] --> EnCoursServeur : ouvert en ligne
+  EnCoursServeur --> Signé : deux signatures
+  SurLeTéléphone --> Signé : deux signatures
+  Signé --> Envoyé : reçu du serveur (une fois)
+  Envoyé --> Supprimé : administrateur (motif)
+  Supprimé --> Envoyé : restauré
+  Envoyé --> [*]
+}
+note right of Rapport : envoyé = scellé ;\nla base refuse toute modification
+@enduml
