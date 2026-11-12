@@ -6,7 +6,7 @@
  */
 import { expect, test, type Page, type WebSocketRoute } from "@playwright/test";
 import type { SipCredentials, StaffCall } from "../src/lib/telephonyTypes";
-import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
+import { API, baseMock, commonAnswer, json, liaisonAnswer, signIn } from "./phase7Helpers";
 
 // ┏━━ SIMULATION ━━ Asterisk's PJSIP WebSocket (WSS) answered in the browser by FakeSipServer
 // ┃ PRODUCTION: services/telephony (Asterisk 22, PJSIP WebRTC endpoints, queue `operators`) serves SIP over WSS
@@ -295,6 +295,8 @@ async function mockApi(page: Page, creds: SipCredentials) {
     const verb = request.method();
     const common = commonAnswer(verb, pathname, route);
     if (common) return common;
+    const liaison = liaisonAnswer(verb, pathname, route);
+    if (liaison) return liaison;
     if (verb === "POST" && pathname === "/api/v1/staff/telephony/credentials") {
       m.credentials += 1;
       return json(route, creds);

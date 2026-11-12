@@ -111,7 +111,8 @@ async def _units(session: AsyncSession, principal: Principal, situation: Situati
     return found
 
 
-def _agencies(situation: Situation) -> list[s.Responder]:
+def agencies(situation: Situation) -> list[s.Responder]:
+    """The national services involved by incident type and classification (also the bodies to inform, OS20)."""
     rules: list[tuple[str, dict[str, str]]] = []
     if situation.lives_at_risk or situation.injured or situation.deaths or situation.category in _LIVES_CATEGORIES:
         rules.append(("samu", domain.SAMU_REASON))
@@ -198,5 +199,5 @@ async def suggest(session: AsyncSession, principal: Principal, situation: Situat
     institution = await _institution(session, situation)
     if institution is not None:
         found.append(institution)
-    found.extend(_agencies(situation))
+    found.extend(agencies(situation))
     return found

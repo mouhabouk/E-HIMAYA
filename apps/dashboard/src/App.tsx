@@ -80,6 +80,7 @@ import {
   isCommittee,
   landingPath,
   canReadAddressWarnings,
+  canReadLiaison,
   canReadCallCards,
   canReadRoomGuide,
 } from "./lib/roles";
@@ -168,6 +169,7 @@ const OpsRoomPage = page(() => import("./pages/OpsRoomPage"), "OpsRoomPage");
 const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
 const CallCardsPage = page(() => import("./pages/CallCardsPage"), "CallCardsPage");
 const AddressWarningsPage = page(() => import("./pages/AddressWarningsPage"), "AddressWarningsPage");
+const LiaisonPage = page(() => import("./pages/LiaisonPage"), "LiaisonPage");
 const RoomGuidePage = page(() => import("./pages/RoomGuidePage"), "RoomGuidePage");
 const RoomReportPage = page(
   () => import("./pages/RoomReportPage"),
@@ -439,6 +441,10 @@ export function AppRoutes() {
         <Route
           path="address-warnings"
           element={gated(canReadAddressWarnings, <AddressWarningsPage />)}
+        />
+        <Route
+          path="liaison"
+          element={gated(canReadLiaison, <LiaisonPage />)}
         />
         <Route
           path="room-guide"

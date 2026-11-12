@@ -4,7 +4,7 @@
  * for the phase report land in test-results/phase-os8/.
  */
 import { expect, test, type Page } from "@playwright/test";
-import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
+import { API, baseMock, commonAnswer, json, liaisonAnswer, signIn } from "./phase7Helpers";
 
 const SHOTS = "test-results/phase-os8";
 const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000).toISOString();
@@ -154,6 +154,8 @@ async function mockApi(page: Page) {
     const verb = request.method();
     const common = commonAnswer(verb, pathname, route);
     if (common) return common;
+    const liaison = liaisonAnswer(verb, pathname, route);
+    if (liaison) return liaison;
     const A = "/api/v1/staff/address-warnings";
     if (verb === "GET" && pathname === `${A}/categories`) return json(route, CATEGORIES);
     if (verb === "GET" && pathname === `${A}/markers`) {

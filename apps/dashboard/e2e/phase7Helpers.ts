@@ -108,6 +108,16 @@ export async function baseMock(page: Page): Promise<BaseMock> {
   return m;
 }
 
+/** OS20: an incident's file asks for its level and bodies informed; no level set, nobody informed. */
+export function liaisonAnswer(method: string, pathname: string, route: Route): Promise<void> | null {
+  if (method !== "GET" || !pathname.startsWith("/api/v1/staff/liaison/")) return null;
+  const incident = /^\/api\/v1\/staff\/liaison\/incidents\/([^/]+)$/.exec(pathname);
+  if (incident) {
+    return json(route, { incident_id: incident[1], gouvernorat_code: null, level: null, parties: [], suggestions: [] });
+  }
+  return json(route, []);
+}
+
 /** Reference answers every screen asks for. */
 export function commonAnswer(
   method: string,

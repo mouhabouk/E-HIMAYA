@@ -436,6 +436,26 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     ),
     awAck: vi.fn(),
     awReveal: vi.fn(),
+    // OS20: informing the partner bodies by phone.
+    liaisonBodies: vi.fn(() => Promise.resolve([])),
+    liaisonBody: vi.fn(),
+    liaisonCreateBody: vi.fn(),
+    liaisonPatchBody: vi.fn(),
+    liaisonArchiveBody: vi.fn(),
+    liaisonAddOfficial: vi.fn(),
+    liaisonArchiveOfficial: vi.fn(),
+    liaisonIncident: vi.fn((id: string) =>
+      Promise.resolve({ incident_id: id, gouvernorat_code: null, level: null, parties: [], suggestions: [] }),
+    ),
+    liaisonSetLevel: vi.fn(),
+    liaisonPicker: vi.fn(() => Promise.resolve({ suggestions: [], used_before: [], history: [] })),
+    liaisonAddParties: vi.fn(),
+    liaisonRemoveParty: vi.fn(),
+    liaisonAddCall: vi.fn(),
+    liaisonFollowUps: vi.fn(() => Promise.resolve([])),
+    liaisonFollowUpDone: vi.fn(),
+    liaisonCalls: vi.fn(() => Promise.resolve([])),
+    liaisonHistory: vi.fn(() => Promise.resolve([])),
     ...overrides,
   };
 }

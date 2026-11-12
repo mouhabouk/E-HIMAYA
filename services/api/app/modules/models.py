@@ -60,6 +60,11 @@ from app.modules.inventory.models import Agent, AgentSkill, Category, InventoryR
 from app.modules.knowledge.models import IndexState, MemoryEntry, MemoryEntryVersion, SearchDoc
 from app.modules.learning.models import LearnedModel, TrainingJob
 from app.modules.learning.models import Sample as LearningSample
+from app.modules.liaison.models import Body as LiaisonBody
+from app.modules.liaison.models import Call as LiaisonCall
+from app.modules.liaison.models import IncidentLevel as LiaisonIncidentLevel
+from app.modules.liaison.models import Official as LiaisonOfficial
+from app.modules.liaison.models import Party as LiaisonParty
 from app.modules.medical.models import FileKey, FileOpening, LockedFile
 from app.modules.notify.models import Device, Dispatch, Message, OrgDigest, Outbox
 from app.modules.ops.models import (
@@ -253,6 +258,11 @@ __all__ = [
     "LearningSample",
     "LedgerEntry",
     "LevelState",
+    "LiaisonBody",
+    "LiaisonCall",
+    "LiaisonIncidentLevel",
+    "LiaisonOfficial",
+    "LiaisonParty",
     "LiveShare",
     "LiveStream",
     "LocationHistory",

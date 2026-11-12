@@ -29,6 +29,7 @@ import { opsApi } from "./opsApi";
 import { crewApi } from "./crewApi";
 import { guideApi } from "./guide";
 import { addressWarningsApi } from "./addressWarnings";
+import { liaisonApi } from "./liaison";
 import { callCardsApi, type CallCardBody } from "./callCards";
 import { layersApi } from "./layersApi";
 import { phase7Api } from "./phase7Api";
@@ -311,6 +312,7 @@ export function staffApi(api: ApiClient) {
     ...guideApi(api),
     ...callCardsApi(api),
     ...addressWarningsApi(api),
+    ...liaisonApi(api),
     ...preventionApi(api),
     ...contactApi(api),
     ...safetyApi(api),

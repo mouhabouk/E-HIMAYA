@@ -220,6 +220,37 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPS_MANAGER,
         ),
     ),
+    # Informing the partner bodies by phone (OS20, Yamen 2026-11-12): the contact system, the level of a report, the
+    # bodies informed and their calls.
+    page(
+        "liaison",
+        "ops",
+        "/liaison",
+        ("نظام الاتصال", "Système de contact", "Contact system"),
+        ("* /liaison",),
+        button(
+            "liaison.contacts",
+            ("إضافة الجهات والمسؤولين وتحيينهم", "Ajouter et mettre à jour les organismes", "Add and update bodies"),
+            "POST /liaison/bodies",
+            "PATCH /liaison/bodies/{body_id}",
+            "POST /liaison/bodies/{body_id}/archive",
+            "POST /liaison/bodies/{body_id}/officials",
+            "PATCH /liaison/officials/{official_id}",
+            "DELETE /liaison/officials/{official_id}",
+            act_as=R.OPERATOR,
+        ),
+        button(
+            "liaison.inform",
+            ("مستوى البلاغ وإبلاغ الجهات وتسجيل المكالمات", "Niveau, organismes informés, appels", "Level and calls"),
+            "PUT /liaison/incidents/{incident_id}/level",
+            "POST /liaison/incidents/{incident_id}/parties",
+            "PATCH /liaison/incidents/{incident_id}/parties/{party_id}",
+            "DELETE /liaison/incidents/{incident_id}/parties/{party_id}",
+            "POST /liaison/incidents/{incident_id}/parties/{party_id}/calls",
+            "POST /liaison/calls/{call_id}/follow-up-done",
+            act_as=R.OPERATOR,
+        ),
+    ),
     page(
         "incidents",
         "ops",

@@ -4,7 +4,7 @@
  * Screenshots for the phase report land in test-results/phase-s2/.
  */
 import { expect, test, type Page } from "@playwright/test";
-import { API, baseMock, commonAnswer, json, signIn } from "./phase7Helpers";
+import { API, baseMock, commonAnswer, json, liaisonAnswer, signIn } from "./phase7Helpers";
 
 const SHOTS = "test-results/phase-s2";
 const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000);
@@ -79,6 +79,8 @@ async function mockApi(page: Page) {
     const verb = request.method();
     const common = commonAnswer(verb, pathname, route);
     if (common) return common;
+    const liaison = liaisonAnswer(verb, pathname, route);
+    if (liaison) return liaison;
     if (verb === "GET" && pathname === "/api/v1/staff/incidents/i-1") {
       return json(route, {
         id: "i-1",
