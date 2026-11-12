@@ -1514,6 +1514,8 @@ erDiagram
         text created_by
         text created_by_name
         datetime created_at
+        datetime notice_sent_at
+        datetime reminder_sent_at
     }
     insp__mission_site {
         uuid id PK
@@ -1526,6 +1528,14 @@ erDiagram
         text room
         smallint gouvernorat_code FK
         array sections
+        datetime arrived_at
+        boolean arrived_offline
+        datetime arrived_received_at
+        geography_point_4326 arrived_location
+        datetime left_at
+        boolean left_offline
+        datetime left_received_at
+        geography_point_4326 left_location
     }
     insp__order_note {
         uuid id PK
