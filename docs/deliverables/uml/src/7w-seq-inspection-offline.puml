@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+title Séquence : rapport d'inspection sur le lieu, sans réseau (I3)
+autonumber
+actor "Inspecteur" as IN
+participant "Application\n(espace inspecteur)" as APP
+database "Coffre du téléphone\n(AES-GCM)" as BOX
+participant "API /inspect" as API
+database "PostgreSQL\ninsp.*" as DB
+IN -> APP : ouvre « Mes missions »
+APP -> API : GET /missions
+API --> APP : ordres, lieux et modèle actif
+APP -> BOX : copie scellée
+== sur le lieu, sans réseau ==
+IN -> APP : « Arrivé » sur le lieu
+APP -> BOX : heure et position du téléphone (hors réseau)
+IN -> APP : items, présence, exercice d'évacuation
+IN -> APP : synthèse, recommandations, deux signatures
+APP -> BOX : rapport scellé, en attente
+IN -> APP : « Parti »
+== retour du réseau ==
+APP -> API : POST /sites/{id}/presence (arrivé, parti ; offline)
+APP -> API : POST /inspections (heure d'arrivée du téléphone)
+API -> DB : rapport ouvert ; version du modèle retenue
+APP -> API : POST /inspections/{id}/submit {client_id}
+API -> DB : note et verdict calculés ; rapport scellé
+API --> APP : reçu T-AAAAMMJJ-NN
+APP -> API : GET /inspections (« Mes inspections »)
+@enduml
