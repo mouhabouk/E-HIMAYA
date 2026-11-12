@@ -25,6 +25,9 @@ from app.modules import models as _models  # noqa: F401  (registers every table 
 from app.modules.access import accounts
 from app.modules.access.router import router as access_router
 from app.modules.access.worker import breakglass_forever
+from app.modules.address_warnings.router import crew_router as address_warnings_crew_router
+from app.modules.address_warnings.router import me_router as address_warnings_me_router
+from app.modules.address_warnings.router import router as address_warnings_router
 from app.modules.ai.dictation import router as dictation_router
 from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
@@ -413,6 +416,9 @@ def create_app() -> FastAPI:
         inspections_admin_router,
         inspections_app_router,
         inspections_public_router,
+        address_warnings_router,
+        address_warnings_crew_router,
+        address_warnings_me_router,
         basemap_router,
         basemap_tiles_router,
         appdownload_router,

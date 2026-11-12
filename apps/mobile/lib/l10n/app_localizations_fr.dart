@@ -7109,4 +7109,141 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get staffMissionSheetFailed =>
       'Impossible de télécharger l’ordre de mission, et aucune copie enregistrée';
+
+  @override
+  String get awCatGas => 'Dépôt de gaz';
+
+  @override
+  String get awCatChem => 'Matières dangereuses';
+
+  @override
+  String get awCatFuel => 'Réservoir de carburant';
+
+  @override
+  String get awCatBatt => 'Batteries et électricité';
+
+  @override
+  String get awCatColl => 'Bâtiment menaçant ruine';
+
+  @override
+  String get awCatAcc => 'Accès difficile';
+
+  @override
+  String get awCatDog => 'Animal dangereux';
+
+  @override
+  String get awCatOcc => 'Nombreuses personnes';
+
+  @override
+  String get awCatMob => 'Besoin d\'aide pour évacuer';
+
+  @override
+  String get awCatOxy => 'Oxygène à domicile';
+
+  @override
+  String get awCatDeaf => 'N\'entend pas l\'alarme';
+
+  @override
+  String get awTitle => 'Alertes d\'adresse';
+
+  @override
+  String get awNone => 'Aucune alerte à cette adresse';
+
+  @override
+  String awCardTitle(int n) {
+    return 'Alertes d\'adresse : $n';
+  }
+
+  @override
+  String get awAllRead => 'Lues par l\'équipe';
+
+  @override
+  String get awProposeHint =>
+      'Un danger sur place ? Proposez un repère, la salle le valide';
+
+  @override
+  String get awAcked => 'Enregistré : alertes lues';
+
+  @override
+  String get awFailed => 'Serveur injoignable, réessayez';
+
+  @override
+  String get awAck => 'J\'ai lu les alertes';
+
+  @override
+  String get awPropose => 'Proposer un repère';
+
+  @override
+  String get awNote =>
+      'Un repère s\'affiche si l\'incident est dans son cercle. Les repères personnels sont donnés par leurs titulaires, sans nom.';
+
+  @override
+  String awCriticalWith(String kind) {
+    return 'Critique avec $kind';
+  }
+
+  @override
+  String awDistance(int m) {
+    return 'à $m m';
+  }
+
+  @override
+  String get awOffHours => 'Hors horaires';
+
+  @override
+  String get awConsent => 'Avec l\'accord du titulaire';
+
+  @override
+  String awReadAt(String time) {
+    return 'Lue à $time';
+  }
+
+  @override
+  String get awProposed => 'Envoyé ; la salle le validera';
+
+  @override
+  String get awProposeText => 'Qu\'avez-vous vu ?';
+
+  @override
+  String get awProposeSend => 'Envoyer la proposition';
+
+  @override
+  String get awConsentTitle => 'Prévenir les secours à mon adresse';
+
+  @override
+  String get awConsentCard =>
+      'Si quelqu\'un chez vous a besoin d\'aide pour évacuer';
+
+  @override
+  String get awConsentRegistered =>
+      'Réservé aux comptes enregistrés, pour que la salle sache qui appeler.';
+
+  @override
+  String get awConsentSaved => 'Votre accord est enregistré';
+
+  @override
+  String get awConsentIntro =>
+      'Si un incident survient près de chez vous, la salle et l\'équipe voient qu\'une personne à cette adresse a besoin d\'aide, sans votre nom. Choisissez ce qui s\'applique.';
+
+  @override
+  String get awConsentNote => 'Ce qui aide l\'équipe (facultatif)';
+
+  @override
+  String get awConsentAddress => 'L\'adresse telle que l\'équipe la trouve';
+
+  @override
+  String get awConsentLocate => 'Placer le domicile à ma position';
+
+  @override
+  String get awConsentLocated => 'Position fixée (touchez pour mettre à jour)';
+
+  @override
+  String get awConsentPrivacy =>
+      'Ni votre nom ni votre téléphone ne s\'affichent. Si la salle en a besoin pour un incident, c\'est enregistré avec le motif et visible ici. Renouvelé chaque année, retirable à tout moment.';
+
+  @override
+  String get awConsentReveals => 'Quand la salle a lu votre nom';
+
+  @override
+  String get awConsentWithdraw => 'Retirer tout mon accord';
 }

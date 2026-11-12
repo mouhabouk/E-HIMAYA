@@ -12,8 +12,8 @@
   the usual ``access.feature_rule`` rows, tied by ``profile_assignment_id`` so they are revoked together. Three
   read-only profiles are seeded: the fleet, the personnel, the inspections.
 
-Revision ID: 0103_fleet
-Revises: 0102_inspections
+Revision ID: 0104_fleet
+Revises: 0103_address_warnings
 Create Date: 2026-11-11
 """
 
@@ -21,8 +21,8 @@ from collections.abc import Sequence
 
 from migrations.sqlutil import run_script
 
-revision: str = "0103_fleet"
-down_revision: str | None = "0102_inspections"
+revision: str = "0104_fleet"
+down_revision: str | None = "0103_address_warnings"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

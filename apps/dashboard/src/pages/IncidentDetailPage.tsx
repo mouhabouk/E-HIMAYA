@@ -35,6 +35,7 @@ import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { canManageIncidents } from "../lib/roles";
 import { promoteLink } from "../lib/crisisText";
 import { NearHospitals } from "../components/NearHospitals";
+import { AddressWarningsPanel } from "../components/AddressWarningsPanel";
 import { queryKeys } from "../lib/staffApi";
 import { TIMELINE_KINDS, type IncidentDetail, type TimelineEntry } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
@@ -335,6 +336,9 @@ export function IncidentDetailPage() {
           </Link>
         )}
       </div>
+
+      {/* OS8: the marks on dangerous addresses around the incident, first in the file. */}
+      <AddressWarningsPanel incident={incident} />
 
       <div className="detail__grid">
         <section className="card" aria-labelledby="sec-summary">

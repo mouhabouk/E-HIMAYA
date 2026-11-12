@@ -686,6 +686,11 @@ export function canEditReportTemplates(identity: { roles: readonly string[]; nat
 export const AXIS_ROLES = ["operator", "ops_manager"] as const;
 export const COMMAND_ROLES = ["governor", "minister", "ops_manager"] as const;
 
+/** Address warnings (OS8): every room reads the register and the warnings of its incidents. */
+export function canReadAddressWarnings(roles: readonly string[]): boolean {
+  return any(READ_ROLES, roles);
+}
+
 /** Guided call-taking cards (OS2): the rooms read them, the Office writes, validates and approves them. */
 export const CALL_CARD_READ_ROLES = ["operator", "ops_manager", "content_editor", "medical_coordinator"] as const;
 

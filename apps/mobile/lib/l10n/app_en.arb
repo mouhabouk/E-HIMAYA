@@ -3651,5 +3651,74 @@
   "staffMissionSheetHelp": "To print or keep on the phone; opens without network",
   "staffMissionSheetSaved": "No network: the copy saved on the phone was opened",
   "staffMissionSheetNoViewer": "Mission sheet saved, but no app on the phone opens PDF files",
-  "staffMissionSheetFailed": "Could not download the mission sheet, and no copy is saved yet"
+  "staffMissionSheetFailed": "Could not download the mission sheet, and no copy is saved yet",
+  "awCatGas": "Gas store",
+  "awCatChem": "Hazardous materials",
+  "awCatFuel": "Fuel tank",
+  "awCatBatt": "Batteries and power",
+  "awCatColl": "Unsafe building",
+  "awCatAcc": "Hard to reach",
+  "awCatDog": "Dangerous animal",
+  "awCatOcc": "Many people",
+  "awCatMob": "Needs help to evacuate",
+  "awCatOxy": "Home oxygen",
+  "awCatDeaf": "Cannot hear the alarm",
+  "awTitle": "Address warnings",
+  "awNone": "No warning at this address",
+  "awCardTitle": "Address warnings: {n}",
+  "@awCardTitle": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "awAllRead": "Read by the team",
+  "awProposeHint": "Saw a danger here? Propose a mark; the room approves it",
+  "awAcked": "Recorded: the warnings were read",
+  "awFailed": "Could not reach the server, try again",
+  "awAck": "I read the warnings",
+  "awPropose": "Propose a mark",
+  "awNote": "A mark shows when the incident is inside its circle. Personal marks are given by their owners, without names.",
+  "awCriticalWith": "Critical with {kind}",
+  "@awCriticalWith": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "awDistance": "{m} m away",
+  "@awDistance": {
+    "placeholders": {
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "awOffHours": "Outside its hours",
+  "awConsent": "With its owner's consent",
+  "awReadAt": "Read at {time}",
+  "@awReadAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "awProposed": "Sent; the room will approve it",
+  "awProposeText": "What did you see?",
+  "awProposeSend": "Send the proposal",
+  "awConsentTitle": "Tell rescuers about my home",
+  "awConsentCard": "If someone at home needs help to evacuate",
+  "awConsentRegistered": "This needs a registered account, so the room knows whom to call.",
+  "awConsentSaved": "Your consent was saved",
+  "awConsentIntro": "If an incident happens near your home, the operations room and the team see that someone at this address needs help, without your name. Choose what applies.",
+  "awConsentNote": "What helps the team (optional)",
+  "awConsentAddress": "The address as the team finds it",
+  "awConsentLocate": "Set the home from my location now",
+  "awConsentLocated": "Location set (tap to update)",
+  "awConsentPrivacy": "Your name and phone are not shown. If the room needs them for an incident, it is recorded with the reason and you see it here. Renewed each year; withdraw any time.",
+  "awConsentReveals": "When the room read your name",
+  "awConsentWithdraw": "Withdraw all my consent"
 }

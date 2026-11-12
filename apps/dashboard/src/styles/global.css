@@ -11936,6 +11936,209 @@ body::after {
   justify-content: center;
 }
 
+/* ---------- Address warnings (OS8) ---------- */
+.aw-panel__head,
+.aw-toolbar,
+.aw-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.aw-panel__head h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  margin-inline-end: auto;
+}
+.aw-panel--critical {
+  border-inline-start: 5px solid var(--tone-red);
+}
+.aw-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.aw-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.aw-item--critical {
+  border: 2px solid var(--tone-red);
+  background: var(--tone-red-tint);
+}
+.aw-item--off {
+  opacity: 0.65;
+}
+.aw-item--pending {
+  border: 2px solid var(--tone-orange);
+}
+.aw-item__body {
+  flex: 1;
+  min-inline-size: 0;
+}
+.aw-item__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.aw-item__desc {
+  margin: 0.2rem 0;
+}
+.aw-item__addr {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.aw-item__pills,
+.aw-item__acts,
+.aw-chips,
+.aw-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-block-start: 0.4rem;
+}
+.aw-note {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  margin-block: 0.75rem 0;
+}
+.aw-reveal {
+  inline-size: 100%;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+}
+.aw-chip,
+.aw-choice,
+.aw-tabs button,
+.aw-stepper button {
+  font: inherit;
+  cursor: pointer;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.aw-chip {
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.aw-chip--on,
+.aw-tabs button[aria-pressed="true"] {
+  background: var(--brand-tint, var(--surface-2));
+  color: var(--brand-ink, var(--text));
+  border-color: transparent;
+}
+.aw-chip:disabled,
+.aw-choice:disabled,
+.aw-stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.aw-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  margin-block: 0.5rem 1rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.aw-tabs button {
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.aw-tabs button[aria-pressed="true"] {
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgb(24 32 56 / 10%);
+}
+.aw-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 14px;
+  padding: 0.4rem 0.6rem;
+  font-weight: 600;
+}
+.aw-choice[aria-pressed="true"] {
+  border: 2px solid var(--tone-orange);
+  background: rgb(240 140 0 / 7%);
+}
+.aw-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.aw-kpis {
+  margin-block-end: 1rem;
+}
+.aw-kpi--pending { border-inline-start-color: var(--tone-orange); }
+.aw-kpi--due { border-inline-start-color: var(--tone-amber); }
+.aw-kpi--personal { border-inline-start-color: var(--tone-green); }
+.aw-queue {
+  margin-block-end: 1rem;
+}
+.aw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.aw-form textarea {
+  inline-size: 100%;
+  min-block-size: 3.5rem;
+  margin-block-start: 0.5rem;
+}
+.aw-actions {
+  white-space: nowrap;
+}
+.aw-actions .btn + .btn {
+  margin-inline-start: 0.35rem;
+}
+.aw-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.aw-stepper button {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border: 0;
+  background: var(--surface-2);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.aw-stepper span {
+  min-inline-size: 5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
 /* OS3: live coverage and the fleet (docs/phase-os3/design-os3.md). */
 .coverage-families {
   align-self: end;

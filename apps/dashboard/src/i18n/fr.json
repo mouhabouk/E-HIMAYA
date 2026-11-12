@@ -89,6 +89,7 @@
     "repoMap": "Carte du système",
     "roomGuide": "Guide de l'agent de salle",
     "callCards": "Fiches d'appel",
+    "addressWarnings": "Alertes d'adresse",
     "fleetDashboard": "Tableau du parc",
     "fleetVehicles": "Véhicules",
     "fleetMaintenance": "En maintenance",
@@ -9336,6 +9337,142 @@
     "button": "Imprimer",
     "office": "Office national de la protection civile",
     "printedBy": "Imprimé par {{name}} le {{at}}"
+  },
+  "addressWarnings": {
+    "title": "Alertes d'adresse",
+    "intro": "Marques sur les adresses dangereuses : dépôt de gaz, matières dangereuses, bâtiment menaçant ruine, animal dangereux, accès difficile, ou résident qui a besoin d'aide et l'a accepté. Quand un signalement tombe dans le cercle d'une marque, la salle et l'équipe la voient aussitôt.",
+    "tab": {
+      "register": "Registre des marques",
+      "settings": "Réglages des catégories",
+      "reveals": "Journal des données personnelles lues"
+    },
+    "kpi": {
+      "active": "marques en vigueur",
+      "pending": "en attente de validation",
+      "reviewDue": "date de révision dépassée",
+      "personal": "marques personnelles consenties"
+    },
+    "queue": {
+      "title": "En attente de validation",
+      "incident": "L'incident"
+    },
+    "action": {
+      "approve": "Valider",
+      "reject": "Rejeter",
+      "archive": "Archiver",
+      "confirm": "Toujours vrai : confirmer"
+    },
+    "ask": {
+      "reject": "Motif du rejet",
+      "archive": "Motif de l'archivage (danger disparu par exemple)"
+    },
+    "status": {
+      "pending": "En attente",
+      "active": "En vigueur",
+      "archived": "Archivée",
+      "rejected": "Rejetée",
+      "withdrawn": "Retirée par son titulaire",
+      "review_due": "Révision dépassée"
+    },
+    "source": {
+      "room": "La salle",
+      "team": "Proposition d'équipe",
+      "org": "Registre des établissements",
+      "municipality": "Municipalité",
+      "report": "Rapport d'intervention",
+      "citizen": "Dossier médical, avec consentement"
+    },
+    "filter": "Afficher",
+    "filterOption": {
+      "current": "En vigueur et en attente",
+      "pending": "En attente",
+      "review_due": "Révision dépassée",
+      "archived": "Archivées",
+      "rejected": "Rejetées"
+    },
+    "empty": "Aucune marque ici.",
+    "personalNote": "Les marques personnelles ne sont ni listées ni recherchables : elles n'apparaissent qu'à un signalement proche, sans nom. Leur titulaire les ajoute depuis l'application citoyen et les retire quand il veut.",
+    "col": {
+      "category": "Catégorie",
+      "address": "Adresse et description",
+      "source": "Source",
+      "shownTo": "Visible par",
+      "review": "Révision",
+      "status": "État",
+      "actions": "Action"
+    },
+    "import": {
+      "button": "Importer du registre des établissements",
+      "done": "{{n}} marques ajoutées en attente"
+    },
+    "add": {
+      "button": "Nouvelle marque",
+      "category": "Catégorie",
+      "personal": "Les catégories personnelles (handicap, oxygène, surdité) ne s'ajoutent pas ici : leur titulaire les ajoute depuis son dossier médical.",
+      "place": "Emplacement",
+      "pick": "Cliquez sur la carte pour placer l'adresse.",
+      "picked": "Emplacement : {{lat}}, {{lon}}",
+      "address": "Adresse",
+      "description": "Description",
+      "other": "Autre",
+      "note": "Précision utile à l'équipe (quantité, endroit, accès)",
+      "hours": "Heures d'activité",
+      "from": "De",
+      "to": "À",
+      "source": "Source",
+      "teamVisible": "Visible aussi par l'équipe",
+      "save": "Enregistrer la marque"
+    },
+    "settings": {
+      "intro": "Cercle, période de révision, visibilité pour l'équipe et types d'incident qui la rendent critique. Fixés par l'Office ; chaque changement est journalisé.",
+      "readOnly": "Réglages de la salle centrale, en lecture ici.",
+      "radius": "Cercle",
+      "review": "Révision tous les",
+      "team": "Visible par l'équipe",
+      "critical": "Critique avec",
+      "personal": "Personnelle",
+      "metres": "{{n}} m",
+      "months": "{{n}} mois",
+      "less": "Moins",
+      "more": "Plus"
+    },
+    "reveals": {
+      "intro": "Chaque fois que le nom et le téléphone d'une marque personnelle ont été affichés : quand, par qui, pour quel incident et pourquoi. Le titulaire en est informé.",
+      "none": "Aucun nom affiché.",
+      "at": "Heure",
+      "by": "Par",
+      "incident": "Incident",
+      "reason": "Motif"
+    },
+    "panel": {
+      "title": "Alertes d'adresse",
+      "count": "{{n}} · {{unread}} non lues",
+      "critical": "{{n}} critiques",
+      "ackAll": "Tout lu",
+      "none": "Aucune marque autour de cet incident.",
+      "note": "Une marque apparaît si l'incident est dans son cercle. Les critiques pour ce type d'incident d'abord. Les marques personnelles sont consenties, sans nom ; afficher le nom est journalisé à votre nom.",
+      "criticalWith": "Critique : {{kind}}",
+      "distance": "à {{m}} m",
+      "team": "Salle et équipe",
+      "roomOnly": "Salle seulement",
+      "consent": "Avec consentement",
+      "offHours": "Hors heures ({{from}}–{{to}})",
+      "onHours": "Active ({{from}}–{{to}})",
+      "roomRead": "Lu par {{who}} {{at}}",
+      "teamRead": "Lu par l'équipe {{at}}",
+      "ack": "Lu"
+    },
+    "reveal": {
+      "button": "Nom et téléphone",
+      "explain": "Pour le besoin de cet incident seulement. Journalisé à votre nom avec le motif ; le titulaire est informé.",
+      "confirm": "Afficher",
+      "noName": "Pas de nom au compte",
+      "reason": {
+        "call": "L'appeler pour vérifier sa présence",
+        "name": "Donner son nom à l'équipe pour l'appeler",
+        "team": "Demande de l'équipe sur place"
+      }
+    }
   },
   "fleet": {
     "title": "Parc et maintenance",

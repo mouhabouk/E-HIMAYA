@@ -102,6 +102,34 @@ class StaffApi {
     return data is Map<String, dynamic> ? data : {'items': data};
   }
 
+  /// OS8: the address warnings of a mission the team sees, most dangerous first.
+  Future<Map<String, dynamic>> addressWarnings(String missionId) =>
+      _call('GET', '/missions/$missionId/address-warnings');
+
+  /// OS8: «قرأت التحذيرات», every warning shown at once.
+  Future<Map<String, dynamic>> ackAddressWarnings(String missionId) => _call(
+    'POST',
+    '/missions/$missionId/address-warnings/ack',
+    body: {'marker_ids': <String>[]},
+  );
+
+  /// OS8: a mark proposed from the scene, pending until the room approves it.
+  Future<void> proposeAddressWarning(
+    String missionId, {
+    required String category,
+    required String description,
+    GeoPoint? location,
+  }) => _call(
+    'POST',
+    '/missions/$missionId/address-warnings/propose',
+    body: {
+      'category': category,
+      'description': description,
+      if (location != null)
+        'location': {'lat': location.lat, 'lon': location.lon},
+    },
+  );
+
   /// The mission sheet (أمر مهمة) as a PDF: the order, the incident, the place with its QR code, the team, and the
   /// page of the intervention report the leader fills in by hand (`GET /missions/{id}/sheet`).
   Future<Uint8List> missionSheet(String missionId) async {

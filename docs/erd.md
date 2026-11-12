@@ -283,6 +283,86 @@ erDiagram
     }
 ```
 
+## aw
+
+```mermaid
+erDiagram
+    aw__ack {
+        bigint id PK
+        uuid marker_id FK
+        uuid incident_id FK
+        smallint gouvernorat_code FK
+        text by_kind
+        text by_subject
+        text by_name
+        datetime at
+    }
+    aw__category {
+        text key PK
+        text name
+        text icon
+        text colour
+        boolean personal
+        integer radius_m
+        smallint review_months
+        boolean team
+        array critical_with
+        array examples
+        smallint position
+        datetime updated_at
+        text updated_by_name
+    }
+    aw__marker {
+        uuid id PK
+        text category FK
+        smallint gouvernorat_code FK
+        geography_point_4326 location
+        text address
+        text description
+        text source
+        text source_ref
+        uuid org_id FK
+        uuid incident_id FK
+        uuid owner_id FK
+        boolean team_visible
+        smallint active_from
+        smallint active_to
+        date review_on
+        text status
+        datetime created_at
+        text created_by
+        text created_by_name
+        datetime decided_at
+        text decided_by_name
+        text decision_reason
+        datetime confirmed_at
+        integer version
+    }
+    aw__reveal {
+        bigint id PK
+        uuid marker_id FK
+        uuid owner_id FK
+        uuid incident_id FK
+        smallint gouvernorat_code FK
+        text by_subject
+        text by_name
+        text reason
+        datetime at
+    }
+    aw__category ||--o{ aw__marker : "category"
+    aw__marker ||--o{ aw__ack : "marker_id"
+    aw__marker ||--o{ aw__reveal : "marker_id"
+    geo__gouvernorat ||--o{ aw__ack : "gouvernorat_code"
+    geo__gouvernorat ||--o{ aw__marker : "gouvernorat_code"
+    geo__gouvernorat ||--o{ aw__reveal : "gouvernorat_code"
+    identity__account ||--o{ aw__marker : "owner_id"
+    identity__account ||--o{ aw__reveal : "owner_id"
+    ops__incident ||--o{ aw__ack : "incident_id"
+    ops__incident ||--o{ aw__marker : "incident_id"
+    ops__incident ||--o{ aw__reveal : "incident_id"
+    org__organization ||--o{ aw__marker : "org_id"
+```
+
 ## coastal
 
 ```mermaid

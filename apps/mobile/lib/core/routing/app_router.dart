@@ -34,6 +34,7 @@ import '../../features/report/report_queued_screen.dart';
 import '../../features/reports/my_reports_screen.dart';
 import '../../features/reports/track_screen.dart';
 import '../../features/rewards/rewards_screen.dart';
+import '../../features/safety/address_warnings_consent_screen.dart';
 import '../../features/safety/contacts_screen.dart';
 import '../../features/safety/linked_screen.dart';
 import '../../features/safety/live_share_screen.dart';
@@ -162,6 +163,7 @@ abstract final class Routes {
   static const safetyTest = '/safety/test';
   static const safetyRecent = '/safety/recent';
   static const safetyMedical = '/safety/medical';
+  static const safetyAddressWarnings = '/safety/address-warnings';
   static const safetyLocationHistory = '/safety/location-history';
   static String safetyAlert(String id) =>
       '/safety/alerts/${Uri.encodeComponent(id)}';
@@ -402,6 +404,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const SafetyRecentScreen(),
           ),
           GoRoute(path: 'medical', builder: (_, _) => const MedicalScreen()),
+          GoRoute(
+            path: 'address-warnings',
+            builder: (_, _) => const AddressWarningsConsentScreen(),
+          ),
           GoRoute(
             path: 'location-history',
             builder: (_, _) => const LocationHistoryScreen(),
