@@ -53,6 +53,11 @@ class FakeCrewServer {
   final addressWarnings = <Map<String, dynamic>>[];
   final proposals = <Map<String, dynamic>>[];
 
+  /// OS7: the danger-zone check of the team leader.
+  Map<String, dynamic>? parTeam;
+  final parMissing = <Map<String, dynamic>>[];
+  final parCalls = <(String, Map<String, dynamic>)>[];
+
   /// The account's field roles (phase P4c: `org_auditor` for inspectors).
   List<String> roles = ['team_leader'];
 
@@ -413,6 +418,9 @@ class FakeCrewServer {
     if (m != null && r.method == 'GET' && m.group(2) == 'hospitals') {
       return const FakeResponse(200, json: hospitals);
     }
+    if (m != null && (m.group(2) == 'par' || m.group(2)!.startsWith('par/'))) {
+      return _par(r, m.group(2)!);
+    }
     if (m != null && m.group(2)!.startsWith('address-warnings')) {
       switch ((r.method, m.group(2))) {
         case ('POST', 'address-warnings/ack'):
@@ -658,6 +666,61 @@ Map<String, dynamic> _fieldTokens(String access, String refresh) => {
 };
 
 extension on FakeCrewServer {
+  FakeResponse _par(SeenRequest r, String path) {
+    final body = (r.json as Map<String, dynamic>?) ?? const {};
+    if (r.method == 'POST') parCalls.add((path.substring(4), body));
+    final team = parTeam;
+    switch (path) {
+      case 'par/enter':
+        parTeam = {
+          'id': 't-1',
+          'zone': body['zone'],
+          'status': 'ok',
+          'interval_s': 600,
+          'remaining_s': 600,
+          'last_confirmed_at': '2026-10-26T09:00:00Z',
+          'next_at': null,
+          'pause_reason': null,
+          'out_at': null,
+          'members': [
+            {'key': 'm0', 'name': 'Sami', 'role': 'Team leader'},
+            {'key': 'm1', 'name': 'Ali', 'role': ''},
+            {'key': 'm2', 'name': 'Mounir', 'role': ''},
+          ],
+        };
+      case 'par/away':
+        for (final x in team!['members'] as List) {
+          if ((x as Map)['key'] == body['member']) x['away_why'] = body['why'];
+        }
+      case 'par/back':
+        for (final x in team!['members'] as List) {
+          if ((x as Map)['key'] == body['member']) x['away_why'] = null;
+        }
+      case 'par/missing':
+        parMissing.add({
+          'resource': body['resource'],
+          'carrier': 'Ali',
+          'recovered_at': null,
+        });
+        team!['status'] = 'missing';
+      case 'par/exit':
+        team!['out_at'] = '2026-10-26T09:30:00Z';
+        team['status'] = 'out';
+    }
+    return FakeResponse(
+      200,
+      json: {
+        'enabled': true,
+        'team': parTeam,
+        'missing': parMissing,
+        'last_sitrep': null,
+        'closed': false,
+        'resources': ['Radio', 'Breathing apparatus'],
+        'now': '2026-10-26T09:00:00Z',
+      },
+    );
+  }
+
   FakeResponse _visit(SeenRequest r, String id, String? action) {
     final i = visits.indexWhere((v) => v['id'] == id);
     if (i < 0) return const FakeResponse(404, json: {'detail': 'not_found'});

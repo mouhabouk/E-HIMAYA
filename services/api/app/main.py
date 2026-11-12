@@ -115,6 +115,8 @@ from app.modules.orgs.prevention_router import staff_router as orgs_prevention_s
 from app.modules.orgs.router import router as orgs_router
 from app.modules.orgs.space import router as orgs_space_router
 from app.modules.orgs.staff_router import router as orgs_staff_router
+from app.modules.par.router import crew_router as par_crew_router
+from app.modules.par.router import router as par_router
 from app.modules.personnel.router import router as personnel_router
 from app.modules.places.router import router as places_router
 from app.modules.privacy.retention import retention_forever
@@ -448,6 +450,8 @@ def create_app() -> FastAPI:
     app.include_router(features_public_router)
     app.include_router(window_router)
     app.include_router(drill_router)
+    app.include_router(par_router)
+    app.include_router(par_crew_router)
     features_registry.install(app.routes)
     return app
 

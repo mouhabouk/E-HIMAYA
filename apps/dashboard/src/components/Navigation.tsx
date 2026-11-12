@@ -54,6 +54,7 @@ import {
   isCommittee,
   canReadAddressWarnings,
   canReadLiaison,
+  canReadPar,
   canReadCallCards,
   canReadRoomGuide,
   canReadCoverage,
@@ -118,6 +119,8 @@ export function navGroups(
         ...e(reads, "/incidents", "localFireDepartment", "red", "incidents"),
         ...e(canReadAddressWarnings(roles), "/address-warnings", "warning", "amber", "addressWarnings"),
         ...e(canReadLiaison(roles), "/liaison", "call", "teal", "liaison"),
+        // Crew accountability in danger zones (OS7).
+        ...e(canReadPar(roles), "/par", "groups", "red", "par"),
         ...e(reads, "/map", "map", "teal", "map"),
         ...e(reads, "/map/room", "monitoring", "red", "opsRoom"),
         ...e(reads, "/streams", "videocam", "red", "streams"),

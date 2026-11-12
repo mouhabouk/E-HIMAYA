@@ -456,6 +456,19 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     liaisonFollowUpDone: vi.fn(),
     liaisonCalls: vi.fn(() => Promise.resolve([])),
     liaisonHistory: vi.fn(() => Promise.resolve([])),
+    // OS7: crew accountability in danger zones.
+    parIncidents: vi.fn(() => Promise.resolve([])),
+    parBoard: vi.fn(),
+    parSetting: vi.fn(() => Promise.reject(new ApiError(404, "not_found", "Not Found"))),
+    parSaveSetting: vi.fn(),
+    parSetNext: vi.fn(),
+    parClearNext: vi.fn(),
+    parPause: vi.fn(),
+    parResume: vi.fn(),
+    parCheckAll: vi.fn(),
+    parTeam: vi.fn(),
+    parMissing: vi.fn(),
+    parClose: vi.fn(),
     ...overrides,
   };
 }

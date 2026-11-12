@@ -101,6 +101,12 @@ from app.modules.orgs.models import (
     Organization,
     TeamMember,
 )
+from app.modules.par.models import Closure as ParClosure
+from app.modules.par.models import Event as ParEvent
+from app.modules.par.models import Missing as ParMissing
+from app.modules.par.models import Setting as ParSetting
+from app.modules.par.models import Sitrep as ParSitrep
+from app.modules.par.models import Team as ParTeam
 from app.modules.personnel.models import Absence as PersonnelAbsence
 from app.modules.personnel.models import Event as PersonnelEvent
 from app.modules.places.models import SavedPlace
@@ -286,6 +292,12 @@ __all__ = [
     "OrgDigest",
     "Organization",
     "Outbox",
+    "ParClosure",
+    "ParEvent",
+    "ParMissing",
+    "ParSetting",
+    "ParSitrep",
+    "ParTeam",
     "PendingAward",
     "PersonnelAbsence",
     "PersonnelEvent",

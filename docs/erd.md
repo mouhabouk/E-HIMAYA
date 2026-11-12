@@ -2815,6 +2815,104 @@ erDiagram
     reports__report ||--o{ org__prealert : "report_id"
 ```
 
+## par
+
+```mermaid
+erDiagram
+    par__closure {
+        uuid incident_id PK,FK
+        smallint gouvernorat_code FK
+        datetime closed_at
+        text closed_by_name
+        boolean automatic
+        jsonb summary
+    }
+    par__event {
+        bigint id PK
+        uuid incident_id FK
+        uuid team_id FK
+        smallint gouvernorat_code FK
+        datetime at
+        text kind
+        text text
+        text by_name
+    }
+    par__missing {
+        uuid id PK
+        uuid team_id FK
+        uuid incident_id FK
+        smallint gouvernorat_code FK
+        text resource
+        text carrier
+        text place
+        geography_point_4326 location
+        datetime reported_at
+        text reported_by_name
+        datetime replacement_at
+        text replacement_by_name
+        datetime recovered_at
+        text recovered_by_name
+    }
+    par__setting {
+        smallint gouvernorat_code PK,FK
+        integer hot_s
+        integer warm_s
+        integer grace_s
+        array auto_events
+        datetime updated_at
+        text updated_by_name
+    }
+    par__sitrep {
+        bigint id PK
+        uuid team_id FK
+        uuid incident_id FK
+        smallint gouvernorat_code FK
+        datetime at
+        text situation
+        boolean reinforcement
+        text text
+        smallint voice_seconds
+        text transcript
+        text by_name
+    }
+    par__team {
+        uuid id PK
+        uuid assignment_id FK
+        uuid incident_id FK
+        smallint gouvernorat_code FK
+        text label
+        text task
+        text zone
+        jsonb members
+        jsonb away
+        text leader_subject
+        text leader_name
+        datetime entered_at
+        datetime last_confirmed_at
+        datetime next_at
+        datetime paused_at
+        text pause_reason
+        datetime alarmed_at
+        datetime out_at
+        smallint out_count
+    }
+    geo__gouvernorat ||--o{ par__closure : "gouvernorat_code"
+    geo__gouvernorat ||--o{ par__event : "gouvernorat_code"
+    geo__gouvernorat ||--o{ par__missing : "gouvernorat_code"
+    geo__gouvernorat ||--o{ par__setting : "gouvernorat_code"
+    geo__gouvernorat ||--o{ par__sitrep : "gouvernorat_code"
+    geo__gouvernorat ||--o{ par__team : "gouvernorat_code"
+    ops__assignment ||--o{ par__team : "assignment_id"
+    ops__incident ||--o{ par__closure : "incident_id"
+    ops__incident ||--o{ par__event : "incident_id"
+    ops__incident ||--o{ par__missing : "incident_id"
+    ops__incident ||--o{ par__sitrep : "incident_id"
+    ops__incident ||--o{ par__team : "incident_id"
+    par__team ||--o{ par__event : "team_id"
+    par__team ||--o{ par__missing : "team_id"
+    par__team ||--o{ par__sitrep : "team_id"
+```
+
 ## personnel
 
 ```mermaid

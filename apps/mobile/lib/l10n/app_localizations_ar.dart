@@ -7433,4 +7433,183 @@ class AppLocalizationsAr extends AppLocalizations {
   String inspErrGeneric(String code) {
     return 'رفض الخادم ($code).';
   }
+
+  @override
+  String get parTitle => 'التفقّد في منطقة الخطر';
+
+  @override
+  String get parEnterHint =>
+      'قبل دخول منطقة الخطر شغّل العدّاد: تراك القاعة وتؤكّد حضور كامل الفريق عند كل تفقّد.';
+
+  @override
+  String get parEnterHot => 'دخلنا المنطقة الساخنة';
+
+  @override
+  String get parEnterWarm => 'دخلنا المنطقة الدافئة';
+
+  @override
+  String get parClosed => 'انتهى التفقّد وأُرشف مع التدخّل';
+
+  @override
+  String get parPaused => 'التفقّد موقوف من القائد أو القاعة';
+
+  @override
+  String parLeft(String time) {
+    return '$time حتى التفقّد القادم';
+  }
+
+  @override
+  String get parUntilCheck => 'حتى التفقّد القادم';
+
+  @override
+  String parZoneHot(int min) {
+    return 'منطقة ساخنة · كل $min د';
+  }
+
+  @override
+  String parZoneWarm(int min) {
+    return 'منطقة دافئة · كل $min د';
+  }
+
+  @override
+  String parLastConfirmed(String time) {
+    return 'آخر تأكيد $time';
+  }
+
+  @override
+  String parSetTime(String time) {
+    return 'توقيت خاص $time';
+  }
+
+  @override
+  String parOutAt(String time) {
+    return 'خرجنا من المنطقة $time';
+  }
+
+  @override
+  String parCrew(int n) {
+    return 'الطاقم داخل المنطقة ($n)';
+  }
+
+  @override
+  String get parLeader => 'رئيس الفريق';
+
+  @override
+  String get parAway => 'خرج مؤقتا';
+
+  @override
+  String get parBack => 'عاد';
+
+  @override
+  String parAwayNow(String why) {
+    return 'خارج مؤقتا: $why';
+  }
+
+  @override
+  String parAwayTitle(String name) {
+    return 'سبب خروج $name';
+  }
+
+  @override
+  String get parAwayNote => 'لا يُحسب في التفقّد حتى يعود، وتراه القاعة.';
+
+  @override
+  String get parAwayAir => 'تزوّد بالهواء';
+
+  @override
+  String get parAwayWater => 'تزوّد بالماء أو الوقود';
+
+  @override
+  String get parAwayCare => 'إسعاف';
+
+  @override
+  String get parAwayRest => 'استراحة';
+
+  @override
+  String get parAwayOther => 'مهمة أخرى';
+
+  @override
+  String get parAllHere => 'الكل حاضر الآن';
+
+  @override
+  String get parSitrep => 'ردّ الخبر';
+
+  @override
+  String get parMissing => 'مورد مفقود';
+
+  @override
+  String get parWeAreOut => 'خرجنا';
+
+  @override
+  String parMissingLine(String resource, String name) {
+    return 'مفقود: $resource · كان مع $name';
+  }
+
+  @override
+  String get parMissingWhat => 'ما المورد المفقود؟';
+
+  @override
+  String get parMissingWho => 'مع من كان؟';
+
+  @override
+  String get parMissingPlace => 'آخر موقع معروف (اختياري)';
+
+  @override
+  String get parAddResource => 'إضافة مورد أو تجهيز';
+
+  @override
+  String get parMissingSend => 'إبلاغ عن المورد المفقود';
+
+  @override
+  String get parSitrepTitle => 'هل تمت السيطرة؟';
+
+  @override
+  String get parSituationControlled => 'تمت السيطرة';
+
+  @override
+  String get parSituationProgress => 'في طريق السيطرة';
+
+  @override
+  String get parSituationNot => 'لم تتم السيطرة';
+
+  @override
+  String get parReinforcement => 'طلب تعزيز';
+
+  @override
+  String get parSpeak => 'رسالة صوتية تُحوَّل إلى نص';
+
+  @override
+  String get parSitrepText => 'النص (كتابة)';
+
+  @override
+  String get parSitrepCorrect => 'النص المسموع: صحّحه قبل الإرسال';
+
+  @override
+  String get parSitrepSend => 'إرسال للقائد والقاعة';
+
+  @override
+  String parLastWord(String situation) {
+    return 'آخر ردّ خبر: $situation';
+  }
+
+  @override
+  String parExitTitle(int out, int all) {
+    return 'العدّ عند الخروج: $out من $all';
+  }
+
+  @override
+  String get parExitHint =>
+      'أشّر على كل عون خرج: لا يتوقّف العدّاد إلا بخروج الجميع.';
+
+  @override
+  String get parExitSend => 'خرج الجميع';
+
+  @override
+  String get parHeadcountIncomplete => 'ما زال عون في الداخل';
+
+  @override
+  String get parNote => 'يُحفظ التفقّد مع التدخّل عند انتهائه.';
+
+  @override
+  String get parFailed => 'لم يُرسل: تحقّق من الشبكة وأعد المحاولة';
 }

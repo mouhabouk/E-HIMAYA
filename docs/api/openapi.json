@@ -3534,6 +3534,32 @@
         "title": "AwarenessTip",
         "type": "object"
       },
+      "AwayIn": {
+        "properties": {
+          "member": {
+            "pattern": "^m[0-9]{1,2}$",
+            "title": "Member",
+            "type": "string"
+          },
+          "why": {
+            "enum": [
+              "air",
+              "water_fuel",
+              "care",
+              "rest",
+              "other"
+            ],
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "member",
+          "why"
+        ],
+        "title": "AwayIn",
+        "type": "object"
+      },
       "AxisDetail": {
         "properties": {
           "axis": {
@@ -3583,7 +3609,7 @@
           },
           "sitreps": {
             "items": {
-              "$ref": "#/components/schemas/SitrepOut"
+              "$ref": "#/components/schemas/app__modules__crisis__schemas__SitrepOut"
             },
             "title": "Sitreps",
             "type": "array"
@@ -4660,6 +4686,104 @@
           "delete_reason"
         ],
         "title": "BinRow",
+        "type": "object"
+      },
+      "Board": {
+        "properties": {
+          "all_out": {
+            "title": "All Out",
+            "type": "boolean"
+          },
+          "closure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClosureOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__par__schemas__EventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "incident_kind": {
+            "title": "Incident Kind",
+            "type": "string"
+          },
+          "incident_status": {
+            "title": "Incident Status",
+            "type": "string"
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/app__modules__par__schemas__Kpis"
+          },
+          "missing": {
+            "items": {
+              "$ref": "#/components/schemas/MissingOut"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "now": {
+            "format": "date-time",
+            "title": "Now",
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/app__modules__par__schemas__SettingOut"
+          },
+          "sitreps": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__par__schemas__SitrepOut"
+            },
+            "title": "Sitreps",
+            "type": "array"
+          },
+          "teams": {
+            "items": {
+              "$ref": "#/components/schemas/TeamOut"
+            },
+            "title": "Teams",
+            "type": "array"
+          }
+        },
+        "required": [
+          "incident_id",
+          "incident_kind",
+          "incident_status",
+          "gouvernorat_code",
+          "settings",
+          "kpis",
+          "teams",
+          "missing",
+          "sitreps",
+          "events",
+          "all_out",
+          "closure",
+          "now"
+        ],
+        "title": "Board",
         "type": "object"
       },
       "BodyIn": {
@@ -6923,6 +7047,25 @@
         "title": "CharterOut",
         "type": "object"
       },
+      "CheckAllIn": {
+        "properties": {
+          "reason": {
+            "enum": [
+              "collapse",
+              "defensive",
+              "evacuation",
+              "commander"
+            ],
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "CheckAllIn",
+        "type": "object"
+      },
       "CheckIn": {
         "additionalProperties": false,
         "properties": {
@@ -7453,6 +7596,45 @@
         "title": "ClassificationOut",
         "type": "object"
       },
+      "ClosureOut": {
+        "properties": {
+          "automatic": {
+            "title": "Automatic",
+            "type": "boolean"
+          },
+          "closed_at": {
+            "format": "date-time",
+            "title": "Closed At",
+            "type": "string"
+          },
+          "closed_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed By Name"
+          },
+          "summary": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Summary",
+            "type": "object"
+          }
+        },
+        "required": [
+          "closed_at",
+          "closed_by_name",
+          "automatic",
+          "summary"
+        ],
+        "title": "ClosureOut",
+        "type": "object"
+      },
       "CodeIn": {
         "additionalProperties": false,
         "properties": {
@@ -7851,7 +8033,7 @@
           },
           "sitreps": {
             "items": {
-              "$ref": "#/components/schemas/SitrepOut"
+              "$ref": "#/components/schemas/app__modules__crisis__schemas__SitrepOut"
             },
             "title": "Sitreps",
             "type": "array"
@@ -12947,6 +13129,35 @@
         "title": "EmailOut",
         "type": "object"
       },
+      "EnterIn": {
+        "properties": {
+          "task": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task"
+          },
+          "zone": {
+            "enum": [
+              "hot",
+              "warm"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "zone"
+        ],
+        "title": "EnterIn",
+        "type": "object"
+      },
       "EntryFields": {
         "properties": {
           "access": {
@@ -14560,7 +14771,7 @@
         "title": "ExerciseOut",
         "type": "object"
       },
-      "ExitIn": {
+      "ExitIn-Output": {
         "properties": {
           "fast": {
             "maximum": 3600.0,
@@ -22048,114 +22259,6 @@
         "title": "IncidentPage",
         "type": "object"
       },
-      "IncidentRow": {
-        "properties": {
-          "axis_number": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Axis Number"
-          },
-          "category": {
-            "title": "Category",
-            "type": "string"
-          },
-          "classification": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Classification"
-          },
-          "closed_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Closed At"
-          },
-          "delegation_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Delegation Id"
-          },
-          "gouvernorat_code": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gouvernorat Code"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "opened_at": {
-            "format": "date-time",
-            "title": "Opened At",
-            "type": "string"
-          },
-          "ref": {
-            "title": "Ref",
-            "type": "string"
-          },
-          "severity": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Severity"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "ref",
-          "category",
-          "classification",
-          "severity",
-          "status",
-          "gouvernorat_code",
-          "delegation_id",
-          "opened_at",
-          "closed_at",
-          "axis_number"
-        ],
-        "title": "IncidentRow",
-        "type": "object"
-      },
       "IncidentSummary": {
         "properties": {
           "assignments_active": {
@@ -26233,57 +26336,18 @@
         "title": "MedicalOut",
         "type": "object"
       },
-      "MemberOut": {
+      "MemberIn": {
         "properties": {
-          "display_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Display Name"
-          },
-          "email": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Email"
-          },
-          "joined_at": {
-            "format": "date-time",
-            "title": "Joined At",
-            "type": "string"
-          },
-          "role": {
-            "$ref": "#/components/schemas/OrgRole"
-          },
-          "safety_officer": {
-            "default": false,
-            "title": "Safety Officer",
-            "type": "boolean"
-          },
-          "user_id": {
-            "format": "uuid",
-            "title": "User Id",
+          "member": {
+            "pattern": "^m[0-9]{1,2}$",
+            "title": "Member",
             "type": "string"
           }
         },
         "required": [
-          "user_id",
-          "display_name",
-          "email",
-          "role",
-          "joined_at"
+          "member"
         ],
-        "title": "MemberOut",
+        "title": "MemberIn",
         "type": "object"
       },
       "MemberRoleIn": {
@@ -27101,6 +27165,142 @@
         "title": "MineOut",
         "type": "object"
       },
+      "MissingIn": {
+        "properties": {
+          "member": {
+            "pattern": "^m[0-9]{1,2}$",
+            "title": "Member",
+            "type": "string"
+          },
+          "place": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place"
+          },
+          "resource": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Resource",
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource",
+          "member"
+        ],
+        "title": "MissingIn",
+        "type": "object"
+      },
+      "MissingOut": {
+        "properties": {
+          "carrier": {
+            "title": "Carrier",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "place": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place"
+          },
+          "recovered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recovered At"
+          },
+          "recovered_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recovered By Name"
+          },
+          "replacement_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replacement At"
+          },
+          "reported_at": {
+            "format": "date-time",
+            "title": "Reported At",
+            "type": "string"
+          },
+          "reported_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported By Name"
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string"
+          },
+          "team_id": {
+            "format": "uuid",
+            "title": "Team Id",
+            "type": "string"
+          },
+          "team_label": {
+            "title": "Team Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "team_id",
+          "team_label",
+          "resource",
+          "carrier",
+          "place",
+          "reported_at",
+          "reported_by_name",
+          "replacement_at",
+          "recovered_at",
+          "recovered_by_name"
+        ],
+        "title": "MissingOut",
+        "type": "object"
+      },
       "MissionFamily": {
         "description": "The parts of a mission in minutes, from the records of the operations rooms (phase S2).",
         "properties": {
@@ -27432,6 +27632,73 @@
           "items"
         ],
         "title": "MissionPage",
+        "type": "object"
+      },
+      "MissionPar": {
+        "description": "What the team leader's phone shows for one mission.",
+        "properties": {
+          "closed": {
+            "title": "Closed",
+            "type": "boolean"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "last_sitrep": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__par__schemas__SitrepOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "missing": {
+            "items": {
+              "$ref": "#/components/schemas/MissingOut"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "now": {
+            "format": "date-time",
+            "title": "Now",
+            "type": "string"
+          },
+          "resources": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Resources",
+            "type": "array"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/app__modules__par__schemas__SettingOut"
+          },
+          "team": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TeamOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "settings",
+          "team",
+          "missing",
+          "last_sitrep",
+          "closed",
+          "resources",
+          "now"
+        ],
+        "title": "MissionPar",
         "type": "object"
       },
       "MoveIn": {
@@ -28138,6 +28405,32 @@
           "missing_points"
         ],
         "title": "NextBadge",
+        "type": "object"
+      },
+      "NextIn": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "team_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id"
+          }
+        },
+        "required": [
+          "at"
+        ],
+        "title": "NextIn",
         "type": "object"
       },
       "NoInterventionIn": {
@@ -31271,6 +31564,50 @@
         "title": "PartyPatch",
         "type": "object"
       },
+      "PauseIn": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "reason": {
+            "enum": [
+              "danger_over",
+              "defensive",
+              "ops_stopped",
+              "comms_failure",
+              "other"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "team_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "PauseIn",
+        "type": "object"
+      },
       "PendingMember": {
         "properties": {
           "doctor_id": {
@@ -33295,7 +33632,7 @@
             "type": "array"
           },
           "exit": {
-            "$ref": "#/components/schemas/ExitIn"
+            "$ref": "#/components/schemas/ExitIn-Output"
           },
           "items": {
             "items": {
@@ -41122,78 +41459,64 @@
         "title": "SiteOut",
         "type": "object"
       },
-      "SitrepOut": {
+      "SitrepIn": {
         "properties": {
-          "assessment": {
-            "title": "Assessment",
-            "type": "string"
+          "reinforcement": {
+            "default": false,
+            "title": "Reinforcement",
+            "type": "boolean"
           },
-          "axis_id": {
-            "title": "Axis Id",
-            "type": "string"
-          },
-          "created_at": {
-            "format": "date-time",
-            "title": "Created At",
-            "type": "string"
-          },
-          "figures": {
-            "additionalProperties": true,
-            "title": "Figures",
-            "type": "object"
-          },
-          "id": {
-            "title": "Id",
-            "type": "string"
-          },
-          "number": {
-            "title": "Number",
-            "type": "integer"
-          },
-          "sent_at": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sent At"
-          },
-          "sent_by_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sent By Name"
-          },
-          "status": {
+          "situation": {
             "enum": [
-              "draft",
-              "sent"
+              "controlled",
+              "progress",
+              "not_controlled"
             ],
-            "title": "Status",
+            "title": "Situation",
             "type": "string"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "transcript": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript"
+          },
+          "voice_seconds": {
+            "anyOf": [
+              {
+                "maximum": 600.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Seconds"
           }
         },
         "required": [
-          "id",
-          "axis_id",
-          "number",
-          "figures",
-          "assessment",
-          "status",
-          "created_at",
-          "sent_by_name",
-          "sent_at"
+          "situation"
         ],
-        "title": "SitrepOut",
+        "title": "SitrepIn",
         "type": "object"
       },
       "SitrepSend": {
@@ -47332,6 +47655,207 @@
         "title": "TeamMemberOut",
         "type": "object"
       },
+      "TeamOut": {
+        "properties": {
+          "assignment_id": {
+            "format": "uuid",
+            "title": "Assignment Id",
+            "type": "string"
+          },
+          "away": {
+            "title": "Away",
+            "type": "integer"
+          },
+          "due_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due At"
+          },
+          "entered_at": {
+            "format": "date-time",
+            "title": "Entered At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "interval_s": {
+            "title": "Interval S",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_confirmed_at": {
+            "format": "date-time",
+            "title": "Last Confirmed At",
+            "type": "string"
+          },
+          "leader_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader Name"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__par__schemas__MemberOut"
+            },
+            "title": "Members",
+            "type": "array"
+          },
+          "next_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next At"
+          },
+          "out_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out At"
+          },
+          "out_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Count"
+          },
+          "pause_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pause Reason"
+          },
+          "paused_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paused At"
+          },
+          "present": {
+            "title": "Present",
+            "type": "integer"
+          },
+          "remaining_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining S"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "soon",
+              "late",
+              "alarm",
+              "missing",
+              "paused",
+              "out"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "task": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task"
+          },
+          "zone": {
+            "enum": [
+              "hot",
+              "warm"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "assignment_id",
+          "incident_id",
+          "label",
+          "task",
+          "zone",
+          "status",
+          "interval_s",
+          "due_at",
+          "remaining_s",
+          "last_confirmed_at",
+          "next_at",
+          "paused_at",
+          "pause_reason",
+          "out_at",
+          "out_count",
+          "entered_at",
+          "leader_name",
+          "members",
+          "present",
+          "away"
+        ],
+        "title": "TeamOut",
+        "type": "object"
+      },
       "TeamRecordIn": {
         "description": "The crew and what the mission used, as the team gives them (phase S2).",
         "properties": {
@@ -47413,6 +47937,25 @@
           "client_id"
         ],
         "title": "TeamRecordIn",
+        "type": "object"
+      },
+      "TeamsIn": {
+        "description": "One team, or every team of the incident inside the zone.",
+        "properties": {
+          "team_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id"
+          }
+        },
+        "title": "TeamsIn",
         "type": "object"
       },
       "Telemetry": {
@@ -55176,6 +55719,80 @@
         "title": "Point",
         "type": "object"
       },
+      "app__modules__crisis__schemas__SitrepOut": {
+        "properties": {
+          "assessment": {
+            "title": "Assessment",
+            "type": "string"
+          },
+          "axis_id": {
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "figures": {
+            "additionalProperties": true,
+            "title": "Figures",
+            "type": "object"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "sent_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent By Name"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "sent"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "axis_id",
+          "number",
+          "figures",
+          "assessment",
+          "status",
+          "created_at",
+          "sent_by_name",
+          "sent_at"
+        ],
+        "title": "SitrepOut",
+        "type": "object"
+      },
       "app__modules__decision__coverage__AlertOut": {
         "properties": {
           "baseline_minutes": {
@@ -56680,6 +57297,49 @@
           "deleted"
         ],
         "title": "DeleteOut",
+        "type": "object"
+      },
+      "app__modules__inspections__schemas__ExitIn": {
+        "properties": {
+          "fast": {
+            "maximum": 3600.0,
+            "minimum": 1.0,
+            "title": "Fast",
+            "type": "integer"
+          },
+          "fast_value": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Fast Value",
+            "type": "integer"
+          },
+          "ok": {
+            "maximum": 3600.0,
+            "minimum": 1.0,
+            "title": "Ok",
+            "type": "integer"
+          },
+          "ok_value": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Ok Value",
+            "type": "integer"
+          },
+          "slow_value": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Slow Value",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "fast",
+          "ok",
+          "fast_value",
+          "ok_value",
+          "slow_value"
+        ],
+        "title": "ExitIn",
         "type": "object"
       },
       "app__modules__inspections__schemas__ItemIn": {
@@ -61616,6 +62276,59 @@
         "title": "MaintenanceIn",
         "type": "object"
       },
+      "app__modules__orgs__schemas__MemberOut": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/OrgRole"
+          },
+          "safety_officer": {
+            "default": false,
+            "title": "Safety Officer",
+            "type": "boolean"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "display_name",
+          "email",
+          "role",
+          "joined_at"
+        ],
+        "title": "MemberOut",
+        "type": "object"
+      },
       "app__modules__orgs__schemas__Person": {
         "properties": {
           "email": {
@@ -61862,6 +62575,457 @@
           "at"
         ],
         "title": "Review",
+        "type": "object"
+      },
+      "app__modules__par__schemas__EventOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Name"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "team_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Team Id"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "kind",
+          "text",
+          "by_name",
+          "team_id"
+        ],
+        "title": "EventOut",
+        "type": "object"
+      },
+      "app__modules__par__schemas__ExitIn": {
+        "properties": {
+          "members": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Members",
+            "type": "array"
+          }
+        },
+        "required": [
+          "members"
+        ],
+        "title": "ExitIn",
+        "type": "object"
+      },
+      "app__modules__par__schemas__IncidentRow": {
+        "properties": {
+          "agents_in": {
+            "title": "Agents In",
+            "type": "integer"
+          },
+          "alarms": {
+            "title": "Alarms",
+            "type": "integer"
+          },
+          "closed": {
+            "title": "Closed",
+            "type": "boolean"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "incident_kind": {
+            "title": "Incident Kind",
+            "type": "string"
+          },
+          "last_sitrep": {
+            "anyOf": [
+              {
+                "enum": [
+                  "controlled",
+                  "progress",
+                  "not_controlled"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Sitrep"
+          },
+          "missing_open": {
+            "title": "Missing Open",
+            "type": "integer"
+          },
+          "teams_in": {
+            "title": "Teams In",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "incident_id",
+          "incident_kind",
+          "gouvernorat_code",
+          "teams_in",
+          "agents_in",
+          "alarms",
+          "missing_open",
+          "last_sitrep",
+          "closed"
+        ],
+        "title": "IncidentRow",
+        "type": "object"
+      },
+      "app__modules__par__schemas__Kpis": {
+        "properties": {
+          "agents_in": {
+            "title": "Agents In",
+            "type": "integer"
+          },
+          "missing_open": {
+            "title": "Missing Open",
+            "type": "integer"
+          },
+          "not_confirmed": {
+            "title": "Not Confirmed",
+            "type": "integer"
+          },
+          "teams_in": {
+            "title": "Teams In",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "agents_in",
+          "teams_in",
+          "not_confirmed",
+          "missing_open"
+        ],
+        "title": "Kpis",
+        "type": "object"
+      },
+      "app__modules__par__schemas__MemberOut": {
+        "properties": {
+          "away_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Away At"
+          },
+          "away_why": {
+            "anyOf": [
+              {
+                "enum": [
+                  "air",
+                  "water_fuel",
+                  "care",
+                  "rest",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Away Why"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          }
+        },
+        "required": [
+          "key",
+          "name"
+        ],
+        "title": "MemberOut",
+        "type": "object"
+      },
+      "app__modules__par__schemas__SettingIn": {
+        "properties": {
+          "auto_events": {
+            "items": {
+              "enum": [
+                "collapse",
+                "defensive",
+                "evacuation",
+                "severity"
+              ],
+              "type": "string"
+            },
+            "maxItems": 4,
+            "title": "Auto Events",
+            "type": "array"
+          },
+          "grace_s": {
+            "maximum": 180.0,
+            "minimum": 30.0,
+            "title": "Grace S",
+            "type": "integer"
+          },
+          "hot_s": {
+            "enum": [
+              300,
+              600,
+              900
+            ],
+            "title": "Hot S",
+            "type": "integer"
+          },
+          "warm_s": {
+            "enum": [
+              600,
+              900,
+              1200
+            ],
+            "title": "Warm S",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hot_s",
+          "warm_s",
+          "grace_s"
+        ],
+        "title": "SettingIn",
+        "type": "object"
+      },
+      "app__modules__par__schemas__SettingOut": {
+        "properties": {
+          "auto_events": {
+            "items": {
+              "enum": [
+                "collapse",
+                "defensive",
+                "evacuation",
+                "severity"
+              ],
+              "type": "string"
+            },
+            "maxItems": 4,
+            "title": "Auto Events",
+            "type": "array"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "grace_s": {
+            "maximum": 180.0,
+            "minimum": 30.0,
+            "title": "Grace S",
+            "type": "integer"
+          },
+          "hot_s": {
+            "enum": [
+              300,
+              600,
+              900
+            ],
+            "title": "Hot S",
+            "type": "integer"
+          },
+          "remind_s": {
+            "title": "Remind S",
+            "type": "integer"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "updated_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By Name"
+          },
+          "warm_s": {
+            "enum": [
+              600,
+              900,
+              1200
+            ],
+            "title": "Warm S",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hot_s",
+          "warm_s",
+          "grace_s",
+          "gouvernorat_code",
+          "remind_s"
+        ],
+        "title": "SettingOut",
+        "type": "object"
+      },
+      "app__modules__par__schemas__SitrepOut": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Name"
+          },
+          "edited": {
+            "title": "Edited",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "reinforcement": {
+            "title": "Reinforcement",
+            "type": "boolean"
+          },
+          "situation": {
+            "enum": [
+              "controlled",
+              "progress",
+              "not_controlled"
+            ],
+            "title": "Situation",
+            "type": "string"
+          },
+          "team_id": {
+            "format": "uuid",
+            "title": "Team Id",
+            "type": "string"
+          },
+          "team_label": {
+            "title": "Team Label",
+            "type": "string"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "voice_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Seconds"
+          }
+        },
+        "required": [
+          "id",
+          "team_id",
+          "team_label",
+          "at",
+          "situation",
+          "reinforcement",
+          "text",
+          "voice_seconds",
+          "edited",
+          "by_name"
+        ],
+        "title": "SitrepOut",
         "type": "object"
       },
       "app__modules__personnel__schemas__AgentIn": {
@@ -68251,6 +69415,114 @@
         "title": "Figures",
         "type": "object"
       },
+      "app__modules__window__schemas__IncidentRow": {
+        "properties": {
+          "axis_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Axis Number"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "delegation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegation Id"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ref",
+          "category",
+          "classification",
+          "severity",
+          "status",
+          "gouvernorat_code",
+          "delegation_id",
+          "opened_at",
+          "closed_at",
+          "axis_number"
+        ],
+        "title": "IncidentRow",
+        "type": "object"
+      },
       "app__modules__window__schemas__SearchOut": {
         "properties": {
           "delegated": {
@@ -68274,7 +69546,7 @@
           },
           "items": {
             "items": {
-              "$ref": "#/components/schemas/IncidentRow"
+              "$ref": "#/components/schemas/app__modules__window__schemas__IncidentRow"
             },
             "title": "Items",
             "type": "array"
@@ -71929,6 +73201,594 @@
         "summary": "Text Note",
         "tags": [
           "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par": {
+      "get": {
+        "operationId": "crew_par_api_v1_crew_missions__assignment_id__par_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Par",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/away": {
+      "post": {
+        "operationId": "crew_away_api_v1_crew_missions__assignment_id__par_away_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AwayIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Away",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/back": {
+      "post": {
+        "operationId": "crew_back_api_v1_crew_missions__assignment_id__par_back_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Back",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/confirm": {
+      "post": {
+        "operationId": "crew_confirm_api_v1_crew_missions__assignment_id__par_confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Confirm",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/enter": {
+      "post": {
+        "operationId": "crew_enter_api_v1_crew_missions__assignment_id__par_enter_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Enter",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/exit": {
+      "post": {
+        "operationId": "crew_exit_api_v1_crew_missions__assignment_id__par_exit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__par__schemas__ExitIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Exit",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/missing": {
+      "post": {
+        "operationId": "crew_missing_api_v1_crew_missions__assignment_id__par_missing_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MissingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Missing",
+        "tags": [
+          "crew",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/crew/missions/{assignment_id}/par/sitrep": {
+      "post": {
+        "operationId": "crew_sitrep_api_v1_crew_missions__assignment_id__par_sitrep_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assignment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Assignment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SitrepIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissionPar"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Sitrep",
+        "tags": [
+          "crew",
+          "par"
         ]
       }
     },
@@ -80524,7 +82384,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/MemberOut"
+                    "$ref": "#/components/schemas/app__modules__orgs__schemas__MemberOut"
                   },
                   "title": "Response List Members Api V1 Orgs  Org Id  Members Get",
                   "type": "array"
@@ -80644,7 +82504,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MemberOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__MemberOut"
                 }
               }
             },
@@ -80713,7 +82573,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MemberOut"
+                  "$ref": "#/components/schemas/app__modules__orgs__schemas__MemberOut"
                 }
               }
             },
@@ -90292,7 +92152,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SitrepOut"
+                  "$ref": "#/components/schemas/app__modules__crisis__schemas__SitrepOut"
                 }
               }
             },
@@ -90777,7 +92637,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SitrepOut"
+                  "$ref": "#/components/schemas/app__modules__crisis__schemas__SitrepOut"
                 }
               }
             },
@@ -106428,6 +108288,706 @@
         "summary": "Review Org",
         "tags": [
           "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents": {
+      "get": {
+        "operationId": "list_incidents_api_v1_staff_par_incidents_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "closed",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Closed",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/app__modules__par__schemas__IncidentRow"
+                  },
+                  "title": "Response List Incidents Api V1 Staff Par Incidents Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Incidents",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}": {
+      "get": {
+        "operationId": "get_board_api_v1_staff_par_incidents__incident_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Board",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/check-all": {
+      "post": {
+        "operationId": "check_all_api_v1_staff_par_incidents__incident_id__check_all_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckAllIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Check All",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/close": {
+      "post": {
+        "operationId": "close_api_v1_staff_par_incidents__incident_id__close_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Close",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/missing/{missing_id}/{action}": {
+      "post": {
+        "operationId": "missing_action_api_v1_staff_par_incidents__incident_id__missing__missing_id___action__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "missing_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Missing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "action",
+            "required": true,
+            "schema": {
+              "title": "Action",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Missing Action",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/next": {
+      "post": {
+        "operationId": "set_next_api_v1_staff_par_incidents__incident_id__next_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NextIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Next",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/next/clear": {
+      "post": {
+        "operationId": "clear_next_api_v1_staff_par_incidents__incident_id__next_clear_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Clear Next",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/pause": {
+      "post": {
+        "operationId": "pause_api_v1_staff_par_incidents__incident_id__pause_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PauseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Pause",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/resume": {
+      "post": {
+        "operationId": "resume_api_v1_staff_par_incidents__incident_id__resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Resume",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/incidents/{incident_id}/teams/{team_id}/{action}": {
+      "post": {
+        "operationId": "team_action_api_v1_staff_par_incidents__incident_id__teams__team_id___action__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "incident_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Incident Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "team_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Team Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "action",
+            "required": true,
+            "schema": {
+              "title": "Action",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Board"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Team Action",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      }
+    },
+    "/api/v1/staff/par/settings": {
+      "get": {
+        "operationId": "get_setting_api_v1_staff_par_settings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__par__schemas__SettingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Setting",
+        "tags": [
+          "staff",
+          "par"
+        ]
+      },
+      "put": {
+        "operationId": "put_setting_api_v1_staff_par_settings_put",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__par__schemas__SettingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__par__schemas__SettingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Setting",
+        "tags": [
+          "staff",
+          "par"
         ]
       }
     },

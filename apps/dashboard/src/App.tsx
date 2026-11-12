@@ -81,6 +81,7 @@ import {
   landingPath,
   canReadAddressWarnings,
   canReadLiaison,
+  canReadPar,
   canReadCallCards,
   canReadRoomGuide,
 } from "./lib/roles";
@@ -170,6 +171,7 @@ const AxesPage = page(() => import("./pages/AxesPage"), "AxesPage");
 const CallCardsPage = page(() => import("./pages/CallCardsPage"), "CallCardsPage");
 const AddressWarningsPage = page(() => import("./pages/AddressWarningsPage"), "AddressWarningsPage");
 const LiaisonPage = page(() => import("./pages/LiaisonPage"), "LiaisonPage");
+const ParPage = page(() => import("./pages/ParPage"), "ParPage");
 const RoomGuidePage = page(() => import("./pages/RoomGuidePage"), "RoomGuidePage");
 const RoomReportPage = page(
   () => import("./pages/RoomReportPage"),
@@ -446,6 +448,7 @@ export function AppRoutes() {
           path="liaison"
           element={gated(canReadLiaison, <LiaisonPage />)}
         />
+        <Route path="par" element={gated(canReadPar, <ParPage />)} />
         <Route
           path="room-guide"
           element={gated(canReadRoomGuide, <RoomGuidePage />)}

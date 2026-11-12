@@ -66,6 +66,8 @@ def button(key: str, names: Names, *routes: str, flags: str = "", act_as: Role |
 
 
 R = Role
+_PAR_I = "POST /par/incidents/{incident_id}"
+_PAR_M = "POST /@crew/missions/{assignment_id}/par"
 
 CATALOGUE: tuple[Spec, ...] = (
     # ------------------------------------------------------------------ operations
@@ -249,6 +251,44 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /liaison/incidents/{incident_id}/parties/{party_id}/calls",
             "POST /liaison/calls/{call_id}/follow-up-done",
             act_as=R.OPERATOR,
+        ),
+    ),
+    # Crew accountability in danger zones (OS7, Yamen 2026-11-12): the board of the teams inside, the timing of the
+    # checks, the pause, the missing resources, the word from the scene and the end of the check.
+    page(
+        "par",
+        "ops",
+        "/par",
+        ("تفقّد الأعوان في منطقة الخطر", "Contrôle des équipes en zone de danger", "Crew accountability"),
+        ("* /par",),
+        button(
+            "par.settings",
+            ("مدد التفقّد والتفقّد الآلي", "Intervalles et contrôles automatiques", "Intervals and automatic checks"),
+            "PUT /par/settings",
+            act_as=R.FIELD_COMMANDER,
+        ),
+        button(
+            "par.timing",
+            ("توقيت التفقّد القادم وإيقافه واستئنافه", "Prochain contrôle, pause, reprise", "Next check, pause"),
+            f"{_PAR_I}/next",
+            f"{_PAR_I}/next/clear",
+            f"{_PAR_I}/pause",
+            f"{_PAR_I}/resume",
+            f"{_PAR_I}/check-all",
+            act_as=R.FIELD_COMMANDER,
+        ),
+        button(
+            "par.teams",
+            ("نداء فريق وتأكيده وخروجه باللاسلكي", "Appel, confirmation, sortie par radio", "Radio call and confirm"),
+            f"{_PAR_I}/teams/{{team_id}}/{{action}}",
+            f"{_PAR_I}/missing/{{missing_id}}/{{action}}",
+            act_as=R.FIELD_COMMANDER,
+        ),
+        button(
+            "par.close",
+            ("إنهاء التفقّد وأرشفته", "Clore et archiver le contrôle", "End and archive the check"),
+            f"{_PAR_I}/close",
+            act_as=R.FIELD_COMMANDER,
         ),
     ),
     page(
@@ -1917,6 +1957,31 @@ CATALOGUE: tuple[Spec, ...] = (
             ("بدء النوبة وإنهاؤها", "Ouvrir et clore la garde", "Start and end the shift"),
             "POST /@crew/shifts",
             "POST /@crew/shifts/current/end",
+            act_as=R.TEAM_LEADER,
+        ),
+    ),
+    # The danger-zone check of the team leader (OS7).
+    page(
+        "field_par",
+        "field_app",
+        "",
+        ("التفقّد في منطقة الخطر", "Contrôle en zone de danger", "Danger-zone check"),
+        ("* /@crew/missions/{assignment_id}/par",),
+        button(
+            "field_par.check",
+            ("الدخول والتأكيد والخروج المؤقت", "Entrée, confirmation, sortie temporaire", "Enter, confirm, away"),
+            f"{_PAR_M}/enter",
+            f"{_PAR_M}/confirm",
+            f"{_PAR_M}/away",
+            f"{_PAR_M}/back",
+            f"{_PAR_M}/exit",
+            act_as=R.TEAM_LEADER,
+        ),
+        button(
+            "field_par.report",
+            ("مورد مفقود وردّ الخبر", "Ressource manquante et compte rendu", "Missing resource and sitrep"),
+            f"{_PAR_M}/missing",
+            f"{_PAR_M}/sitrep",
             act_as=R.TEAM_LEADER,
         ),
     ),

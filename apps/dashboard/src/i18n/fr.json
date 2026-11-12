@@ -99,7 +99,8 @@
     "inspections": "Inspections périodiques",
     "inspectionResults": "Résultats des inspections",
     "inspectionAdmin": "Suppression des inspections",
-    "liaison": "Système de contact"
+    "liaison": "Système de contact",
+    "par": "Contrôle des équipes"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -10082,6 +10083,176 @@
       "who": "Organisme et responsable",
       "detail": "Demande et engagement",
       "none": "Aucun appel."
+    }
+  },
+  "par": {
+    "title": "Contrôle des équipes en zone de danger",
+    "intro": "Suivi des équipes dans la zone de danger : le temps restant à chaque équipe pour confirmer qu'elle est au complet, les sorties temporaires, les ressources manquantes et le compte rendu du terrain. Le commandant des opérations et la salle fixent le prochain contrôle, le suspendent avec un motif et le reprennent.",
+    "tab": {
+      "live": "Intervention en cours",
+      "settings": "Réglages du contrôle",
+      "archive": "Archives"
+    },
+    "noTeams": "Aucune équipe en zone de danger.",
+    "noArchive": "Aucun contrôle archivé.",
+    "row": {
+      "teams": "{{n}} équipes",
+      "agents": "{{n}} agents",
+      "alarms": "{{n}} alarmes",
+      "missing": "{{n}} ressources manquantes"
+    },
+    "board": {
+      "title": "Tableau du contrôle",
+      "alarm": "{{team}} n'a pas confirmé · retard {{late}} · appelez par radio"
+    },
+    "closure": {
+      "manual": "Contrôle clos et archivé avec l'intervention",
+      "automatic": "Contrôle clos automatiquement à la clôture de l'intervention",
+      "summary": "{{at}} · {{by}} · {{teams}} équipes · {{agents}} agents · retiré du suivi en direct"
+    },
+    "kpi": {
+      "agents": "agents en zone de danger",
+      "teams": "équipes dans la zone",
+      "notConfirmed": "équipes non confirmées",
+      "missing": "ressources manquantes"
+    },
+    "status": {
+      "ok": "Confirmé",
+      "soon": "Contrôle imminent",
+      "late": "Délai de grâce",
+      "alarm": "Non confirmé",
+      "missing": "Ressource manquante",
+      "paused": "Contrôle suspendu",
+      "out": "Sorti de la zone"
+    },
+    "zone": {
+      "hot": "Zone chaude",
+      "warm": "Zone tiède"
+    },
+    "team": {
+      "label": "Équipe",
+      "present": "{{present}} sur {{total}}",
+      "due": "avant le prochain contrôle",
+      "paused": "Suspendu · {{reason}}",
+      "special": "heure fixée {{at}}",
+      "last": "dernière confirmation {{at}}",
+      "out": "Sortie complète {{at}} · {{n}} agents",
+      "members": "Équipage",
+      "radio": "Appel radio",
+      "confirm": "Confirmé par radio",
+      "recordOut": "Enregistrer la sortie"
+    },
+    "away": {
+      "air": "Recharge d'air",
+      "water_fuel": "Eau ou carburant",
+      "care": "Soins",
+      "rest": "Repos",
+      "other": "Autre tâche"
+    },
+    "missing": {
+      "title": "Ressource manquante",
+      "carrier": "portée par {{name}} ({{team}})",
+      "open": "Manquante",
+      "replacementSent": "Remplacement envoyé",
+      "recovered": "Récupérée {{at}}",
+      "sendReplacement": "Envoyer un remplacement",
+      "markRecovered": "Ressource récupérée"
+    },
+    "sitrep": {
+      "title": "Compte rendu du terrain",
+      "none": "Aucun compte rendu.",
+      "reinforcement": "Renfort demandé",
+      "voice": "Message vocal transcrit",
+      "voiceEdited": "Vocal transcrit puis corrigé"
+    },
+    "situation": {
+      "controlled": "Maîtrisé",
+      "progress": "En voie de maîtrise",
+      "not_controlled": "Non maîtrisé"
+    },
+    "log": {
+      "title": "Journal du contrôle",
+      "kept": "Le journal est archivé avec l'intervention."
+    },
+    "allTeams": "Toutes les équipes de la zone",
+    "next": {
+      "title": "Heure du prochain contrôle",
+      "help": "Le commandant ou la salle fixe une heure au lieu de l'intervalle habituel ; ensuite l'intervalle reprend.",
+      "choose": "Choisir l'heure",
+      "pickTitle": "Heure et minute",
+      "now": "maintenant {{at}}",
+      "plus": "+{{n}} min",
+      "hour": "Heure",
+      "minute": "Minute",
+      "ok": "Valider",
+      "apply": "Appliquer",
+      "none": "Aucune heure fixée : l'intervalle habituel s'applique.",
+      "set": "{{team}} : prochain contrôle {{at}}",
+      "clear": "Annuler"
+    },
+    "pause": {
+      "title": "Suspendre le contrôle",
+      "help": "Le compteur s'arrête avec un motif, inscrit au journal ; à la reprise il repart d'où il s'était arrêté.",
+      "reason": "Motif",
+      "detail": "Précisez le motif",
+      "button": "Suspendre",
+      "resume": "Reprendre"
+    },
+    "pauseWhy": {
+      "danger_over": "Danger écarté dans la zone",
+      "defensive": "Passage en défensive à l'extérieur",
+      "ops_stopped": "Opérations arrêtées",
+      "comms_failure": "Panne de transmission ou d'application",
+      "other": "Autre motif"
+    },
+    "checkAll": {
+      "title": "Contrôle général immédiat",
+      "help": "Demande à toutes les équipes de confirmer tout de suite. Choisissez le motif, inscrit au journal."
+    },
+    "checkAllWhy": {
+      "collapse": "Effondrement ou explosion",
+      "defensive": "Passage en défensive",
+      "evacuation": "Ordre d'évacuation",
+      "commander": "Demande du commandant"
+    },
+    "end": {
+      "title": "Clore le contrôle",
+      "ready": "Toutes les équipes sont sorties : le contrôle sera archivé.",
+      "notYet": "Possible quand toutes les équipes sont sorties et les ressources récupérées ; clos automatiquement avec l'intervention.",
+      "button": "Clore et archiver"
+    },
+    "settings": {
+      "interval": "Intervalle entre deux contrôles",
+      "hotHelp": "Dans le bâtiment, fumée, effondrement, noyade",
+      "warmHelp": "Abords, alimentation en eau, soutien",
+      "grace": "Délai de grâce",
+      "graceHelp": "Après l'échéance, avant l'alarme",
+      "seconds": "s",
+      "minutes": "{{n}} min",
+      "appliesNext": "Le nouvel intervalle s'applique aux équipes présentes dès leur prochain contrôle.",
+      "auto": "Contrôle automatique sur événement",
+      "updated": "Modifié le {{at}} · {{by}}",
+      "readOnly": "Modifiables par le commandant et la salle régionale.",
+      "save": "Enregistrer",
+      "saved": "Réglages enregistrés."
+    },
+    "autoEvent": {
+      "collapse": "Effondrement ou explosion",
+      "defensive": "Passage en défensive",
+      "evacuation": "Ordre d'évacuation",
+      "severity": "Hausse de la gravité"
+    },
+    "error": {
+      "time_passed": "Cette heure est passée.",
+      "time_too_far": "Plus de 12 heures à l'avance.",
+      "reason_detail_required": "Précisez le motif.",
+      "teams_inside": "Des équipes sont encore dans la zone.",
+      "missing_open": "Une ressource manque encore.",
+      "par_closed": "Le contrôle de cette intervention est clos.",
+      "team_not_inside": "L'équipe est sortie.",
+      "team_out": "L'équipe est sortie.",
+      "paused": "Le contrôle est suspendu.",
+      "gouvernorat_required": "Choisissez le gouvernorat."
     }
   }
 }

@@ -13275,6 +13275,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The server refused ({code}).'**
   String inspErrGeneric(String code);
+
+  /// No description provided for @parTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger-zone check'**
+  String get parTitle;
+
+  /// No description provided for @parEnterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Before going into the danger zone, start the timer: the room sees your team and you confirm it is complete at every check.'**
+  String get parEnterHint;
+
+  /// No description provided for @parEnterHot.
+  ///
+  /// In en, this message translates to:
+  /// **'We enter the hot zone'**
+  String get parEnterHot;
+
+  /// No description provided for @parEnterWarm.
+  ///
+  /// In en, this message translates to:
+  /// **'We enter the warm zone'**
+  String get parEnterWarm;
+
+  /// No description provided for @parClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Check ended and archived with the intervention'**
+  String get parClosed;
+
+  /// No description provided for @parPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Check paused by the commander or the room'**
+  String get parPaused;
+
+  /// No description provided for @parLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} to the next check'**
+  String parLeft(String time);
+
+  /// No description provided for @parUntilCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'to the next check'**
+  String get parUntilCheck;
+
+  /// No description provided for @parZoneHot.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot zone · every {min} min'**
+  String parZoneHot(int min);
+
+  /// No description provided for @parZoneWarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm zone · every {min} min'**
+  String parZoneWarm(int min);
+
+  /// No description provided for @parLastConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last confirmed {time}'**
+  String parLastConfirmed(String time);
+
+  /// No description provided for @parSetTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Set time {time}'**
+  String parSetTime(String time);
+
+  /// No description provided for @parOutAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of the zone at {time}'**
+  String parOutAt(String time);
+
+  /// No description provided for @parCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew in the zone ({n})'**
+  String parCrew(int n);
+
+  /// No description provided for @parLeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Team leader'**
+  String get parLeader;
+
+  /// No description provided for @parAway.
+  ///
+  /// In en, this message translates to:
+  /// **'Out for a while'**
+  String get parAway;
+
+  /// No description provided for @parBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get parBack;
+
+  /// No description provided for @parAwayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Out: {why}'**
+  String parAwayNow(String why);
+
+  /// No description provided for @parAwayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why is {name} out?'**
+  String parAwayTitle(String name);
+
+  /// No description provided for @parAwayNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Not counted at the checks until back; the room sees it.'**
+  String get parAwayNote;
+
+  /// No description provided for @parAwayAir.
+  ///
+  /// In en, this message translates to:
+  /// **'Air refill'**
+  String get parAwayAir;
+
+  /// No description provided for @parAwayWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Water or fuel'**
+  String get parAwayWater;
+
+  /// No description provided for @parAwayCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Care'**
+  String get parAwayCare;
+
+  /// No description provided for @parAwayRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get parAwayRest;
+
+  /// No description provided for @parAwayOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other task'**
+  String get parAwayOther;
+
+  /// No description provided for @parAllHere.
+  ///
+  /// In en, this message translates to:
+  /// **'All here now'**
+  String get parAllHere;
+
+  /// No description provided for @parSitrep.
+  ///
+  /// In en, this message translates to:
+  /// **'Word from the scene'**
+  String get parSitrep;
+
+  /// No description provided for @parMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing resource'**
+  String get parMissing;
+
+  /// No description provided for @parWeAreOut.
+  ///
+  /// In en, this message translates to:
+  /// **'We are out'**
+  String get parWeAreOut;
+
+  /// No description provided for @parMissingLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing: {resource} · with {name}'**
+  String parMissingLine(String resource, String name);
+
+  /// No description provided for @parMissingWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'What is missing?'**
+  String get parMissingWhat;
+
+  /// No description provided for @parMissingWho.
+  ///
+  /// In en, this message translates to:
+  /// **'Who had it?'**
+  String get parMissingWho;
+
+  /// No description provided for @parMissingPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Last known place (optional)'**
+  String get parMissingPlace;
+
+  /// No description provided for @parAddResource.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a resource or equipment'**
+  String get parAddResource;
+
+  /// No description provided for @parMissingSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Report the missing resource'**
+  String get parMissingSend;
+
+  /// No description provided for @parSitrepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Is the incident under control?'**
+  String get parSitrepTitle;
+
+  /// No description provided for @parSituationControlled.
+  ///
+  /// In en, this message translates to:
+  /// **'Under control'**
+  String get parSituationControlled;
+
+  /// No description provided for @parSituationProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Being brought under control'**
+  String get parSituationProgress;
+
+  /// No description provided for @parSituationNot.
+  ///
+  /// In en, this message translates to:
+  /// **'Not under control'**
+  String get parSituationNot;
+
+  /// No description provided for @parReinforcement.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for reinforcement'**
+  String get parReinforcement;
+
+  /// No description provided for @parSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak: turned into text'**
+  String get parSpeak;
+
+  /// No description provided for @parSitrepText.
+  ///
+  /// In en, this message translates to:
+  /// **'Message (typed)'**
+  String get parSitrepText;
+
+  /// No description provided for @parSitrepCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'The text heard: correct it before sending'**
+  String get parSitrepCorrect;
+
+  /// No description provided for @parSitrepSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to the commander and the room'**
+  String get parSitrepSend;
+
+  /// No description provided for @parLastWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Last word sent: {situation}'**
+  String parLastWord(String situation);
+
+  /// No description provided for @parExitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Headcount at the exit: {out} of {all}'**
+  String parExitTitle(int out, int all);
+
+  /// No description provided for @parExitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick every member out of the zone: the timer stops only when everyone is out.'**
+  String get parExitHint;
+
+  /// No description provided for @parExitSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone is out'**
+  String get parExitSend;
+
+  /// No description provided for @parHeadcountIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'A member is still inside'**
+  String get parHeadcountIncomplete;
+
+  /// No description provided for @parNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The check is filed with the intervention when it ends.'**
+  String get parNote;
+
+  /// No description provided for @parFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent: check the network and try again'**
+  String get parFailed;
 }
 
 class _AppLocalizationsDelegate

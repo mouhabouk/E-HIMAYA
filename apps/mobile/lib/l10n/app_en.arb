@@ -3933,5 +3933,146 @@
         "type": "String"
       }
     }
-  }
+  },
+  "parTitle": "Danger-zone check",
+  "parEnterHint": "Before going into the danger zone, start the timer: the room sees your team and you confirm it is complete at every check.",
+  "parEnterHot": "We enter the hot zone",
+  "parEnterWarm": "We enter the warm zone",
+  "parClosed": "Check ended and archived with the intervention",
+  "parPaused": "Check paused by the commander or the room",
+  "parLeft": "{time} to the next check",
+  "@parLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "parUntilCheck": "to the next check",
+  "parZoneHot": "Hot zone · every {min} min",
+  "@parZoneHot": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "parZoneWarm": "Warm zone · every {min} min",
+  "@parZoneWarm": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "parLastConfirmed": "Last confirmed {time}",
+  "@parLastConfirmed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "parSetTime": "Set time {time}",
+  "@parSetTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "parOutAt": "Out of the zone at {time}",
+  "@parOutAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "parCrew": "Crew in the zone ({n})",
+  "@parCrew": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "parLeader": "Team leader",
+  "parAway": "Out for a while",
+  "parBack": "Back",
+  "parAwayNow": "Out: {why}",
+  "@parAwayNow": {
+    "placeholders": {
+      "why": {
+        "type": "String"
+      }
+    }
+  },
+  "parAwayTitle": "Why is {name} out?",
+  "@parAwayTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parAwayNote": "Not counted at the checks until back; the room sees it.",
+  "parAwayAir": "Air refill",
+  "parAwayWater": "Water or fuel",
+  "parAwayCare": "Care",
+  "parAwayRest": "Rest",
+  "parAwayOther": "Other task",
+  "parAllHere": "All here now",
+  "parSitrep": "Word from the scene",
+  "parMissing": "Missing resource",
+  "parWeAreOut": "We are out",
+  "parMissingLine": "Missing: {resource} · with {name}",
+  "@parMissingLine": {
+    "placeholders": {
+      "resource": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parMissingWhat": "What is missing?",
+  "parMissingWho": "Who had it?",
+  "parMissingPlace": "Last known place (optional)",
+  "parAddResource": "Add a resource or equipment",
+  "parMissingSend": "Report the missing resource",
+  "parSitrepTitle": "Is the incident under control?",
+  "parSituationControlled": "Under control",
+  "parSituationProgress": "Being brought under control",
+  "parSituationNot": "Not under control",
+  "parReinforcement": "Ask for reinforcement",
+  "parSpeak": "Speak: turned into text",
+  "parSitrepText": "Message (typed)",
+  "parSitrepCorrect": "The text heard: correct it before sending",
+  "parSitrepSend": "Send to the commander and the room",
+  "parLastWord": "Last word sent: {situation}",
+  "@parLastWord": {
+    "placeholders": {
+      "situation": {
+        "type": "String"
+      }
+    }
+  },
+  "parExitTitle": "Headcount at the exit: {out} of {all}",
+  "@parExitTitle": {
+    "placeholders": {
+      "out": {
+        "type": "int"
+      },
+      "all": {
+        "type": "int"
+      }
+    }
+  },
+  "parExitHint": "Tick every member out of the zone: the timer stops only when everyone is out.",
+  "parExitSend": "Everyone is out",
+  "parHeadcountIncomplete": "A member is still inside",
+  "parNote": "The check is filed with the intervention when it ends.",
+  "parFailed": "Not sent: check the network and try again"
 }

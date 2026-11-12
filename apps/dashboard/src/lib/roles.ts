@@ -731,6 +731,11 @@ export function canReadLiaison(roles: readonly string[]): boolean {
   return any(READ_ROLES, roles);
 }
 
+/** Crew accountability in danger zones (PAR, OS7, optional module): the rooms and the operations commander. */
+export function canReadPar(roles: readonly string[]): boolean {
+  return any(READ_ROLES, roles);
+}
+
 /** Guided call-taking cards (OS2): the rooms read them, the Office writes, validates and approves them. */
 export const CALL_CARD_READ_ROLES = ["operator", "ops_manager", "content_editor", "medical_coordinator"] as const;
 

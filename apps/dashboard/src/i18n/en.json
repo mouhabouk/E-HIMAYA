@@ -99,7 +99,8 @@
     "inspections": "Periodic inspections",
     "inspectionResults": "Room inspection results",
     "inspectionAdmin": "Delete inspections",
-    "liaison": "Contact system"
+    "liaison": "Contact system",
+    "par": "Crew accountability"
   },
   "header": {
     "scope": "Geographic scope",
@@ -10082,6 +10083,176 @@
       "who": "Body and official",
       "detail": "Asked and promised",
       "none": "No call yet."
+    }
+  },
+  "par": {
+    "title": "Crew accountability in danger zones",
+    "intro": "The teams inside the danger zone: the time each has left to confirm that it is complete, members out for a while, missing resources and the word from the scene. The operations commander and the room set the next check, pause it with a reason and resume it.",
+    "tab": {
+      "live": "Current intervention",
+      "settings": "Check settings",
+      "archive": "Archive"
+    },
+    "noTeams": "No team inside a danger zone now.",
+    "noArchive": "No archived check yet.",
+    "row": {
+      "teams": "{{n}} teams",
+      "agents": "{{n}} members",
+      "alarms": "{{n}} alarms",
+      "missing": "{{n}} missing resources"
+    },
+    "board": {
+      "title": "Check board",
+      "alarm": "{{team}} has not confirmed · late {{late}} · call it by radio"
+    },
+    "closure": {
+      "manual": "Check ended and archived with the intervention",
+      "automatic": "Check ended automatically when the intervention was closed",
+      "summary": "{{at}} · {{by}} · {{teams}} teams · {{agents}} members · off the live follow-up"
+    },
+    "kpi": {
+      "agents": "members in the danger zone",
+      "teams": "teams in the zone",
+      "notConfirmed": "teams not confirmed",
+      "missing": "missing resources"
+    },
+    "status": {
+      "ok": "Confirmed",
+      "soon": "Check due soon",
+      "late": "Grace period",
+      "alarm": "Not confirmed",
+      "missing": "Missing resource",
+      "paused": "Check paused",
+      "out": "Out of the zone"
+    },
+    "zone": {
+      "hot": "Hot zone",
+      "warm": "Warm zone"
+    },
+    "team": {
+      "label": "Team",
+      "present": "{{present}} of {{total}}",
+      "due": "to the next check",
+      "paused": "Paused · {{reason}}",
+      "special": "set time {{at}}",
+      "last": "last confirmed {{at}}",
+      "out": "All out {{at}} · {{n}} members",
+      "members": "Crew",
+      "radio": "Radio call",
+      "confirm": "Confirmed by radio",
+      "recordOut": "Record the exit"
+    },
+    "away": {
+      "air": "Air refill",
+      "water_fuel": "Water or fuel",
+      "care": "Care",
+      "rest": "Rest",
+      "other": "Other task"
+    },
+    "missing": {
+      "title": "Missing resource",
+      "carrier": "carried by {{name}} ({{team}})",
+      "open": "Missing",
+      "replacementSent": "Replacement sent",
+      "recovered": "Recovered {{at}}",
+      "sendReplacement": "Send a replacement",
+      "markRecovered": "Resource recovered"
+    },
+    "sitrep": {
+      "title": "Word from the scene",
+      "none": "No word from the scene yet.",
+      "reinforcement": "Reinforcement asked",
+      "voice": "Voice message transcribed",
+      "voiceEdited": "Voice transcribed, then corrected"
+    },
+    "situation": {
+      "controlled": "Under control",
+      "progress": "Being brought under control",
+      "not_controlled": "Not under control"
+    },
+    "log": {
+      "title": "Check log",
+      "kept": "The log is filed with the intervention."
+    },
+    "allTeams": "Every team in the zone",
+    "next": {
+      "title": "Time of the next check",
+      "help": "The commander or the room sets a time instead of the usual interval; after that check the interval resumes.",
+      "choose": "Pick the time",
+      "pickTitle": "Hour and minute",
+      "now": "now {{at}}",
+      "plus": "+{{n}} min",
+      "hour": "Hour",
+      "minute": "Minute",
+      "ok": "OK",
+      "apply": "Apply",
+      "none": "No set time: the usual interval applies.",
+      "set": "{{team}}: next check {{at}}",
+      "clear": "Cancel"
+    },
+    "pause": {
+      "title": "Pause the check",
+      "help": "The timer stops with a reason, logged; on resuming it goes on from where it stopped.",
+      "reason": "Reason",
+      "detail": "State the reason",
+      "button": "Pause",
+      "resume": "Resume"
+    },
+    "pauseWhy": {
+      "danger_over": "Danger over in the zone",
+      "defensive": "Defensive, outside the building",
+      "ops_stopped": "Operations stopped",
+      "comms_failure": "Communication or app failure",
+      "other": "Other reason"
+    },
+    "checkAll": {
+      "title": "Immediate general check",
+      "help": "Asks every team in the zone to confirm now. Pick the reason; it is logged."
+    },
+    "checkAllWhy": {
+      "collapse": "Collapse or explosion",
+      "defensive": "Switch to defensive",
+      "evacuation": "Evacuation order",
+      "commander": "Commander's request"
+    },
+    "end": {
+      "title": "End the check",
+      "ready": "Every team is out: the check is archived with the intervention.",
+      "notYet": "Possible once every team is out and every resource recovered; it closes by itself with the intervention.",
+      "button": "End and archive"
+    },
+    "settings": {
+      "interval": "Interval between checks",
+      "hotHelp": "Inside the building, smoke, collapse, water",
+      "warmHelp": "Around the building, water supply, support",
+      "grace": "Grace period",
+      "graceHelp": "After the time, before the alarm",
+      "seconds": "s",
+      "minutes": "{{n}} min",
+      "appliesNext": "The new interval applies to the teams inside from their next check.",
+      "auto": "Automatic check on events",
+      "updated": "Changed {{at}} · {{by}}",
+      "readOnly": "Changed by the operations commander and the regional room.",
+      "save": "Save",
+      "saved": "Settings saved."
+    },
+    "autoEvent": {
+      "collapse": "Collapse or explosion",
+      "defensive": "Switch to defensive",
+      "evacuation": "Evacuation order",
+      "severity": "Severity raised"
+    },
+    "error": {
+      "time_passed": "That time has passed.",
+      "time_too_far": "More than 12 hours ahead.",
+      "reason_detail_required": "State the reason.",
+      "teams_inside": "Teams are still inside.",
+      "missing_open": "A resource is still missing.",
+      "par_closed": "This intervention's check has ended.",
+      "team_not_inside": "The team is out.",
+      "team_out": "The team is out.",
+      "paused": "The check is paused.",
+      "gouvernorat_required": "Pick the gouvernorat."
     }
   }
 }

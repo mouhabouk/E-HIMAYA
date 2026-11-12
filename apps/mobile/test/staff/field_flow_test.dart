@@ -543,4 +543,55 @@ void main() {
       expect(server.proposals.single['description'], 'A dog in the yard');
     },
   );
+
+  testWidgets('the danger-zone check of the team leader (OS7)', (tester) async {
+    final server = await onMission();
+    await openMission(tester, server);
+    await reveal(tester, 'open-par');
+    await tester.tap(find.byKey(const Key('open-par')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('par-enter-hot')));
+    await tester.pumpAndSettle();
+    expect(server.parCalls.last.$1, 'enter');
+    expect(server.parCalls.last.$2, {'zone': 'hot'});
+    expect(find.text('10:00'), findsOneWidget);
+    expect(find.text('Hot zone · every 10 min'), findsOneWidget);
+
+    // A member out for air, then back.
+    await tester.tap(find.byKey(const Key('par-away-m1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('par-why-air')));
+    await tester.pumpAndSettle();
+    expect(server.parCalls.last.$1, 'away');
+    expect(server.parCalls.last.$2, {'member': 'm1', 'why': 'air'});
+    expect(find.text('Out: Air refill'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('par-back-m1')));
+    await tester.pumpAndSettle();
+    expect(server.parCalls.last.$1, 'back');
+
+    // The headcount must be complete before «we are out».
+    await tester.tap(find.byKey(const Key('par-exit')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('par-out-m0')));
+    await tester.tap(find.byKey(const Key('par-out-m1')));
+    await tester.pump();
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const Key('par-exit-send')))
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(find.byKey(const Key('par-out-m2')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('par-exit-send')));
+    await tester.pumpAndSettle();
+    expect(server.parCalls.last.$1, 'exit');
+    expect((server.parCalls.last.$2['members'] as List).toSet(), {
+      'm0',
+      'm1',
+      'm2',
+    });
+    expect(find.byKey(const Key('par-enter-warm')), findsOneWidget);
+  });
 }
