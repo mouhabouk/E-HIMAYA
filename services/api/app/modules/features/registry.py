@@ -5,8 +5,10 @@ the ``require_roles`` dependencies of its routes, so they follow the code; check
 a gouvernorat, the access matrix) still apply on top.
 """
 
+import json
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from fastapi.routing import APIRoute, iter_route_contexts
@@ -54,6 +56,61 @@ _PREFERENCE = (
 )
 
 
+# The menu's one source (apps/dashboard/src/menu/menu.json, copied here by scripts/menu/sync.py): 20 systems in 4
+# blocks (Yamen 2026-11-13). The administrator hides, suspends or grants a whole system at once.
+MENU_FILE = Path(__file__).with_name("menu.json")
+# A system's feature key: ``system.<key>`` (the key pattern of access.feature_rule; no page is called «system»).
+SYSTEM_PREFIX = "system."
+
+
+@dataclass(frozen=True)
+class System:
+    key: str
+    number: int
+    block: str
+    names: Names
+    # The dashboard paths of its entries (aliases left out, planned entries kept).
+    paths: tuple[str, ...]
+    planned: tuple[str, ...]
+
+
+def load_menu(path: Path = MENU_FILE) -> dict[str, Any]:
+    menu: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    return menu
+
+
+def menu_systems(menu: dict[str, Any] | None = None) -> tuple[System, ...]:
+    menu = menu or load_menu()
+    out = []
+    for block in menu["blocks"]:
+        for s in block["systems"]:
+            names = s["names"]
+            own = [i for i in s["items"] if not i.get("alias")]
+            out.append(
+                System(
+                    key=s["key"],
+                    number=s["number"],
+                    block=block["key"],
+                    names=(names["ar"], names["fr"], names["en"]),
+                    paths=tuple(i["path"] for i in own if not i.get("planned")),
+                    planned=tuple(i["path"] for i in own if i.get("planned")),
+                )
+            )
+    return tuple(out)
+
+
+def system_of_nav(systems: Sequence[System], nav: str | None) -> str | None:
+    """The system of a dashboard path: the one listing it, else the one listing the longest path above it."""
+    if not nav or nav == "/":
+        return None
+    best: tuple[int, str] | None = None
+    for s in systems:
+        for p in s.paths:
+            if (nav == p or nav.startswith(p.rstrip("/") + "/")) and (best is None or len(p) > best[0]):
+                best = (len(p), s.key)
+    return best[1] if best else None
+
+
 @dataclass(frozen=True)
 class Feature:
     key: str
@@ -68,6 +125,8 @@ class Feature:
     roles: frozenset[Role]
     act_as: Role | None
     routes: tuple[str, ...]
+    # The menu system it belongs to (``system.<key>`` is its feature), None outside the dashboard menu.
+    system: str | None = None
 
 
 @dataclass(frozen=True)
@@ -79,6 +138,7 @@ class Registry:
     prefixes: tuple[tuple[str, str, str], ...]
     # Every route of the catalogue's surfaces: (method, path relative to the staff prefix or under a marker).
     routes: tuple[tuple[str, str], ...]
+    systems: tuple[System, ...] = ()
 
     def owner(self, method: str, path: str) -> str | None:
         """The key of the most specific feature guarding a route."""
@@ -91,14 +151,26 @@ class Registry:
         return key
 
     def match(self, method: str, path: str) -> list[Feature]:
-        """The features guarding a route, most specific first (button or tab, then its page); empty if none."""
+        """The features guarding a route, most specific first (button or tab, then its page, then its system)."""
         key = self.owner(method, path)
+        return self.chain(key) if key is not None else []
+
+    def chain(self, key: str) -> list[Feature]:
+        """A feature, its page, and the system of the most specific of them that has one."""
         chain: list[Feature] = []
-        while key is not None:
-            feature = self.features[key]
+        k: str | None = key
+        while k is not None:
+            feature = self.features[k]
             chain.append(feature)
-            key = feature.parent
+            k = feature.parent
+        system = next((f.system for f in chain if f.system), None)
+        if system is not None and chain[0].kind != "system":
+            chain.append(self.features[SYSTEM_PREFIX + system])
         return chain
+
+    def system_pages(self, system: str) -> list[Feature]:
+        """The pages of a system, and the tabs of other pages that show in its menu."""
+        return [f for f in self.features.values() if f.kind in ("page", "tab") and f.system == system]
 
 
 def _method_ok(rule: str, method: str) -> bool:
@@ -175,7 +247,8 @@ def build(api_routes: Iterable[Any]) -> Registry:
             for spec_route in child.routes:
                 exact[_split(spec_route)] = child.key
     prefixes.sort(key=lambda p: -len(p[1]))
-    registry = Registry({}, tuple(s.key for s, _ in specs), exact, tuple(prefixes), tuple(route_roles))
+    systems = menu_systems()
+    registry = Registry({}, tuple(s.key for s, _ in specs), exact, tuple(prefixes), tuple(route_roles), systems)
 
     owned: dict[str, list[frozenset[Role] | None]] = {}
     for method, path in route_roles:
@@ -203,6 +276,23 @@ def build(api_routes: Iterable[Any]) -> Registry:
             roles=roles,
             act_as=_act_as(spec, flags, required),
             routes=spec.routes,
+            # A tab shown in the menu of another system belongs there (the locations to verify, under the GIS).
+            system=system_of_nav(systems, spec.nav) or (system_of_nav(systems, parent.nav) if parent else None),
+        )
+    for s in systems:
+        registry.features[SYSTEM_PREFIX + s.key] = Feature(
+            key=SYSTEM_PREFIX + s.key,
+            kind="system",
+            names=s.names,
+            page=SYSTEM_PREFIX + s.key,
+            parent=None,
+            flags=frozenset(),
+            nav=None,
+            group=s.key,
+            roles=frozenset(),
+            act_as=None,
+            routes=(),
+            system=s.key,
         )
     return registry
 

@@ -76,6 +76,13 @@ jobs:
       - name: Bundled emergency guide drift
         run: uv run python ../../scripts/guide_seed.py --check
 
+      # The menu of 20 systems in 4 blocks (2026-11-13): the API's copy is the dashboard's source, every entry opens a
+      # screen and every screen is reached from the menu.
+      - name: Menu drift
+        run: |
+          python3 ../../scripts/menu/sync.py --check
+          python3 ../../scripts/menu/check.py
+
       - name: Validate procedures library
         working-directory: services/api
         run: uv run python -m app.modules.decision.cli check ../../docs/procedures

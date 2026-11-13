@@ -1,67 +1,18 @@
-// The main menu (phase UI-3, docs/phase-ui3/design-menu.md): the same links under the same role rules as before,
-// in eight groups (phase N split the disasters from the command). Grouped, each group is a disclosure button that opens a glass panel on hover, click or keyboard;
-// flat, every link shows at once. At the top of the page or in a side bar, as the user chose in the account menu.
+// The main menu (phase UI-3, docs/phase-ui3/design-menu.md), rebuilt on 2026-11-13 (Yamen) as 20 systems in 4 blocks
+// read from one source, src/menu/menu.json. Grouped, each block is a disclosure button that opens a glass panel with
+// its systems on hover, click or keyboard; flat, every link shows at once. At the top of the page or in a side bar, as
+// the user chose in the account menu.
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { matchPath, NavLink, useLocation } from "react-router";
-import type { TFunction } from "i18next";
+import i18next, { type TFunction } from "i18next";
 import { Icon, IconTile, type IconName, type Tone } from "./Icon";
 import type { StaffIdentity as Identity } from "../auth/identity";
-import { canReadSystemTrail } from "../lib/systemApi";
-import { canUseSqlConsole } from "../lib/sqlApi";
-import { canUseDevTools } from "../lib/repoMap";
-import {
-  canEditAiSettings,
-  canReadModelCards,
-  canOpenLearning,
-  canEditTips,
-  canHandleContact,
-  canManageAccounts,
-  canManageMedicalCommittee,
-  canManagePermissions,
-  canMonitorPerformance,
-  canOpenAxes,
-  canOpenDisasters,
-  canOpenBreakGlass,
-  canOpenCoastal,
-  canOpenCommand,
-  canManageFieldAgents,
-  canOpenCrew,
-  canOpenInventory,
-  canOpenLayers,
-  canOpenProgrammes,
-  canOpenRegister,
-  canOpenSchedule,
-  canOpenSnacr,
-  canOpenWindowFull,
-  canReadAnalytics,
-  canReadKnowledge,
-  canReadOrgs,
-  canReadPersonnel,
-  canManageInspections,
-  canReadInspectionResults,
-  canAdministerInspections,
-  canReviewOrgs,
-  canReadPlatformSettings,
-  canReadResources,
-  canReadRewards,
-  canReadScopedAudit,
-  canReviewDoctors,
-  canReviewWeatherSuggestions,
-  canSeeNationalQueues,
-  canUseNotifications,
-  hasReadAccess,
-  isCommittee,
-  canReadAddressWarnings,
-  canReadLiaison,
-  canReadPar,
-  canReadCallCards,
-  canReadRoomGuide,
-  canReadCoverage,
-  canReadFleet,
-} from "../lib/roles";
+import { isLanguage, type Language } from "../i18n";
 import type { MenuPosition, MenuShape } from "../lib/menu";
 import { allowed, featureOfPath, type FeatureAccess } from "../lib/features";
+import { localized } from "../lib/localized";
+import { BLOCK_OF, gateAllows, MENU, SYSTEMS, type MenuItemSpec } from "../menu/menu";
 
 export interface NavEntry {
   to: string;
@@ -69,465 +20,88 @@ export interface NavEntry {
   icon: IconName;
   tone: Tone;
   label: string;
+  /** A sub-heading inside the system (the developer tools inside the settings). */
+  section?: string;
 }
 
 export interface NavGroup {
+  /** The system's key (menu.json), or "home" for the first screen outside every system. */
   key: string;
+  /** The block the system belongs to (operational, support, partner spaces, mother boards). */
+  block: string;
+  number?: number;
   icon: IconName;
   tone: Tone;
   label: string;
   items: NavEntry[];
+  /** The administrator suspended the whole system: its message, shown in place of its links. */
+  suspended?: string;
 }
 
-/** The links the user's roles can open (the API enforces the same rules), in their groups; empty groups dropped. */
+function currentLanguage(): Language {
+  const lng = i18next.resolvedLanguage ?? i18next.language;
+  return isLanguage(lng) ? lng : "ar";
+}
+
+/** The links the user's roles can open (the API enforces the same rules), in their systems; empty systems dropped. */
 export function navGroups(
   identity: Identity,
   t: TFunction,
   access?: FeatureAccess,
   windowOpen?: boolean,
   strategies: readonly NavEntry[] = [],
+  lang: Language = currentLanguage(),
 ): NavGroup[] {
-  const roles = identity.roles;
-  const reads = hasReadAccess(roles);
-  const knowledge = canReadKnowledge(roles);
-  const analytics = canReadAnalytics(roles);
-  const editsTips = canEditTips(roles);
-  const orgs = canReadOrgs(roles);
+  const ctx = { windowOpen };
   // The administrator's rules (L4 §8): a hidden page leaves the menu, a granted one joins it.
-  const e = (
-    show: boolean,
-    to: string,
-    icon: IconName,
-    tone: Tone,
-    key: string,
-    end?: boolean,
-  ): NavEntry[] =>
-    (access ? allowed(access, featureOfPath(to), show) : show)
-      ? [{ to, end, icon, tone, label: t(`nav.${key}`) }]
+  const entry = (spec: MenuItemSpec, byRole: boolean): NavEntry[] =>
+    !spec.planned && !spec.tabOf && (access ? allowed(access, featureOfPath(spec.path), byRole) : byRole)
+      ? [
+          {
+            to: spec.path,
+            end: spec.end,
+            icon: spec.icon,
+            tone: spec.tone,
+            label: t(`nav.${spec.key}`),
+            ...(spec.section ? { section: spec.section } : {}),
+          },
+        ]
       : [];
+  const home = MENU.home;
   const groups: NavGroup[] = [
     {
-      key: "ops",
-      icon: "dashboard",
-      tone: "red",
-      label: t("nav.group.ops"),
-      items: [
-        ...e(reads, "/", "home", "navy", "home", true),
-        ...e(reads, "/reports", "description", "red", "reports"),
-        ...e(canReadRoomGuide(roles), "/room-guide", "menuBook", "navy", "roomGuide"),
-        ...e(canReadCallCards(roles), "/call-cards", "call", "red", "callCards"),
-        ...e(reads, "/incidents", "localFireDepartment", "red", "incidents"),
-        ...e(canReadAddressWarnings(roles), "/address-warnings", "warning", "amber", "addressWarnings"),
-        ...e(canReadLiaison(roles), "/liaison", "call", "teal", "liaison"),
-        // Crew accountability in danger zones (OS7).
-        ...e(canReadPar(roles), "/par", "groups", "red", "par"),
-        ...e(reads, "/map", "map", "teal", "map"),
-        ...e(reads, "/map/room", "monitoring", "red", "opsRoom"),
-        ...e(reads, "/streams", "videocam", "red", "streams"),
-        ...e(reads, "/calls", "call", "green", "calls"),
-        ...e(reads, "/sensors", "water", "sky", "sensors"),
-        ...e(reads, "/towers", "videocam", "orange", "towers"),
-        ...e(reads, "/drones", "drone", "purple", "drones"),
-        ...e(
-          reads,
-          "/resource-requests",
-          "inventory2",
-          "amber",
-          "resourceRequests",
-        ),
-        ...e(
-          canSeeNationalQueues(identity),
-          "/reports/late",
-          "schedule",
-          "orange",
-          "late",
-        ),
-        ...e(
-          canSeeNationalQueues(identity),
-          "/reports/geo-queue",
-          "wrongLocation",
-          "orange",
-          "geoQueue",
-        ),
-        ...e(
-          canReadResources(roles),
-          "/resources",
-          "localShipping",
-          "amber",
-          "resources",
-        ),
-        ...e(
-          canOpenInventory(roles),
-          "/inventory",
-          "inventory2",
-          "teal",
-          "inventory",
-        ),
-        ...e(canReadCoverage(roles), "/coverage", "crisisAlert", "red", "coverage"),
-        ...e(canOpenCrew(roles), "/crew", "groups", "green", "crew"),
-        ...e(
-          canManageFieldAgents(roles),
-          "/crew/agents",
-          "manageAccounts",
-          "green",
-          "fieldAgents",
-        ),
-        ...e(
-          canOpenSchedule(roles),
-          "/schedule",
-          "calendarMonth",
-          "teal",
-          "schedule",
-        ),
-      ],
+      key: "home",
+      block: "home",
+      icon: home.icon,
+      tone: home.tone,
+      label: t(`nav.${home.key}`),
+      items: entry(home, gateAllows(home.gate, identity, ctx)),
     },
-    {
-      // OS3 (Yamen 2026-11-11): the vehicles and their maintenance, a system of its own sharing the register.
-      key: "fleet",
-      icon: "localShipping",
-      tone: "amber",
-      label: t("nav.group.fleet"),
-      items: [
-        ...e(canReadFleet(roles), "/fleet", "dashboard", "amber", "fleetDashboard", true),
-        ...e(canReadFleet(roles), "/fleet/vehicles", "localShipping", "amber", "fleetVehicles"),
-        ...e(canReadFleet(roles), "/fleet/maintenance", "settings", "orange", "fleetMaintenance"),
-        ...e(canReadFleet(roles), "/fleet/archive", "folderOpen", "navy", "fleetArchive"),
-        ...e(canReadFleet(roles), "/fleet/log", "schedule", "teal", "fleetLog"),
-      ],
-    },
-    {
-      key: "crisis",
-      icon: "militaryTech",
-      tone: "navy",
-      label: t("nav.group.crisis"),
-      items: [
-        ...e(
-          windowOpen ?? canOpenWindowFull(identity),
-          "/window",
-          "insights",
-          "navy",
-          "window",
-        ),
-        ...e(
-          canOpenCommand(roles),
-          "/command",
-          "militaryTech",
-          "navy",
-          "command",
-        ),
-        ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
-        ...e(
-          canOpenRegister(roles),
-          "/register",
-          "folderOpen",
-          "navy",
-          "register",
-          true,
-        ),
-        ...e(
-          canOpenRegister(roles),
-          "/register/dispatches",
-          "campaign",
-          "red",
-          "dispatches",
-        ),
-        ...e(
-          isCommittee(roles) || canMonitorPerformance(roles),
-          "/committee",
-          "monitoring",
-          "navy",
-          "committee",
-        ),
-        ...e(
-          canOpenProgrammes(roles),
-          "/programmes",
-          "schedule",
-          "orange",
-          "programmes",
-        ),
-      ],
-    },
-    {
-      // Phase S (docs/phase-s/design-s.md §2): the strategies, gathered in one place. Each page also stays in its own
-      // group (the plans and programmes under command, the drills under disasters, the lessons under knowledge).
-      key: "strategies",
-      icon: "insights",
-      tone: "purple",
-      label: t("nav.group.strategies"),
-      items: [
-        ...e(true, "/strategies", "insights", "purple", "strategies", true),
-        ...e(canOpenSnacr(roles), "/snacr", "analytics", "purple", "snacr"),
-        ...e(canOpenRegister(roles), "/plans", "menuBook", "sky", "plans"),
-        ...e(
-          canOpenProgrammes(roles),
-          "/programmes",
-          "schedule",
-          "orange",
-          "programmes",
-        ),
-        ...e(false, "/drills", "militaryTech", "amber", "drills"),
-        ...e(knowledge, "/memory", "historyEdu", "purple", "lessons"),
-      ],
-    },
-    {
-      // Phase N (docs/phase-n/design-n.md §3): disasters and crises apart from the daily command.
-      key: "disasters",
-      icon: "crisisAlert",
-      tone: "red",
-      label: t("nav.group.disasters"),
-      items: [
-        ...e(
-          canOpenDisasters(roles),
-          "/disasters",
-          "warning",
-          "red",
-          "disasters",
-        ),
-        ...e(canOpenAxes(roles), "/axes", "crisisAlert", "red", "axes"),
-        ...e(
-          canOpenCoastal(roles),
-          "/coastal",
-          "healthAndSafety",
-          "sky",
-          "coastal",
-        ),
-        ...e(false, "/drills", "militaryTech", "amber", "drills"),
-      ],
-    },
-    {
-      key: "alerts",
-      icon: "campaign",
-      tone: "sky",
-      label: t("nav.group.alerts"),
-      items: [
-        ...e(
-          canUseNotifications(roles),
-          "/notifications",
-          "campaign",
-          "sky",
-          "notifications",
-        ),
-        ...e(
-          canReviewWeatherSuggestions(roles),
-          "/weather/suggestions",
-          "partlyCloudyDay",
-          "sky",
-          "weatherSuggestions",
-        ),
-        ...e(
-          editsTips,
-          "/safety-tips",
-          "healthAndSafety",
-          "green",
-          "safetyTips",
-        ),
-        ...e(
-          editsTips,
-          "/emergency-guide",
-          "medicalServices",
-          "red",
-          "emergencyGuide",
-        ),
-        ...e(canHandleContact(roles), "/contact", "mail", "sky", "contact"),
-      ],
-    },
-    {
-      key: "people",
-      icon: "volunteerActivism",
-      tone: "green",
-      label: t("nav.group.people"),
-      items: [
-        ...e(canReadPersonnel(roles), "/personnel", "manageAccounts", "navy", "personnel"),
-        ...e(canManageInspections(roles), "/inspections", "verified", "navy", "inspections"),
-        ...e(canReadInspectionResults(roles), "/inspection-results", "verified", "teal", "inspectionResults"),
-        ...e(reads, "/volunteers", "volunteerActivism", "green", "volunteers"),
-        ...e(
-          canReviewDoctors(roles),
-          "/doctors",
-          "stethoscope",
-          "purple",
-          "doctors",
-        ),
-        ...e(
-          canManageMedicalCommittee(identity),
-          "/medical-committee",
-          "groups",
-          "purple",
-          "medicalCommittee",
-        ),
-        ...e(
-          canReadRewards(roles),
-          "/rewards",
-          "militaryTech",
-          "pink",
-          "rewards",
-        ),
-      ],
-    },
-    {
-      key: "orgs",
-      icon: "apartment",
-      tone: "navy",
-      label: t("nav.group.orgs"),
-      items: [
-        ...e(orgs, "/orgs", "apartment", "navy", "orgs", true),
-        ...e(
-          canReviewOrgs(roles),
-          "/orgs/certificates",
-          "workspacePremium",
-          "amber",
-          "certificates",
-        ),
-        ...e(
-          orgs,
-          "/orgs/certificates/counter",
-          "verified",
-          "green",
-          "counter",
-        ),
-        ...e(
-          canReviewOrgs(roles),
-          "/orgs/prevention",
-          "policy",
-          "purple",
-          "prevention",
-        ),
-      ],
-    },
-    {
-      key: "knowledge",
-      icon: "insights",
-      tone: "purple",
-      label: t("nav.group.knowledge"),
-      items: [
-        ...e(analytics, "/analytics", "analytics", "navy", "analytics"),
-        ...e(
-          analytics,
-          "/reports-library",
-          "folderOpen",
-          "slate",
-          "reportsLibrary",
-        ),
-        ...e(
-          reads,
-          "/report-templates",
-          "description",
-          "purple",
-          "reportTemplates",
-        ),
-        ...e(knowledge, "/memory", "historyEdu", "purple", "memory"),
-        ...e(knowledge, "/library", "menuBook", "purple", "library"),
-      ],
-    },
-    {
-      key: "system",
-      icon: "adminPanelSettings",
-      tone: "slate",
-      label: t("nav.group.system"),
-      items: [
-        ...e(canOpenLayers(roles), "/layers", "layers", "teal", "layers"),
-        ...e(reads, "/references", "menuBook", "slate", "references"),
-        ...e(canAdministerInspections(roles), "/inspection-admin", "delete", "red", "inspectionAdmin"),
-        ...e(
-          canReadPlatformSettings(roles),
-          "/settings",
-          "settings",
-          "slate",
-          "settings",
-          true,
-        ),
-        ...e(
-          reads || canEditAiSettings(identity),
-          "/settings/ai",
-          "smartToy",
-          "slate",
-          "aiSettings",
-          true,
-        ),
-        ...e(
-          canReadModelCards(identity),
-          "/settings/ai/models",
-          "science",
-          "slate",
-          "modelCards",
-        ),
-        ...e(
-          canOpenLearning(identity),
-          "/settings/ai/learning",
-          "science",
-          "slate",
-          "learning",
-        ),
-        ...e(
-          canManageAccounts(identity),
-          "/accounts",
-          "manageAccounts",
-          "slate",
-          "accounts",
-        ),
-        ...e(
-          canReadScopedAudit(identity),
-          "/audit",
-          "policy",
-          "slate",
-          "audit",
-        ),
-        ...e(
-          canReadSystemTrail(identity),
-          "/system-logs",
-          "monitoring",
-          "slate",
-          "systemLogs",
-        ),
-        ...e(
-          canReadSystemTrail(identity),
-          "/changes",
-          "historyEdu",
-          "slate",
-          "changes",
-        ),
-        ...e(
-          canOpenBreakGlass(identity),
-          "/break-glass",
-          "lockOpen",
-          "red",
-          "breakGlass",
-        ),
-        ...e(
-          canManagePermissions(identity),
-          "/permissions",
-          "adminPanelSettings",
-          "slate",
-          "permissions",
-        ),
-      ],
-    },
-    // The «تطوير النظام» menu (Yamen, 2026-11-09): the SQL window and the system map, for the national administrator.
-    {
-      key: "dev",
-      icon: "code",
-      tone: "slate",
-      label: t("nav.group.dev"),
-      items: [
-        ...e(canUseSqlConsole(identity), "/sql", "database", "slate", "sqlConsole"),
-        ...e(canUseDevTools(identity), "/dev/map", "hub", "navy", "repoMap"),
-      ],
-    },
+    ...SYSTEMS.map((s) => {
+      const message = access?.suspended?.[s.key];
+      const byRole = s.items.filter((i) => !i.planned && !i.tabOf && gateAllows(i.gate, identity, ctx));
+      const group: NavGroup = {
+        key: s.key,
+        block: BLOCK_OF[s.key] ?? "",
+        number: s.number,
+        icon: s.icon,
+        tone: s.tone,
+        label: localized(s.names, lang),
+        items: s.items.flatMap((i) => entry(i, gateAllows(i.gate, identity, ctx))),
+      };
+      // Suspended (phase 2026-11-13): the system stays in the menu of those who could open it, with the message.
+      if (message && byRole.length > 0) return { ...group, items: [], suspended: localized(message, lang) };
+      return group;
+    }),
   ];
   // The items the system administrator added (their own page, or a page of the platform not already listed).
   const own = groups.find((g) => g.key === "strategies");
-  if (own) {
-    own.items.push(
-      ...strategies.filter((s) => !own.items.some((i) => i.to === s.to)),
-    );
+  if (own && !own.suspended) {
+    own.items.push(...strategies.filter((s) => !groups.some((g) => g.items.some((i) => i.to === s.to))));
     // The overview alone is no menu, except for the administrator who adds the items.
-    if (
-      own.items.length === 1 &&
-      !(identity.national && roles.includes("sysadmin"))
-    )
-      own.items = [];
+    if (own.items.length === 1 && !(identity.national && identity.roles.includes("sysadmin"))) own.items = [];
   }
-  return groups.filter((g) => g.items.length > 0);
+  return groups.filter((g) => g.items.length > 0 || g.suspended);
 }
 
 function NavItem({ entry }: { entry: NavEntry }) {
@@ -645,9 +219,87 @@ export function Disclosure({
   );
 }
 
-function GroupMenu({ group, rail }: { group: NavGroup; rail: boolean }) {
+/** The links of one system, with its sub-headings (the developer tools), or the administrator's suspension message. */
+function SystemLinks({ group }: { group: NavGroup }) {
+  const { t } = useTranslation();
+  if (group.suspended)
+    return (
+      <p className="nav-system__suspended" role="note">
+        <Icon name="lockOpen" size={16} /> {t("nav.suspended")}: {group.suspended}
+      </p>
+    );
+  const plain = group.items.filter((i) => !i.section);
+  const sections = [...new Set(group.items.flatMap((i) => (i.section ? [i.section] : [])))];
+  return (
+    <>
+      <ul>
+        {plain.map((entry) => (
+          <li key={entry.to}>
+            <NavItem entry={entry} />
+          </li>
+        ))}
+      </ul>
+      {sections.map((s) => (
+        <div key={s} className="nav-system__section">
+          <p className="nav-system__subtitle">{t(`nav.section.${s}`)}</p>
+          <ul>
+            {group.items
+              .filter((i) => i.section === s)
+              .map((entry) => (
+                <li key={entry.to}>
+                  <NavItem entry={entry} />
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function SystemTitle({ group }: { group: NavGroup }) {
+  return (
+    <p className="nav-system__title">
+      <IconTile name={group.icon} tone={group.tone} size="sm" />
+      <span>
+        {group.number !== undefined && <span className="nav-system__number">{group.number}.</span>} {group.label}
+      </span>
+    </p>
+  );
+}
+
+export interface NavBlock {
+  key: string;
+  icon: IconName;
+  tone: Tone;
+  label: string;
+  systems: NavGroup[];
+}
+
+/** The systems in their blocks, in the order given (the administrator's order); a block with no system dropped. */
+export function navBlocks(groups: readonly NavGroup[], lang: Language = currentLanguage()): NavBlock[] {
+  const out: NavBlock[] = [];
+  for (const g of groups) {
+    let block = out.find((b) => b.key === g.block);
+    if (!block) {
+      const spec = MENU.blocks.find((b) => b.key === g.block);
+      block = {
+        key: g.block,
+        icon: spec?.icon ?? g.icon,
+        tone: spec?.tone ?? g.tone,
+        label: spec ? localized(spec.names, lang) : g.label,
+        systems: [],
+      };
+      out.push(block);
+    }
+    block.systems.push(g);
+  }
+  return out;
+}
+
+function BlockMenu({ block, rail }: { block: NavBlock; rail: boolean }) {
   const { pathname } = useLocation();
-  const only = group.items.length === 1 ? group.items[0] : undefined;
+  const only = block.systems.length === 1 && block.systems[0]?.items.length === 1 ? block.systems[0].items[0] : undefined;
   if (only) {
     return (
       <div className="nav-group nav-group--single">
@@ -658,39 +310,28 @@ function GroupMenu({ group, rail }: { group: NavGroup; rail: boolean }) {
   return (
     <Disclosure
       className="nav-group"
-      panelClassName="nav-group__panel"
-      active={isActive(group, pathname)}
+      panelClassName={`nav-group__panel nav-block__panel nav-block__panel--${Math.min(block.systems.length, 4)}`}
+      active={block.systems.some((g) => isActive(g, pathname))}
       label={
         <>
-          <IconTile name={group.icon} tone={group.tone} size="sm" />
-          <span className="nav-group__label">{group.label}</span>
+          <IconTile name={block.icon} tone={block.tone} size="sm" />
+          <span className="nav-group__label">{block.label}</span>
           {!rail && <Icon name="expandMore" size={18} />}
         </>
       }
     >
       <p className="nav-group__title" aria-hidden="true">
-        {group.label}
+        {block.label}
       </p>
-      <ul>
-        {group.items.map((entry) => (
-          <li key={entry.to}>
-            <NavItem entry={entry} />
-          </li>
+      <div className="nav-block__systems">
+        {block.systems.map((g) => (
+          <section key={g.key} className="nav-system" aria-label={g.label} data-system={g.key}>
+            <SystemTitle group={g} />
+            <SystemLinks group={g} />
+          </section>
         ))}
-      </ul>
+      </div>
     </Disclosure>
-  );
-}
-
-/** In one flat row, a page the strategies gather from another group is shown once, under its own name and place. */
-function firstOf(
-  groups: readonly NavGroup[],
-  entry: NavEntry,
-  group: NavGroup,
-): boolean {
-  return (
-    group.key !== "strategies" ||
-    !groups.some((g) => g !== group && g.items.some((i) => i.to === entry.to))
   );
 }
 
@@ -704,33 +345,34 @@ export function MainNav({
   shape: MenuShape;
   position: MenuPosition;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const side = position !== "top";
+  const blocks = navBlocks(groups, isLanguage(i18n.language) ? i18n.language : "ar");
   return (
     <nav
       aria-label={t("nav.main")}
       className={`main-nav main-nav--${shape} main-nav--${side ? "side" : "top"}`}
     >
       {shape === "grouped"
-        ? groups.map((g) => <GroupMenu key={g.key} group={g} rail={side} />)
+        ? blocks.map((b) => <BlockMenu key={b.key} block={b} rail={side} />)
         : groups.map((g) =>
             side ? (
-              <section
-                key={g.key}
-                className="main-nav__section"
-                aria-label={g.label}
-              >
+              <section key={g.key} className="main-nav__section" aria-label={g.label}>
                 <p className="main-nav__heading" aria-hidden="true">
+                  {g.number !== undefined ? `${g.number}. ` : ""}
                   {g.label}
                 </p>
-                {g.items.map((entry) => (
-                  <NavItem key={entry.to} entry={entry} />
-                ))}
+                {g.suspended ? (
+                  <SystemLinks group={g} />
+                ) : (
+                  g.items.map((entry) => <NavItem key={entry.to} entry={entry} />)
+                )}
               </section>
             ) : (
+              // At the top and flat, a page shown in two systems (an alias) is shown once.
               g.items
-                .filter((entry) => firstOf(groups, entry, g))
-                .map((entry) => <NavItem key={entry.to} entry={entry} />)
+                .filter((entry) => groups.find((o) => o.items.some((i) => i.to === entry.to)) === g)
+                .map((entry) => <NavItem key={`${g.key}:${entry.to}`} entry={entry} />)
             ),
           )}
     </nav>

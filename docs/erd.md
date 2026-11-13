@@ -38,6 +38,7 @@ erDiagram
         text revoke_reason
         uuid profile_id FK
         uuid profile_assignment_id
+        jsonb message
     }
     access__feature_profile ||--o{ access__feature_rule : "profile_id"
 ```

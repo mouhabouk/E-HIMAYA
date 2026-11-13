@@ -100,7 +100,27 @@
     "inspectionResults": "Room inspection results",
     "inspectionAdmin": "Delete inspections",
     "liaison": "Contact system",
-    "par": "Crew accountability"
+    "par": "Crew accountability",
+    "suspended": "Suspended",
+    "readiness": "Daily readiness level",
+    "shiftSwaps": "Shift swaps",
+    "selfRegistration": "Shift self-registration",
+    "forecast": "Forecast: fires and floods",
+    "vision": "Image and video analysis centre",
+    "citizens": "Citizens",
+    "adminBoard": "Mother board",
+    "systems": "Subsystems",
+    "menuOrder": "Menu order",
+    "section": {
+      "dev": "Developer tools"
+    },
+    "centreScreen": "Centre wall screen",
+    "exposure": "Exposed population and sites",
+    "damage": "Building damage assessment",
+    "shelters": "Hospital and shelter capacity",
+    "training": "Continuous training",
+    "consumables": "Consumables and expiry",
+    "cap": "CAP alert export"
   },
   "header": {
     "scope": "Geographic scope",
@@ -10253,6 +10273,190 @@
       "team_out": "The team is out.",
       "paused": "The check is paused.",
       "gouvernorat_required": "Pick the gouvernorat."
+    }
+  },
+  "systems": {
+    "title": "Subsystems",
+    "intro": "Act here on each of the twenty systems as a whole: hide it or suspend it with a message, grant it read only or read and write, rename it, change its colour and icon. The security rules stay a ceiling, every change is audited, and the default menu can be restored at any time.",
+    "toMenuOrder": "Move and order the entries",
+    "toPermissions": "Permissions of pages, tabs and buttons",
+    "target": "For whom",
+    "everyone": "Everyone",
+    "role": "Role",
+    "account": "Account",
+    "accountId": "Account identifier",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Every gouvernorat",
+    "close": "Hide or suspend",
+    "effect": {
+      "hide": "Hidden",
+      "suspend": "Suspended",
+      "grant": "Granted"
+    },
+    "message": {
+      "ar": "Message in Arabic",
+      "fr": "Message in French",
+      "en": "Message in English"
+    },
+    "until": "Until (optional)",
+    "reason": "Reason (audited)",
+    "apply": {
+      "hide": "Hide the system",
+      "suspend": "Suspend the system"
+    },
+    "applied": "Applied.",
+    "grant": "Grant the whole system",
+    "mode": {
+      "read": "Read only",
+      "write": "Read and write"
+    },
+    "ceiling": "What the security ceiling forbids (personal data for a governor or a minister, national pages for a regional account, accounts and the audit) is skipped and reported.",
+    "grantButton": "Grant",
+    "granted": "{{count}} items granted",
+    "skipped": "{{count}} skipped by the security ceiling",
+    "name": {
+      "ar": "Name in Arabic",
+      "fr": "Name in French",
+      "en": "Name in English"
+    },
+    "tone": "Colour",
+    "icon": "Icon",
+    "builtIn": "Default",
+    "tones": {
+      "red": "Red",
+      "navy": "Navy",
+      "purple": "Purple",
+      "green": "Green",
+      "amber": "Amber",
+      "teal": "Teal",
+      "slate": "Slate",
+      "pink": "Pink",
+      "sky": "Sky",
+      "orange": "Orange"
+    },
+    "saveLook": "Save the look",
+    "resetLook": "Back to its default look",
+    "revoke": "Revoke",
+    "revokeReason": "Revoked from the subsystems page",
+    "planned": "Planned",
+    "actions": {
+      "close": "Hide or suspend",
+      "grant": "Grant",
+      "look": "Name, colour and icon"
+    },
+    "saved": "Saved.",
+    "resetTitle": "Back to the default menu",
+    "resetIntro": "Clears the order, moves, names and colours saved: the menu is the source file's again. The hiding, suspension and grant rules stay; each is revoked on its own.",
+    "reset": "Restore the default"
+  },
+  "resourcesTabs": {
+    "resources": "Units and resources",
+    "inventory": "Inventory"
+  },
+  "boards": {
+    "period": "Period",
+    "hours": "Last {{n}} hours",
+    "days": "Last {{n}} days",
+    "at": "Time",
+    "gouvernorat": "Gouvernorat",
+    "open": "Open",
+    "danger": {
+      "high": "High danger",
+      "medium": "Medium danger",
+      "low": "Low danger"
+    },
+    "vision": {
+      "title": "Image and video analysis centre",
+      "intro": "What the vision models detected in the live streams, the towers, the drones and the reports' photos, with a first estimate of the danger. It supports the decision: the alert stays with a human.",
+      "kpis": "Detection figures",
+      "confirmed": "Confirmed detections",
+      "confirmedOne": "confirmed",
+      "watching": "Streams under watch",
+      "threshold": "Alert threshold: confidence {{value}}.",
+      "toStreams": "Live streams",
+      "empty": "No detection in this period.",
+      "table": "Latest detections",
+      "label": "Detected",
+      "confidence": "Confidence",
+      "danger": "Estimated danger",
+      "origin": "Source",
+      "report": "Report",
+      "reportImage": "Report photo"
+    },
+    "forecast": {
+      "title": "Forecasting",
+      "intro": "The fire danger (FWI) and the heavy rain of the next hours per gouvernorat, and the latest spread and flood forecasts of the incidents.",
+      "sim": "Simulated weather data: do not decide on it.",
+      "next": "The next {{n}} hours",
+      "empty": "No weather forecast yet.",
+      "table": "Forecast per gouvernorat",
+      "fireAt": "Peak danger",
+      "rain24": "24 h rain (mm)",
+      "gust": "Max gust (km/h)",
+      "runs": "Latest spread and flood forecasts",
+      "noRuns": "No forecast run yet.",
+      "incident": "Incident",
+      "model": "Model"
+    },
+    "citizens": {
+      "title": "Citizens",
+      "intro": "Figures about the citizens per gouvernorat, never an identity: reporters, reports kept and rejected, volunteers.",
+      "kpis": "Citizen figures",
+      "reporters": "Reporters",
+      "reports": "Reports",
+      "kept": "Reports that led to an intervention",
+      "rejected": "Rejected reports",
+      "volunteers": "Approved volunteers",
+      "accounts": "Citizen accounts",
+      "anonymous": "Anonymous accounts",
+      "rating": "App rating",
+      "privacy": "The gouvernorat is where the report was made; no identity shows here. Rewards go to volunteers, citizens and institutions:",
+      "empty": "No report in this period.",
+      "table": "Citizens per gouvernorat"
+    },
+    "admin": {
+      "title": "Administrator's board",
+      "intro": "The health of the services, the new accounts, the rules on the features and subsystems, and the latest changes.",
+      "services": "Services",
+      "service": {
+        "database": "Database",
+        "ai": "Artificial intelligence",
+        "vision": "Image analysis",
+        "telephony": "Telephony",
+        "notifications": "Notifications"
+      },
+      "state": {
+        "ok": "Running",
+        "error": "Error",
+        "unreachable": "Unreachable",
+        "not_configured": "Not configured (simulation)",
+        "real": "Real sending",
+        "simulated": "Simulation"
+      },
+      "activity": "Activity",
+      "accountsWeek": "New accounts this week",
+      "grants": "Active grants",
+      "hidden": "Hidden pages",
+      "assignments": "Assigned profiles",
+      "systems": "Subsystem rules",
+      "noSystemRules": "Every subsystem is open.",
+      "effect": {
+        "hide": "Hidden",
+        "suspend": "Suspended",
+        "grant": "Granted"
+      },
+      "target": {
+        "everyone": "Everyone",
+        "role": "Role",
+        "user": "User",
+        "gouvernorat": "Gouvernorat"
+      },
+      "until": "until {{at}}",
+      "recent": "Latest changes",
+      "noRecent": "No change recorded.",
+      "action": "Action",
+      "targetCol": "Target",
+      "reason": "Reason"
     }
   }
 }

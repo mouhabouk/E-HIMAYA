@@ -123,7 +123,8 @@ export function MenuOrderPage() {
   const save = useMutation({
     mutationFn: (groups: NavGroup[]) =>
       api.savePlatformSetting(MENU_ORDER_KEY, {
-        value: orderOf(groups),
+        // The names, colours and icons the administrator gave the systems are kept (the systems page sets them).
+        value: { ...orderOf(groups), systems: menuOrderOf(setting?.value).systems ?? {} },
         version: setting?.version ?? 0,
         reason: reason.trim(),
       }),

@@ -12,5 +12,7 @@ export function fakeFeaturesApi(): ReturnType<typeof featuresApi> {
     createFeatureRule: vi.fn(() => Promise.resolve(FIRST)),
     revokeFeatureRule: vi.fn(() => Promise.resolve({ ...FIRST, state: "revoked" as const })),
     featurePreview: vi.fn(() => Promise.resolve(PREVIEW)),
+    featureSystems: vi.fn(() => Promise.resolve([])),
+    grantFeatureSystem: vi.fn(() => Promise.resolve({ id: "a1", features: [], skipped: [] })),
   };
 }

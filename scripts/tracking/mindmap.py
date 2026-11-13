@@ -18,15 +18,40 @@ sys.path.insert(0, str(HERE))
 import requests as cur  # noqa: E402
 from build import collect  # noqa: E402
 
+sys.path.insert(0, str(HERE.parent / "menu"))
+from menu import label, load  # noqa: E402
+
+
+def menu_maps() -> tuple[dict[str, str], list[dict]]:
+    """One map per block of the dashboard menu (apps/dashboard/src/menu/menu.json): a branch per system, its entries as
+    leaves; a system still holding planned screens shows as approved, not done."""
+    groups: dict[str, str] = {}
+    rows: list[dict] = []
+    for block in load()["blocks"]:
+        g = f"menu_{block['key']}"
+        groups[g] = f"القائمة: {block['names']['ar']}"
+        for s in block["systems"]:
+            built = [label(i["key"]) for i in s["items"] if not i.get("planned") and not i.get("alias")]
+            planned = [f"{label(i['key'])} (قيد الإنجاز)" for i in s["items"] if i.get("planned")]
+            rows.append(
+                dict(g=g, code=str(s["number"]), title=s["names"]["ar"], kind="نظام", desc="، ".join(built + planned),
+                     status="approved" if planned else "done", size="L" if len(s["items"]) > 5 else "M",
+                     imp=4 if block["key"] == "operational" else 3, date="", ref="menu.json")
+            )
+    return groups, rows
+
 
 def main() -> None:
     out = Path(sys.argv[1])
     rows, nitems = collect()
-    data = {"groups": cur.G, "rows": rows, "built": date.today().isoformat(), "versions": nitems}
+    menu_groups, menu_rows = menu_maps()
+    groups = {**cur.G, **menu_groups}
+    rows = rows + menu_rows
+    data = {"groups": groups, "rows": rows, "built": date.today().isoformat(), "versions": nitems}
     viewer = (HERE.parent / "atlas" / "viewer.js").read_text(encoding="utf-8")
     html = (HERE / "mindmap.html").read_text(encoding="utf-8").replace("__VIEWER__", viewer)
     out.write_text(html.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8")
-    print(f"{len(cur.G)} mind maps, {len(rows)} items → {out}")
+    print(f"{len(groups)} mind maps, {len(rows)} items → {out}")
 
 
 if __name__ == "__main__":

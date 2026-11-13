@@ -268,9 +268,9 @@ describe("navigation and gates by role", () => {
       within(nav)
         .getAllByRole("button")
         .map((b) => b.textContent),
-    ).toEqual(["Établissements"]);
+    ).toEqual(["Espaces partenaires"]);
     fireEvent.click(
-      within(nav).getByRole("button", { name: "Établissements" }),
+      within(nav).getByRole("button", { name: "Espaces partenaires" }),
     );
     expect(
       within(nav)

@@ -74,6 +74,7 @@ def _rule_out(row: FeatureRule, now: datetime) -> schemas.RuleOut:
         revoked_at=row.revoked_at,
         revoked_by_name=row.revoked_by_name,
         revoke_reason=row.revoke_reason,
+        message=schemas.SystemMessage(**row.message) if row.message else None,
         state=state,
     )
 
@@ -89,11 +90,18 @@ async def mine(principal: AnyStaff) -> schemas.Mine:
     eff = service.effective(principal, rules, datetime.now(UTC))
     granted = [k for k, e in eff.items() if e.granted and not e.hidden]
     features = registry.get().features
+    now = datetime.now(UTC)
+    suspended = {
+        s.key: schemas.SystemMessage(**m)
+        for s in registry.get().systems
+        if (m := service.suspension(principal, s.key, rules, now)) is not None
+    }
     return schemas.Mine(
         granted=granted,
         hidden=[k for k, e in eff.items() if e.hidden],
         lent={k: act_as.value for k in granted if (act_as := features[k].act_as) is not None},
         announcement=schemas.Announcement(**message) if (message := await _announcement("dashboard")) else None,
+        suspended=suspended,
     )
 
 
@@ -137,12 +145,22 @@ def _check(principal: Principal, body: schemas.RuleIn, feature: Feature, now: da
     elif body.target_kind == "everyone":
         if body.target != "*" or body.gouvernorat_code is not None:
             raise _refuse("everyone_rule_is_global")
-        if body.effect != "hide":
+        if body.effect == "grant":
             raise _refuse("ceiling", reason="fixed")
     elif body.gouvernorat_code is not None:
         raise _refuse("user_rule_has_no_gouvernorat")
     if body.ends_at is not None and (body.ends_at <= now or (body.starts_at and body.ends_at <= body.starts_at)):
         raise _refuse("invalid_period")
+    if body.effect == "suspend":
+        # Only a whole system is suspended, and its users read why (2026-11-13).
+        if feature.kind != "system":
+            raise _refuse("suspend_needs_system")
+        if body.message is None or not any(v.strip() for v in body.message.model_dump().values()):
+            raise _refuse("suspend_needs_message")
+        return
+    if feature.kind == "system" and body.effect == "grant":
+        # A system is granted page by page, under the ceiling (POST /features/systems/{key}/grant).
+        raise _refuse("system_grant_by_pages")
     if body.effect == "hide":
         if "safety" in feature.flags and feature.group in (*PUBLIC_GROUPS, "field_app"):
             # The emergency report, the SOS, the crew's alerts: never hidden. (A dashboard safety feature such as the
@@ -189,6 +207,7 @@ async def create_rule(principal: Admin, session: Session, body: schemas.RuleIn) 
             created_by=audit.actor_of(principal),
             created_by_name=audit.name_of(principal),
             created_at=now,
+            message=body.message.model_dump() if body.effect == "suspend" and body.message else None,
         )
         session.add(row)
         await session.flush()
@@ -204,6 +223,7 @@ async def create_rule(principal: Admin, session: Session, body: schemas.RuleIn) 
                 "target": body.target,
                 "starts_at": body.starts_at.isoformat() if body.starts_at else None,
                 "ends_at": body.ends_at.isoformat() if body.ends_at else None,
+                **({"message": row.message} if row.message else {}),
             },
             gouvernorats=[body.gouvernorat_code] if body.gouvernorat_code else None,
         )
