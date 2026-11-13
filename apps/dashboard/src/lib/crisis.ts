@@ -289,6 +289,81 @@ export interface DirectiveBody {
   area?: Area | null;
 }
 
+// ---------------------------------------------------------------- OS14: people and places exposed on the axis area
+
+export type ExposureGroupKey = "health" | "elderly" | "education" | "hazardous" | "transport" | "gathering";
+export const EXPOSURE_GROUPS: readonly ExposureGroupKey[] = ["health", "elderly", "education", "hazardous", "transport", "gathering"];
+/** Only the sensitive groups are drawn as points on the maps; the others are counted in the axis tab. */
+export const DRAWN_GROUPS: readonly ExposureGroupKey[] = ["health", "elderly", "education"];
+/** Core (direct danger) and ring (warning band): the design-system emergency red and amber. */
+export const EXPOSURE_CORE = "#D7141A";
+export const EXPOSURE_RING = "#C78F00";
+
+export interface ExposurePlace {
+  name: string;
+  layer: string;
+  lat: number;
+  lon: number;
+  zone: "core" | "ring";
+}
+
+export interface ExposureGroup {
+  count: number;
+  core: number;
+  sensitive: boolean;
+  items: ExposurePlace[];
+}
+
+export interface ExposureBrief {
+  population: number;
+  core_population: number;
+  health: number;
+  elderly: number;
+  education: number;
+  lines_cut: number;
+  ring_m: number;
+  at: string;
+}
+
+export interface Exposure {
+  axis_id: string;
+  axis_number: string;
+  axis_name: string;
+  kind: string;
+  ring_m: number;
+  core_km2: number;
+  area_km2: number;
+  population: { estimate: number; low: number; high: number; core: number; core_low: number; core_high: number };
+  delegations: {
+    id: number;
+    name_ar: string;
+    name_fr: string;
+    gouvernorat_code: number;
+    population: number;
+    area_share: number;
+    low: number;
+    high: number;
+    estimate: number;
+    core: number;
+  }[];
+  groups: Record<ExposureGroupKey, ExposureGroup>;
+  lines: { layer: string; name: string; km: number; cut: boolean }[];
+  brief: ExposureBrief;
+  sources: { census: string; layers: { layer: string; to_verify: boolean }[] };
+  ring: Area | null;
+  computed_at: string;
+  computed_by: string | null;
+  stale: boolean;
+}
+
+export interface ExposureState {
+  estimate: Exposure | null;
+  default_ring_m: number;
+  rings: number[];
+  can_compute: boolean;
+  has_area: boolean;
+}
+
 export const crisisKeys = {
   all: ["crisis"] as const,
   axes: (status: "open" | "closed") => ["crisis", "axes", status] as const,
@@ -298,6 +373,8 @@ export const crisisKeys = {
   command: ["crisis", "command"] as const,
   boundaries: ["crisis", "boundaries"] as const,
   disasterMap: (ids: readonly string[]) => ["crisis", "disasterMap", ...ids] as const,
+  exposure: (id: string) => ["crisis", "exposure", id] as const,
+  exposureMap: ["crisis", "exposureMap"] as const,
 };
 
 const C = "/api/v1/staff/crisis";
@@ -367,6 +444,11 @@ export function crisisApi(api: ApiClient) {
       }),
     crisisCommand: (signal?: AbortSignal) => api.request<CommandOverview>(`${C}/command`, { signal }),
     crisisBoundaries: (signal?: AbortSignal) => api.request<FeatureCollection>(`${C}/boundaries`, { signal }),
+    crisisExposure: (id: string, signal?: AbortSignal) => api.request<ExposureState>(`${axis(id)}/exposure`, { signal }),
+    computeExposure: (id: string, ring_m: number | null) =>
+      api.request<Exposure>(`${axis(id)}/exposure`, { method: "POST", body: { ring_m } }),
+    crisisExposureMap: (signal?: AbortSignal) =>
+      api.request<{ items: Exposure[] }>(`${C}/exposure/map`, { signal }).then((b) => b.items),
   };
 }
 

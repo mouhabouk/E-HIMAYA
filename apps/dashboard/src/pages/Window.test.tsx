@@ -25,6 +25,8 @@ describe("WindowPage", () => {
     expect(await screen.findByText(/AX-2026-004 · \[SIM\] حرائق غابات نابل/)).toBeInTheDocument();
     expect(screen.getByText("[SIM] إخلاء المنازل المحاذية لغابة دار شيشو")).toBeInTheDocument();
     expect(screen.getByText("المخطط الساري: [SIM] مخطط مجابهة حرائق الغابات")).toBeInTheDocument();
+    // OS14: the people and places exposed on the axis area, read from the axis.
+    expect(screen.getByText(/≈ 18.000 ساكن/)).toBeInTheDocument();
     // AI4: an indicator out of its habit, calmly, with its explanation.
     const unusual = within(screen.getByRole("region", { name: /مؤشرات خارج عادتها/ }));
     expect(unusual.getByText(/المعتاد 14 ± 3/)).toBeInTheDocument();

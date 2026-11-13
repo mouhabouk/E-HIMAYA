@@ -983,6 +983,12 @@ CATALOGUE: tuple[Spec, ...] = (
             act_as=R.OPS_MANAGER,
         ),
         button(
+            "axes.exposure",
+            ("حساب المعرّضين للخطر", "Calcul de la population exposée", "Exposure estimate"),
+            "POST /crisis/axes/{axis_id}/exposure",
+            act_as=R.OPS_MANAGER,
+        ),
+        button(
             "axes.checklist",
             ("قراءة المخطط ومراجعة المهام", "Lecture du plan et revue des tâches", "Plan reading and task review"),
             "POST /crisis/axes/{axis_id}/checklist/read",

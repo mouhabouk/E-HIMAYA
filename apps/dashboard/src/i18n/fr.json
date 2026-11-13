@@ -115,7 +115,6 @@
       "dev": "Outils du développeur"
     },
     "centreScreen": "Grand écran du centre",
-    "exposure": "Population et sites exposés",
     "damage": "Évaluation des dégâts aux bâtiments",
     "shelters": "Capacité des hôpitaux et abris",
     "training": "Formation continue",
@@ -731,7 +730,8 @@
     "no_follow_up": "Pas de rappel pour cet appel.",
     "body_not_found": "Organisme introuvable.",
     "official_not_found": "Responsable introuvable.",
-    "party_not_found": "Organisme absent du signalement."
+    "party_not_found": "Organisme absent du signalement.",
+    "axis_no_area": "L'axe n'a pas de zone tracée : tracez-la d'abord."
   },
   "kpi": {
     "title": "Indicateurs clés",
@@ -5681,7 +5681,8 @@
         "incidents": "Interventions",
         "shelters": "Centres d’hébergement",
         "evacuations": "Zones d’évacuation",
-        "decisions": "Zones des décisions"
+        "decisions": "Zones des décisions",
+        "exposure": "Population exposée"
       }
     },
     "command": {
@@ -5714,7 +5715,8 @@
         "documents": "Documents",
         "plans": "Plans et recommandations",
         "resources": "Moyens dans la zone",
-        "tasks": "Tâches du plan"
+        "tasks": "Tâches du plan",
+        "exposure": "Population exposée"
       }
     },
     "axes": {
@@ -5876,7 +5878,64 @@
       "directive_failed": "Décision impossible",
       "directive_overdue": "Échéance dépassée",
       "sitrep_drafted": "Brouillon de point",
-      "sitrep_sent": "Point envoyé"
+      "sitrep_sent": "Point envoyé",
+      "exposure": "Estimation de la population exposée"
+    },
+    "exposure": {
+      "ring": "Bande autour de la zone",
+      "noRing": "Sans bande",
+      "ringKm": "{{km}} km",
+      "compute": "Estimer",
+      "recompute": "Recalculer",
+      "at": "Dernière estimation {{at}}",
+      "noArea": "Cet axe n'a pas de zone tracée : impossible d'estimer. Tracez d'abord la zone de l'axe.",
+      "none": "Pas encore estimé. Choisissez la bande puis « Estimer ».",
+      "noneReader": "La salle ne l'a pas encore estimé.",
+      "stale": "La zone de l'axe a changé depuis cette estimation : recalculez.",
+      "people": "habitants exposés (estimation)",
+      "peopleHint": "entre {{low}} et {{high}} · dont ≈ {{core}} dans la zone même",
+      "sensitive": "établissements sensibles",
+      "inCore": "{{n}} dans la zone même · santé, personnes âgées, enseignement",
+      "linesCut": "routes et voies coupées",
+      "linesHint": "{{n}} lignes dans l’empreinte",
+      "area": "surface de l'empreinte",
+      "areaHint": "zone {{core}} km² + bande {{ring}} km",
+      "byDelegation": "Population par délégation",
+      "delegation": "Délégation",
+      "census": "Population 2024",
+      "share": "Part de sa surface",
+      "estimate": "Exposés (estimation)",
+      "core": "Dans la zone",
+      "method": "Deux méthodes, puis l'écart entre elles : la part de la surface de la délégation et la part de ses lieux de vie quotidienne (écoles, mosquées, pharmacies, supermarchés, arrêts de bus). Plus l'écart est grand, moins l'habitat est uniforme.",
+      "places": "Établissements dans l'empreinte",
+      "noneInside": "Aucun dans l'empreinte",
+      "more": "et {{n}} autres",
+      "group": {
+        "health": "Hôpitaux et cliniques",
+        "elderly": "Maisons de retraite",
+        "education": "Écoles, lycées et facultés",
+        "hazardous": "Sites dangereux (effet domino)",
+        "transport": "Gares",
+        "gathering": "Hôtels et lieux de rassemblement"
+      },
+      "zone": {
+        "core": "Zone",
+        "ring": "Bande"
+      },
+      "lines": "Routes et voies ferrées",
+      "noLines": "Aucune route ni voie ferrée des couches dans l'empreinte.",
+      "line": {
+        "railways": "Voie ferrée",
+        "roads": "Route"
+      },
+      "cut": "Coupée",
+      "threatened": "Menacée",
+      "roadsNote": "Les routes viennent de la couche « Routes » quand elle est chargée, les voies ferrées de leur couche.",
+      "sources": "Sources",
+      "sourceCensus": "Population : {{census}}, Institut national de la statistique, par délégation",
+      "sourceLayers": "Établissements : {{n}} couches de la carte",
+      "toVerify": "certaines « à vérifier » (OpenStreetMap)",
+      "caveat": "Un ordre de grandeur pour planifier, pas un recensement : il ne sait pas qui est chez soi maintenant. Chaque estimation reste dans la chronologie de l'axe et se recalcule quand la zone change."
     }
   },
   "register": {
@@ -6982,7 +7041,15 @@
       "week": "Semaine",
       "decisions": "Dernières décisions et recommandations",
       "noDecisions": "Aucune décision.",
-      "areaResources": "Moyens dans la zone de {{number}}"
+      "areaResources": "Moyens dans la zone de {{number}}",
+      "exposure": "Population exposée :",
+      "exposurePeople": "≈ {{n}} habitants ({{core}} dans la zone)",
+      "exposureHealth": "{{n}} hôpitaux et cliniques",
+      "exposureEducation": "{{n}} écoles et lycées",
+      "exposureElderly": "{{n}} maisons de retraite",
+      "exposureLines": "{{n}} routes ou voies coupées",
+      "exposureAt": "estimation {{at}}",
+      "exposureOpen": "Ouvrir l'estimation"
     },
     "saved": {
       "name": "Nom de la recherche",

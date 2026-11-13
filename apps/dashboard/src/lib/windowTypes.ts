@@ -135,6 +135,17 @@ export interface AxisNow {
   plan_document_id: string | null;
   plan_title: string | null;
   incidents: number;
+  /** OS14: the latest estimate of the people and places exposed on the axis area (aggregates only). */
+  exposure?: {
+    population: number;
+    core_population: number;
+    health: number;
+    elderly: number;
+    education: number;
+    lines_cut: number;
+    ring_m: number;
+    at: string;
+  } | null;
 }
 
 export interface ResourceNow {

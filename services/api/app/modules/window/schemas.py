@@ -141,6 +141,17 @@ class CompareOut(BaseModel):
 # ---------------------------------------------------------------- the situation now
 
 
+class ExposureNow(BaseModel):
+    population: int
+    core_population: int
+    health: int
+    elderly: int
+    education: int
+    lines_cut: int
+    ring_m: int
+    at: datetime
+
+
 class AxisNow(BaseModel):
     id: uuid.UUID
     number: str
@@ -154,6 +165,8 @@ class AxisNow(BaseModel):
     plan_document_id: uuid.UUID | None
     plan_title: str | None
     incidents: int
+    # OS14: the latest estimate of the people and places exposed on the axis area (aggregates only).
+    exposure: ExposureNow | None = None
 
 
 class ResourceNow(BaseModel):

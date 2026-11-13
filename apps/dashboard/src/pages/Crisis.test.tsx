@@ -122,6 +122,25 @@ describe("AxisPage", () => {
   });
 });
 
+describe("AxisPage exposure (OS14)", () => {
+  it("shows the people and places exposed on the axis area and recomputes with a chosen band", async () => {
+    const api = fakeCrisisApi();
+    renderApp(<AxisPage />, {
+      api: fakeApi(api),
+      auth: fakeAuth(claims(["ops_manager"], "21")),
+      lang: "fr",
+      path: "/axes/ax-nabeul?tab=exposure",
+      route: "/axes/:id",
+    });
+    expect(await screen.findByText("≈ 18 000")).toBeInTheDocument();
+    expect(screen.getByText("مدرسة الوفاء")).toBeInTheDocument();
+    expect(screen.getByText("المستشفى الجهوي بنابل")).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText("2 km"));
+    fireEvent.click(screen.getByRole("button", { name: "Recalculer" }));
+    await waitFor(() => expect(api.computeExposure).toHaveBeenCalledWith("ax-nabeul", 2000));
+  });
+});
+
 describe("AxesPage", () => {
   it("lets the commander accept a declaration request", async () => {
     const api = fakeCrisisApi();

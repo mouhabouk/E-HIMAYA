@@ -411,3 +411,117 @@ class CommandOverview(BaseModel):
     directives: list[DirectiveOut]
     sitreps: list[SitrepOut]
     closed: list[AxisOut]
+
+
+# ---------------------------------------------------------------- OS14: people and places exposed (exposure.py)
+
+Ring = Literal[0, 500, 1000, 2000, 5000]
+
+
+class ExposureIn(BaseModel):
+    # The band around the axis area, in metres; null keeps the last one, or the default of the axis kind.
+    ring_m: Ring | None = None
+
+
+class ExposurePopulation(BaseModel):
+    estimate: int
+    low: int
+    high: int
+    core: int
+    core_low: int
+    core_high: int
+
+
+class ExposureDelegation(BaseModel):
+    id: int
+    name_ar: str
+    name_fr: str
+    gouvernorat_code: int
+    population: int
+    area_share: float
+    low: int
+    high: int
+    estimate: int
+    core: int
+
+
+class ExposurePlace(BaseModel):
+    name: str
+    layer: str
+    lat: float
+    lon: float
+    zone: Literal["core", "ring"]
+
+
+class ExposureGroup(BaseModel):
+    count: int
+    core: int
+    sensitive: bool
+    items: list[ExposurePlace]
+
+
+class ExposureLine(BaseModel):
+    layer: str
+    name: str
+    km: float
+    cut: bool
+
+
+class ExposureBrief(BaseModel):
+    """The aggregate the decision window shows (no name)."""
+
+    population: int
+    core_population: int
+    health: int
+    elderly: int
+    education: int
+    lines_cut: int
+    ring_m: int
+    at: datetime
+
+
+class ExposureLayerSource(BaseModel):
+    layer: str
+    to_verify: bool
+
+
+class ExposureSources(BaseModel):
+    census: str
+    layers: list[ExposureLayerSource]
+
+
+class ExposureOut(BaseModel):
+    axis_id: uuid.UUID
+    axis_number: str
+    axis_name: str
+    kind: str
+    ring_m: int
+    core_km2: float
+    area_km2: float
+    population: ExposurePopulation
+    delegations: list[ExposureDelegation]
+    groups: dict[str, ExposureGroup]
+    lines: list[ExposureLine]
+    brief: ExposureBrief
+    sources: ExposureSources
+    ring: dict[str, Any] | None
+    computed_at: datetime
+    computed_by: str | None
+    # The axis area changed after this estimate (recompute it).
+    stale: bool = False
+
+
+class ExposureState(BaseModel):
+    """The latest estimate of the axis, if any, and what the caller may do."""
+
+    estimate: ExposureOut | None
+    default_ring_m: int
+    rings: list[int]
+    can_compute: bool
+    has_area: bool
+
+
+class ExposureMap(BaseModel):
+    """The latest estimate of every open axis the caller sees: the optional layer of the interactive map."""
+
+    items: list[ExposureOut]

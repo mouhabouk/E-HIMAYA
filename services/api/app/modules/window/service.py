@@ -584,13 +584,16 @@ async def now(session: AsyncSession, viewer: Viewer) -> schemas.NowOut:
             plan_document_id=r[9],
             plan_title=r[10],
             incidents=int(r[11]),
+            exposure=schemas.ExposureNow.model_validate(r[12]) if r[12] else None,
         )
         for r in (
             await session.execute(
                 text(
                     "SELECT x.id, x.number, x.name, x.kind, x.level, x.scope, x.gouvernorat_code, x.opened_at, "  # noqa: S608 (constant SQL fragments, values are bound)
                     "x.plan, x.plan_document_id, d.title, (SELECT count(*) FROM crisis.axis_incident ai "
-                    "WHERE ai.axis_id = x.id AND ai.detached_at IS NULL) FROM crisis.axis x "
+                    "WHERE ai.axis_id = x.id AND ai.detached_at IS NULL), "
+                    "(SELECT e.payload -> 'brief' FROM crisis.event e WHERE e.axis_id = x.id AND e.kind = 'exposure' "
+                    "ORDER BY e.at DESC, e.id DESC LIMIT 1) FROM crisis.axis x "
                     "LEFT JOIN register.document d ON d.id = x.plan_document_id "
                     f"WHERE {' AND '.join(axis_where)} ORDER BY x.level DESC, x.opened_at DESC LIMIT 50"
                 ),
