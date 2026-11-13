@@ -154,6 +154,9 @@ class RoomReportIn(BaseModel):
     lang: Lang = "ar"
     # When the call or the radio message came in, if earlier than the entry; never in the future.
     received_at: AwareDatetime | None = None
+    # When the agent opened the intake form (OS2-3): the time of a radio or walk-in entry. Ignored when older than
+    # two hours (a form left open) and capped at now.
+    started_at: AwareDatetime | None = None
     # The guided call-taking card answered during the call (OS2); optional, the free text stays.
     call_card: CallCardIn | None = None
     # The call of the dashboard's phone this report was written from (2026-11-11): linked to it on saving, so the

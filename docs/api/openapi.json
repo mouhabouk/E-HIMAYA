@@ -6121,6 +6121,86 @@
         "title": "CardContent",
         "type": "object"
       },
+      "CardFigures": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "checks": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Checks",
+            "type": "object"
+          },
+          "field_checked": {
+            "default": 0,
+            "title": "Field Checked",
+            "type": "integer"
+          },
+          "instruction_titles": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Instruction Titles",
+            "type": "object"
+          },
+          "key_answered": {
+            "default": 0,
+            "title": "Key Answered",
+            "type": "integer"
+          },
+          "key_unknown": {
+            "default": 0,
+            "title": "Key Unknown",
+            "type": "integer"
+          },
+          "median_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median S"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionFigures"
+            },
+            "title": "Questions",
+            "type": "array"
+          },
+          "read": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Read",
+            "type": "object"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "used": {
+            "default": 0,
+            "title": "Used",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category",
+          "title",
+          "checks",
+          "questions",
+          "read",
+          "instruction_titles"
+        ],
+        "title": "CardFigures",
+        "type": "object"
+      },
       "Casualties": {
         "properties": {
           "deceased": {
@@ -8639,6 +8719,21 @@
           "active"
         ],
         "title": "ConferenceOut",
+        "type": "object"
+      },
+      "ConfirmIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ConfirmIn",
         "type": "object"
       },
       "ConnectionOut": {
@@ -12832,6 +12927,16 @@
           "content": {
             "$ref": "#/components/schemas/CardContent"
           },
+          "notes": {
+            "additionalProperties": {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxProperties": 21,
+            "title": "Notes",
+            "type": "object"
+          },
           "reason": {
             "maxLength": 500,
             "minLength": 3,
@@ -12850,6 +12955,16 @@
         "properties": {
           "content": {
             "$ref": "#/components/schemas/CardContent"
+          },
+          "notes": {
+            "additionalProperties": {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxProperties": 21,
+            "title": "Notes",
+            "type": "object"
           },
           "reason": {
             "maxLength": 500,
@@ -35753,6 +35868,54 @@
         "title": "Question",
         "type": "object"
       },
+      "QuestionFigures": {
+        "properties": {
+          "field_answered": {
+            "default": 0,
+            "title": "Field Answered",
+            "type": "integer"
+          },
+          "field_changed": {
+            "default": 0,
+            "title": "Field Changed",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "boolean"
+          },
+          "no": {
+            "default": 0,
+            "title": "No",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "unknown": {
+            "default": 0,
+            "title": "Unknown",
+            "type": "integer"
+          },
+          "yes": {
+            "default": 0,
+            "title": "Yes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "key"
+        ],
+        "title": "QuestionFigures",
+        "type": "object"
+      },
       "QuotaOut": {
         "description": "Anonymous report quota (phase 9 §3); all null for registered accounts (no quota).",
         "properties": {
@@ -39128,7 +39291,7 @@
         "title": "RevealRow",
         "type": "object"
       },
-      "ReviewItem": {
+      "ReviewItem-Input": {
         "additionalProperties": false,
         "properties": {
           "action": {
@@ -39180,37 +39343,84 @@
         "title": "ReviewItem",
         "type": "object"
       },
-      "ReviewOut": {
+      "ReviewItem-Output": {
         "properties": {
-          "accepted": {
-            "title": "Accepted",
-            "type": "integer"
+          "approved": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "edited": {
-            "title": "Edited",
-            "type": "integer"
+          "category": {
+            "$ref": "#/components/schemas/Category"
           },
-          "kept": {
-            "title": "Kept",
-            "type": "integer"
+          "doctor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doctor"
           },
-          "merged": {
-            "title": "Merged",
-            "type": "integer"
+          "draft": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
-          "rejected": {
-            "title": "Rejected",
-            "type": "integer"
+          "medical": {
+            "title": "Medical",
+            "type": "boolean"
+          },
+          "office": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Office"
+          },
+          "stage": {
+            "enum": [
+              "not_started",
+              "office",
+              "doctor",
+              "approval",
+              "done"
+            ],
+            "title": "Stage",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
           }
         },
         "required": [
-          "accepted",
-          "edited",
-          "rejected",
-          "kept",
-          "merged"
+          "category",
+          "title",
+          "stage",
+          "medical",
+          "approved",
+          "draft",
+          "office",
+          "doctor"
         ],
-        "title": "ReviewOut",
+        "title": "ReviewItem",
         "type": "object"
       },
       "ReviewQueue": {
@@ -39240,6 +39450,47 @@
           "total"
         ],
         "title": "ReviewQueue",
+        "type": "object"
+      },
+      "ReviewersIn": {
+        "properties": {
+          "doctor": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doctor"
+          },
+          "office": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Office"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReviewersIn",
         "type": "object"
       },
       "Revision": {
@@ -39382,6 +39633,72 @@
         "title": "RoomDisclosure",
         "type": "object"
       },
+      "RoomFigures": {
+        "properties": {
+          "entered": {
+            "default": 0,
+            "title": "Entered",
+            "type": "integer"
+          },
+          "field_checked": {
+            "default": 0,
+            "title": "Field Checked",
+            "type": "integer"
+          },
+          "field_confirmed": {
+            "default": 0,
+            "title": "Field Confirmed",
+            "type": "integer"
+          },
+          "median_with_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median With S"
+          },
+          "median_without_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Without S"
+          },
+          "p90_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P90 S"
+          },
+          "room": {
+            "title": "Room",
+            "type": "string"
+          },
+          "with_card": {
+            "default": 0,
+            "title": "With Card",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "room"
+        ],
+        "title": "RoomFigures",
+        "type": "object"
+      },
       "RoomLiveOut": {
         "properties": {
           "answered": {
@@ -39517,6 +39834,18 @@
               }
             ],
             "title": "Received At"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
           },
           "text": {
             "anyOf": [
@@ -46307,6 +46636,61 @@
           "site_id"
         ],
         "title": "StartIn",
+        "type": "object"
+      },
+      "StatsOut": {
+        "properties": {
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/CardFigures"
+            },
+            "title": "Cards",
+            "type": "array"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "national": {
+            "$ref": "#/components/schemas/app__modules__reports__callcard_stats__Figures"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/RoomFigures"
+            },
+            "title": "Rooms",
+            "type": "array"
+          },
+          "since": {
+            "format": "date-time",
+            "title": "Since",
+            "type": "string"
+          },
+          "total": {
+            "$ref": "#/components/schemas/app__modules__reports__callcard_stats__Figures"
+          }
+        },
+        "required": [
+          "days",
+          "since",
+          "room",
+          "total",
+          "national",
+          "rooms",
+          "cards"
+        ],
+        "title": "StatsOut",
         "type": "object"
       },
       "Status": {
@@ -60002,7 +60386,7 @@
           },
           "items": {
             "items": {
-              "$ref": "#/components/schemas/ReviewItem"
+              "$ref": "#/components/schemas/ReviewItem-Input"
             },
             "maxItems": 500,
             "title": "Items",
@@ -60019,6 +60403,39 @@
           "reason"
         ],
         "title": "ReviewIn",
+        "type": "object"
+      },
+      "app__modules__layers__schemas__ReviewOut": {
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "integer"
+          },
+          "edited": {
+            "title": "Edited",
+            "type": "integer"
+          },
+          "kept": {
+            "title": "Kept",
+            "type": "integer"
+          },
+          "merged": {
+            "title": "Merged",
+            "type": "integer"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "accepted",
+          "edited",
+          "rejected",
+          "kept",
+          "merged"
+        ],
+        "title": "ReviewOut",
         "type": "object"
       },
       "app__modules__layers__schemas__RevisionsOut": {
@@ -66163,6 +66580,65 @@
         "title": "SearchOut",
         "type": "object"
       },
+      "app__modules__reports__callcard_stats__Figures": {
+        "properties": {
+          "entered": {
+            "default": 0,
+            "title": "Entered",
+            "type": "integer"
+          },
+          "field_checked": {
+            "default": 0,
+            "title": "Field Checked",
+            "type": "integer"
+          },
+          "field_confirmed": {
+            "default": 0,
+            "title": "Field Confirmed",
+            "type": "integer"
+          },
+          "median_with_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median With S"
+          },
+          "median_without_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Without S"
+          },
+          "p90_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P90 S"
+          },
+          "with_card": {
+            "default": 0,
+            "title": "With Card",
+            "type": "integer"
+          }
+        },
+        "title": "Figures",
+        "type": "object"
+      },
       "app__modules__reports__callcards_router__CardOut": {
         "properties": {
           "approval_reason": {
@@ -66259,6 +66735,48 @@
             ],
             "title": "Medical Validated By"
           },
+          "notes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "title": "Notes",
+            "type": "object"
+          },
+          "returned_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned At"
+          },
+          "returned_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned By Name"
+          },
+          "returned_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned Reason"
+          },
           "sim": {
             "title": "Sim",
             "type": "boolean"
@@ -66266,6 +66784,34 @@
           "status": {
             "title": "Status",
             "type": "string"
+          },
+          "submitted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted At"
+          },
+          "submitted_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitted By Name"
+          },
+          "unchanged": {
+            "default": false,
+            "title": "Unchanged",
+            "type": "boolean"
           },
           "updated_at": {
             "format": "date-time",
@@ -66349,6 +66895,32 @@
           "updated_at"
         ],
         "title": "ReasonIn",
+        "type": "object"
+      },
+      "app__modules__reports__callcards_router__ReviewOut": {
+        "properties": {
+          "done": {
+            "title": "Done",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewItem-Output"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "done",
+          "total"
+        ],
+        "title": "ReviewOut",
         "type": "object"
       },
       "app__modules__reports__schemas__CategoryOut": {
@@ -89417,6 +89989,120 @@
         ]
       }
     },
+    "/api/v1/staff/call-cards/review": {
+      "get": {
+        "description": "Where the review of each category's card stands, with its reviewers.",
+        "operationId": "review_api_v1_staff_call_cards_review_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__ReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/stats": {
+      "get": {
+        "description": "Card use and call time per room, and per card what callers answered and what the teams found. A regional\nroom gets its own room whatever ``room`` says, with the national figures beside it.",
+        "operationId": "card_stats_api_v1_staff_call_cards_stats_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 366,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^(phone|radio|in_person|other)(,(phone|radio|in_person|other))*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Channel"
+            }
+          },
+          {
+            "in": "query",
+            "name": "room",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^(central|g:[0-9]{1,3})$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Room"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Card Stats",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
     "/api/v1/staff/call-cards/{card_id}": {
       "delete": {
         "operationId": "discard_draft_api_v1_staff_call_cards__card_id__delete",
@@ -89637,6 +90323,184 @@
         ]
       }
     },
+    "/api/v1/staff/call-cards/{card_id}/return": {
+      "post": {
+        "description": "The doctor or the room manager sends a handed-over draft back to the Office; the reason is the note it reads.\nA medical validation already recorded is withdrawn: the text will change.",
+        "operationId": "send_back_api_v1_staff_call_cards__card_id__return_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "card_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Card Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__reports__callcards_router__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Back",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{card_id}/submit": {
+      "post": {
+        "description": "The Office hands the draft over: to the doctor for a medical card, otherwise to the room manager.",
+        "operationId": "submit_api_v1_staff_call_cards__card_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "card_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Card Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__reports__callcards_router__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Submit",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{category}/confirm": {
+      "post": {
+        "description": "The Office keeps the approved [SIM] text as it is: a new version with the same content, handed over at once.\nIt still goes through the medical validation (medical cards) and the room manager's approval.",
+        "operationId": "confirm_unchanged_api_v1_staff_call_cards__category__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__reports__callcards_router__CardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Confirm Unchanged",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
     "/api/v1/staff/call-cards/{category}/draft": {
       "post": {
         "description": "A new version of the card of ``category``, written as a draft (one draft per category at a time).",
@@ -89689,6 +90553,64 @@
           }
         ],
         "summary": "Create Draft",
+        "tags": [
+          "staff",
+          "call-cards"
+        ]
+      }
+    },
+    "/api/v1/staff/call-cards/{category}/reviewers": {
+      "put": {
+        "description": "Name who reviews this card: the Office's reviewer and, for the medical cards, the doctor.",
+        "operationId": "set_reviewers_api_v1_staff_call_cards__category__reviewers_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewersIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewItem-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Reviewers",
         "tags": [
           "staff",
           "call-cards"
@@ -104879,7 +105801,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewOut"
+                  "$ref": "#/components/schemas/app__modules__layers__schemas__ReviewOut"
                 }
               }
             },
