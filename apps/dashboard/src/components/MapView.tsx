@@ -190,8 +190,12 @@ const LABEL_SOURCE = "ehimaya-basemap-labels";
 const TONE_COLOURS: Record<MapPolygon["tone"], string> = { high: "#D7141A", medium: "#C25E00", low: "#5B6478" };
 
 /** Run `fn` now if the style is ready, otherwise once it has loaded. */
+/** Maps whose style has loaded once. `isStyleLoaded()` turns false again while any source loads (e.g. the markers
+ * being updated), and "load" fires only once: without this, an area added at that moment was never drawn. */
+const STYLE_LOADED = new WeakSet<MlMap>();
+
 function whenStyleReady(map: MlMap, fn: () => void): void {
-  if (map.isStyleLoaded()) fn();
+  if (STYLE_LOADED.has(map) || map.isStyleLoaded()) fn();
   // The style loads once: a plain listener is enough (`once` without a listener returns a promise).
   else map.on("load", fn);
 }
@@ -665,6 +669,7 @@ export function MapView({
       e.preventDefault();
       toggleRef.current(e.lngLat.lng, e.lngLat.lat);
     });
+    map.on("load", () => STYLE_LOADED.add(map));
     mapRef.current = map;
     const registry = markersRef.current;
     const poiRegistry = poisRef.current;

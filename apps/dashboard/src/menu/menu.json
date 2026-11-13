@@ -224,15 +224,6 @@
               "icon": "layers",
               "tone": "teal",
               "gate": "layers"
-            },
-            {
-              "key": "exposure",
-              "path": "/exposure",
-              "icon": "groups",
-              "tone": "orange",
-              "gate": "reads",
-              "planned": true,
-              "ref": "OS14"
             }
           ]
         },

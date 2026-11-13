@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
+import { useExposureLayer } from "../lib/exposure";
 import { useSavedPlaces } from "../components/SavedPlaces";
 import { useAdminLayer } from "../components/AdminLayer";
 import { useAddressWarningsLayer } from "../components/AddressWarningsLayer";
@@ -28,6 +29,7 @@ import { opsKeys } from "../lib/opsApi";
 import { areaRings, type Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
 import {
+  canOpenDisasters,
   canOpenDrones,
   canReadAddressWarnings,
   canOpenSensors,
@@ -61,6 +63,7 @@ const TOWER_LAYER_KEY = "ehimaya.mapTowerLayer";
 const TOWER_VIEW = "#ea580c";
 const TOWER_VIEW_ALERT = "#dc2626";
 const DRONE_LAYER_KEY = "ehimaya.mapDroneLayer";
+const EXPOSURE_LAYER_KEY = "ehimaya.mapExposureLayer";
 // Drones (L5b): the camera's view and the path in purple, work areas in green, no-fly zones in red.
 const DRONE_VIEW = "#7c3aed";
 const DRONE_WORK = "#16a34a";
@@ -185,6 +188,10 @@ export function MapPage() {
   const droneLayerAllowed = canOpenDrones(user?.identity.roles ?? []);
   const [droneLayer, setDroneLayer] = useLayer(DRONE_LAYER_KEY);
   const showDrones = droneLayerAllowed && droneLayer;
+  // OS14: the people and places exposed on the open crisis axes, read from the axes' own estimates (optional layer).
+  const exposureLayerAllowed = canOpenDisasters(user?.identity.roles ?? []);
+  const [exposureLayer, setExposureLayer] = useLayer(EXPOSURE_LAYER_KEY);
+  const exposure = useExposureLayer(exposureLayerAllowed && exposureLayer);
   // A minute is fine enough for "a fire or smoke in the last hour".
   const clock = useNow(60_000);
   const qc = useQueryClient();
@@ -556,8 +563,8 @@ export function MapPage() {
   const dataLayers = useMapDataLayers(bbox, folderExtras);
   const awMarks = useAddressWarningsLayer(bbox, awLayerAllowed && awLayer);
   const allPois = useMemo(
-    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...awMarks.pois, ...savedPlaces.pois],
-    [pois, opsPois, resourceSearch.pois, dataLayers.pois, awMarks.pois, savedPlaces.pois],
+    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...awMarks.pois, ...savedPlaces.pois, ...exposure.pois],
+    [pois, opsPois, resourceSearch.pois, dataLayers.pois, awMarks.pois, savedPlaces.pois, exposure.pois],
   );
   const shapes = useMemo(
     () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
@@ -604,8 +611,8 @@ export function MapPage() {
         colour: DRONE_VIEW,
         outline: "solid",
       }));
-    return [...alertPolygons(alerts), ...wedges, ...zones, ...views];
-  }, [alerts, showTowers, towersQuery.data, clock, showDrones, zonesQuery.data, flying]);
+    return [...alertPolygons(alerts), ...wedges, ...zones, ...views, ...exposure.polygons];
+  }, [alerts, showTowers, towersQuery.data, clock, showDrones, zonesQuery.data, flying, exposure.polygons]);
 
   const legend = useMemo(() => {
     const items: { kind: MapPoi["kind"]; label: string }[] = [];
@@ -672,6 +679,9 @@ export function MapPage() {
         )}
         {droneLayerAllowed && (
           <LayerToggle checked={droneLayer} onChange={setDroneLayer} label={t("drones.map.toggle")} />
+        )}
+        {exposureLayerAllowed && (
+          <LayerToggle checked={exposureLayer} onChange={setExposureLayer} label={t("crisis.map.layer.exposure")} />
         )}
         <LayerToggle
           checked={showWeather}

@@ -9,6 +9,12 @@ import { SIM_CALL_CARDS } from "../src/test/callCardsData";
 
 export const API = E2E_ENV.VITE_API_BASE_URL;
 
+/** A 1×1 transparent PNG. */
+const BLANK_TILE = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+  "base64",
+);
+
 // ┏━━ SIMULATION ━━ signed-in staff session (unsigned JWT, national scope, roles given by the test)
 // ┃ PRODUCTION: Keycloak (realm ehimaya-staff) issues a signed token after Authorization Code + PKCE and MFA; the
 // ┃ API verifies it. To run against a real stack, remove this and sign in through the Keycloak login page first.
@@ -81,6 +87,15 @@ export async function baseMock(page: Page): Promise<BaseMock> {
       m.unexpected.push(route.request().url());
       return route.abort();
     },
+  );
+  // The open satellite and label tiles of the map background (phase R): a blank tile, so a test that picks the
+  // satellite background draws it without leaving the fence.
+  const tileHosts = new Set(
+    [...BASEMAP.satellite.tiles, ...BASEMAP.labels.tiles].map((u) => new URL(u).hostname),
+  );
+  await page.route(
+    (url) => tileHosts.has(url.hostname),
+    (route) => route.fulfill({ status: 200, contentType: "image/png", body: BLANK_TILE }),
   );
   await page.route(E2E_ENV.VITE_MAP_STYLE_URL, (route) =>
     json(route, {

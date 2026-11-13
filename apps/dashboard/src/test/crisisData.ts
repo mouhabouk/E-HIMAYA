@@ -3,6 +3,8 @@ import type {
   AxisDetail,
   CommandOverview,
   DeclarationRequest,
+  Exposure,
+  ExposureState,
   Directive,
   Figures,
   Sitrep,
@@ -457,3 +459,41 @@ export function overview(role: "governor" | "minister"): CommandOverview {
     ],
   };
 }
+
+/** OS14: an estimate of the people and places exposed on the Nabeul axis area. */
+export const EXPOSURE: Exposure = {
+  axis_id: "ax-nabeul",
+  axis_number: "AX-2026-001",
+  axis_name: "فيضانات نابل",
+  kind: "flood",
+  ring_m: 1000,
+  core_km2: 49.1,
+  area_km2: 108.5,
+  population: { estimate: 18000, low: 9700, high: 26000, core: 12000, core_low: 4400, core_high: 19600 },
+  delegations: [
+    { id: 2101, name_ar: "نابل", name_fr: "Nabeul", gouvernorat_code: 21, population: 82000, area_share: 17.3, low: 7800, high: 21000, estimate: 14000, core: 11000 },
+  ],
+  groups: {
+    health: { count: 1, core: 0, sensitive: true, items: [{ name: "المستشفى الجهوي بنابل", layer: "hospitals", lat: 36.45, lon: 10.73, zone: "ring" }] },
+    elderly: { count: 0, core: 0, sensitive: true, items: [] },
+    education: { count: 1, core: 1, sensitive: true, items: [{ name: "مدرسة الوفاء", layer: "schools", lat: 36.46, lon: 10.74, zone: "core" }] },
+    hazardous: { count: 0, core: 0, sensitive: false, items: [] },
+    transport: { count: 0, core: 0, sensitive: false, items: [] },
+    gathering: { count: 0, core: 0, sensitive: false, items: [] },
+  },
+  lines: [{ layer: "railways", name: "", km: 18.3, cut: true }],
+  brief: { population: 18000, core_population: 12000, health: 1, elderly: 0, education: 1, lines_cut: 1, ring_m: 1000, at: "2026-11-13T03:42:00Z" },
+  sources: { census: "INS RGPH 2024", layers: [{ layer: "hospitals", to_verify: true }] },
+  ring: null,
+  computed_at: "2026-11-13T03:42:00Z",
+  computed_by: "قاعة نابل",
+  stale: false,
+};
+
+export const EXPOSURE_STATE: ExposureState = {
+  estimate: EXPOSURE,
+  default_ring_m: 1000,
+  rings: [0, 500, 1000, 2000, 5000],
+  can_compute: true,
+  has_area: true,
+};

@@ -3681,6 +3681,16 @@
       },
       "AxisNow": {
         "properties": {
+          "exposure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExposureNow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "gouvernorat_code": {
             "anyOf": [
               {
@@ -16385,6 +16395,536 @@
           "accuracy_m"
         ],
         "title": "ExportTrackPoint",
+        "type": "object"
+      },
+      "ExposureBrief": {
+        "description": "The aggregate the decision window shows (no name).",
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "core_population": {
+            "title": "Core Population",
+            "type": "integer"
+          },
+          "education": {
+            "title": "Education",
+            "type": "integer"
+          },
+          "elderly": {
+            "title": "Elderly",
+            "type": "integer"
+          },
+          "health": {
+            "title": "Health",
+            "type": "integer"
+          },
+          "lines_cut": {
+            "title": "Lines Cut",
+            "type": "integer"
+          },
+          "population": {
+            "title": "Population",
+            "type": "integer"
+          },
+          "ring_m": {
+            "title": "Ring M",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "population",
+          "core_population",
+          "health",
+          "elderly",
+          "education",
+          "lines_cut",
+          "ring_m",
+          "at"
+        ],
+        "title": "ExposureBrief",
+        "type": "object"
+      },
+      "ExposureDelegation": {
+        "properties": {
+          "area_share": {
+            "title": "Area Share",
+            "type": "number"
+          },
+          "core": {
+            "title": "Core",
+            "type": "integer"
+          },
+          "estimate": {
+            "title": "Estimate",
+            "type": "integer"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "high": {
+            "title": "High",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "low": {
+            "title": "Low",
+            "type": "integer"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "population": {
+            "title": "Population",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_fr",
+          "gouvernorat_code",
+          "population",
+          "area_share",
+          "low",
+          "high",
+          "estimate",
+          "core"
+        ],
+        "title": "ExposureDelegation",
+        "type": "object"
+      },
+      "ExposureGroup": {
+        "properties": {
+          "core": {
+            "title": "Core",
+            "type": "integer"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ExposurePlace"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "sensitive": {
+            "title": "Sensitive",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "count",
+          "core",
+          "sensitive",
+          "items"
+        ],
+        "title": "ExposureGroup",
+        "type": "object"
+      },
+      "ExposureIn": {
+        "properties": {
+          "ring_m": {
+            "anyOf": [
+              {
+                "enum": [
+                  0,
+                  500,
+                  1000,
+                  2000,
+                  5000
+                ],
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ring M"
+          }
+        },
+        "title": "ExposureIn",
+        "type": "object"
+      },
+      "ExposureLayerSource": {
+        "properties": {
+          "layer": {
+            "title": "Layer",
+            "type": "string"
+          },
+          "to_verify": {
+            "title": "To Verify",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "layer",
+          "to_verify"
+        ],
+        "title": "ExposureLayerSource",
+        "type": "object"
+      },
+      "ExposureLine": {
+        "properties": {
+          "cut": {
+            "title": "Cut",
+            "type": "boolean"
+          },
+          "km": {
+            "title": "Km",
+            "type": "number"
+          },
+          "layer": {
+            "title": "Layer",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "layer",
+          "name",
+          "km",
+          "cut"
+        ],
+        "title": "ExposureLine",
+        "type": "object"
+      },
+      "ExposureMap": {
+        "description": "The latest estimate of every open axis the caller sees: the optional layer of the interactive map.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ExposureOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ExposureMap",
+        "type": "object"
+      },
+      "ExposureNow": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "core_population": {
+            "title": "Core Population",
+            "type": "integer"
+          },
+          "education": {
+            "title": "Education",
+            "type": "integer"
+          },
+          "elderly": {
+            "title": "Elderly",
+            "type": "integer"
+          },
+          "health": {
+            "title": "Health",
+            "type": "integer"
+          },
+          "lines_cut": {
+            "title": "Lines Cut",
+            "type": "integer"
+          },
+          "population": {
+            "title": "Population",
+            "type": "integer"
+          },
+          "ring_m": {
+            "title": "Ring M",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "population",
+          "core_population",
+          "health",
+          "elderly",
+          "education",
+          "lines_cut",
+          "ring_m",
+          "at"
+        ],
+        "title": "ExposureNow",
+        "type": "object"
+      },
+      "ExposureOut": {
+        "properties": {
+          "area_km2": {
+            "title": "Area Km2",
+            "type": "number"
+          },
+          "axis_id": {
+            "format": "uuid",
+            "title": "Axis Id",
+            "type": "string"
+          },
+          "axis_name": {
+            "title": "Axis Name",
+            "type": "string"
+          },
+          "axis_number": {
+            "title": "Axis Number",
+            "type": "string"
+          },
+          "brief": {
+            "$ref": "#/components/schemas/ExposureBrief"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "computed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Computed By"
+          },
+          "core_km2": {
+            "title": "Core Km2",
+            "type": "number"
+          },
+          "delegations": {
+            "items": {
+              "$ref": "#/components/schemas/ExposureDelegation"
+            },
+            "title": "Delegations",
+            "type": "array"
+          },
+          "groups": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ExposureGroup"
+            },
+            "title": "Groups",
+            "type": "object"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/ExposureLine"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "population": {
+            "$ref": "#/components/schemas/ExposurePopulation"
+          },
+          "ring": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ring"
+          },
+          "ring_m": {
+            "title": "Ring M",
+            "type": "integer"
+          },
+          "sources": {
+            "$ref": "#/components/schemas/ExposureSources"
+          },
+          "stale": {
+            "default": false,
+            "title": "Stale",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "axis_id",
+          "axis_number",
+          "axis_name",
+          "kind",
+          "ring_m",
+          "core_km2",
+          "area_km2",
+          "population",
+          "delegations",
+          "groups",
+          "lines",
+          "brief",
+          "sources",
+          "ring",
+          "computed_at",
+          "computed_by"
+        ],
+        "title": "ExposureOut",
+        "type": "object"
+      },
+      "ExposurePlace": {
+        "properties": {
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "layer": {
+            "title": "Layer",
+            "type": "string"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "zone": {
+            "enum": [
+              "core",
+              "ring"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "layer",
+          "lat",
+          "lon",
+          "zone"
+        ],
+        "title": "ExposurePlace",
+        "type": "object"
+      },
+      "ExposurePopulation": {
+        "properties": {
+          "core": {
+            "title": "Core",
+            "type": "integer"
+          },
+          "core_high": {
+            "title": "Core High",
+            "type": "integer"
+          },
+          "core_low": {
+            "title": "Core Low",
+            "type": "integer"
+          },
+          "estimate": {
+            "title": "Estimate",
+            "type": "integer"
+          },
+          "high": {
+            "title": "High",
+            "type": "integer"
+          },
+          "low": {
+            "title": "Low",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "estimate",
+          "low",
+          "high",
+          "core",
+          "core_low",
+          "core_high"
+        ],
+        "title": "ExposurePopulation",
+        "type": "object"
+      },
+      "ExposureSources": {
+        "properties": {
+          "census": {
+            "title": "Census",
+            "type": "string"
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/ExposureLayerSource"
+            },
+            "title": "Layers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "census",
+          "layers"
+        ],
+        "title": "ExposureSources",
+        "type": "object"
+      },
+      "ExposureState": {
+        "description": "The latest estimate of the axis, if any, and what the caller may do.",
+        "properties": {
+          "can_compute": {
+            "title": "Can Compute",
+            "type": "boolean"
+          },
+          "default_ring_m": {
+            "title": "Default Ring M",
+            "type": "integer"
+          },
+          "estimate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExposureOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "has_area": {
+            "title": "Has Area",
+            "type": "boolean"
+          },
+          "rings": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Rings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "estimate",
+          "default_ring_m",
+          "rings",
+          "can_compute",
+          "has_area"
+        ],
+        "title": "ExposureState",
         "type": "object"
       },
       "ExtendIn": {
@@ -93355,6 +93895,112 @@
         ]
       }
     },
+    "/api/v1/staff/crisis/axes/{axis_id}/exposure": {
+      "get": {
+        "operationId": "get_exposure_api_v1_staff_crisis_axes__axis_id__exposure_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExposureState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Exposure",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      },
+      "post": {
+        "operationId": "compute_exposure_api_v1_staff_crisis_axes__axis_id__exposure_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "axis_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Axis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExposureIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExposureOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Compute Exposure",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
     "/api/v1/staff/crisis/axes/{axis_id}/incidents": {
       "post": {
         "description": "The room manager attaches; an operator proposes (the proposal goes to the timeline for the manager).",
@@ -94028,6 +94674,34 @@
           }
         ],
         "summary": "Disaster Map",
+        "tags": [
+          "staff",
+          "crisis"
+        ]
+      }
+    },
+    "/api/v1/staff/crisis/exposure/map": {
+      "get": {
+        "description": "The latest estimate of each open top axis the caller sees (the optional layer of the interactive map).",
+        "operationId": "exposure_map_api_v1_staff_crisis_exposure_map_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExposureMap"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Exposure Map",
         "tags": [
           "staff",
           "crisis"

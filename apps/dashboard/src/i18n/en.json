@@ -115,7 +115,6 @@
       "dev": "Developer tools"
     },
     "centreScreen": "Centre wall screen",
-    "exposure": "Exposed population and sites",
     "damage": "Building damage assessment",
     "shelters": "Hospital and shelter capacity",
     "training": "Continuous training",
@@ -735,7 +734,8 @@
     "no_follow_up": "No reminder for this call.",
     "body_not_found": "Body not found.",
     "official_not_found": "Official not found.",
-    "party_not_found": "Body not in the report."
+    "party_not_found": "Body not in the report.",
+    "axis_no_area": "The axis has no drawn area: draw it first."
   },
   "kpi": {
     "title": "Key indicators",
@@ -5685,7 +5685,8 @@
         "incidents": "Interventions",
         "shelters": "Shelters",
         "evacuations": "Evacuation zones",
-        "decisions": "Decision areas"
+        "decisions": "Decision areas",
+        "exposure": "People exposed"
       }
     },
     "command": {
@@ -5718,7 +5719,8 @@
         "documents": "Documents",
         "plans": "Plans and recommendations",
         "resources": "Resources in the area",
-        "tasks": "Plan tasks"
+        "tasks": "Plan tasks",
+        "exposure": "People exposed"
       }
     },
     "axes": {
@@ -5880,7 +5882,64 @@
       "directive_failed": "Decision failed",
       "directive_overdue": "Deadline passed",
       "sitrep_drafted": "Report drafted",
-      "sitrep_sent": "Report sent"
+      "sitrep_sent": "Report sent",
+      "exposure": "Exposure estimate"
+    },
+    "exposure": {
+      "ring": "Band around the area",
+      "noRing": "No band",
+      "ringKm": "{{km}} km",
+      "compute": "Estimate",
+      "recompute": "Recompute",
+      "at": "Last estimate {{at}}",
+      "noArea": "This axis has no drawn area, so nothing can be estimated. Draw the axis area first.",
+      "none": "Not estimated yet. Choose the band, then “Estimate”.",
+      "noneReader": "The room has not estimated it yet.",
+      "stale": "The axis area changed after this estimate: recompute it.",
+      "people": "people exposed (estimate)",
+      "peopleHint": "between {{low}} and {{high}} · ≈ {{core}} in the area itself",
+      "sensitive": "sensitive places",
+      "inCore": "{{n}} in the area itself · health, elderly, education",
+      "linesCut": "roads and railways cut",
+      "linesHint": "{{n}} lines in the footprint",
+      "area": "footprint area",
+      "areaHint": "area {{core}} km² + band {{ring}} km",
+      "byDelegation": "People by delegation",
+      "delegation": "Delegation",
+      "census": "Population 2024",
+      "share": "Share of its area",
+      "estimate": "Exposed (estimate)",
+      "core": "In the area",
+      "method": "Two methods, then the range between them: the share of the delegation’s area and the share of its places of daily life (schools, mosques, pharmacies, supermarkets, bus stops). The wider the range, the less even the housing.",
+      "places": "Places in the footprint",
+      "noneInside": "None in the footprint",
+      "more": "and {{n}} more",
+      "group": {
+        "health": "Hospitals and clinics",
+        "elderly": "Elderly homes",
+        "education": "Schools and faculties",
+        "hazardous": "Hazardous sites (domino effect)",
+        "transport": "Stations",
+        "gathering": "Hotels and gathering places"
+      },
+      "zone": {
+        "core": "Area",
+        "ring": "Band"
+      },
+      "lines": "Roads and railways",
+      "noLines": "No road or railway of the map layers in the footprint.",
+      "line": {
+        "railways": "Railway",
+        "roads": "Road"
+      },
+      "cut": "Cut",
+      "threatened": "Threatened",
+      "roadsNote": "Roads come from the “Roads” layer once loaded, railways from their layer.",
+      "sources": "Sources",
+      "sourceCensus": "Population: {{census}}, National Institute of Statistics, by delegation",
+      "sourceLayers": "Places: {{n}} map layers",
+      "toVerify": "some “to verify” (OpenStreetMap)",
+      "caveat": "A planning figure, not a count: it does not know who is home now. Every estimate stays in the axis timeline and is recomputed when the area changes."
     }
   },
   "register": {
@@ -6986,7 +7045,15 @@
       "week": "Week",
       "decisions": "Latest decisions and recommendations",
       "noDecisions": "No decision yet.",
-      "areaResources": "Resources in the area of {{number}}"
+      "areaResources": "Resources in the area of {{number}}",
+      "exposure": "People exposed:",
+      "exposurePeople": "≈ {{n}} people ({{core}} in the area)",
+      "exposureHealth": "{{n}} hospitals and clinics",
+      "exposureEducation": "{{n}} schools",
+      "exposureElderly": "{{n}} elderly homes",
+      "exposureLines": "{{n}} roads or railways cut",
+      "exposureAt": "estimate {{at}}",
+      "exposureOpen": "Open the estimate"
     },
     "saved": {
       "name": "Search name",

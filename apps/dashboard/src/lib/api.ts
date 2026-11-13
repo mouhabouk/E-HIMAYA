@@ -294,6 +294,7 @@ export const ERROR_CODES = [
   // Disaster and crisis axes (phase L3).
   "axis_not_found",
   "axis_closed",
+  "axis_no_area",
   "incident_not_found",
   "incident_not_attachable",
   "incident_out_of_axis",

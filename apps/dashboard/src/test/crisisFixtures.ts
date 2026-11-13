@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import type { crisisApi } from "../lib/crisis";
-import { DIRECTIVES, first, JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SITREPS, SOUSSE_AXIS, SUGGESTIONS } from "./crisisData";
+import { DIRECTIVES, EXPOSURE, EXPOSURE_STATE, first, JENDOUBA_AXIS, NABEUL_AXIS, NABEUL_DETAIL, overview, REQUEST, SITREPS, SOUSSE_AXIS, SUGGESTIONS } from "./crisisData";
 
 export * from "./crisisData";
 
@@ -42,5 +42,8 @@ export function fakeCrisisApi(): CrisisApi {
     decideRequest: vi.fn(() => Promise.resolve({ ...REQUEST, status: "accepted" as const, axis_id: "ax-nabeul" })),
     crisisCommand: vi.fn(() => Promise.resolve(overview("minister"))),
     crisisBoundaries: vi.fn(() => Promise.resolve({ type: "FeatureCollection" as const, features: [] })),
+    crisisExposure: vi.fn(() => Promise.resolve(EXPOSURE_STATE)),
+    computeExposure: vi.fn(() => Promise.resolve(EXPOSURE)),
+    crisisExposureMap: vi.fn(() => Promise.resolve([EXPOSURE])),
   };
 }
