@@ -8,6 +8,10 @@
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
 #   atlas/                    the flowchart atlas with screenshots and narration (scripts/atlas/run.sh)
 #
+# The menu's 4 blocks and 20 systems come from one file, apps/dashboard/src/menu/menu.json (Yamen 2026-11-13): the
+# workbook's «القائمة» sheet, the atlas's groups, the web's screens and the menu's mind maps all read it, so a change
+# there shows everywhere on the next run. The run stops first if the menu and the screens drifted apart.
+#
 #   scripts/refresh-all.sh <out-dir> [--no-atlas]
 #
 # Needs what the API tests need (a migrated local database in DATABASE_URL and MIGRATION_DATABASE_URL,
@@ -21,6 +25,10 @@ ATLAS=${2:-}
 PY="$ROOT/services/api/.venv/bin/python"
 DB=${MIGRATION_DATABASE_URL:-${DATABASE_URL:?DATABASE_URL is needed}}
 DB=${DB/+asyncpg/}
+
+echo "0/6 menu: one source, every screen reached"
+python3 "$ROOT/scripts/menu/sync.py" --check
+python3 "$ROOT/scripts/menu/check.py"
 
 echo "1/6 backend dump"
 (cd "$ROOT/services/api" && "$PY" ../../scripts/ui_reference/backend_dump.py >"$OUT/backend.json")

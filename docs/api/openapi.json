@@ -27078,6 +27078,14 @@
             },
             "title": "Lent",
             "type": "object"
+          },
+          "suspended": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SystemMessage"
+            },
+            "default": {},
+            "title": "Suspended",
+            "type": "object"
           }
         },
         "required": [
@@ -47251,6 +47259,217 @@
         "title": "SynonymOut",
         "type": "object"
       },
+      "SystemGrantIn": {
+        "description": "Every page of the system, read only (its pages and tabs) or read and write (its buttons too).",
+        "properties": {
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "mode": {
+            "enum": [
+              "read",
+              "write"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 5,
+            "title": "Reason",
+            "type": "string"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "target": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          },
+          "target_kind": {
+            "enum": [
+              "user",
+              "role"
+            ],
+            "title": "Target Kind",
+            "type": "string"
+          },
+          "target_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Name"
+          }
+        },
+        "required": [
+          "target_kind",
+          "target",
+          "reason",
+          "mode"
+        ],
+        "title": "SystemGrantIn",
+        "type": "object"
+      },
+      "SystemMessage": {
+        "description": "What the users of a suspended system read in its place (one language at least).",
+        "properties": {
+          "ar": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Ar",
+            "type": "string"
+          },
+          "en": {
+            "default": "",
+            "maxLength": 300,
+            "title": "En",
+            "type": "string"
+          },
+          "fr": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Fr",
+            "type": "string"
+          }
+        },
+        "title": "SystemMessage",
+        "type": "object"
+      },
+      "SystemOut": {
+        "description": "One of the 20 systems of the menu: its pages and the rules set on it as a whole.",
+        "properties": {
+          "block": {
+            "title": "Block",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/components/schemas/app__modules__features__schemas__Names"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/SystemPage"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
+          "planned": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Planned",
+            "type": "array"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__features__schemas__RuleOut"
+            },
+            "title": "Rules",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "number",
+          "block",
+          "names",
+          "pages",
+          "planned",
+          "rules"
+        ],
+        "title": "SystemOut",
+        "type": "object"
+      },
+      "SystemPage": {
+        "properties": {
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "tab"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/components/schemas/app__modules__features__schemas__Names"
+          },
+          "nav": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nav"
+          }
+        },
+        "required": [
+          "key",
+          "kind",
+          "names",
+          "nav",
+          "flags"
+        ],
+        "title": "SystemPage",
+        "type": "object"
+      },
       "Table": {
         "description": "One table of figures, already worded and formatted in the reader's language (the PDF prints the same).",
         "properties": {
@@ -56692,7 +56911,8 @@
             "enum": [
               "page",
               "tab",
-              "button"
+              "button",
+              "system"
             ],
             "title": "Kind",
             "type": "string"
@@ -56873,7 +57093,8 @@
           "effect": {
             "enum": [
               "grant",
-              "hide"
+              "hide",
+              "suspend"
             ],
             "title": "Effect",
             "type": "string"
@@ -56906,6 +57127,16 @@
               }
             ],
             "title": "Gouvernorat Code"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SystemMessage"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "reason": {
             "maxLength": 500,
@@ -56984,7 +57215,8 @@
           "effect": {
             "enum": [
               "grant",
-              "hide"
+              "hide",
+              "suspend"
             ],
             "title": "Effect",
             "type": "string"
@@ -57020,6 +57252,16 @@
             "format": "uuid",
             "title": "Id",
             "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SystemMessage"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "reason": {
             "title": "Reason",
@@ -86780,6 +87022,35 @@
         ]
       }
     },
+    "/api/v1/staff/admin-board/overview": {
+      "get": {
+        "operationId": "admin_board_api_v1_staff_admin_board_overview_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Admin Board Api V1 Staff Admin Board Overview Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Admin Board",
+        "tags": [
+          "staff",
+          "boards"
+        ]
+      }
+    },
     "/api/v1/staff/ai/models": {
       "get": {
         "operationId": "list_cards_api_v1_staff_ai_models_get",
@@ -90140,6 +90411,60 @@
         "summary": "Put Stamp Photo",
         "tags": [
           "staff-institutions"
+        ]
+      }
+    },
+    "/api/v1/staff/citizens/overview": {
+      "get": {
+        "description": "Figures about the citizens, never an identity: reporters, reports kept and rejected, volunteers, the app's\nrating. A gouvernorat is the place of the report (a citizen's account has no gouvernorat).",
+        "operationId": "citizens_overview_api_v1_staff_citizens_overview_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 90,
+              "maximum": 365,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Citizens Overview Api V1 Staff Citizens Overview Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Citizens Overview",
+        "tags": [
+          "staff",
+          "boards"
         ]
       }
     },
@@ -96629,6 +96954,93 @@
         ]
       }
     },
+    "/api/v1/staff/features/systems": {
+      "get": {
+        "operationId": "list_systems_api_v1_staff_features_systems_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SystemOut"
+                  },
+                  "title": "Response List Systems Api V1 Staff Features Systems Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Systems",
+        "tags": [
+          "features"
+        ]
+      }
+    },
+    "/api/v1/staff/features/systems/{key}/grant": {
+      "post": {
+        "operationId": "grant_system_api_v1_staff_features_systems__key__grant_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemGrantIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__features__schemas__AssignmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Grant System",
+        "tags": [
+          "features"
+        ]
+      }
+    },
     "/api/v1/staff/field-agents": {
       "get": {
         "operationId": "list_agents_api_v1_staff_field_agents_get",
@@ -96952,6 +97364,59 @@
         "summary": "Disable",
         "tags": [
           "field-agents"
+        ]
+      }
+    },
+    "/api/v1/staff/forecast/overview": {
+      "get": {
+        "operationId": "forecast_overview_api_v1_staff_forecast_overview_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 48,
+              "maximum": 48,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Forecast Overview Api V1 Staff Forecast Overview Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Forecast Overview",
+        "tags": [
+          "staff",
+          "boards"
         ]
       }
     },
@@ -122559,6 +123024,71 @@
         "summary": "Lookup User",
         "tags": [
           "staff-notifications"
+        ]
+      }
+    },
+    "/api/v1/staff/vision/overview": {
+      "get": {
+        "operationId": "vision_overview_api_v1_staff_vision_overview_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 168,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 60,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Vision Overview Api V1 Staff Vision Overview Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Vision Overview",
+        "tags": [
+          "staff",
+          "boards"
         ]
       }
     },

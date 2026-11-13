@@ -7,8 +7,8 @@
 * ``aw.reminder_day``: one row per gouvernorat and day once the morning review reminder went to its room (08:00), so
   that several worker processes send it once.
 
-Revision ID: 0108_aw_followups
-Revises: 0107_par
+Revision ID: 0109_aw_followups
+Revises: 0108_feature_systems
 Create Date: 2026-11-13
 """
 
@@ -16,8 +16,8 @@ from collections.abc import Sequence
 
 from migrations.sqlutil import run_script
 
-revision: str = "0108_aw_followups"
-down_revision: str | None = "0107_par"
+revision: str = "0109_aw_followups"
+down_revision: str | None = "0108_feature_systems"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -44,6 +44,8 @@ CREATE TABLE aw.reminder_day (
 );
 ALTER TABLE aw.reminder_day ENABLE ROW LEVEL SECURITY;
 CREATE POLICY reminder_day_own ON aw.reminder_day USING ({_OWN}) WITH CHECK ({_OWN});
+-- The change journal (migration 0097): counts only, no name.
+SELECT audit.journal_attach('aw.reminder_day', false);
 """
 
 DOWNGRADE = """

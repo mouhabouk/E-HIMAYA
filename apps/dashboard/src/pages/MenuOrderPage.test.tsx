@@ -22,6 +22,7 @@ const entry = (to: string) => ({
 const GROUPS: NavGroup[] = [
   {
     key: "ops",
+    block: "operational",
     icon: "dashboard",
     tone: "red",
     label: "Ops",
@@ -29,6 +30,7 @@ const GROUPS: NavGroup[] = [
   },
   {
     key: "alerts",
+    block: "partnerSpaces",
     icon: "campaign",
     tone: "red",
     label: "Alerts",
@@ -36,6 +38,7 @@ const GROUPS: NavGroup[] = [
   },
   {
     key: "system",
+    block: "mother",
     icon: "settings",
     tone: "slate",
     label: "System",
@@ -54,7 +57,7 @@ describe("the order of the menu", () => {
     expect(applyMenuOrder(GROUPS, menuOrderOf(null))).toEqual(GROUPS);
     expect(
       menuOrderOf({ groups: ["ops", 3], items: { ops: ["/", null] } }),
-    ).toEqual({ groups: ["ops"], items: { ops: ["/"] } });
+    ).toEqual({ groups: ["ops"], items: { ops: ["/"] }, systems: {} });
     expect(moved(["a", "b", "c"], 2, 0)).toEqual(["c", "a", "b"]);
   });
 
@@ -89,7 +92,7 @@ describe("the order of the menu", () => {
     renderApp(<MenuOrderPage />, { api, auth: fakeAuth(SYSADMIN), lang: "en" });
     const groups = await screen.findByRole("list", { name: "Groups" });
     const first = within(groups).getAllByRole("listitem")[0];
-    expect(first).toHaveAttribute("data-testid", "sortable-ops");
+    expect(first).toHaveAttribute("data-testid", "sortable-home");
     const firstName = within(first as HTMLElement).getByText(/./, {
       selector: ".sortable__label",
     }).textContent;
@@ -110,8 +113,8 @@ describe("the order of the menu", () => {
     expect(key).toBe("menu.order");
     expect(body.version).toBe(2);
     expect(body.reason).toBe("Order for the demonstration");
-    // The operations group, first in the built-in order, is now second.
-    expect(body.value.groups[1]).toBe("ops");
+    // The first screen, first in the built-in order, is now second.
+    expect(body.value.groups[1]).toBe("home");
     expect(await screen.findByText(/Order saved/)).toBeInTheDocument();
   });
 

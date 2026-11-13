@@ -111,6 +111,7 @@ async def test_a_hidden_page_and_a_granted_button(client: httpx.AsyncClient, sta
         "granted": ["schedule.settings"],
         "lent": {"schedule.settings": "ops_manager"},
         "announcement": None,
+        "suspended": {},
     }
     # Never beyond the account's gouvernorat.
     r = await client.put("/api/v1/staff/schedule/settings/23", json=put, headers=operator)

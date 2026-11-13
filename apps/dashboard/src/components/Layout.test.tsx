@@ -42,7 +42,7 @@ describe("Layout", () => {
   it("main_menu: grouped by default, a group opens and closes from the keyboard", async () => {
     renderApp(<Layout />, { lang: "fr", path: "/reports" });
     const nav = await screen.findByRole("navigation", { name: "Navigation principale" });
-    const ops = within(nav).getByRole("button", { name: "Opérations du jour" });
+    const ops = within(nav).getByRole("button", { name: "Domaine opérationnel" });
     expect(ops).toHaveAttribute("aria-expanded", "false");
     // The group of the current page is marked, and its links stay out of reach until it opens.
     expect(ops).toHaveAttribute("data-active", "true");
@@ -69,7 +69,7 @@ describe("Layout", () => {
     expect(JSON.parse(localStorage.getItem("ehimaya.menu") ?? "{}")).toEqual({ shape: "flat", position: "right" });
     // Flat: every link at once, under its group heading.
     const nav = screen.getByRole("navigation", { name: "Navigation principale" });
-    expect(within(nav).getByRole("region", { name: "Opérations du jour" })).toBeInTheDocument();
+    expect(within(nav).getByRole("region", { name: "Signalements, alertes et secours" })).toBeInTheDocument();
     expect(within(nav).getByRole("link", { name: "Signalements" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Se déconnecter" })).toBeInTheDocument();
   });

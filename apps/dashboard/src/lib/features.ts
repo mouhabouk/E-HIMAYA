@@ -2,7 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import type { ApiClient } from "./api";
 import { useServices } from "../context/services";
 import { useAuth } from "../context/auth";
-import type { Announcement, Feature, FeatureRule, FeatureRuleIn, MyFeatures, PreviewRow } from "./featureTypes";
+import type {
+  Announcement,
+  Feature,
+  FeatureRule,
+  FeatureRuleIn,
+  FeatureSystem,
+  MyFeatures,
+  PreviewRow,
+  SystemGrantIn,
+  SystemGrantOut,
+  SystemMessage,
+} from "./featureTypes";
 
 export type * from "./featureTypes";
 
@@ -25,6 +36,10 @@ export function featuresApi(api: ApiClient) {
       api.request<FeatureRule>(`${F}/rules/${enc(id)}/revoke`, { method: "POST", body: { reason } }),
     featurePreview: (roles: string[], gouvernorat: number | null, subject: string | null, signal?: AbortSignal) =>
       api.request<PreviewRow[]>(`${F}/preview`, { signal, query: { roles, gouvernorat, subject } }),
+    // The systems of the menu as a whole (2026-11-13).
+    featureSystems: (signal?: AbortSignal) => api.request<FeatureSystem[]>(`${F}/systems`, { signal }),
+    grantFeatureSystem: (key: string, body: SystemGrantIn) =>
+      api.request<SystemGrantOut>(`${F}/systems/${enc(key)}/grant`, { method: "POST", body }),
   };
 }
 
@@ -38,12 +53,21 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/address-warnings", "address_warnings"],
   ["/liaison", "liaison"],
   ["/par", "par"],
+  ["/room-guide", "room_guide"],
+  ["/call-cards", "call_cards"],
   ["/map", "map"],
   ["/streams", "streams"],
+  ["/sensors", "sensors"],
+  ["/towers", "towers"],
+  ["/drones", "drones"],
   ["/calls", "calls"],
   ["/resource-requests", "resource_requests"],
   ["/resources", "resources"],
   ["/inventory", "inventory"],
+  ["/vision", "vision"],
+  ["/forecast", "forecast"],
+  ["/citizens", "citizens"],
+  ["/admin", "admin_board"],
   ["/coverage", "coverage"],
   ["/fleet/maintenance", "fleet.maintenance"],
   ["/fleet/archive", "fleet.archive"],
@@ -90,7 +114,10 @@ export const PAGE_PATHS: readonly (readonly [string, string])[] = [
   ["/settings/ai/models", "ai_models"],
   ["/settings/ai/learning", "ai_learning"],
   ["/settings/ai", "ai_settings"],
+  ["/settings/systems", "systems"],
+  ["/settings/menu", "menu_order"],
   ["/settings", "settings"],
+  ["/references", "references"],
   ["/accounts", "accounts"],
   ["/audit", "audit"],
   ["/system-logs", "system_logs"],
@@ -120,9 +147,11 @@ export interface FeatureAccess {
   granted: ReadonlySet<string>;
   hidden: ReadonlySet<string>;
   lent: Readonly<Record<string, string>>;
+  /** The systems the administrator suspended for the caller, with the message to show in their place. */
+  suspended?: Readonly<Record<string, SystemMessage>>;
 }
 
-const NONE: FeatureAccess = { granted: new Set(), hidden: new Set(), lent: {} };
+const NONE: FeatureAccess = { granted: new Set(), hidden: new Set(), lent: {}, suspended: {} };
 
 /** The caller's grants and hidings; none while loading or on error (the API enforces them anyway). */
 export function useMyFeatures(): FeatureAccess {
@@ -135,7 +164,12 @@ export function useMyFeatures(): FeatureAccess {
     staleTime: 60_000,
   });
   if (!q.data) return NONE;
-  return { granted: new Set(q.data.granted), hidden: new Set(q.data.hidden), lent: q.data.lent ?? {} };
+  return {
+    granted: new Set(q.data.granted),
+    hidden: new Set(q.data.hidden),
+    lent: q.data.lent ?? {},
+    suspended: q.data.suspended ?? {},
+  };
 }
 
 /** Phase 5: the system administrator's message for the dashboard (the same answer as the caller's features). */

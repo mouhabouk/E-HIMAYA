@@ -25,10 +25,12 @@ from app.modules.features.registry import TECHNICAL, WRITE_METHODS, Feature
 
 log = structlog.get_logger()
 
-State = Literal["grant", "hide"] | None
+State = Literal["grant", "hide", "suspend"] | None
 FEATURE_HIDDEN = "feature_hidden"
 # The page the administrator works from: never hidden from a national system administrator (no lock-out).
 PERMISSIONS = "permissions"
+# The pages the national system administrator always keeps, whatever hides their page or their system (2026-11-13).
+ADMIN_KEEPS = frozenset({PERMISSIONS, "systems"})
 # Never granted a feature showing personal data (reporters, callers, victims, citizens, personnel).
 NO_PERSONAL = frozenset({Role.GOVERNOR, Role.MINISTER})
 
@@ -37,12 +39,14 @@ NO_PERSONAL = frozenset({Role.GOVERNOR, Role.MINISTER})
 class Rule:
     id: uuid.UUID
     feature_key: str
-    effect: Literal["grant", "hide"]
+    # «suspend» (2026-11-13): a whole system closed for a while; it hides like «hide» and shows ``message``.
+    effect: Literal["grant", "hide", "suspend"]
     target_kind: Literal["user", "role", "everyone"]
     target: str
     gouvernorat_code: int | None
     starts_at: datetime | None
     ends_at: datetime | None
+    message: dict[str, str] | None = None
 
     def active(self, now: datetime) -> bool:
         return (self.starts_at is None or self.starts_at <= now) and (self.ends_at is None or now < self.ends_at)
@@ -58,6 +62,7 @@ def _rule(row: FeatureRule) -> Rule:
         row.gouvernorat_code,
         row.starts_at,
         row.ends_at,
+        row.message,
     )
 
 
@@ -99,25 +104,43 @@ def _admin(principal: Principal) -> bool:
     return principal.is_national and Role.SYSADMIN in principal.roles
 
 
-def state(principal: Principal, feature: Feature, rules: Iterable[Rule], now: datetime) -> State:
-    mine: list[str] = []
-    of_roles: list[str] = []
+def _applying(principal: Principal, key: str, rules: Iterable[Rule], now: datetime) -> list[Rule]:
+    """The rules of ``key`` that reach ``principal``: the account's own if any, else those of its roles."""
+    mine: list[Rule] = []
+    of_roles: list[Rule] = []
     for r in rules:
-        if r.feature_key != feature.key or not r.active(now):
+        if r.feature_key != key or not r.active(now):
             continue
         if r.target_kind == "user" and r.target == principal.subject:
-            mine.append(r.effect)
+            mine.append(r)
         elif (
             r.target_kind == "role"
             and r.target in principal.roles
             and (r.gouvernorat_code is None or r.gouvernorat_code == principal.gouvernorat_code)
         ) or r.target_kind == "everyone":
             # A rule for everyone (phase 5: a window closed for all the users of a surface) counts as a role rule.
-            of_roles.append(r.effect)
-    level = mine or of_roles
+            of_roles.append(r)
+    return mine or of_roles
+
+
+def state(principal: Principal, feature: Feature, rules: Iterable[Rule], now: datetime) -> State:
+    level = {r.effect for r in _applying(principal, feature.key, rules, now)}
     if "hide" in level:
         return "hide"
+    if "suspend" in level:
+        return "suspend"
     return "grant" if level else None
+
+
+def suspension(principal: Principal, system_key: str, rules: Iterable[Rule], now: datetime) -> dict[str, str] | None:
+    """The administrator's message when the system is suspended for ``principal`` (and not hidden), else None."""
+    applying = _applying(principal, registry.SYSTEM_PREFIX + system_key, rules, now)
+    if any(r.effect == "hide" for r in applying):
+        return None
+    found = next((r for r in applying if r.effect == "suspend"), None)
+    if found is None:
+        return None
+    return found.message or {"ar": "", "fr": "", "en": ""}
 
 
 def ceiling(principal: Principal, feature: Feature) -> str | None:
@@ -164,8 +187,8 @@ def decide(
     granted: Feature | None = None
     for feature in chain:
         st = state(principal, feature, rules, now)
-        if st == "hide":
-            if feature.key == PERMISSIONS and _admin(principal):
+        if st in ("hide", "suspend"):
+            if chain[0].page in ADMIN_KEEPS and _admin(principal):
                 continue
             return Outcome(True, None)
         if st == "grant" and granted is None and ceiling(principal, feature) is None:
@@ -244,7 +267,7 @@ async def hidden_keys(principal: Principal | None, surfaces: Iterable[str]) -> l
         f = reg.features[key]
         if f.group not in groups:
             continue
-        chain = [f] if f.parent is None else [f, reg.features[f.parent]]
+        chain = reg.chain(key)
         method = "POST" if f.kind == "button" else "GET"
         if principal is not None and principal.is_staff:
             hidden = decide(principal, chain, method, rules, datetime.now(UTC)).hidden
@@ -276,12 +299,26 @@ def effective(principal: Principal, rules: Iterable[Rule], now: datetime) -> dic
     out: dict[str, Effective] = {}
     for key in reg.order:
         f = reg.features[key]
-        chain = [f] if f.parent is None else [f, reg.features[f.parent]]
+        chain = reg.chain(key)
         hidden = decide(principal, chain, "POST" if f.kind == "button" else "GET", rules, now).hidden
         granted = state(principal, f, rules, now) == "grant"
         refused = ceiling(principal, f) if granted else None
         out[key] = Effective(holds_by_default(principal, f), hidden, granted and refused is None, refused)
     return out
+
+
+async def granted(principal: Principal, key: str) -> bool:
+    """A rule in force grants feature ``key`` (or its page, or its system) to ``principal``, within the ceiling.
+
+    For the routes the administrator keeps by default and may lend (the inspections' bin, Yamen 2026-11-13)."""
+    if not principal.is_staff:
+        return False
+    rules = await rules_in_force()
+    if not rules:
+        return False
+    chain = registry.get().chain(key)
+    outcome = decide(principal, chain, "POST" if chain[0].kind == "button" else "GET", rules, datetime.now(UTC))
+    return not outcome.hidden and outcome.granted is not None
 
 
 async def as_for(principal: Principal, key: str) -> Principal | None:
@@ -291,12 +328,11 @@ async def as_for(principal: Principal, key: str) -> Principal | None:
     if not principal.is_staff:
         return principal
     reg = registry.get()
-    feature = reg.features[key]
-    chain = [feature] if feature.parent is None else [feature, reg.features[feature.parent]]
+    chain = reg.chain(key)
     rules = await rules_in_force()
     if not rules and not any(dormant(f) for f in chain):
         return principal
-    outcome = decide(principal, chain, "POST" if feature.kind == "button" else "GET", rules, datetime.now(UTC))
+    outcome = decide(principal, chain, "POST" if chain[0].kind == "button" else "GET", rules, datetime.now(UTC))
     if outcome.hidden:
         return None
     return elevate(principal, outcome.granted) if outcome.granted is not None else principal

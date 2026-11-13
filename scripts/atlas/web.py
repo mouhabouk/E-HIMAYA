@@ -13,11 +13,15 @@ import argparse
 import json
 import math
 import re
+import sys
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
 from openpyxl import load_workbook
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "menu"))
+from menu import system_of_path  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
@@ -201,8 +205,15 @@ def main() -> None:
     for sf in SURFACES:
         if count[sf]:
             add(f"u:{sf}", "surface", sf, n=count[sf])
+    def system_of(label: str) -> str | None:
+        """The system of a dashboard screen (its first path), from the menu's one source."""
+        first = label.split("، ")[0].strip()
+        spec = system_of_path(first) if first.startswith("/") else None
+        return f"{spec['number']}. {spec['names']['ar']}" if spec else None
+
     for s in screens:
-        add(sid[s], "screen", s[1], sf=SURFACES.index(s[0]), files=sorted(scr_files[s]), calls=scr_calls[s])
+        extra = {"sys": name} if (name := system_of(s[1])) else {}
+        add(sid[s], "screen", s[1], sf=SURFACES.index(s[0]), files=sorted(scr_files[s]), calls=scr_calls[s], **extra)
         links.append([f"u:{s[0]}", sid[s]])
         for m in sorted(scr_mod[s]):
             links.append([sid[s], f"m:{m}"])

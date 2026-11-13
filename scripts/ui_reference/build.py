@@ -707,6 +707,56 @@ def text_sheet(
 # ---------------------------------------------------------------------------------- sign-in page (Keycloak)
 
 
+def menu_sheet(wb: Workbook) -> int:
+    """The dashboard menu as its one source holds it (apps/dashboard/src/menu/menu.json, Yamen 2026-11-13): 4 blocks,
+    20 systems and their entries, with the planned ones, the aliases and the tabs."""
+    import sys
+
+    sys.path.insert(0, str(REPO / "scripts" / "menu"))
+    from menu import items as menu_items
+    from menu import label as menu_label
+    from menu import load as load_menu
+
+    menu = load_menu()
+    blocks = {b["key"]: b for b in menu["blocks"]}
+    systems = {s["key"]: s for b in menu["blocks"] for s in b["systems"]}
+    ws = sheet(
+        wb,
+        "القائمة",
+        ["#", "الكتلة", "رقم النظام", "النظام", "العنصر", "المسار", "شرط الظهور", "الحالة", "ملاحظة"],
+        [5, 26, 10, 40, 34, 30, 22, 14, 40],
+    )
+    n = 0
+    for e in menu_items(menu):
+        n += 1
+        sys_spec = systems.get(e["system"] or "")
+        block = blocks.get(e["block"] or "")
+        if e.get("planned"):
+            state, note = "قيد الإنجاز", e.get("ref", "")
+        elif e.get("alias"):
+            state, note = "يظهر أيضا هنا", f"مكانه الأصلي: {systems[e['alias']]['names']['ar']}"
+        elif e.get("tabOf"):
+            state, note = "تبويب", f"داخل صفحة {e['tabOf']}"
+        else:
+            state, note = "منجز", f"قسم: {e['section']}" if e.get("section") else ""
+        add(
+            ws,
+            [
+                n,
+                block["names"]["ar"] if block else "",
+                sys_spec["number"] if sys_spec else "",
+                sys_spec["names"]["ar"] if sys_spec else menu_label("home"),
+                menu_label(e["key"]),
+                e["path"],
+                e["gate"],
+                state,
+                note,
+            ],
+        )
+    finish(ws)
+    return n
+
+
 def keycloak_sheet(wb: Workbook, sha: str, kc_themes: Path | None) -> int:
     theme = REPO / "infra/keycloak/themes/ehimaya/login"
     ftl = theme / "login.ftl"
@@ -1438,6 +1488,7 @@ def main() -> None:
     styles(wb)
     stats: dict[str, str] = {}
     stats["صفحة الدخول"] = f"{keycloak_sheet(wb, sha, args.keycloak_themes)} عنصرا"
+    stats["القائمة"] = f"{menu_sheet(wb)} عنصرا في 20 نظاما"
     entries: list[tuple[str, str, Path, str, str, int]] = []
     icon_surfaces = []
     web_css = []

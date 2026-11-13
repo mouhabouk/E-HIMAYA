@@ -78,7 +78,7 @@ function setup() {
       ]),
     ),
   });
-  return { api, ...renderApp(<AddressWarningsPage />, { api, path: "/address-warnings?tab=reminders" }) };
+  return { ...renderApp(<AddressWarningsPage />, { api, path: "/address-warnings?tab=reminders" }), api };
 }
 
 describe("AddressWarningsPage follow-ups", () => {
