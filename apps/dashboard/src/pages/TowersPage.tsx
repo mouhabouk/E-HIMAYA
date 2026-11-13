@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 import { RequiredNote } from "../components/PhaseASettings";
 import { Stepper } from "../components/Stepper";
 import { SimTag } from "../components/StreamBits";
@@ -450,6 +451,7 @@ export function TowersPage() {
         <PageTitle icon="videocam" tone="orange">
           {t("towers.title")}
         </PageTitle>
+        <MapLayerLink layer="towers" />
         {manager && list.data?.can_manage && editing === null && (
           <button type="button" className="btn btn--primary" onClick={() => setEditing("new")}>
             {t("towers.new")}

@@ -267,6 +267,7 @@ test.describe("OS3 follow-ups: crews, turnout, cost, neighbours, official map", 
     await signIn(page, ["operator"], "القاعة المركزية");
     await page.addInitScript(() => window.localStorage.setItem("ehimaya.lang", "ar"));
     await page.goto("/map");
+    await page.getByRole("button", { name: /موارد الحماية المدنية/ }).click();
     await page.getByRole("checkbox", { name: "طبقة التغطية الحية" }).check();
     await page.getByRole("checkbox", { name: "طبقة أوامر التمركز والوسائل في تعزيز" }).check();
     await page.getByRole("checkbox", { name: "طبقة جاهزية الأسطول حسب الولاية" }).check();

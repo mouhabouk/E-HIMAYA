@@ -22,6 +22,7 @@ import {
   type VolunteerStatus,
 } from "../lib/opsTypes";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 
 export function VolunteerStatusChip({ status }: { status: VolunteerStatus }) {
   const { t } = useTranslation();
@@ -170,6 +171,7 @@ export function VolunteersPage() {
     <div className="page">
       <div className="page__head">
         <PageTitle print icon="volunteerActivism" tone="green">{t("volunteers.title")}</PageTitle>
+        <MapLayerLink layer="volunteers" />
       </div>
       <p className="muted">{t("volunteers.intro")}</p>
 

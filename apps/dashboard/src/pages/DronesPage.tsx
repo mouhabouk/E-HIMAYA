@@ -9,6 +9,7 @@ import { Link } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyPolygonDrawMap } from "../components/LazyPolygonMap";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 import { RequiredNote } from "../components/PhaseASettings";
 import { Stepper } from "../components/Stepper";
 import { SimTag } from "../components/StreamBits";
@@ -493,6 +494,7 @@ export function DronesPage() {
         <PageTitle icon="drone" tone="purple">
           {t("drones.title")} <SimTag label={t("drones.simTag")} />
         </PageTitle>
+        <MapLayerLink layer="drones" />
         {canRegister && !registering && (
           <button type="button" className="btn btn--primary" onClick={() => setRegistering(true)}>
             {t("drones.new")}

@@ -104,6 +104,7 @@ test.describe("weather layer", () => {
 
     await page.goto("/map");
     await expect(page.getByRole("heading", { name: "Carte en direct", level: 1 })).toBeVisible();
+    await page.getByRole("button", { name: /Surveillance et capteurs/ }).click();
     await page.getByRole("checkbox", { name: "Météo" }).check();
 
     const panel = page.getByRole("region", { name: "Couche météo" });

@@ -10846,5 +10846,43 @@
       "targetCol": "Target",
       "reason": "Reason"
     }
+  },
+  "mapLayers": {
+    "source": "Source: {{screen}}",
+    "openOnMap": "Show on the interactive map",
+    "incidents": {
+      "toggle": "Open interventions",
+      "reports": "{{n}} report(s)"
+    },
+    "hotspots": {
+      "toggle": "Hotspots (7 days)"
+    },
+    "coastal": {
+      "toggle": "Beaches and risk flags"
+    },
+    "crisis": {
+      "toggle": "Open axes: areas, shelters and evacuation zones",
+      "shelter": "Shelter · {{occupants}} of {{capacity}}"
+    },
+    "streams": {
+      "toggle": "Live streams and cameras"
+    },
+    "screen": {
+      "incidents": "Interventions",
+      "analytics": "Analytics",
+      "notifications": "Alerts",
+      "aw": "Address warnings",
+      "disasters": "Disasters",
+      "resources": "Resources",
+      "volunteers": "Volunteers",
+      "sensors": "Sensors",
+      "towers": "Watch towers",
+      "drones": "Drones",
+      "streams": "Stream wall",
+      "orgs": "Institutions",
+      "coastal": "Coastal safety",
+      "coverage": "Live coverage",
+      "fleet": "Fleet report"
+    }
   }
 }

@@ -144,6 +144,7 @@ test.describe("OS14: people and places exposed", () => {
     await signIn(page, ["ops_manager"], "Sami Operator", ROOM);
     await page.addInitScript(() => window.localStorage.setItem("ehimaya.lang", "ar"));
     await page.goto("/map");
+    await page.getByRole("button", { name: /الأزمات والمحاور/ }).click();
     const toggle = page.getByLabel("المعرّضون للخطر");
     await expect(toggle).not.toBeChecked();
     const asked = page.waitForRequest((r) => r.url().endsWith(`${C}/exposure/map`));

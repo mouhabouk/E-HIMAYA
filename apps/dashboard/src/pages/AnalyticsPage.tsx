@@ -46,6 +46,7 @@ import {
 import { canCreateReports, canRunScenarios } from "../lib/roles";
 import { CATEGORIES, REPORT_STATUSES } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 
 export const HEX_SIZES_KM = [2, 5, 10, 20] as const;
 
@@ -501,6 +502,7 @@ export function AnalyticsPage() {
         <PageTitle icon="analytics" tone="navy">
           {t("analytics.title")}
         </PageTitle>
+        <MapLayerLink layer="hotspots" />
         {exportable && (
           <button
             type="button"

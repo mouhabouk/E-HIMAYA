@@ -12,6 +12,7 @@ import { COVERAGE_FAMILIES, fleetKeys, readinessTone, type CoverageFamily } from
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { POI_ICON_PATHS } from "../lib/poiIcons";
 import { canReadCoverage, canReadFleet } from "../lib/roles";
+import type { FolderExtra } from "./MapDataLayers";
 import type { MapLine, MapPoi } from "./MapView";
 
 /** The tones of docs/design-system.md, as the map paints them. */
@@ -64,8 +65,11 @@ function thisMonth(): string {
 }
 
 export interface FleetMapLayers {
-  /** The switches (and the coverage's family and gouvernorat), for the map's layer bar. */
-  controls: ReactNode;
+  /**
+   * The switches, for the «موارد الحماية المدنية» folder of the layer panel (ML, Yamen 2026-11-13): the coverage's
+   * family, gouvernorat, neighbours and legend show under its switch when it is on.
+   */
+  extras: FolderExtra[];
   pois: MapPoi[];
   lines: MapLine[];
 }
@@ -208,34 +212,38 @@ export function useFleetMapLayers(): FleetMapLayers {
     [showOrders, orders.data],
   );
 
-  if (!coverageAllowed && !fleetAllowed) return { controls: null, pois, lines };
-  const legend: [string, string][] = [];
-  if (showCoverage) {
-    legend.push(
-      [COLOUR.green, t("map.fleet.legendCovered")],
-      [COLOUR.red, t("map.fleet.legendLost")],
-      [COLOUR.amber, t("map.fleet.legendOut")],
-    );
-    if (withNeighbours) legend.push([COLOUR.purple, t("map.fleet.legendNeighbour")]);
-  }
-  if (showOrders) legend.push([COLOUR.purple, t("map.fleet.legendOrder")]);
-  const controls = (
-    <fieldset className="map-layers fleet-map-layers">
-      <legend>{t("map.fleet.title")}</legend>
-      {coverageAllowed && <Toggle checked={coverageOn} onChange={setCoverage} label={t("map.fleet.coverage")} />}
-      {showCoverage && (
-        <div className="field">
-          <label htmlFor={familyId}>{t("map.fleet.family")}</label>
-          <select id={familyId} value={family} onChange={(e) => setFamily(e.target.value as CoverageFamily)}>
-            {COVERAGE_FAMILIES.map((f) => (
-              <option key={f} value={f}>
-                {t(`coverage.families.${f}`)}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-      {showCoverage && national && (
+  if (!coverageAllowed && !fleetAllowed) return { extras: [], pois, lines };
+  const legendOf = (rows: [string, string][]): ReactNode =>
+    rows.length > 0 ? (
+      <ul className="map-legend">
+        {rows.map(([colour, label]) => (
+          <li key={label}>
+            <span className="fleet-map-swatch" style={{ background: colour }} aria-hidden="true" />
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
+    ) : null;
+  const coverageLegend: [string, string][] = [
+    [COLOUR.green, t("map.fleet.legendCovered")],
+    [COLOUR.red, t("map.fleet.legendLost")],
+    [COLOUR.amber, t("map.fleet.legendOut")],
+  ];
+  if (withNeighbours) coverageLegend.push([COLOUR.purple, t("map.fleet.legendNeighbour")]);
+  const hint = <p className="muted">{t("map.fleet.hint")}</p>;
+  const coverageNote = (
+    <div className="fleet-map-layers">
+      <div className="field">
+        <label htmlFor={familyId}>{t("map.fleet.family")}</label>
+        <select id={familyId} value={family} onChange={(e) => setFamily(e.target.value as CoverageFamily)}>
+          {COVERAGE_FAMILIES.map((f) => (
+            <option key={f} value={f}>
+              {t(`coverage.families.${f}`)}
+            </option>
+          ))}
+        </select>
+      </div>
+      {national && (
         <div className="field">
           <label htmlFor={gouvId}>{t("map.fleet.gouvernorat")}</label>
           <select id={gouvId} value={gouvernorat ?? ""} onChange={(e) => setPicked(Number(e.target.value))}>
@@ -247,21 +255,34 @@ export function useFleetMapLayers(): FleetMapLayers {
           </select>
         </div>
       )}
-      {showCoverage && national && <Toggle checked={neighbours} onChange={setNeighbours} label={t("map.fleet.neighbours")} />}
-      {coverageAllowed && <Toggle checked={ordersOn} onChange={setOrders} label={t("map.fleet.orders")} />}
-      {fleetAllowed && <Toggle checked={readinessOn} onChange={setReadiness} label={t("map.fleet.readiness")} />}
-      {legend.length > 0 && (
-        <ul className="map-legend">
-          {legend.map(([colour, label]) => (
-            <li key={label}>
-              <span className="fleet-map-swatch" style={{ background: colour }} aria-hidden="true" />
-              <span>{label}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-      {(showCoverage || showOrders || showReadiness) && <p className="muted">{t("map.fleet.hint")}</p>}
-    </fieldset>
+      {national && <Toggle checked={neighbours} onChange={setNeighbours} label={t("map.fleet.neighbours")} />}
+      {legendOf(coverageLegend)}
+      {hint}
+    </div>
   );
-  return { controls, pois, lines };
+  const coverageSource = { to: "/coverage", label: t("mapLayers.screen.coverage") };
+  const extras: FolderExtra[] = [];
+  if (coverageAllowed) {
+    extras.push(
+      { key: "coverage", label: t("map.fleet.coverage"), on: coverageOn, onChange: setCoverage, source: coverageSource, note: coverageNote },
+      {
+        key: "orders",
+        label: t("map.fleet.orders"),
+        on: ordersOn,
+        onChange: setOrders,
+        source: coverageSource,
+        note: legendOf([[COLOUR.purple, t("map.fleet.legendOrder")]]),
+      },
+    );
+  }
+  if (fleetAllowed) {
+    extras.push({
+      key: "readiness",
+      label: t("map.fleet.readiness"),
+      on: readinessOn,
+      onChange: setReadiness,
+      source: { to: "/fleet/report", label: t("mapLayers.screen.fleet") },
+    });
+  }
+  return { extras, pois, lines };
 }

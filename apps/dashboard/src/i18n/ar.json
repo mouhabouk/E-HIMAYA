@@ -10846,5 +10846,43 @@
       "targetCol": "الهدف",
       "reason": "السبب"
     }
+  },
+  "mapLayers": {
+    "source": "المصدر: {{screen}}",
+    "openOnMap": "اعرضها على الخريطة التفاعلية",
+    "incidents": {
+      "toggle": "التدخّلات المفتوحة",
+      "reports": "{{n}} بلاغ"
+    },
+    "hotspots": {
+      "toggle": "البؤر الساخنة (7 أيام)"
+    },
+    "coastal": {
+      "toggle": "الشواطئ ورايات الخطر"
+    },
+    "crisis": {
+      "toggle": "المحاور المفتوحة: مناطقها وملاجئها ومناطق الإخلاء",
+      "shelter": "ملجأ · {{occupants}} من {{capacity}}"
+    },
+    "streams": {
+      "toggle": "البث المباشر والكاميرات"
+    },
+    "screen": {
+      "incidents": "التدخّلات",
+      "analytics": "التحليلات",
+      "notifications": "التنبيهات",
+      "aw": "تحذيرات العنوان",
+      "disasters": "الكوارث",
+      "resources": "الموارد",
+      "volunteers": "المتطوعون",
+      "sensors": "الحسّاسات",
+      "towers": "أبراج المراقبة",
+      "drones": "الطائرات المسيّرة",
+      "streams": "جدار البث",
+      "orgs": "المؤسسات",
+      "coastal": "السلامة الساحلية",
+      "coverage": "التغطية الحية",
+      "fleet": "تقرير الأسطول"
+    }
   }
 }

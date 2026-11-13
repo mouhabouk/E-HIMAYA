@@ -10846,5 +10846,43 @@
       "targetCol": "Cible",
       "reason": "Motif"
     }
+  },
+  "mapLayers": {
+    "source": "Source : {{screen}}",
+    "openOnMap": "Afficher sur la carte interactive",
+    "incidents": {
+      "toggle": "Interventions ouvertes",
+      "reports": "{{n}} signalement(s)"
+    },
+    "hotspots": {
+      "toggle": "Points chauds (7 jours)"
+    },
+    "coastal": {
+      "toggle": "Plages et drapeaux de risque"
+    },
+    "crisis": {
+      "toggle": "Axes ouverts : zones, abris et zones d'évacuation",
+      "shelter": "Abri · {{occupants}} sur {{capacity}}"
+    },
+    "streams": {
+      "toggle": "Flux en direct et caméras"
+    },
+    "screen": {
+      "incidents": "Interventions",
+      "analytics": "Analyses",
+      "notifications": "Alertes",
+      "aw": "Mises en garde d'adresse",
+      "disasters": "Catastrophes",
+      "resources": "Moyens",
+      "volunteers": "Bénévoles",
+      "sensors": "Capteurs",
+      "towers": "Tours de guet",
+      "drones": "Drones",
+      "streams": "Mur des flux",
+      "orgs": "Établissements",
+      "coastal": "Sécurité littorale",
+      "coverage": "Couverture en direct",
+      "fleet": "Rapport de la flotte"
+    }
   }
 }

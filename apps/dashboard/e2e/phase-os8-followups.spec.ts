@@ -274,6 +274,7 @@ test.describe("OS8 follow-ups", () => {
     await asRoom(page);
     await mockApi(page);
     await page.goto("/map");
+    await page.getByRole("button", { name: /الإنذار والتحذيرات/ }).click();
     await page.getByRole("checkbox", { name: "تحذيرات العناوين" }).check();
     // Over the whole gouvernorat: groups with their count; personal marks only counted.
     const group = page.locator(".map-poi--aw_cluster").first();

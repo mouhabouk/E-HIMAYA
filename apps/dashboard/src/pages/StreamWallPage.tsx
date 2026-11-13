@@ -20,6 +20,7 @@ import { arrangeWall, loadWall, pinStream, saveWall, WALL_LAYOUTS, type WallLayo
 import { useStreamList } from "../lib/streamHooks";
 import { Coordinates, StreamsNav } from "./StreamsPage";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 
 /**
  * Detail of a tile's stream, read only when the tile needs it (each read is audited `stream.detail`): for the boxes of
@@ -173,6 +174,7 @@ export function StreamWallPage() {
     <div className="page">
       <div className="page__head">
         <PageTitle icon="videocam" tone="red">{t("streams.wall.title")}</PageTitle>
+        <MapLayerLink layer="streams" />
         <StreamsNav />
       </div>
       <div className="filters__row list-tools">
