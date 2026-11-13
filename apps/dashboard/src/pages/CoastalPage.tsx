@@ -7,6 +7,7 @@ import { ErrorBox, Loading } from "../components/Feedback";
 import { LazyMapView } from "../components/LazyMap";
 import type { HeatPoint, MapPoi } from "../components/MapView";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 import { SimTag, SimulationBand } from "../components/StreamBits";
 import { useAuth } from "../context/auth";
 import { useLiveEvents } from "../context/live";
@@ -661,6 +662,7 @@ export function CoastalPage() {
       <PageTitle icon="healthAndSafety" tone="sky">
         {t("coastal.title")}
       </PageTitle>
+      <MapLayerLink layer="coastal" />
       <p className="muted">{t("coastal.intro")}</p>
       {data?.simulated && <SimulationBand note={t("coastal.simBand")} />}
       <p className="visually-hidden" role="status" aria-live="polite">

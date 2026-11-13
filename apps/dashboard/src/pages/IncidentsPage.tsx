@@ -11,6 +11,7 @@ import { useFormat, useGouvernorats } from "../lib/hooks";
 import { queryKeys, type IncidentStatusFilter } from "../lib/staffApi";
 import { INCIDENT_STATUSES } from "../lib/types";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 
 const STATUS_FILTERS: readonly IncidentStatusFilter[] = [...INCIDENT_STATUSES, "all"];
 
@@ -57,6 +58,7 @@ export function IncidentsPage() {
     <div className="page">
       <div className="page__head">
         <PageTitle print icon="localFireDepartment" tone="red">{t("incidents.title")}</PageTitle>
+        <MapLayerLink layer="incidents" />
         <StatusFilter value={status} onChange={setStatus} />
       </div>
       <p className="muted">{t("incidents.intro")}</p>

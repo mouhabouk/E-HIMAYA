@@ -6,6 +6,7 @@ import { ErrorBox, Loading } from "../components/Feedback";
 import { Icon, IconTile, Pill } from "../components/Icon";
 import { LazyMapView } from "../components/LazyMap";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { directionOf } from "../i18n";
@@ -49,6 +50,7 @@ export function AddressWarningsPage() {
       <PageTitle print icon="warning" tone="amber">
         {t("addressWarnings.title")}
       </PageTitle>
+      <MapLayerLink layer="aw" />
       <p className="muted">{t("addressWarnings.intro")}</p>
       <div className="aw-tabs" role="group" aria-label={t("addressWarnings.title")}>
         {TABS.map((k) => (

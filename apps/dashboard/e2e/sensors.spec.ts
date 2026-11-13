@@ -173,7 +173,8 @@ test.describe("sensors layer", () => {
 
     await page.goto("/map");
     await expect(page.getByRole("heading", { name: "Carte en direct", level: 1 })).toBeVisible();
-    await page.getByRole("checkbox", { name: "Capteurs" }).check();
+    await page.getByRole("button", { name: /Surveillance et capteurs/ }).click();
+    await page.getByRole("checkbox", { name: "Capteurs", exact: true }).check();
 
     const alarm = page.getByRole("button", { name: /^Pluviomètre Tunis \[SIM\] — Pluviomètre · Alarme · 42,5/ });
     await expect(alarm).toBeVisible();
@@ -206,7 +207,7 @@ test.describe("sensors layer", () => {
     const popup = page.locator(".maplibregl-popup");
     await expect(popup.getByText("Pluviomètre Tunis [SIM]")).toBeVisible();
 
-    await page.getByRole("checkbox", { name: "Capteurs" }).uncheck();
+    await page.getByRole("checkbox", { name: "Capteurs", exact: true }).uncheck();
     await expect(alarm).toHaveCount(0);
 
     expect(api.unexpected).toEqual([]);
@@ -225,6 +226,7 @@ test.describe("watch towers layer", () => {
     await signIn(page, ["operator"]);
     const api = await mockApi(page);
     await page.goto("/map");
+    await page.getByRole("button", { name: /Surveillance et capteurs/ }).click();
     await page.getByRole("checkbox", { name: "Tours de guet" }).check();
     const tower = page.getByRole("button", { name: /^Tour de Boukornine \[SIM\] — Feu · Est \(90°\), ouverture 60°, portée 8 km$/ });
     await expect(tower).toHaveClass(/map-poi--tower_alert/);
@@ -247,6 +249,7 @@ test.describe("drones layer", () => {
     await signIn(page, ["operator"]);
     const api = await mockApi(page);
     await page.goto("/map");
+    await page.getByRole("button", { name: /Surveillance et capteurs/ }).click();
     await page.getByRole("checkbox", { name: "Drones" }).check();
     const drone = page.getByRole("button", { name: /^Drone Protection 1 — 1 alerte\(s\) ouverte\(s\) · En vol · altitude 120 m · batterie 54 %/ });
     await expect(drone).toHaveClass(/map-poi--drone_alert/);

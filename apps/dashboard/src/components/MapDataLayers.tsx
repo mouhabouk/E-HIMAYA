@@ -2,6 +2,7 @@ import { keepPreviousData, useQueries, useQuery } from "@tanstack/react-query";
 import type { FeatureCollection } from "geojson";
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { useServices } from "../context/services";
 import type { BBox } from "../lib/filters";
 import { useLanguage } from "../lib/hooks";
@@ -99,6 +100,8 @@ export interface FolderExtra {
   note?: ReactNode;
   /** Opens the folder once when the layer arrives (a search sent to the map). */
   reveal?: boolean;
+  /** The screen that owns the data (integration first, Yamen 2026-11-13): the layer only reads it. */
+  source?: { to: string; label: string };
 }
 
 /** Phase R2: the folder the operations layers go to, should the caller see no file layer of it. */
@@ -110,6 +113,69 @@ export const CIVIL_PROTECTION_GROUP: LayerGroup = {
   position: 0,
   sensitive: false,
   layer_count: 0,
+};
+
+/**
+ * The folders of the layers the screens of the system draw (Yamen 2026-11-13: any data on a map is also a layer of
+ * the interactive map). They show even before the administrator creates them; once created, the administrator's
+ * name, icon, colour and place win.
+ */
+export const SYSTEM_GROUPS: Readonly<Record<string, LayerGroup>> = {
+  civil_protection: CIVIL_PROTECTION_GROUP,
+  ops_reports: {
+    key: "ops_reports",
+    name: { ar: "البلاغات والتدخّلات", fr: "Signalements et interventions", en: "Reports and interventions" },
+    icon: "campaign",
+    tone: "navy",
+    position: 0,
+    sensitive: false,
+    layer_count: 0,
+  },
+  warnings: {
+    key: "warnings",
+    name: { ar: "الإنذار والتحذيرات", fr: "Alertes et mises en garde", en: "Alerts and warnings" },
+    icon: "warning",
+    tone: "red",
+    position: 0,
+    sensitive: false,
+    layer_count: 0,
+  },
+  crisis: {
+    key: "crisis",
+    name: { ar: "الأزمات والمحاور", fr: "Crises et axes", en: "Crises and axes" },
+    icon: "healthAndSafety",
+    tone: "orange",
+    position: 0,
+    sensitive: false,
+    layer_count: 0,
+  },
+  monitoring: {
+    key: "monitoring",
+    name: { ar: "الرصد والاستشعار", fr: "Surveillance et capteurs", en: "Monitoring and sensors" },
+    icon: "monitoring",
+    tone: "teal",
+    position: 0,
+    sensitive: false,
+    layer_count: 0,
+  },
+  prevention: {
+    key: "prevention",
+    name: { ar: "الوقاية والمؤسسات", fr: "Prévention et établissements", en: "Prevention and institutions" },
+    icon: "apartment",
+    tone: "purple",
+    position: 0,
+    sensitive: false,
+    layer_count: 0,
+  },
+  seasons: {
+    key: "seasons",
+    name: { ar: "المواسم والسواحل", fr: "Saisons et littoral", en: "Seasons and coast" },
+    icon: "schedule",
+    tone: "teal",
+    position: 0,
+    sensitive: false,
+    layer_count: 0,
+  },
 };
 
 /** "Show every layer of the folder": ticked, unticked, or mixed when only some are on. */
@@ -198,6 +264,11 @@ function LayerFolder({
               <input type="checkbox" checked={x.on} onChange={(e) => x.onChange(e.target.checked)} />
               <span>{x.label}</span>
             </label>
+            {x.source && (
+              <Link className="layer-folder__source muted" to={x.source.to}>
+                {t("mapLayers.source", { screen: x.source.label })}
+              </Link>
+            )}
             {x.on && x.note}
           </div>
         ))}
@@ -257,12 +328,14 @@ export function useMapDataLayers(bbox: BBox | null, extras: Readonly<Record<stri
   const layersQuery = useQuery({ queryKey: layerKeys.all, queryFn: ({ signal }) => api.layers(signal) });
   const layers = useMemo(() => (layersQuery.data?.items ?? []).filter((l) => l.enabled), [layersQuery.data]);
   const fileFolders = useMemo(() => layerFolders(layersQuery.data?.groups ?? [], layers), [layersQuery.data, layers]);
-  // Phase R2: a folder holding only page layers (no file layer the caller sees) still shows, first.
+  // Phase R2: a folder holding only page layers (no file layer the caller sees) still shows, first, in the order of
+  // the extras (the system's folders, Yamen 2026-11-13).
   const folders = useMemo(() => {
     const missing = Object.keys(extras)
       .filter((key) => (extras[key]?.length ?? 0) > 0 && !fileFolders.some((f) => f.group.key === key))
       .map((key) => ({
-        group: layersQuery.data?.groups?.find((g) => g.key === key) ?? { ...CIVIL_PROTECTION_GROUP, key },
+        group: layersQuery.data?.groups?.find((g) => g.key === key) ??
+          SYSTEM_GROUPS[key] ?? { ...CIVIL_PROTECTION_GROUP, key },
         layers: [] as MapLayer[],
       }));
     return [...missing, ...fileFolders];

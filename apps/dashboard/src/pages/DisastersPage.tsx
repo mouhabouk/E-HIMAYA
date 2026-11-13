@@ -11,6 +11,7 @@ import { FigureTiles, LevelPill, SimBadge } from "../components/crisis/CrisisBit
 import { ErrorBox, Loading } from "../components/Feedback";
 import { GouvernoratPicker } from "../components/GouvernoratPicker";
 import { PageTitle } from "../components/PageTitle";
+import { MapLayerLink } from "../components/MapLayerLink";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { areaBounds, crisisKeys, type Axis } from "../lib/crisis";
@@ -102,6 +103,7 @@ export function DisastersPage() {
           <PageTitle print icon="warning" tone="red">
             {t("disasters.title")}
           </PageTitle>
+          <MapLayerLink layer="crisis" />
           <CommitteeHeading />
         </div>
         {canOpenAxes(roles) && (

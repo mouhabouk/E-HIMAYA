@@ -1,7 +1,7 @@
 import { keepPreviousData, useQueries, useQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
-import { Suspense, useCallback, useId, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
@@ -12,8 +12,17 @@ import { useAddressWarningsLayer } from "../components/AddressWarningsLayer";
 import { useBasemap } from "../components/BasemapSwitch";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
+import {
+  layersFromUrl,
+  useCoastalLayer,
+  useCrisisLayer,
+  useHotspotsLayer,
+  useIncidentsLayer,
+  useStreamsLayer,
+  type MapLayerId,
+} from "../components/SystemLayers";
 import { WhatWhereSearch } from "../components/WhatWhereSearch";
-import type { HeatPoint, MapLine, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
+import type { HeatPoint, MapHex, MapLine, MapMarker, MapPoi, MapPolygon } from "../components/MapView";
 import { MapLegend, orgKindLabel } from "../components/OrgBits";
 import { useMapWeather, useWeatherGrid, WeatherControls, WeatherPointCard, type WeatherViews } from "../components/WeatherLayer";
 import { useAuth } from "../context/auth";
@@ -31,7 +40,9 @@ import { errorMessageKey } from "../lib/api";
 import {
   canOpenDisasters,
   canOpenDrones,
+  canOpenCoastal,
   canReadAddressWarnings,
+  canReadAnalytics,
   canOpenSensors,
   canOpenTowers,
   canReadOrgs,
@@ -64,6 +75,11 @@ const TOWER_VIEW = "#ea580c";
 const TOWER_VIEW_ALERT = "#dc2626";
 const DRONE_LAYER_KEY = "ehimaya.mapDroneLayer";
 const EXPOSURE_LAYER_KEY = "ehimaya.mapExposureLayer";
+const HOTSPOTS_LAYER_KEY = "ehimaya.mapHotspotsLayer";
+const INCIDENTS_LAYER_KEY = "ehimaya.mapIncidentsLayer";
+const COASTAL_LAYER_KEY = "ehimaya.mapCoastalLayer";
+const CRISIS_LAYER_KEY = "ehimaya.mapCrisisLayer";
+const STREAMS_LAYER_KEY = "ehimaya.mapStreamsLayer";
 // Drones (L5b): the camera's view and the path in purple, work areas in green, no-fly zones in red.
 const DRONE_VIEW = "#7c3aed";
 const DRONE_WORK = "#16a34a";
@@ -107,9 +123,12 @@ function storeLayer(key: string, on: boolean): void {
   }
 }
 
-/** A map layer switch remembered for the tab (like the institutions layer). */
-function useLayer(key: string): [boolean, (on: boolean) => void] {
-  const [on, setOn] = useState(() => storedLayer(key));
+/**
+ * A map layer switch remembered for the tab (like the institutions layer). A source screen opens the map with its
+ * layer on through `/map?layers=<id>` (Yamen 2026-11-13: the same information reachable from more than one place).
+ */
+function useLayer(key: string, fromUrl = false): [boolean, (on: boolean) => void] {
+  const [on, setOn] = useState(() => fromUrl || storedLayer(key));
   return [
     on,
     (value: boolean) => {
@@ -117,16 +136,6 @@ function useLayer(key: string): [boolean, (on: boolean) => void] {
       storeLayer(key, value);
     },
   ];
-}
-
-function LayerToggle({ checked, onChange, label }: { checked: boolean; onChange: (on: boolean) => void; label: string }) {
-  const id = useId();
-  return (
-    <label htmlFor={id} className="checkbox">
-      <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <span>{label}</span>
-    </label>
-  );
 }
 
 /** The paths of the flying drones (their last 30 minutes), from the track queries. */
@@ -167,31 +176,50 @@ export function MapPage() {
   const bbox = useDebounced(rawBBox, 400);
   const [fresh, setFresh] = useState<ReadonlySet<string>>(new Set());
   const [initialBounds] = useState(() => initialBoundsFor(user?.identity.gouvernoratCode ?? null));
-  const layerToggleId = useId();
+  const location = useLocation();
+  const [asked] = useState(() => layersFromUrl(location.search));
+  const wants = (id: MapLayerId) => asked.has(id);
+  const roles = user?.identity.roles ?? [];
   const orgLayerAllowed = canReadOrgs(user?.identity.roles ?? []);
-  const [orgLayer, setOrgLayer] = useLayer(ORG_LAYER_KEY);
+  const [orgLayer, setOrgLayer] = useLayer(ORG_LAYER_KEY, wants("orgs"));
   const showOrgs = orgLayerAllowed && orgLayer;
   const resourceLayerAllowed = canReadResources(user?.identity.roles ?? []);
-  const [resourceLayer, setResourceLayer] = useLayer(RESOURCE_LAYER_KEY);
+  const [resourceLayer, setResourceLayer] = useLayer(RESOURCE_LAYER_KEY, wants("resources"));
   const showResources = resourceLayerAllowed && resourceLayer;
-  const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY);
-  const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY);
+  const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY, wants("volunteers"));
+  const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY, wants("alerts"));
   const sensorLayerAllowed = canOpenSensors(user?.identity.roles ?? []);
-  const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY);
+  const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY, wants("sensors"));
   const showSensors = sensorLayerAllowed && sensorLayer;
   // OS8-1: the address warnings of the room's register on its map.
   const awLayerAllowed = canReadAddressWarnings(user?.identity.roles ?? []);
-  const [awLayer, setAwLayer] = useLayer(AW_LAYER_KEY);
+  const [awLayer, setAwLayer] = useLayer(AW_LAYER_KEY, wants("aw"));
   const towerLayerAllowed = canOpenTowers(user?.identity.roles ?? []);
-  const [towerLayer, setTowerLayer] = useLayer(TOWER_LAYER_KEY);
+  const [towerLayer, setTowerLayer] = useLayer(TOWER_LAYER_KEY, wants("towers"));
   const showTowers = towerLayerAllowed && towerLayer;
   const droneLayerAllowed = canOpenDrones(user?.identity.roles ?? []);
-  const [droneLayer, setDroneLayer] = useLayer(DRONE_LAYER_KEY);
+  const [droneLayer, setDroneLayer] = useLayer(DRONE_LAYER_KEY, wants("drones"));
   const showDrones = droneLayerAllowed && droneLayer;
   // OS14: the people and places exposed on the open crisis axes, read from the axes' own estimates (optional layer).
   const exposureLayerAllowed = canOpenDisasters(user?.identity.roles ?? []);
-  const [exposureLayer, setExposureLayer] = useLayer(EXPOSURE_LAYER_KEY);
+  const [exposureLayer, setExposureLayer] = useLayer(EXPOSURE_LAYER_KEY, wants("exposure"));
   const exposure = useExposureLayer(exposureLayerAllowed && exposureLayer);
+  // Yamen 2026-11-13: the data the other screens draw on their maps, as optional layers here. Each reads its source
+  // screen's own request (same permissions, same scope by gouvernorat) and links back to it.
+  const hotspotsAllowed = canReadAnalytics(roles);
+  const [hotspotsLayer, setHotspotsLayer] = useLayer(HOTSPOTS_LAYER_KEY, wants("hotspots"));
+  const hotspots = useHotspotsLayer(hotspotsAllowed && hotspotsLayer);
+  const [incidentsLayer, setIncidentsLayer] = useLayer(INCIDENTS_LAYER_KEY, wants("incidents"));
+  const incidents = useIncidentsLayer(incidentsLayer);
+  const coastalAllowed = canOpenCoastal(roles);
+  const [coastalLayer, setCoastalLayer] = useLayer(COASTAL_LAYER_KEY, wants("coastal"));
+  const coastal = useCoastalLayer(coastalAllowed && coastalLayer);
+  const [crisisLayer, setCrisisLayer] = useLayer(CRISIS_LAYER_KEY, wants("crisis"));
+  const crisis = useCrisisLayer(exposureLayerAllowed && crisisLayer);
+  const [streamsLayer, setStreamsLayer] = useLayer(STREAMS_LAYER_KEY, wants("streams"));
+  const streams = useStreamsLayer(streamsLayer);
+  const systemLayers = [hotspots, incidents, coastal, crisis, streams];
+  const systemError = systemLayers.find((l) => l.error);
   // A minute is fine enough for "a fire or smoke in the last hour".
   const clock = useNow(60_000);
   const qc = useQueryClient();
@@ -240,7 +268,7 @@ export function MapPage() {
   );
 
   // Weather layer (phase 7 §1, FR-C-08 / FR-C-10): fire danger field, wind arrows, rain level, 48 h slider.
-  const [showWeather, setWeatherLayer] = useLayer(WEATHER_LAYER_KEY);
+  const [showWeather, setWeatherLayer] = useLayer(WEATHER_LAYER_KEY, wants("weather"));
   const [weatherViews, setWeatherViewsState] = useState<WeatherViews>(storedViews);
   const setWeatherViews = (v: WeatherViews) => {
     setWeatherViewsState(v);
@@ -550,21 +578,157 @@ export function MapPage() {
   // Phase R2: the units and resources of the operations and a resources search sent from the register sit in the
   // «موارد الحماية المدنية» folder of the layer panel, beside the file layers of that folder.
   const resourceSearch = useResourceSearchLayer(bbox);
-  const civilProtection = useMemo<FolderExtra[]>(() => {
-    const out: FolderExtra[] = [];
-    if (resourceSearch.extra) out.push(resourceSearch.extra);
-    if (resourceLayerAllowed) {
-      out.push({ key: "ops-resources", label: t("ops.map.resourcesToggle"), on: resourceLayer, onChange: setResourceLayer });
+  const awMarks = useAddressWarningsLayer(bbox, awLayerAllowed && awLayer);
+  // Yamen 2026-11-13: every layer of the system in its folder of the panel, with a link to the screen that owns it.
+  const src = (to: string, key: string) => ({ to, label: t(key) });
+  const folderExtras = useMemo<Record<string, FolderExtra[]>>(() => {
+    const extra = (
+      key: string,
+      label: string,
+      on: boolean,
+      onChange: (on: boolean) => void,
+      source?: { to: string; label: string },
+      note?: FolderExtra["note"],
+    ): FolderExtra => ({
+      key,
+      label,
+      on,
+      onChange,
+      ...(source ? { source } : {}),
+      ...(note ? { note } : {}),
+      // A layer asked for by a source screen (`/map?layers=…`) opens its folder once.
+      ...(asked.has(key === "ops-resources" ? "resources" : key) ? { reveal: true } : {}),
+    });
+    const ops: FolderExtra[] = [
+      extra("incidents", t("mapLayers.incidents.toggle"), incidentsLayer, setIncidentsLayer, src("/incidents", "mapLayers.screen.incidents")),
+    ];
+    if (hotspotsAllowed) {
+      ops.push(extra("hotspots", t("mapLayers.hotspots.toggle"), hotspotsLayer, setHotspotsLayer, src("/analytics", "mapLayers.screen.analytics")));
     }
-    return out;
-  }, [resourceSearch.extra, resourceLayerAllowed, resourceLayer, setResourceLayer, t]);
-  const folderExtras = useMemo(() => ({ civil_protection: civilProtection }), [civilProtection]);
+    const warnings: FolderExtra[] = [
+      extra("alerts", t("ops.map.alertsToggle"), showAlerts, setAlertLayer, src("/notifications", "mapLayers.screen.notifications")),
+    ];
+    if (awLayerAllowed) {
+      warnings.push(
+        extra("aw", t("addressWarnings.layer.toggle"), awLayer, setAwLayer, src("/address-warnings", "mapLayers.screen.aw"), awMarks.controls),
+      );
+    }
+    const crisisFolder: FolderExtra[] = [];
+    if (exposureLayerAllowed) {
+      crisisFolder.push(
+        extra("crisis", t("mapLayers.crisis.toggle"), crisisLayer, setCrisisLayer, src("/disasters", "mapLayers.screen.disasters")),
+        extra("exposure", t("crisis.map.layer.exposure"), exposureLayer, setExposureLayer, src("/disasters", "mapLayers.screen.disasters")),
+      );
+    }
+    const civil: FolderExtra[] = [];
+    if (resourceSearch.extra) civil.push(resourceSearch.extra);
+    if (resourceLayerAllowed) {
+      civil.push(extra("ops-resources", t("ops.map.resourcesToggle"), resourceLayer, setResourceLayer, src("/resources", "mapLayers.screen.resources")));
+    }
+    civil.push(extra("volunteers", t("ops.map.volunteersToggle"), showVolunteers, setVolunteerLayer, src("/volunteers", "mapLayers.screen.volunteers")));
+    const monitoring: FolderExtra[] = [];
+    if (sensorLayerAllowed) monitoring.push(extra("sensors", t("sensors.map.toggle"), sensorLayer, setSensorLayer, src("/sensors", "mapLayers.screen.sensors")));
+    if (towerLayerAllowed) monitoring.push(extra("towers", t("towers.map.toggle"), towerLayer, setTowerLayer, src("/towers", "mapLayers.screen.towers")));
+    if (droneLayerAllowed) monitoring.push(extra("drones", t("drones.map.toggle"), droneLayer, setDroneLayer, src("/drones", "mapLayers.screen.drones")));
+    monitoring.push(
+      extra("streams", t("mapLayers.streams.toggle"), streamsLayer, setStreamsLayer, src("/streams/wall", "mapLayers.screen.streams")),
+      extra("weather", t("weather.toggle"), showWeather, (on) => {
+        setWeatherLayer(on);
+        if (!on) setWeatherPoint(null);
+      }),
+    );
+    const prevention: FolderExtra[] = [];
+    if (orgLayerAllowed) {
+      prevention.push(
+        extra(
+          "orgs",
+          t("orgs.layer.toggle"),
+          orgLayer,
+          setOrgLayer,
+          src("/orgs", "mapLayers.screen.orgs"),
+          <span className="muted" role="status" aria-live="polite">
+            {orgsQuery.isFetching ? t("common.loading") : t("orgs.layer.count", { count: fmt.number(pois.length) })}
+          </span>,
+        ),
+      );
+    }
+    const seasons: FolderExtra[] = coastalAllowed
+      ? [extra("coastal", t("mapLayers.coastal.toggle"), coastalLayer, setCoastalLayer, src("/coastal", "mapLayers.screen.coastal"))]
+      : [];
+    return {
+      ops_reports: ops,
+      warnings,
+      crisis: crisisFolder,
+      civil_protection: civil,
+      monitoring,
+      prevention,
+      seasons,
+    };
+    // The setters of useLayer are new each render, like the switches before; the values are the dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    t,
+    fmt,
+    asked,
+    incidentsLayer,
+    hotspotsAllowed,
+    hotspotsLayer,
+    showAlerts,
+    awLayerAllowed,
+    awLayer,
+    awMarks.controls,
+    exposureLayerAllowed,
+    crisisLayer,
+    exposureLayer,
+    resourceSearch.extra,
+    resourceLayerAllowed,
+    resourceLayer,
+    showVolunteers,
+    sensorLayerAllowed,
+    sensorLayer,
+    towerLayerAllowed,
+    towerLayer,
+    droneLayerAllowed,
+    droneLayer,
+    streamsLayer,
+    showWeather,
+    orgLayerAllowed,
+    orgLayer,
+    orgsQuery.isFetching,
+    pois.length,
+    coastalAllowed,
+    coastalLayer,
+  ]);
   // Map data layers loaded from files (phase B1): hospitals, shelters… any number at once.
   const dataLayers = useMapDataLayers(bbox, folderExtras);
-  const awMarks = useAddressWarningsLayer(bbox, awLayerAllowed && awLayer);
+  const hexes: MapHex[] = hotspots.hexes;
   const allPois = useMemo(
-    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...awMarks.pois, ...savedPlaces.pois, ...exposure.pois],
-    [pois, opsPois, resourceSearch.pois, dataLayers.pois, awMarks.pois, savedPlaces.pois, exposure.pois],
+    () => [
+      ...pois,
+      ...opsPois,
+      ...resourceSearch.pois,
+      ...dataLayers.pois,
+      ...awMarks.pois,
+      ...savedPlaces.pois,
+      ...exposure.pois,
+      ...incidents.pois,
+      ...coastal.pois,
+      ...crisis.pois,
+      ...streams.pois,
+    ],
+    [
+      pois,
+      opsPois,
+      resourceSearch.pois,
+      dataLayers.pois,
+      awMarks.pois,
+      savedPlaces.pois,
+      exposure.pois,
+      incidents.pois,
+      coastal.pois,
+      crisis.pois,
+      streams.pois,
+    ],
   );
   const shapes = useMemo(
     () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
@@ -611,8 +775,8 @@ export function MapPage() {
         colour: DRONE_VIEW,
         outline: "solid",
       }));
-    return [...alertPolygons(alerts), ...wedges, ...zones, ...views, ...exposure.polygons];
-  }, [alerts, showTowers, towersQuery.data, clock, showDrones, zonesQuery.data, flying, exposure.polygons]);
+    return [...crisis.polygons, ...alertPolygons(alerts), ...wedges, ...zones, ...views, ...exposure.polygons];
+  }, [crisis.polygons, alerts, showTowers, towersQuery.data, clock, showDrones, zonesQuery.data, flying, exposure.polygons]);
 
   const legend = useMemo(() => {
     const items: { kind: MapPoi["kind"]; label: string }[] = [];
@@ -654,52 +818,11 @@ export function MapPage() {
         </p>
       </div>
       <FiltersBar showGouvernorat={national} />
+      {/* Yamen 2026-11-13: every switch sits in its folder of the layer panel; this row keeps the legend and basemap. */}
       <div className="map-layers" role="group" aria-label={t("ops.map.layers")}>
-        {orgLayerAllowed && (
-          <label htmlFor={layerToggleId} className="checkbox">
-            <input
-              id={layerToggleId}
-              type="checkbox"
-              checked={orgLayer}
-              onChange={(e) => setOrgLayer(e.target.checked)}
-            />
-            <span>{t("orgs.layer.toggle")}</span>
-          </label>
-        )}
-        <LayerToggle checked={showVolunteers} onChange={setVolunteerLayer} label={t("ops.map.volunteersToggle")} />
-        <LayerToggle checked={showAlerts} onChange={setAlertLayer} label={t("ops.map.alertsToggle")} />
-        {sensorLayerAllowed && (
-          <LayerToggle checked={sensorLayer} onChange={setSensorLayer} label={t("sensors.map.toggle")} />
-        )}
-        {awLayerAllowed && (
-          <LayerToggle checked={awLayer} onChange={setAwLayer} label={t("addressWarnings.layer.toggle")} />
-        )}
-        {towerLayerAllowed && (
-          <LayerToggle checked={towerLayer} onChange={setTowerLayer} label={t("towers.map.toggle")} />
-        )}
-        {droneLayerAllowed && (
-          <LayerToggle checked={droneLayer} onChange={setDroneLayer} label={t("drones.map.toggle")} />
-        )}
-        {exposureLayerAllowed && (
-          <LayerToggle checked={exposureLayer} onChange={setExposureLayer} label={t("crisis.map.layer.exposure")} />
-        )}
-        <LayerToggle
-          checked={showWeather}
-          onChange={(on) => {
-            setWeatherLayer(on);
-            if (!on) setWeatherPoint(null);
-          }}
-          label={t("weather.toggle")}
-        />
-        {showOrgs && (
-          <span className="muted" role="status" aria-live="polite">
-            {orgsQuery.isFetching ? t("common.loading") : t("orgs.layer.count", { count: fmt.number(pois.length) })}
-          </span>
-        )}
         {legend.length > 0 && <MapLegend items={legend} />}
         {basemap.control}
       </div>
-      {awMarks.controls}
       {dataLayers.controls}
       {adminLayer.controls}
       {showWeather && (
@@ -750,6 +873,7 @@ export function MapPage() {
         <ErrorBox error={volunteersQuery.error} onRetry={() => void volunteersQuery.refetch()} />
       )}
       {query.isError && <ErrorBox error={query.error} onRetry={() => void query.refetch()} />}
+      {systemError && <ErrorBox error={systemError.error} onRetry={systemError.refetch} />}
       {showOrgs && orgsQuery.isError && (
         <ErrorBox error={orgsQuery.error} onRetry={() => void orgsQuery.refetch()} />
       )}
@@ -781,6 +905,7 @@ export function MapPage() {
               poiOpenLabel={t("orgs.layer.open")}
               onOpenPoi={onOpenPoi}
               polygons={polygons}
+              hexes={hexes}
               lines={lines}
               heat={heat}
               shapes={shapes}
