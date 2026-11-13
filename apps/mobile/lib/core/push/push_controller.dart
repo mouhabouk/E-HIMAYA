@@ -7,6 +7,7 @@ import '../../features/alerts/alerts_providers.dart';
 import '../../features/doctor/doctor_providers.dart';
 import '../../features/institution/institution_providers.dart';
 import '../../features/reports/reports_providers.dart';
+import '../../features/safety/address_warnings_consent_screen.dart';
 import '../../features/safety/safety_providers.dart';
 import '../../features/volunteer/volunteer_providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -182,6 +183,8 @@ class PushController {
         _ref.invalidate(safetyCheckProvider);
       case PushKind.safetyHistoryViewed:
         break;
+      case PushKind.addressWarningViewed:
+        _ref.invalidate(myAddressWarningsProvider);
       case PushKind.medicalReferral || PushKind.medicalOpinion:
         _ref.invalidate(medicalFilesProvider);
       case PushKind.prealert:

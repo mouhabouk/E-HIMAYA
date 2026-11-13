@@ -80,6 +80,16 @@ export type LiveEvent =
       gouvernorat_code: number | null;
       simulated: boolean;
     }
+  /** OS8-3: the morning review reminder of the address warnings of a gouvernorat (once a day, from 08:00). */
+  | {
+      type: "address_warnings.review_reminder";
+      day: string;
+      gouvernorat_code: number;
+      late: number;
+      soon: number;
+      manager: number;
+      central: number;
+    }
   /** Phase L5b: a reading of a sensor of the local network, with its level after it. */
   | {
       type: "sensor.reading";
@@ -320,6 +330,10 @@ function parseEvent(raw: unknown): LiveEvent | { type: "ready" } | null {
         typeof m.feature_id === "string" &&
         (m.level === "yellow" || m.level === "red") &&
         typeof m.score === "number"
+        ? (m as unknown as LiveEvent)
+        : null;
+    case "address_warnings.review_reminder":
+      return typeof m.day === "string" && typeof m.late === "number" && typeof m.soon === "number"
         ? (m as unknown as LiveEvent)
         : null;
     case "sensor.reading":

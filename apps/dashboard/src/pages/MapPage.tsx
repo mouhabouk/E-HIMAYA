@@ -7,6 +7,7 @@ import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
 import { useSavedPlaces } from "../components/SavedPlaces";
 import { useAdminLayer } from "../components/AdminLayer";
+import { useAddressWarningsLayer } from "../components/AddressWarningsLayer";
 import { useBasemap } from "../components/BasemapSwitch";
 import { useFleetMapLayers } from "../components/FleetMapLayers";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
@@ -29,6 +30,7 @@ import { areaRings, type Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
 import {
   canOpenDrones,
+  canReadAddressWarnings,
   canOpenSensors,
   canOpenTowers,
   canReadOrgs,
@@ -54,6 +56,7 @@ const VOLUNTEER_LAYER_KEY = "ehimaya.mapVolunteerLayer";
 const ALERT_LAYER_KEY = "ehimaya.mapAlertLayer";
 const WEATHER_LAYER_KEY = "ehimaya.mapWeatherLayer";
 const SENSOR_LAYER_KEY = "ehimaya.mapSensorLayer";
+const AW_LAYER_KEY = "ehimaya.mapAddressWarningsLayer";
 const TOWER_LAYER_KEY = "ehimaya.mapTowerLayer";
 // The wedge of a tower's view: MapLibre paints plain colours, the same in both themes.
 const TOWER_VIEW = "#ea580c";
@@ -174,6 +177,9 @@ export function MapPage() {
   const sensorLayerAllowed = canOpenSensors(user?.identity.roles ?? []);
   const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY);
   const showSensors = sensorLayerAllowed && sensorLayer;
+  // OS8-1: the address warnings of the room's register on its map.
+  const awLayerAllowed = canReadAddressWarnings(user?.identity.roles ?? []);
+  const [awLayer, setAwLayer] = useLayer(AW_LAYER_KEY);
   const towerLayerAllowed = canOpenTowers(user?.identity.roles ?? []);
   const [towerLayer, setTowerLayer] = useLayer(TOWER_LAYER_KEY);
   const showTowers = towerLayerAllowed && towerLayer;
@@ -551,9 +557,10 @@ export function MapPage() {
   const dataLayers = useMapDataLayers(bbox, folderExtras);
   // OS3 follow-ups: the live coverage, the repositioning orders and the fleet readiness, as optional layers.
   const fleetLayers = useFleetMapLayers();
+  const awMarks = useAddressWarningsLayer(bbox, awLayerAllowed && awLayer);
   const allPois = useMemo(
-    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...fleetLayers.pois, ...savedPlaces.pois],
-    [pois, opsPois, resourceSearch.pois, dataLayers.pois, fleetLayers.pois, savedPlaces.pois],
+    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...awMarks.pois, ...fleetLayers.pois, ...savedPlaces.pois],
+    [pois, opsPois, resourceSearch.pois, dataLayers.pois, awMarks.pois, fleetLayers.pois, savedPlaces.pois],
   );
   const allLines = useMemo(() => [...lines, ...fleetLayers.lines], [lines, fleetLayers.lines]);
   const shapes = useMemo(
@@ -661,6 +668,9 @@ export function MapPage() {
         {sensorLayerAllowed && (
           <LayerToggle checked={sensorLayer} onChange={setSensorLayer} label={t("sensors.map.toggle")} />
         )}
+        {awLayerAllowed && (
+          <LayerToggle checked={awLayer} onChange={setAwLayer} label={t("addressWarnings.layer.toggle")} />
+        )}
         {towerLayerAllowed && (
           <LayerToggle checked={towerLayer} onChange={setTowerLayer} label={t("towers.map.toggle")} />
         )}
@@ -683,6 +693,7 @@ export function MapPage() {
         {legend.length > 0 && <MapLegend items={legend} />}
         {basemap.control}
       </div>
+      {awMarks.controls}
       {dataLayers.controls}
       {fleetLayers.controls}
       {adminLayer.controls}

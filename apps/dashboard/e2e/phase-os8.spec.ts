@@ -163,6 +163,9 @@ async function mockApi(page: Page) {
       return json(route, { ...MARKERS, items: status ? MARKERS.items.filter((x) => x.status === status) : MARKERS.items });
     }
     if (verb === "GET" && pathname === `${A}/reveals`) return json(route, []);
+    if (verb === "GET" && pathname === `${A}/reminders`) {
+      return json(route, { late: [], soon: [], disputes: 0, settings: { hour: 8, ahead_days: 30, manager_days: 7, central_days: 30 } });
+    }
     if (verb === "GET" && pathname === `${A}/incidents/i-1`) return json(route, WARNINGS);
     if (verb === "POST" && pathname === `${A}/incidents/i-1/reveal/p1`) {
       return json(route, { name: "فاطمة بن صالح", phone: "+216 98 000 000" });

@@ -20,6 +20,7 @@ const _saved = <String, Object?>{
   ],
   'reveals': [
     {
+      'id': 7,
       'at': '2026-11-12T08:00:00Z',
       'category': 'mob',
       'reason': 'To call and check someone is home',
@@ -54,6 +55,46 @@ void main() {
     expect(m.address, '12 rue de Tunis, Sfax');
     expect(m.needs, {'mob': 'Wheelchair, 2nd floor'});
     expect(m.reveals.single.reason, 'To call and check someone is home');
+    expect(m.reveals.single.id, 7);
+    expect(m.reveals.single.disputedAt, isNull);
+  });
+
+  testWidgets('OS8-2: the owner may object to a reading of their name', (
+    tester,
+  ) async {
+    await _pump(tester, MyAddressWarnings.fromJson(_saved));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('aw-dispute-7')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('I know of no incident at my home'), findsOneWidget);
+  });
+
+  testWidgets('OS8-2: an objection already sent is shown, not offered again', (
+    tester,
+  ) async {
+    final disputed = MyAddressWarnings.fromJson({
+      ..._saved,
+      'reveals': [
+        {
+          'id': 7,
+          'at': '2026-11-12T08:00:00Z',
+          'category': 'mob',
+          'reason': 'To call and check someone is home',
+          'disputed_at': '2026-11-12T09:00:00Z',
+        },
+      ],
+    });
+    await _pump(tester, disputed);
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('aw-disputed-7')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.byKey(const Key('aw-dispute-7')), findsNothing);
   });
 
   testWidgets('shows the needs, who read the name and why, and withdraw', (

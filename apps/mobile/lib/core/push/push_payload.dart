@@ -14,6 +14,9 @@ enum PushKind {
   safetyLink('safety_link'),
   safetyCheckFired('safety_check_fired'),
   safetyHistoryViewed('safety_history_viewed'),
+  // OS8-2: a room read the name of the owner of a personal address warning (when and why are
+  // fetched behind the login, never in the push).
+  addressWarningViewed('address_warning_viewed'),
   safetyCheckReminder('safety_check_reminder'),
   // Phase C1-c: a medical file referred to this doctor, a specialist's opinion on a file they hold.
   medicalReferral('medical_referral'),
@@ -114,6 +117,7 @@ class PushPayload {
     PushKind.safetyCheckFired ||
     PushKind.safetyCheckReminder => Routes.safetyCheck,
     PushKind.safetyHistoryViewed => Routes.safetyLocationHistory,
+    PushKind.addressWarningViewed => Routes.safetyAddressWarnings,
     PushKind.medicalReferral || PushKind.medicalOpinion => Routes.doctorFiles,
     PushKind.prealert
         when (data['org_id'] ?? '').isNotEmpty &&

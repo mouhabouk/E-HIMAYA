@@ -8,8 +8,8 @@
   parts, labour and outside workshop in dinars (three decimals, millimes), the invoice or order number, and who
   entered the cost and when (at the exit, or later when the invoice arrives).
 
-Revision ID: 0110_coverage_followups
-Revises: 0109_call_card_review
+Revision ID: 0111_coverage_followups
+Revises: 0110_aw_followups
 Create Date: 2026-11-13
 """
 
@@ -17,8 +17,8 @@ from collections.abc import Sequence
 
 from migrations.sqlutil import run_script
 
-revision: str = "0110_coverage_followups"
-down_revision: str | None = "0109_call_card_review"
+revision: str = "0111_coverage_followups"
+down_revision: str | None = "0110_aw_followups"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

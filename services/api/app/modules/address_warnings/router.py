@@ -84,6 +84,14 @@ async def patch_marker(
     return out
 
 
+@router.post("/markers/{marker_id}/check", response_model=schemas.MarkerOut)
+async def request_check(principal: Writer, session: Session, marker_id: uuid.UUID) -> schemas.MarkerOut:
+    """OS8-3: ask a field check of a mark from the review reminder (kept until a confirm or an archive)."""
+    out = await service.request_check(session, principal, marker_id)
+    await session.commit()
+    return out
+
+
 @router.post("/markers/{marker_id}/{action}", response_model=schemas.MarkerOut)
 async def decide(
     principal: Writer,
@@ -103,6 +111,12 @@ async def import_orgs(principal: Writer, session: Session) -> schemas.ImportOut:
     out = await service.import_orgs(session, principal)
     await session.commit()
     return out
+
+
+@router.get("/reminders", response_model=schemas.Reminders)
+async def reminders(principal: Reader, session: Session) -> schemas.Reminders:
+    """OS8-3: the marks past their review date or within the notice, with their level (room, manager, central)."""
+    return await service.reminders(session, principal)
 
 
 @router.get("/reveals", response_model=list[schemas.RevealRow])
@@ -232,3 +246,10 @@ async def withdraw_my_warnings(reporter: CurrentReporter, session: Session) -> s
         await session.commit()
         return out
     return current
+
+
+@me_router.post("/reveals/{reveal_id}/dispute", status_code=status.HTTP_204_NO_CONTENT)
+async def dispute_reveal(reporter: CurrentReporter, session: Session, reveal_id: int, body: schemas.DisputeIn) -> None:
+    """OS8-2: «لا علم لي بأي بلاغ عندي». The owner objects to a reading of their name; the central room follows it."""
+    await service.dispute(session, _registered(reporter), reporter.actor, reveal_id, body.note)
+    await session.commit()

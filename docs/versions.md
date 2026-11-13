@@ -1,4 +1,4 @@
-# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2 و L3 و L3b و UI-3 و UI-3b و R و PL و L4 و R3 و R4 و L5 و AI5 و M و N و S و S2 و F و D و OS2 و I1 و OS8 و OS20 و OS7 و OS2b)
+# الإصدارات المثبتة (المراحل 1 إلى 10 والمراحل A و B1 و B2 و C1-a و C1-b و C1-c و UI-2 و P2a و P2b و P3a و P3b و P3c و P5a و P5b و P4a و P4b و P4c و P4d و L1a و L1b و L2 و L3 و L3b و UI-3 و UI-3b و R و PL و L4 و R3 و R4 و L5 و AI5 و M و N و S و S2 و F و D و OS2 و I1 و OS8 و OS20 و OS7 و OS2b ومتابعات OS8)
 
 تُحدَّث هذه القائمة مع كل مرحلة. تُعتمد الإصدارات الدقيقة أدناه في الكود والحاويات.
 
@@ -935,8 +935,14 @@ Keycloak بـ `java.security` القياسية. تطبيق الهاتف لم ي�
     `docs/phase-os2b/design-os2b.md`): لا حزمة جديدة ولا إعداد جديد. الترحيل `0109_call_card_review` (بعد `0108_feature_systems`) يضيف
     القاعة التي أدخلت البلاغ ووقت فتح الاستمارة، وحقول المراجعة على البطاقة، والجدول `reports.call_card_reviewer`. النسخة
     السابقة في الفرع `archive/before-os2-followups-2026-11-13`.
-72. متابعات OS3 (OS3-1 إلى OS3-4، تفويض يامن 2026-11-13، `docs/phase-os3/design-os3b.md`): لا حزمة جديدة. الترحيل
-    `0110_coverage_followups` (بعد `0109_call_card_review`) ينشئ `ops.reposition_order` (أوامر التمركز للطاقم، بأمان على مستوى الأسطر لولاية الوسيلة
+72. متابعات OS8، تحذيرات العناوين (موافقة يامن 2026-11-13، `docs/phase-os8/design-os8.md` §8 إلى §10): لا حزمة جديدة
+    ولا إعداد. `alembic upgrade head` (0110) يضيف إلى سجل الكشف وسيلة إشعار صاحب العلامة واعتراضه، وإلى العلامة طلب
+    التحقق الميداني، والجدول `aw.reminder_day` لتذكير الصباح. حلقة عامل جديدة `address-warning-reminders` (08:00 بتوقيت
+    تونس، مرة في اليوم لكل ولاية). طبقة «تحذيرات العناوين» في الخريطة التفاعلية، وتبويب «تذكير المراجعة» في الصفحة.
+    النسخة السابقة في الفرع `backup/pre-os8-followups-2026-11-13` وفي
+    `backups/repo/e-himaya-pre-os8-followups-2026-11-13.bundle` (ملفات المشروع).
+73. متابعات OS3 (OS3-1 إلى OS3-4، تفويض يامن 2026-11-13، `docs/phase-os3/design-os3b.md`): لا حزمة جديدة. الترحيل
+    `0111_coverage_followups` (بعد `0110_aw_followups`) ينشئ `ops.reposition_order` (أوامر التمركز للطاقم، بأمان على مستوى الأسطر لولاية الوسيلة
     وللطرف الآخر من التنقل) ويضيف إلى `ops.vehicle_event` كلفة إقامة الورشة (قطع، يد عاملة، ورشة خارجية بالمليم، رقم
     الفاتورة). سبعة إعدادات جديدة في «العتبات» (`coverage.order_ack_minutes` و `coverage.turnout_*` و `coverage.neighbour_m`
     و `fleet.readiness_red/amber`). الإنتاج: `ROUTING_URL=http://routing:8002` افتراضيا، والمحرك يُشغَّل بالملف `routing`

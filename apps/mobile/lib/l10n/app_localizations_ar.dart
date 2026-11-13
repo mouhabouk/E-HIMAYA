@@ -7100,6 +7100,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get awConsentWithdraw => 'اسحب موافقتي كلها';
 
   @override
+  String get awViewedPushTitle => 'اطّلعت فرق الحماية على اسمك';
+
+  @override
+  String get awViewedPushBody =>
+      'بسبب بلاغ قريب من عنوانك. افتح ء-حماية لمعرفة السبب.';
+
+  @override
+  String get awDispute => 'لا علم لي بأي بلاغ عندي';
+
+  @override
+  String get awDisputed => 'أُرسل اعتراضك إلى القاعة المركزية وستراجعه.';
+
+  @override
   String get inspOpen => 'فضاء المتفقّد';
 
   @override

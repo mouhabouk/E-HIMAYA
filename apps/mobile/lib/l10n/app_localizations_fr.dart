@@ -7248,6 +7248,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get awConsentWithdraw => 'Retirer tout mon accord';
 
   @override
+  String get awViewedPushTitle => 'Les secours ont consulté votre nom';
+
+  @override
+  String get awViewedPushBody =>
+      'Suite à un signalement près de chez vous. Ouvrez e-Himaya pour voir le motif.';
+
+  @override
+  String get awDispute => 'Je n’ai connaissance d’aucun incident chez moi';
+
+  @override
+  String get awDisputed =>
+      'Votre contestation a été transmise à la salle centrale, qui l’examinera.';
+
+  @override
   String get inspOpen => 'Espace inspecteur';
 
   @override
