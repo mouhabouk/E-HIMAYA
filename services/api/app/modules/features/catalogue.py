@@ -683,6 +683,13 @@ CATALOGUE: tuple[Spec, ...] = (
             nav="/fleet/maintenance",
         ),
         tab("fleet.archive", ("أرشيف الوسائل المطروحة", "Véhicules réformés", "Decommissioned"), nav="/fleet/archive"),
+        # OS3-3: readiness and the cost of maintenance per gouvernorat and month.
+        tab(
+            "fleet.report",
+            ("التقرير الشهري: الجاهزية والكلفة", "Rapport mensuel : disponibilité et coût", "Monthly report"),
+            "GET /inventory/fleet-report",
+            nav="/fleet/report",
+        ),
         tab(
             "fleet.log",
             ("سجل الوسائل", "Journal des véhicules", "Vehicle log"),
@@ -706,6 +713,8 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /inventory/vehicles/{vehicle_id}/maintenance",
             "POST /inventory/vehicles/{vehicle_id}/maintenance/end",
             "POST /inventory/vehicles/{vehicle_id}/retire",
+            # OS3-3: the cost of a stay entered later, when the invoice arrives.
+            "POST /inventory/vehicle-events/{event_id}/cost",
             act_as=R.MAINTENANCE_OFFICER,
         ),
         button(
@@ -1942,7 +1951,7 @@ CATALOGUE: tuple[Spec, ...] = (
         "field_app",
         "",
         ("المهام الميدانية", "Missions de terrain", "Field missions"),
-        ("* /@crew/missions", "* /@crew/streams"),
+        ("* /@crew/missions", "* /@crew/streams", "* /@crew/repositions"),
         button(
             "field_missions.steps",
             ("مراحل المهمة", "Étapes de la mission", "Mission steps"),
@@ -1952,6 +1961,12 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /@crew/missions/{assignment_id}/skip",
             "POST /@crew/missions/{assignment_id}/no-intervention",
             "POST /@crew/missions/{assignment_id}/nature",
+            act_as=R.TEAM_LEADER,
+        ),
+        button(
+            "field_missions.reposition",
+            ("أوامر التمركز: اطلعنا، انطلقنا، وصلنا", "Ordres de repositionnement", "Repositioning orders"),
+            "POST /@crew/repositions/{order_id}/{step}",
             act_as=R.TEAM_LEADER,
         ),
         button(

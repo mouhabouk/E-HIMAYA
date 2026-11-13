@@ -721,6 +721,7 @@ export function AppRoutes() {
         <Route path="fleet/maintenance" element={gated(canReadFleet, <FleetPage view="maintenance" />)} />
         <Route path="fleet/archive" element={gated(canReadFleet, <FleetPage view="archive" />)} />
         <Route path="fleet/log" element={gated(canReadFleet, <FleetPage view="log" />)} />
+        <Route path="fleet/report" element={gated(canReadFleet, <FleetPage view="report" />)} />
         <Route path="coverage" element={gated(canReadCoverage, <CoveragePage />)} />
         <Route
           path="disasters"

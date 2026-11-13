@@ -28,6 +28,8 @@ PUSH_DATA_KEYS = frozenset(
         "team",
         "callout_id",
         "assignment_id",
+        # OS3-1: a repositioning order of the staff app.
+        "order_id",
         "incident_id",
         "prealert_id",
         "org_id",

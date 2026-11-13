@@ -17,6 +17,7 @@ import {
   type Coverage,
   type CoverageFamily,
   type CoverageSuggestion,
+  type RepositionOrder,
 } from "../lib/fleet";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { inventoryKeys } from "../lib/inventory";
@@ -33,11 +34,19 @@ export function CoveragePage() {
   const [picked, setPicked] = useState<number | null>(null);
   const gouvernorat = national ? (picked ?? gouvernorats.list[0]?.code ?? null) : null;
   const [family, setFamily] = useState<CoverageFamily>("medical");
+  const [neighbours, setNeighbours] = useState(false);
+  const withNeighbours = national && neighbours;
   const q = useQuery({
-    queryKey: fleetKeys.coverage(gouvernorat),
-    queryFn: ({ signal }) => api.coverage(gouvernorat, signal),
+    queryKey: fleetKeys.coverage(gouvernorat, withNeighbours),
+    queryFn: ({ signal }) => api.coverage(gouvernorat, signal, withNeighbours),
     enabled: !national || gouvernorat !== null,
     refetchInterval: 60_000,
+  });
+  const orders = useQuery({
+    queryKey: fleetKeys.orders(gouvernorat),
+    queryFn: ({ signal }) => api.repositionOrders(gouvernorat, signal),
+    enabled: !national || gouvernorat !== null,
+    refetchInterval: 30_000,
   });
   return (
     <div className="page coverage-page">
@@ -60,6 +69,12 @@ export function CoveragePage() {
             </select>
           </div>
         )}
+        {national && (
+          <label className="checkbox coverage-neighbours" title={q.data ? t("coverage.neighboursHelp", { km: Math.round(q.data.neighbour_m / 1000) }) : undefined}>
+            <input type="checkbox" checked={neighbours} onChange={(e) => setNeighbours(e.target.checked)} />
+            <span>{t("coverage.neighbours")}</span>
+          </label>
+        )}
         <div className="actions coverage-families" role="group" aria-label={t("coverage.family")}>
           {COVERAGE_FAMILIES.map((f) => (
             <button
@@ -76,15 +91,32 @@ export function CoveragePage() {
       </div>
       {q.isPending && <Loading />}
       {q.isError && <ErrorBox error={q.error} onRetry={() => void q.refetch()} />}
-      {q.data && <Body data={q.data} family={family} canAccept={canSetVehicleState(roles)} />}
+      {q.data && (
+        <Body
+          data={q.data}
+          family={family}
+          canAccept={canSetVehicleState(roles)}
+          orders={orders.data?.items ?? []}
+          ackMinutes={orders.data?.ack_minutes ?? 2}
+        />
+      )}
     </div>
   );
 }
 
-function Body({ data, family, canAccept }: { data: Coverage; family: CoverageFamily; canAccept: boolean }) {
+interface BodyProps {
+  data: Coverage;
+  family: CoverageFamily;
+  canAccept: boolean;
+  orders: RepositionOrder[];
+  ackMinutes: number;
+}
+
+function Body({ data, family, canAccept, orders, ackMinutes }: BodyProps) {
   const { t } = useTranslation();
   const fmt = useFormat();
   const lang = useLanguage();
+  const gouvernorats = useGouvernorats();
   const row = data.families.find((f) => f.family === family);
   const alerts = data.alerts.filter((a) => a.family === family);
   const suggestions = data.suggestions.filter((s) => s.family === family);
@@ -98,6 +130,7 @@ function Body({ data, family, canAccept }: { data: Coverage; family: CoverageFam
             <dd className="kpi__value">{fmt.percent(f.covered_pct / 100)}</dd>
             <dd className="muted">{t("coverage.planned", { pct: fmt.percent(f.baseline_pct / 100) })}</dd>
             <dd className="muted">{t("coverage.readyOf", { ready: fmt.number(f.ready), fleet: fmt.number(f.fleet) })}</dd>
+            {data.neighbours && <dd className="muted">{t("coverage.ownPct", { pct: fmt.percent(f.own_pct / 100) })}</dd>}
           </div>
         ))}
       </dl>
@@ -138,9 +171,17 @@ function Body({ data, family, canAccept }: { data: Coverage; family: CoverageFam
             {suggestions.length === 0 ? (
               <p className="muted">{t("coverage.noSuggestion")}</p>
             ) : (
-              suggestions.map((s) => <Suggestion key={`${s.vehicle_id}-${s.to_unit_id}`} s={s} canAccept={canAccept} />)
+              suggestions.map((s) => (
+                <Suggestion
+                  key={`${s.vehicle_id}-${s.to_unit_id}`}
+                  s={s}
+                  canAccept={canAccept}
+                  from={s.from_gouvernorat_code !== data.gouvernorat_code ? gouvernorats.nameOf(s.from_gouvernorat_code) : null}
+                />
+              ))
             )}
           </section>
+          <Orders orders={orders} ackMinutes={ackMinutes} />
         </div>
       </div>
       <section className="card" aria-labelledby="cov-table">
@@ -170,7 +211,10 @@ function Body({ data, family, canAccept }: { data: Coverage; family: CoverageFam
                       <td className="num">
                         {c.minutes === null ? "—" : t("coverage.minutes", { n: fmt.number(c.minutes), target: c.target })}
                       </td>
-                      <td dir="auto">{c.unit_name ?? "—"}</td>
+                      <td dir="auto">
+                        {c.unit_name ?? "—"}
+                        {c.neighbour && <span className="pill tone-purple coverage-pill">{t("coverage.fromNeighbour")}</span>}
+                      </td>
                       <td>
                         <span className={`pill tone-${c.covered ? "green" : c.baseline_covered ? "red" : "amber"}`}>
                           {t(c.covered ? "coverage.covered" : c.baseline_covered ? "coverage.lost" : "coverage.notCovered")}
@@ -183,8 +227,9 @@ function Body({ data, family, canAccept }: { data: Coverage; family: CoverageFam
           </table>
         </div>
       </section>
+      <Turnouts data={data} />
       <p className="muted">
-        {t("coverage.method", { turnout: data.turnout_minutes })} ·{" "}
+        {t(data.turnout_mode === "measured" ? "coverage.methodMeasured" : "coverage.method", { turnout: data.turnout_minutes })} ·{" "}
         {t(data.engine === "fallback" ? "coverage.engineFallback" : "coverage.engineRoad")} ·{" "}
         {t("coverage.computedAt", { at: fmt.dateTime(data.computed_at) })}
         {row ? ` · ${t("coverage.out", { n: fmt.number(row.out) })}` : ""}
@@ -193,7 +238,114 @@ function Body({ data, family, canAccept }: { data: Coverage; family: CoverageFam
   );
 }
 
-function Suggestion({ s, canAccept }: { s: CoverageSuggestion; canAccept: boolean }) {
+/** OS3-1: the orders sent to the crews, step by step; an order nobody opened in time is flagged. */
+function Orders({ orders, ackMinutes }: { orders: RepositionOrder[]; ackMinutes: number }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const time = (at: string) => fmt.dateTime(at);
+  return (
+    <section className="card" aria-labelledby="cov-orders">
+      <h2 id="cov-orders">{t("coverage.orders")}</h2>
+      {orders.length === 0 ? (
+        <p className="muted">{t("coverage.noOrders")}</p>
+      ) : (
+        <ul className="coverage-orders">
+          {orders.map((o) => (
+            <li key={o.id} className="coverage-order">
+              <p>
+                <strong dir="auto">{t("coverage.orderLine", { label: o.label, from: o.from_unit, to: o.to_unit })}</strong>{" "}
+                <span className="pill tone-navy">{t(`coverage.orderKind.${o.kind}`)}</span>{" "}
+                <span className={`pill tone-${orderTone(o)}`}>{t(`coverage.orderState.${o.state}`)}</span>
+              </p>
+              <ol className="coverage-steps" aria-label={t("coverage.orders")}>
+                <li className="is-done">{t("coverage.orderSent", { at: time(o.created_at), by: o.created_by_name ?? "—" })}</li>
+                <li className={o.seen_at ? "is-done" : ""}>
+                  {o.seen_at ? t("coverage.orderSeen", { at: time(o.seen_at), by: o.seen_by_name ?? "—" }) : t("coverage.orderState.seen")}
+                </li>
+                <li className={o.departed_at ? "is-done" : ""}>
+                  {o.departed_at ? t("coverage.orderDeparted", { at: time(o.departed_at) }) : t("coverage.orderState.departed")}
+                </li>
+                <li className={o.arrived_at ? "is-done" : ""}>
+                  {o.arrived_at ? t("coverage.orderArrived", { at: time(o.arrived_at) }) : t("coverage.orderState.arrived")}
+                </li>
+              </ol>
+              {o.closed_at && o.close_reason && <p className="muted">{t(`coverage.closeReason.${o.close_reason}`)}</p>}
+              {o.state !== "closed" && o.state !== "arrived" && (
+                <>
+                  {!o.pushed && <p className="alert alert--warning">{t("coverage.noShift")}</p>}
+                  {o.pushed && o.leader_name && <p className="muted">{t("coverage.notified", { leader: o.leader_name })}</p>}
+                  {o.overdue && (
+                    <p className="alert alert--error" role="alert">
+                      {t("coverage.overdue", { n: ackMinutes })}
+                    </p>
+                  )}
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function orderTone(o: RepositionOrder): string {
+  if (o.state === "closed") return "slate";
+  if (o.state === "arrived") return "green";
+  if (o.overdue) return "red";
+  return o.state === "sent" ? "amber" : "sky";
+}
+
+/** OS3-2: the turnout of each unit, measured on its missions or the default. */
+function Turnouts({ data }: { data: Coverage }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  const lang = useLanguage();
+  const gouvernorats = useGouvernorats();
+  const units = data.units.filter((u) => !u.neighbour);
+  if (units.length === 0) return null;
+  return (
+    <section className="card" aria-labelledby="cov-turnout">
+      <h2 id="cov-turnout">{t("coverage.turnoutTitle")}</h2>
+      <p className="muted">{t("coverage.turnoutHelp")}</p>
+      <div className="table-wrap">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">{t("coverage.unit")}</th>
+              <th scope="col">{t("coverage.missions")}</th>
+              <th scope="col">{t("coverage.median")}</th>
+              <th scope="col">{t("coverage.p90")}</th>
+              <th scope="col">{t("coverage.state")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...units]
+              .sort((a, b) => b.turnout_minutes - a.turnout_minutes)
+              .map((u) => (
+                <tr key={u.id}>
+                  <th scope="row" dir="auto">
+                    {lang === "ar" ? u.name_ar : u.name_fr}
+                    {u.gouvernorat_code !== data.gouvernorat_code && ` (${gouvernorats.nameOf(u.gouvernorat_code)})`}
+                  </th>
+                  <td className="num">{fmt.number(u.turnout_missions)}</td>
+                  <td className="num">{t("coverage.minutes", { n: fmt.number(u.turnout_minutes) })}</td>
+                  <td className="num">{u.turnout_p90_minutes === null ? "—" : t("coverage.minutes", { n: fmt.number(u.turnout_p90_minutes) })}</td>
+                  <td>
+                    <span className={`pill tone-${u.turnout_source === "measured" ? "green" : "slate"}`}>
+                      {t(`coverage.${u.turnout_source}`)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function Suggestion({ s, canAccept, from }: { s: CoverageSuggestion; canAccept: boolean; from: string | null }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const fmt = useFormat();
@@ -218,6 +370,7 @@ function Suggestion({ s, canAccept }: { s: CoverageSuggestion; canAccept: boolea
         <strong dir="auto">{s.label}</strong>:{" "}
         {t("coverage.move", { from: s.from_unit, to: s.to_unit })}
       </p>
+      {from && <p className="pill tone-purple">{t("coverage.crossMove", { gouvernorat: from })}</p>}
       <p className="muted">
         {t("coverage.gain", { n: fmt.number(s.gain_population) })}
         {s.newly_covered.length > 0 && ` — ${s.newly_covered.join("، ")}`}
@@ -278,9 +431,11 @@ function CoverageMap({ data, family }: { data: Coverage; family: CoverageFamily 
       {data.units.map((u) => {
         const [x, y] = view(u.lat, u.lon);
         const n = u.ready[family];
+        const fill = n === 0 ? "var(--muted)" : u.neighbour ? "var(--tone-purple)" : "var(--tone-navy)";
         return (
           <g key={u.id}>
-            <rect x={x - 8} y={y - 22} width={16} height={16} rx={3} fill={n > 0 ? "var(--tone-navy)" : "var(--muted)"} />
+            <title>{lang === "ar" ? u.name_ar : u.name_fr}</title>
+            <rect x={x - 8} y={y - 22} width={16} height={16} rx={3} fill={fill} />
             <text x={x} y={y - 10} textAnchor="middle" fontSize="10" fill="var(--tone-navy-on)">
               {n}
             </text>

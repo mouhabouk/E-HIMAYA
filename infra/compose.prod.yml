@@ -31,6 +31,9 @@ x-api-prod-env: &api-prod-env
   # QR code of reward certificates (phase 8): public verification on the API host.
   API_PUBLIC_URL: https://${API_HOST}
   API_CORS_ORIGINS: https://${DASHBOARD_HOST:?set DASHBOARD_HOST},https://${PORTAL_HOST}
+  # OS3-2: road times by default (profile "routing", Valhalla on the OpenStreetMap of Tunisia). While the engine is
+  # down or not started, the coverage and the nearest units fall back to straight-line estimates and say so.
+  ROUTING_URL: ${ROUTING_URL:-http://routing:8002}
   # The logs window (profile "logs"): http://loki:3100 once Loki runs; empty, the window says it is off.
   LOKI_URL: ${LOKI_URL:-}
   # The SQL window (docs/sql/console.md): empty, it reads the API's own database; a SELECT-only role is advised.

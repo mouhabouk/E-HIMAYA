@@ -1,10 +1,24 @@
 import enum
 import uuid
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Any
 
 from geoalchemy2 import Geography
-from sqlalchemy import BigInteger, Boolean, Date, DateTime, Enum, Float, ForeignKey, Integer, SmallInteger, Text, func
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Date,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    Numeric,
+    SmallInteger,
+    Text,
+    func,
+)
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -212,6 +226,51 @@ class VehicleEvent(Base):
     created_by: Mapped[str] = mapped_column(Text)
     created_by_name: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # OS3-3: the cost of a stay in the workshop, on its ``maintenance_end`` event (dinars, three decimals).
+    maint_kind: Mapped[str | None] = mapped_column(Text)
+    cost_parts: Mapped[Decimal | None] = mapped_column(Numeric(12, 3))
+    cost_labour: Mapped[Decimal | None] = mapped_column(Numeric(12, 3))
+    cost_external: Mapped[Decimal | None] = mapped_column(Numeric(12, 3))
+    invoice_ref: Mapped[str | None] = mapped_column(Text)
+    cost_by_name: Mapped[str | None] = mapped_column(Text)
+    cost_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class RepositionOrder(Base):
+    """OS3-1: a repositioning sent to the crew holding the vehicle on the staff app, followed step by step."""
+
+    __tablename__ = "reposition_order"
+    __table_args__ = {"schema": "ops"}
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    resource_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.resource.id", ondelete="CASCADE")
+    )
+    vehicle_event_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.vehicle_event.id", ondelete="SET NULL")
+    )
+    # ``reinforce``: to a host unit; ``return``: back to its own unit.
+    kind: Mapped[str] = mapped_column(Text)
+    from_unit_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.unit.id"))
+    to_unit_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ops.unit.id"))
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    host_gouvernorat_code: Mapped[int | None] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"))
+    note: Mapped[str | None] = mapped_column(Text)
+    gain_population: Mapped[int | None] = mapped_column(Integer)
+    shift_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ops.shift.id", ondelete="SET NULL")
+    )
+    leader_name: Mapped[str | None] = mapped_column(Text)
+    pushed: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    created_by: Mapped[str] = mapped_column(Text)
+    created_by_name: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    seen_by_name: Mapped[str | None] = mapped_column(Text)
+    departed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    arrived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    close_reason: Mapped[str | None] = mapped_column(Text)
 
 
 class Callout(Base):

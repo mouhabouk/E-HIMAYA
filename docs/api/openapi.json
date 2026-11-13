@@ -9141,6 +9141,89 @@
         "title": "CorrectionRow",
         "type": "object"
       },
+      "CostIn": {
+        "description": "OS3-3: what a stay in the workshop cost, in dinars (three decimals): at the exit or later.",
+        "properties": {
+          "cost_external": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost External"
+          },
+          "cost_labour": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Labour"
+          },
+          "cost_parts": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Parts"
+          },
+          "invoice_ref": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invoice Ref"
+          },
+          "maint_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "repair",
+                  "periodic",
+                  "accident"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Kind"
+          }
+        },
+        "title": "CostIn",
+        "type": "object"
+      },
       "CounterView": {
         "description": "What the agent at the counter of a regional administration sees after scanning a certificate (phase P3a).",
         "properties": {
@@ -9271,6 +9354,14 @@
             "title": "Gouvernorat Code",
             "type": "integer"
           },
+          "neighbour_m": {
+            "title": "Neighbour M",
+            "type": "integer"
+          },
+          "neighbours": {
+            "title": "Neighbours",
+            "type": "boolean"
+          },
           "suggestions": {
             "items": {
               "$ref": "#/components/schemas/app__modules__decision__coverage__SuggestionOut"
@@ -9292,6 +9383,14 @@
             "title": "Turnout Minutes",
             "type": "integer"
           },
+          "turnout_mode": {
+            "enum": [
+              "measured",
+              "uniform"
+            ],
+            "title": "Turnout Mode",
+            "type": "string"
+          },
           "units": {
             "items": {
               "$ref": "#/components/schemas/app__modules__decision__coverage__UnitOut"
@@ -9304,6 +9403,9 @@
           "gouvernorat_code",
           "engine",
           "turnout_minutes",
+          "turnout_mode",
+          "neighbours",
+          "neighbour_m",
           "targets",
           "families",
           "delegations",
@@ -17123,6 +17225,11 @@
             ],
             "title": "Minutes"
           },
+          "neighbour": {
+            "default": false,
+            "title": "Neighbour",
+            "type": "boolean"
+          },
           "target": {
             "title": "Target",
             "type": "integer"
@@ -17285,6 +17392,10 @@
             "title": "Out",
             "type": "integer"
           },
+          "own_pct": {
+            "title": "Own Pct",
+            "type": "number"
+          },
           "population": {
             "title": "Population",
             "type": "integer"
@@ -17302,7 +17413,8 @@
           "baseline_pct",
           "ready",
           "fleet",
-          "out"
+          "out",
+          "own_pct"
         ],
         "title": "FamilyOut",
         "type": "object"
@@ -19541,6 +19653,261 @@
           "publish_token"
         ],
         "title": "FixedSourceOut",
+        "type": "object"
+      },
+      "FleetCostlyVehicle": {
+        "properties": {
+          "cost_total": {
+            "title": "Cost Total",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "stays": {
+            "title": "Stays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "resource_id",
+          "label",
+          "plate",
+          "gouvernorat_code",
+          "cost_total",
+          "stays"
+        ],
+        "title": "FleetCostlyVehicle",
+        "type": "object"
+      },
+      "FleetMonth": {
+        "properties": {
+          "cost_total": {
+            "title": "Cost Total",
+            "type": "string"
+          },
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "readiness_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Readiness Pct"
+          }
+        },
+        "required": [
+          "month",
+          "readiness_pct",
+          "cost_total"
+        ],
+        "title": "FleetMonth",
+        "type": "object"
+      },
+      "FleetReportOut": {
+        "properties": {
+          "amber_below": {
+            "title": "Amber Below",
+            "type": "integer"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "costly": {
+            "items": {
+              "$ref": "#/components/schemas/FleetCostlyVehicle"
+            },
+            "title": "Costly",
+            "type": "array"
+          },
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "red_below": {
+            "title": "Red Below",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/FleetReportRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FleetReportRow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "month",
+          "months",
+          "rows",
+          "total",
+          "costly",
+          "red_below",
+          "amber_below",
+          "computed_at"
+        ],
+        "title": "FleetReportOut",
+        "type": "object"
+      },
+      "FleetReportRow": {
+        "properties": {
+          "cost_external": {
+            "title": "Cost External",
+            "type": "string"
+          },
+          "cost_labour": {
+            "title": "Cost Labour",
+            "type": "string"
+          },
+          "cost_parts": {
+            "title": "Cost Parts",
+            "type": "string"
+          },
+          "cost_per_vehicle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per Vehicle"
+          },
+          "cost_total": {
+            "title": "Cost Total",
+            "type": "string"
+          },
+          "down_days": {
+            "title": "Down Days",
+            "type": "number"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_fr": {
+            "title": "Name Fr",
+            "type": "string"
+          },
+          "point": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Point"
+          },
+          "readiness_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Readiness Pct"
+          },
+          "retired": {
+            "title": "Retired",
+            "type": "integer"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/FleetMonth"
+            },
+            "title": "Series",
+            "type": "array"
+          },
+          "vehicle_days": {
+            "title": "Vehicle Days",
+            "type": "number"
+          },
+          "vehicles": {
+            "title": "Vehicles",
+            "type": "integer"
+          },
+          "workshop_entries": {
+            "title": "Workshop Entries",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "gouvernorat_code",
+          "name_ar",
+          "name_fr",
+          "point",
+          "vehicles",
+          "vehicle_days",
+          "down_days",
+          "readiness_pct",
+          "workshop_entries",
+          "retired",
+          "cost_parts",
+          "cost_labour",
+          "cost_external",
+          "cost_total",
+          "cost_per_vehicle",
+          "series"
+        ],
+        "title": "FleetReportRow",
         "type": "object"
       },
       "FloodForecastOut": {
@@ -26101,6 +26468,82 @@
       },
       "MaintenanceEndIn": {
         "properties": {
+          "cost_external": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost External"
+          },
+          "cost_labour": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Labour"
+          },
+          "cost_parts": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Parts"
+          },
+          "invoice_ref": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invoice Ref"
+          },
+          "maint_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "repair",
+                  "periodic",
+                  "accident"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Kind"
+          },
           "note": {
             "anyOf": [
               {
@@ -37924,6 +38367,318 @@
           "source"
         ],
         "title": "ReporterContextOut",
+        "type": "object"
+      },
+      "RepositionOrderOut": {
+        "properties": {
+          "arrived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Arrived At"
+          },
+          "close_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "replaced",
+                  "state",
+                  "maintenance",
+                  "retired"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close Reason"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Name"
+          },
+          "departed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Departed At"
+          },
+          "from_point": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Point"
+          },
+          "from_unit": {
+            "title": "From Unit",
+            "type": "string"
+          },
+          "from_unit_id": {
+            "format": "uuid",
+            "title": "From Unit Id",
+            "type": "string"
+          },
+          "gain_population": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gain Population"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "host_gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Host Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "reinforce",
+              "return"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "leader_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader Name"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "overdue": {
+            "title": "Overdue",
+            "type": "boolean"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "pushed": {
+            "title": "Pushed",
+            "type": "boolean"
+          },
+          "resource_id": {
+            "format": "uuid",
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "seen_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen At"
+          },
+          "seen_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen By Name"
+          },
+          "state": {
+            "enum": [
+              "sent",
+              "seen",
+              "departed",
+              "arrived",
+              "closed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "to_point": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Point"
+          },
+          "to_unit": {
+            "title": "To Unit",
+            "type": "string"
+          },
+          "to_unit_id": {
+            "format": "uuid",
+            "title": "To Unit Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "resource_id",
+          "label",
+          "plate",
+          "kind",
+          "from_unit_id",
+          "from_unit",
+          "to_unit_id",
+          "to_unit",
+          "from_point",
+          "to_point",
+          "gouvernorat_code",
+          "host_gouvernorat_code",
+          "note",
+          "gain_population",
+          "leader_name",
+          "pushed",
+          "created_by_name",
+          "created_at",
+          "seen_at",
+          "seen_by_name",
+          "departed_at",
+          "arrived_at",
+          "closed_at",
+          "close_reason",
+          "state",
+          "overdue"
+        ],
+        "title": "RepositionOrderOut",
+        "type": "object"
+      },
+      "RepositionOrdersOut": {
+        "properties": {
+          "ack_minutes": {
+            "title": "Ack Minutes",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RepositionOrderOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "ack_minutes"
+        ],
+        "title": "RepositionOrdersOut",
+        "type": "object"
+      },
+      "RepositionStepIn": {
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          }
+        },
+        "title": "RepositionStepIn",
         "type": "object"
       },
       "RequestIn": {
@@ -52297,6 +53052,62 @@
       },
       "VehicleEventOut": {
         "properties": {
+          "cost_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost At"
+          },
+          "cost_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost By Name"
+          },
+          "cost_external": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost External"
+          },
+          "cost_labour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Labour"
+          },
+          "cost_parts": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Parts"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -52331,6 +53142,17 @@
             "title": "Id",
             "type": "string"
           },
+          "invoice_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invoice Ref"
+          },
           "kind": {
             "enum": [
               "state",
@@ -52346,6 +53168,22 @@
           "label": {
             "title": "Label",
             "type": "string"
+          },
+          "maint_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "repair",
+                  "periodic",
+                  "accident"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Kind"
           },
           "plate": {
             "anyOf": [
@@ -57253,6 +58091,10 @@
             "title": "Family",
             "type": "string"
           },
+          "from_gouvernorat_code": {
+            "title": "From Gouvernorat Code",
+            "type": "integer"
+          },
           "from_unit": {
             "title": "From Unit",
             "type": "string"
@@ -57314,13 +58156,18 @@
           "gain_population",
           "newly_covered",
           "lost",
-          "version"
+          "version",
+          "from_gouvernorat_code"
         ],
         "title": "SuggestionOut",
         "type": "object"
       },
       "app__modules__decision__coverage__UnitOut": {
         "properties": {
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
           "hosted": {
             "title": "Hosted",
             "type": "integer"
@@ -57346,12 +58193,44 @@
             "title": "Name Fr",
             "type": "string"
           },
+          "neighbour": {
+            "default": false,
+            "title": "Neighbour",
+            "type": "boolean"
+          },
           "ready": {
             "additionalProperties": {
               "type": "integer"
             },
             "title": "Ready",
             "type": "object"
+          },
+          "turnout_minutes": {
+            "title": "Turnout Minutes",
+            "type": "number"
+          },
+          "turnout_missions": {
+            "title": "Turnout Missions",
+            "type": "integer"
+          },
+          "turnout_p90_minutes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnout P90 Minutes"
+          },
+          "turnout_source": {
+            "enum": [
+              "measured",
+              "default"
+            ],
+            "title": "Turnout Source",
+            "type": "string"
           }
         },
         "required": [
@@ -57361,7 +58240,12 @@
           "lat",
           "lon",
           "ready",
-          "hosted"
+          "hosted",
+          "gouvernorat_code",
+          "turnout_minutes",
+          "turnout_source",
+          "turnout_missions",
+          "turnout_p90_minutes"
         ],
         "title": "UnitOut",
         "type": "object"
@@ -76868,6 +77752,152 @@
         ]
       }
     },
+    "/api/v1/crew/repositions": {
+      "get": {
+        "description": "The orders of the vehicle on shift: the open ones and those of the last hours.",
+        "operationId": "crew_orders_api_v1_crew_repositions_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositionOrdersOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Orders",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
+    "/api/v1/crew/repositions/{order_id}/{step}": {
+      "post": {
+        "description": "The leader says the crew saw the order, left, or arrived. Set once; later steps fill the earlier ones.",
+        "operationId": "crew_step_api_v1_crew_repositions__order_id___step__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "step",
+            "required": true,
+            "schema": {
+              "enum": [
+                "seen",
+                "departed",
+                "arrived"
+              ],
+              "title": "Step",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Staff-Device",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Staff-Device"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepositionStepIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositionOrderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crew Step",
+        "tags": [
+          "crew"
+        ]
+      }
+    },
     "/api/v1/crew/resources": {
       "get": {
         "operationId": "vehicles_api_v1_crew_resources_get",
@@ -92815,7 +93845,7 @@
     },
     "/api/v1/staff/coverage": {
       "get": {
-        "description": "The live coverage of a gouvernorat: the caller's own, or the one the central room names.",
+        "description": "The live coverage of a gouvernorat: the caller's own, or the one the central room names (which may count the\nunits of the neighbouring gouvernorats, OS3-4).",
         "operationId": "coverage_api_v1_staff_coverage_get",
         "parameters": [
           {
@@ -92834,6 +93864,16 @@
                 }
               ],
               "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "neighbours",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Neighbours",
+              "type": "boolean"
             }
           }
         ],
@@ -92865,6 +93905,74 @@
           }
         ],
         "summary": "Coverage",
+        "tags": [
+          "staff",
+          "decision"
+        ]
+      }
+    },
+    "/api/v1/staff/coverage/orders": {
+      "get": {
+        "description": "The orders of the last hours the room sees (its vehicles and those sent to or from it), and every open one.",
+        "operationId": "room_orders_api_v1_staff_coverage_orders_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "open",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Open",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositionOrdersOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Room Orders",
         "tags": [
           "staff",
           "decision"
@@ -102825,6 +103933,92 @@
         ]
       }
     },
+    "/api/v1/staff/inventory/fleet-report": {
+      "get": {
+        "operationId": "fleet_report_api_v1_staff_inventory_fleet_report_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "month",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^20\\d\\d-(0[1-9]|1[0-2])$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Month"
+            }
+          },
+          {
+            "in": "query",
+            "name": "months",
+            "required": false,
+            "schema": {
+              "default": 6,
+              "maximum": 12,
+              "minimum": 1,
+              "title": "Months",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "gouvernorat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 99,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gouvernorat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FleetReportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Fleet Report",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
     "/api/v1/staff/inventory/import-profiles": {
       "get": {
         "description": "The column mappings the caller may use: their gouvernorat's and the central room's (row level security).",
@@ -104048,6 +105242,66 @@
           }
         ],
         "summary": "Vehicle Events",
+        "tags": [
+          "staff",
+          "inventory"
+        ]
+      }
+    },
+    "/api/v1/staff/inventory/vehicle-events/{event_id}/cost": {
+      "post": {
+        "description": "OS3-3: the cost of a stay in the workshop entered or corrected later, when the invoice arrives.",
+        "operationId": "set_cost_api_v1_staff_inventory_vehicle_events__event_id__cost_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleEventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Cost",
         "tags": [
           "staff",
           "inventory"

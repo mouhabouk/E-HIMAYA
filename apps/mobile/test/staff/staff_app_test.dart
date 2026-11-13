@@ -553,4 +553,44 @@ void main() {
       inInclusiveRange(110, 112),
     );
   });
+
+  testWidgets('OS3-1: the repositioning order and its three steps', (
+    tester,
+  ) async {
+    final server = FakeCrewServer()..shiftOpen = true;
+    server.repositions.add({
+      'id': 'o-1',
+      'kind': 'reinforce',
+      'from_unit': 'Unité Zaghouan',
+      'to_unit': 'Unité El Fahs',
+      'state': 'sent',
+      'created_at': '2026-10-26T08:58:00Z',
+      'created_by_name': 'Salle Zaghouan',
+      'note': null,
+      'seen_at': null,
+      'departed_at': null,
+      'arrived_at': null,
+    });
+    final store = await signedInStore();
+    await StaffVault(store).setPin('123456', 'salt');
+    await pumpStaffApp(tester, server, store: store);
+    await enterPin(tester, '123456');
+
+    expect(find.byKey(const Key('reposition-o-1')), findsOneWidget);
+    expect(
+      find.text('As reinforcement: from Unité Zaghouan to Unité El Fahs'),
+      findsOneWidget,
+    );
+    for (final step in ['seen', 'departed', 'arrived']) {
+      await reveal(tester, 'reposition-$step');
+      await tester.tap(find.byKey(Key('reposition-$step')));
+      await tester.pumpAndSettle();
+    }
+    expect(
+      server.writes.map((w) => w.uri.path.split('/').last).toList(),
+      containsAllInOrder(['seen', 'departed', 'arrived']),
+    );
+    // Arrived: the order leaves the home screen.
+    expect(find.byKey(const Key('reposition-o-1')), findsNothing);
+  });
 }

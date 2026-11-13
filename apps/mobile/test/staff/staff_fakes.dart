@@ -49,6 +49,9 @@ class FakeCrewServer {
   bool shiftOpen = false;
   final missions = <Map<String, dynamic>>[];
 
+  /// OS3-1: the repositioning orders of the vehicle on shift.
+  final repositions = <Map<String, dynamic>>[];
+
   /// OS8: the address warnings every mission shows, their reading and the marks proposed from the scene.
   final addressWarnings = <Map<String, dynamic>>[];
   final proposals = <Map<String, dynamic>>[];
@@ -399,6 +402,11 @@ class FakeCrewServer {
         return FakeResponse(200, json: _shift);
       case ('GET', '/missions'):
         return FakeResponse(200, json: {'items': missions});
+      case ('GET', '/repositions'):
+        return FakeResponse(
+          200,
+          json: {'items': repositions, 'ack_minutes': 2},
+        );
       case ('GET', '/prevention/visits'):
         return FakeResponse(
           200,
@@ -407,6 +415,18 @@ class FakeCrewServer {
               if (v['status'] == 'scheduled' || v['status'] == 'inspected') v,
           ],
         );
+    }
+    final rp = RegExp(r'^/repositions/([^/]+)/(seen|departed|arrived)$')
+        .firstMatch(sub);
+    if (rp != null && r.method == 'POST') {
+      final o = repositions.firstWhere((x) => x['id'] == rp.group(1));
+      final at = (r.json! as Map)['at'];
+      final step = rp.group(2)!;
+      o['seen_at'] ??= at;
+      if (step != 'seen') o['departed_at'] ??= at;
+      if (step == 'arrived') o['arrived_at'] ??= at;
+      o['state'] = step;
+      return FakeResponse(200, json: o);
     }
     final pv = RegExp(r'^/prevention/visits/([^/]+)(?:/(.+))?$')
         .firstMatch(sub);

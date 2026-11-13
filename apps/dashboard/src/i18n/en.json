@@ -95,6 +95,7 @@
     "fleetMaintenance": "In maintenance",
     "fleetArchive": "Retired archive",
     "fleetLog": "State log",
+    "fleetReport": "Monthly fleet report",
     "coverage": "Live coverage",
     "inspections": "Periodic inspections",
     "inspectionResults": "Room inspection results",
@@ -735,6 +736,10 @@
     "body_not_found": "Body not found.",
     "official_not_found": "Official not found.",
     "party_not_found": "Body not in the report.",
+    "order_closed": "The order is closed: a newer decision replaced it.",
+    "not_a_workshop_stay": "A cost goes on a workshop exit only.",
+    "cost_required": "Enter an amount, a kind or an invoice.",
+    "month_in_future": "The month is in the future.",
     "axis_no_area": "The axis has no drawn area: draw it first."
   },
   "kpi": {
@@ -885,6 +890,27 @@
       "exit": "Back to the normal view",
       "hint": "Double-click a place or a report to lift it in 3D; double-click again to go back.",
       "on": "Place lifted: the rest of the map is in the background. Double-click or use the button above to go back."
+    },
+    "fleet": {
+      "title": "Coverage and fleet",
+      "coverage": "Live coverage layer",
+      "orders": "Repositioning orders layer",
+      "readiness": "Fleet readiness layer",
+      "neighbours": "Coverage from neighbours",
+      "family": "Family",
+      "gouvernorat": "Gouvernorat of the coverage",
+      "placeTitle": "{{place}}: {{state}}",
+      "placeSub": "{{minutes}} for {{target}} min · from {{unit}}",
+      "unitSub": "{{n}} ready · turnout {{turnout}} min",
+      "orderTitle": "{{label}} · {{kind}}",
+      "readinessTitle": "{{name}}: readiness {{pct}}",
+      "readinessSub": "{{month}} · cost {{cost}} TND · {{n}} vehicles",
+      "legendCovered": "Covered",
+      "legendLost": "Lost",
+      "legendOut": "Out of target",
+      "legendNeighbour": "From a neighbour",
+      "legendOrder": "Repositioning order",
+      "hint": "Each layer follows its page's rights; a click opens the page."
     }
   },
   "priority": {
@@ -3995,7 +4021,8 @@
         "rooms": "Room and field thresholds",
         "partners": "Doctor and institution thresholds",
         "snacr": "Risk analysis and coverage thresholds (SNACR)",
-        "field": "Staff app"
+        "field": "Staff app",
+        "fleet": "Fleet thresholds"
       },
       "help": "The numbers of daily work: changing them needs no new release, and they stay within their bounds. What is not changed keeps its default.",
       "bounds": "Each value is a whole number within the bounds shown next to it.",
@@ -4094,6 +4121,19 @@
           "code_attempts": "Wrong tries before the code is voided",
           "hold_ms": "Long press on the step button",
           "undo_seconds": "Undo window after a step"
+        },
+        "coverage": {
+          "turnout_minutes": "Default turnout",
+          "suggestions_max": "Repositioning suggestions per family",
+          "order_ack_minutes": "Flag an unseen order after",
+          "turnout_measured": "Turnout measured per unit (1 yes, 0 uniform)",
+          "turnout_days": "Turnout measured over",
+          "turnout_min_missions": "Least missions for the measure",
+          "neighbour_m": "Reach of neighbouring units"
+        },
+        "fleet": {
+          "readiness_red": "Readiness: red under",
+          "readiness_amber": "Readiness: amber under"
         }
       }
     }
@@ -9812,7 +9852,8 @@
       "vehicles": "Vehicles",
       "maintenance": "In maintenance",
       "archive": "Archive",
-      "log": "Log"
+      "log": "Log",
+      "report": "Monthly report"
     },
     "kpi": {
       "active": "Vehicles in service"
@@ -9879,7 +9920,47 @@
     },
     "workshopEmpty": "No vehicle broken down or in the workshop.",
     "introRoom": "Your gouvernorat’s vehicles and those waiting there as reinforcement. The room sets the state: at the unit, on reinforcement, broken down. The workshop and retirement belong to maintenance.",
-    "introMaintenance": "Vehicle cards (number, plate, odometer, acquisition), workshop entry and exit, retirement."
+    "introMaintenance": "Vehicle cards (number, plate, odometer, acquisition), workshop entry and exit, retirement.",
+    "cost": {
+      "title": "Maintenance cost",
+      "kind": "Kind of maintenance",
+      "kinds": {
+        "repair": "Repair",
+        "periodic": "Periodic",
+        "accident": "Accident"
+      },
+      "parts": "Parts (TND)",
+      "labour": "Labour (TND)",
+      "external": "Outside workshop (TND)",
+      "invoice": "Invoice or order number",
+      "help": "Optional at the exit; add it when the invoice arrives.",
+      "add": "Add the cost",
+      "edit": "Edit the cost",
+      "line": "Cost {{total}} TND ({{kind}})",
+      "saved": "Cost saved.",
+      "invalid": "A positive amount, three decimals at most."
+    },
+    "report": {
+      "month": "Month",
+      "intro": "Readiness = vehicle-days neither broken nor in the workshop ÷ vehicle-days not decommissioned in the month, from the log. Red under {{red}}%, amber under {{amber}}%.",
+      "readiness": "Readiness",
+      "cost": "Maintenance cost",
+      "downDays": "Days off the road",
+      "entries": "Workshop entries",
+      "retired": "Decommissioned",
+      "vehicles": "Vehicles",
+      "perVehicle": "Per vehicle",
+      "gouvernorat": "Gouvernorat",
+      "total": "Total",
+      "trend": "Last {{n}} months",
+      "trendOf": "{{name}}: last {{n}} months",
+      "costly": "Costliest vehicles of the month",
+      "stays": "{{n}} stay(s)",
+      "dinars": "{{n}} TND",
+      "csv": "Export CSV",
+      "none": "No vehicle in this scope.",
+      "split": "Parts {{parts}} · labour {{labour}} · outside {{external}}"
+    }
   },
   "coverage": {
     "title": "Live coverage and repositioning",
@@ -9929,7 +10010,49 @@
     "engineRoad": "actual road time",
     "covered": "Covered",
     "lost": "Coverage lost",
-    "notCovered": "Out of time even at full fleet"
+    "notCovered": "Out of time even at full fleet",
+    "neighbours": "Count the neighbouring gouvernorats' units",
+    "neighboursHelp": "Central room: neighbouring units within {{km}} km of the délégations.",
+    "ownPct": "Own units only {{pct}}",
+    "fromNeighbour": "From a neighbour",
+    "neighbourUnit": "Unit of {{gouvernorat}}",
+    "crossMove": "Between two gouvernorats: from {{gouvernorat}}, decided by the central room",
+    "methodMeasured": "Turnout measured per unit on its missions, {{turnout}} min otherwise",
+    "turnoutTitle": "Turnout per unit",
+    "turnoutHelp": "From the order to «on the way»: median of recent missions, and the 9-in-10 mark.",
+    "unit": "Unit",
+    "missions": "Missions",
+    "median": "Used",
+    "p90": "9 in 10 under",
+    "measured": "Measured",
+    "default": "Default",
+    "orders": "Repositioning orders",
+    "noOrders": "No order under way.",
+    "orderKind": {
+      "reinforce": "Reinforcement",
+      "return": "Back to its unit"
+    },
+    "orderState": {
+      "sent": "Sent",
+      "seen": "Seen",
+      "departed": "On the way",
+      "arrived": "Arrived",
+      "closed": "Closed"
+    },
+    "closeReason": {
+      "replaced": "Replaced by a newer order",
+      "state": "The vehicle's state changed",
+      "maintenance": "Went to the workshop",
+      "retired": "Decommissioned"
+    },
+    "orderLine": "{{label}}: from {{from}} to {{to}}",
+    "orderSent": "Sent {{at}} · {{by}}",
+    "orderSeen": "Seen {{at}} · {{by}}",
+    "orderDeparted": "Left {{at}}",
+    "orderArrived": "Arrived {{at}}",
+    "overdue": "Not seen after {{n}} min: call the team",
+    "noShift": "No team on shift: the order reached no phone",
+    "notified": "Order sent to {{leader}}'s phone"
   },
   "profiles": {
     "title": "Access profiles",

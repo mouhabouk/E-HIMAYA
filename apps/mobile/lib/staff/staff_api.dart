@@ -102,6 +102,21 @@ class StaffApi {
     return data is Map<String, dynamic> ? data : {'items': data};
   }
 
+  /// OS3-1: the repositioning orders of the vehicle on shift (see reposition.dart).
+  Future<Map<String, dynamic>> repositionsJson() =>
+      _call('GET', '/repositions');
+
+  /// OS3-1: the leader says the crew saw the order, left or arrived, at [at].
+  Future<Map<String, dynamic>> repositionStepJson(
+    String id,
+    String step,
+    DateTime at,
+  ) => _call(
+    'POST',
+    '/repositions/$id/$step',
+    body: {'at': at.toUtc().toIso8601String()},
+  );
+
   /// OS8: the address warnings of a mission the team sees, most dangerous first.
   Future<Map<String, dynamic>> addressWarnings(String missionId) =>
       _call('GET', '/missions/$missionId/address-warnings');

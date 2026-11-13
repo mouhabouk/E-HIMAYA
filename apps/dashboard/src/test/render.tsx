@@ -262,6 +262,10 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     retireVehicle: vi.fn(),
     vehicleEvents: vi.fn(() => Promise.resolve({ items: [] })),
     coverage: vi.fn(),
+    // OS3 follow-ups: the orders to the crews, the cost of a stay, the monthly report.
+    repositionOrders: vi.fn(() => Promise.resolve({ items: [], ack_minutes: 2 })),
+    setEventCost: vi.fn(),
+    fleetReport: vi.fn(),
     featureProfiles: vi.fn(() => Promise.resolve([])),
     saveFeatureProfile: vi.fn(),
     deleteFeatureProfile: vi.fn(),

@@ -474,6 +474,11 @@ export const ERROR_CODES = [
   "until_in_past",
   "vehicle_retired",
   "vehicle_maintenance",
+  // OS3 follow-ups: repositioning orders, the cost of a stay, the monthly report.
+  "order_closed",
+  "not_a_workshop_stay",
+  "cost_required",
+  "month_in_future",
   // Phase I2: the periodic inspections.
   "after_account_end",
   "already_closed",

@@ -89,6 +89,16 @@ docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml up
 المالك ثم صلاحيات دور التشغيل) ← `api` و `worker` ← `caddy`. الواجهة لا ترحّل عند إقلاعها (`RUN_MIGRATIONS=0` افتراضيًا
 في الصورة)، ودورها لا يملك أي جدول.
 
+**محرك الطرقات (OS3-2):** التغطية الحية وأقرب الوحدات تعتمد زمن الطريق الفعلي افتراضيا (`ROUTING_URL=http://routing:8002`).
+يُشغَّل المحرك مع الملف `routing` مرة واحدة (أول إقلاع يبني خريطة تونس، بضع دقائق):
+
+```bash
+docker compose --env-file .env -f infra/compose.yml -f infra/compose.prod.yml --profile routing up -d --build --wait
+```
+
+ما دام المحرك متوقفا أو غير مشغَّل، تعود الحسابات إلى تقدير المسافة المستقيمة وتقول ذلك في الصفحة. ولإيقافه نهائيا:
+`ROUTING_URL=` فارغة في `.env`.
+
 ### فحوص بعد النشر
 
 ```bash
