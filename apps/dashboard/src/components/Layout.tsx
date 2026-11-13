@@ -12,7 +12,7 @@ import { PrintHeader } from "./PrintButton";
 import { useLiveState } from "../context/live";
 import { directionOf, LANGUAGES, type Language } from "../i18n";
 import { useGouvernorats, useLanguage } from "../lib/hooks";
-import { canDraftMessage, canRequestBreakGlass, hasReadAccess, staffRoles } from "../lib/roles";
+import { canDraftMessage, canReadAddressWarnings, canRequestBreakGlass, hasReadAccess, staffRoles } from "../lib/roles";
 import { MENU_POSITIONS, MENU_SHAPES, type MenuPrefs, saveMenu, storedMenu } from "../lib/menu";
 import { applyTheme, nextTheme, storedTheme, THEMES, type Theme } from "../lib/theme";
 import { applyBrand, otherBrand, storedBrand, type Brand } from "../lib/brand";
@@ -24,6 +24,7 @@ import { EnvironmentStrip } from "./EnvironmentStrip";
 import { LevelBanner } from "./LevelBanner";
 import { SoftphoneDock } from "./Softphone";
 import { StreamAlertToasts } from "./StreamAlertToasts";
+import { ReviewReminderToast } from "./ReviewReminderToast";
 import { applyMenuOrder, MENU_ORDER_KEY, menuOrderOf } from "../lib/menuOrder";
 import { settingOf, usePlatformSettings } from "../lib/phase9";
 
@@ -373,6 +374,7 @@ export function Layout() {
       </div>
       {readsReports && <StreamAlertToasts />}
       {canDraftMessage(identity.roles, "alert") && <AlertFollowUpToasts />}
+      {canReadAddressWarnings(identity.roles) && <ReviewReminderToast />}
       <SoftphoneDock />
     </div>
   );

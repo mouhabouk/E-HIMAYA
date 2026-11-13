@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { Icon, IconTile, Pill } from "../components/Icon";
 import { LazyMapView } from "../components/LazyMap";
@@ -19,12 +19,14 @@ import {
   type AwFilter,
   type AwMarker,
   type AwMarkerBody,
+  type AwReminderItem,
 } from "../lib/addressWarnings";
 import { useFormat, useLanguage } from "../lib/hooks";
 import { initialBoundsFor } from "../lib/mapStyle";
 import { canManageIncidents } from "../lib/roles";
 
-type Tab = "register" | "settings" | "reveals";
+type Tab = "register" | "reminders" | "settings" | "reveals";
+const TABS: readonly Tab[] = ["register", "reminders", "settings", "reveals"];
 const FILTERS: AwFilter[] = ["", "pending", "review_due", "archived", "rejected"];
 const SOURCES: AwMarkerBody["source"][] = ["room", "report", "municipality", "org"];
 
@@ -35,8 +37,13 @@ const SOURCES: AwMarkerBody["source"][] = ["room", "report", "municipality", "or
 export function AddressWarningsPage() {
   const { t } = useTranslation();
   const { api } = useServices();
-  const [tab, setTab] = useState<Tab>("register");
+  const [params, setParams] = useSearchParams();
+  const asked = params.get("tab");
+  const tab: Tab = TABS.find((k) => k === asked) ?? "register";
+  const setTab = (k: Tab) => setParams(k === "register" ? {} : { tab: k }, { replace: true });
   const cats = useQuery({ queryKey: awKeys.categories, queryFn: ({ signal }) => api.awCategories(signal) });
+  const reminders = useQuery({ queryKey: awKeys.reminders, queryFn: ({ signal }) => api.awReminders(signal) });
+  const late = reminders.data?.late.length ?? 0;
   return (
     <div className="page">
       <PageTitle print icon="warning" tone="amber">
@@ -44,15 +51,17 @@ export function AddressWarningsPage() {
       </PageTitle>
       <p className="muted">{t("addressWarnings.intro")}</p>
       <div className="aw-tabs" role="group" aria-label={t("addressWarnings.title")}>
-        {(["register", "settings", "reveals"] as const).map((k) => (
+        {TABS.map((k) => (
           <button key={k} type="button" aria-pressed={tab === k} onClick={() => setTab(k)}>
             {t(`addressWarnings.tab.${k}`)}
+            {k === "reminders" && late > 0 && <span className="aw-layer__count">{late}</span>}
           </button>
         ))}
       </div>
       {cats.isLoading && <Loading />}
       {cats.isError && <ErrorBox error={cats.error} onRetry={() => void cats.refetch()} />}
       {cats.data && tab === "register" && <Register categories={cats.data} />}
+      {cats.data && tab === "reminders" && <Reminders categories={cats.data} />}
       {cats.data && tab === "settings" && <Settings categories={cats.data} />}
       {cats.data && tab === "reveals" && <Reveals categories={cats.data} />}
     </div>
@@ -595,11 +604,12 @@ function Reveals({ categories }: { categories: AwCategory[] }) {
               <th>{t("addressWarnings.col.category")}</th>
               <th>{t("addressWarnings.reveals.incident")}</th>
               <th>{t("addressWarnings.reveals.reason")}</th>
+              <th>{t("addressWarnings.reveals.owner")}</th>
             </tr>
           </thead>
           <tbody>
             {q.data.map((r) => (
-              <tr key={`${r.at}-${r.address}`}>
+              <tr key={r.id}>
                 <td>{fmt.dateTime(r.at)}</td>
                 <td>{r.by_name ?? "—"}</td>
                 <td>
@@ -607,11 +617,173 @@ function Reveals({ categories }: { categories: AwCategory[] }) {
                 </td>
                 <td>{r.incident_id ? <Link to={`/incidents/${r.incident_id}`}>{t("addressWarnings.queue.incident")}</Link> : "—"}</td>
                 <td>{r.reason}</td>
+                <td>
+                  <Pill tone={r.notified_via ? "green" : "slate"}>
+                    {t(`addressWarnings.reveals.told.${r.notified_via ?? "none"}`)}
+                  </Pill>
+                  {r.disputed_at && (
+                    <div className="aw-dispute">
+                      <Pill tone="red">{t("addressWarnings.reveals.disputed", { at: fmt.dateTime(r.disputed_at) })}</Pill>
+                      {r.dispute_note && (
+                        <div className="muted" dir="auto">
+                          {r.dispute_note}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
     </section>
+  );
+}
+
+/**
+ * OS8-3 (docs/phase-os8/design-os8.md §10): the marks past their review date or within the notice, the oldest first.
+ * Past the manager's delay the line says it was raised to the room's manager, past the central delay to the central
+ * room. From here: confirm (the category's period), edit in the register, archive with a reason, or ask a field check.
+ */
+function Reminders({ categories }: { categories: AwCategory[] }) {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const { user } = useAuth();
+  const fmt = useFormat();
+  const qc = useQueryClient();
+  const [, setParams] = useSearchParams();
+  const canWrite = canManageIncidents(user?.identity.roles ?? []);
+  const byKey = new Map(categories.map((c) => [c.key, c]));
+  const q = useQuery({ queryKey: awKeys.reminders, queryFn: ({ signal }) => api.awReminders(signal) });
+  const refresh = () => void qc.invalidateQueries({ queryKey: awKeys.all });
+  const decide = useMutation({
+    mutationFn: ({ id, action, reason }: { id: string; action: "confirm" | "archive"; reason?: string }) =>
+      api.awDecide(id, action, reason),
+    onSuccess: refresh,
+  });
+  const check = useMutation({ mutationFn: (id: string) => api.awRequestCheck(id), onSuccess: refresh });
+  const archive = (id: string) => {
+    const reason = window.prompt(t("addressWarnings.ask.archive"));
+    if (reason && reason.trim().length >= 2) decide.mutate({ id, action: "archive", reason: reason.trim() });
+  };
+  const item = ({ marker: m, days, level }: AwReminderItem) => {
+    const c = byKey.get(m.category);
+    return (
+      <li key={m.id} className={`aw-item aw-reminder aw-reminder--${level === "soon" ? "soon" : "late"}`}>
+        <IconTile name={awIcon(c)} tone={awTone(c)} />
+        <div className="aw-item__body">
+          <div className="aw-item__title">
+            <strong>{c?.name}</strong>
+            {level === "soon" ? (
+              <Pill tone="amber">{t("addressWarnings.reminders.soonIn", { n: fmt.number(-days) })}</Pill>
+            ) : (
+              <Pill tone="red">{t("addressWarnings.reminders.lateBy", { n: fmt.number(days) })}</Pill>
+            )}
+            {(level === "manager" || level === "central") && (
+              <Pill tone="red">{t(`addressWarnings.reminders.raised.${level}`)}</Pill>
+            )}
+            {m.check_requested_at && (
+              <Pill tone="navy">
+                {t("addressWarnings.reminders.checkAsked", {
+                  at: fmt.dateTime(m.check_requested_at),
+                  by: m.check_requested_by_name ?? "—",
+                })}
+              </Pill>
+            )}
+          </div>
+          <p className="aw-item__desc" dir="auto">
+            {m.description}
+          </p>
+          <p className="muted aw-item__addr" dir="auto">
+            {m.address} · {t("addressWarnings.col.review")} {fmt.date(m.review_on)} · {t(`addressWarnings.source.${m.source}`)}
+          </p>
+          {canWrite && (
+            <div className="aw-item__acts">
+              <button
+                type="button"
+                className="btn btn--small btn--primary"
+                onClick={() => decide.mutate({ id: m.id, action: "confirm" })}
+              >
+                {t("addressWarnings.reminders.confirm", { n: fmt.number(c?.review_months ?? 12) })}
+              </button>
+              <button type="button" className="btn btn--small" onClick={() => setParams({}, { replace: true })}>
+                {t("addressWarnings.reminders.edit")}
+              </button>
+              <button type="button" className="btn btn--small" onClick={() => archive(m.id)}>
+                {t("addressWarnings.action.archive")}
+              </button>
+              {!m.check_requested_at && (
+                <button type="button" className="btn btn--small" onClick={() => check.mutate(m.id)}>
+                  {t("addressWarnings.reminders.askCheck")}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </li>
+    );
+  };
+  const s = q.data?.settings;
+  return (
+    <div className="aw-reminders">
+      <section className="card" aria-labelledby="aw-rem-late">
+        {q.isLoading && <Loading />}
+        {q.isError && <ErrorBox error={q.error} onRetry={() => void q.refetch()} />}
+        {decide.isError && <ErrorBox error={decide.error} />}
+        {check.isError && <ErrorBox error={check.error} />}
+        {q.data && (
+          <>
+            <h2 id="aw-rem-late">
+              <IconTile name="warning" tone="red" size="sm" />{" "}
+              {t("addressWarnings.reminders.late", { n: fmt.number(q.data.late.length) })}
+            </h2>
+            {q.data.late.length === 0 ? (
+              <p className="muted">{t("addressWarnings.reminders.noneLate")}</p>
+            ) : (
+              <ul className="aw-list">{q.data.late.map(item)}</ul>
+            )}
+            {q.data.soon.length > 0 && (
+              <>
+                <h3>{t("addressWarnings.reminders.soon", { n: fmt.number(q.data.soon.length), days: s?.ahead_days ?? 30 })}</h3>
+                <ul className="aw-list">{q.data.soon.map(item)}</ul>
+              </>
+            )}
+            {q.data.disputes > 0 && (
+              <p className="aw-note">
+                <Pill tone="red">{t("addressWarnings.reminders.disputes", { n: fmt.number(q.data.disputes) })}</Pill>{" "}
+                <button type="button" className="btn btn--small" onClick={() => setParams({ tab: "reveals" }, { replace: true })}>
+                  {t("addressWarnings.tab.reveals")}
+                </button>
+              </p>
+            )}
+          </>
+        )}
+      </section>
+      {s && (
+        <section className="card" aria-labelledby="aw-rem-path">
+          <h2 id="aw-rem-path">{t("addressWarnings.reminders.pathTitle")}</h2>
+          <ul className="aw-path">
+            <li>
+              <strong>{t("addressWarnings.reminders.path.aheadLabel", { n: s.ahead_days })}</strong>{" "}
+              {t("addressWarnings.reminders.path.ahead")}
+            </li>
+            <li>
+              <strong>{t("addressWarnings.reminders.path.dueLabel")}</strong>{" "}
+              {t("addressWarnings.reminders.path.due", { hour: `${String(s.hour).padStart(2, "0")}:00` })}
+            </li>
+            <li>
+              <strong>{t("addressWarnings.reminders.path.afterLabel", { n: s.manager_days })}</strong>{" "}
+              {t("addressWarnings.reminders.path.manager")}
+            </li>
+            <li>
+              <strong>{t("addressWarnings.reminders.path.afterLabel", { n: s.central_days })}</strong>{" "}
+              {t("addressWarnings.reminders.path.central")}
+            </li>
+          </ul>
+          <p className="muted">{t("addressWarnings.reminders.personal")}</p>
+        </section>
+      )}
+    </div>
   );
 }

@@ -9389,7 +9389,8 @@
     "tab": {
       "register": "Registre des marques",
       "settings": "Réglages des catégories",
-      "reveals": "Journal des données personnelles lues"
+      "reveals": "Journal des données personnelles lues",
+      "reminders": "Rappel de révision"
     },
     "kpi": {
       "active": "marques en vigueur",
@@ -9487,7 +9488,14 @@
       "at": "Heure",
       "by": "Par",
       "incident": "Incident",
-      "reason": "Motif"
+      "reason": "Motif",
+      "owner": "Avis au titulaire",
+      "told": {
+        "push": "Averti dans l’application",
+        "sms": "Averti par SMS",
+        "none": "Aucun moyen de l’avertir"
+      },
+      "disputed": "Contesté par le titulaire le {{at}} : aucun incident connu"
     },
     "panel": {
       "title": "Alertes d'adresse",
@@ -9517,6 +9525,57 @@
         "name": "Donner son nom à l'équipe pour l'appeler",
         "team": "Demande de l'équipe sur place"
       }
+    },
+    "layer": {
+      "toggle": "Avertissements d’adresse",
+      "groups": "Groupes d’avertissements d’adresse",
+      "group": {
+        "all": "Tous",
+        "haz": "Matières dangereuses",
+        "bld": "Bâtiments et accès",
+        "ppl": "Personnes et animaux",
+        "late": "Révision dépassée"
+      },
+      "count": "Marques affichées : {{n}}",
+      "personal": "{{n}} marques personnelles ne sont pas sur la carte (seulement dans le dossier d’un incident proche, sans nom)",
+      "mark": "Marque",
+      "cluster": "{{n}} marques dans cette zone",
+      "clusterDue": "dont {{n}} à réviser",
+      "circle": "Cercle",
+      "metres": "m"
+    },
+    "reminders": {
+      "late": "Date de révision dépassée ({{n}})",
+      "noneLate": "Aucune marque en retard.",
+      "soon": "Révision dans les {{days}} jours ({{n}})",
+      "soonIn": "Échéance dans {{n}} jours",
+      "lateBy": "En retard de {{n}} jours",
+      "raised": {
+        "manager": "Remonté au chef de salle",
+        "central": "Remonté à la salle centrale"
+      },
+      "checkAsked": "Vérification de terrain demandée {{at}} · {{by}}",
+      "confirm": "Confirmer ({{n}} mois)",
+      "edit": "Modifier dans le registre",
+      "askCheck": "Demander une vérification",
+      "disputes": "Contestations des titulaires de marques personnelles : {{n}}",
+      "pathTitle": "Parcours du rappel",
+      "path": {
+        "aheadLabel": "{{n}} jours avant :",
+        "ahead": "« Révision proche », en ambre.",
+        "dueLabel": "Le jour du dépassement :",
+        "due": "rappel à la salle chaque matin à {{hour}} ; la marque reste affichée sur les incidents avec « révision en retard ».",
+        "afterLabel": "Après {{n}} jours :",
+        "manager": "remonté au chef de salle.",
+        "central": "remonté à la salle centrale. Pas d’archivage automatique : une personne décide."
+      },
+      "personal": "Les marques personnelles ne sont pas dans ce rappel : leur titulaire renouvelle son accord chaque année dans l’application.",
+      "toastRegion": "Rappel de révision des avertissements d’adresse",
+      "toastTitle": "Rappel du matin : avertissements d’adresse",
+      "toastBody": "Marques à réviser : {{late}} · bientôt : {{soon}}.",
+      "toastCentral": "Dont {{n}} remontées à la salle centrale.",
+      "toastManager": "Dont {{n}} remontées au chef de salle.",
+      "open": "Ouvrir les rappels"
     }
   },
   "fleet": {
