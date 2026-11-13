@@ -162,6 +162,11 @@ void main() {
       expect(p('safety_check_fired').route, Routes.safetyCheck);
       expect(p('safety_check_reminder').route, Routes.safetyCheck);
       expect(p('safety_history_viewed').route, Routes.safetyLocationHistory);
+      // OS8-2: a room read the owner's name: their consent screen (when and why).
+      expect(
+        p('address_warning_viewed', {'id': '7'}).route,
+        Routes.safetyAddressWarnings,
+      );
     });
 
     test(

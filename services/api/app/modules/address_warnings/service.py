@@ -10,33 +10,60 @@ mark gives its owner's need and never a name; the name and phone are shown on re
 request is kept and shown to the owner.
 """
 
+import asyncio
 import calendar
 import uuid
 from datetime import UTC, date, datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
+import structlog
 from fastapi import HTTPException, status
 from geoalchemy2 import Geography, Geometry
 from sqlalchemy import Select, cast, func, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core import events
 from app.core.db import as_system
 from app.core.security import Principal
 from app.modules.address_warnings import schemas
-from app.modules.address_warnings.models import Ack, Category, Marker, Reveal
+from app.modules.address_warnings.models import Ack, Category, Marker, ReminderDay, Reveal
 from app.modules.audit import service as audit
 from app.modules.identity.models import Profile
+from app.modules.notify import outbox
+from app.modules.notify.models import Device, Outbox
 from app.modules.ops.models import Incident
 from app.modules.orgs.models import Hazmat, Organization
 from app.modules.reports.service import locate_gouvernorat
 
 TUNIS = ZoneInfo("Africa/Tunis")
+log = structlog.get_logger()
 _LAT = func.ST_Y(cast(Marker.location, Geometry))
 _LON = func.ST_X(cast(Marker.location, Geometry))
 #: Words of a hazardous material that make an institution's mark a gas store rather than hazardous materials.
 GAS_WORDS = ("غاز", "gaz", "gas", "propane", "butane", "بروبان", "بوتان")
 GAS_UN = {"1011", "1075", "1965", "1978", "1049", "1971"}
+#: OS8-3, the morning review reminder (Yamen 2026-11-13): sent at 08:00 to the room of the gouvernorat; a mark shows
+#: «soon» 30 days ahead, is raised to the room's manager 7 days past its date and to the central room 30 days past.
+REMINDER_HOUR = 8
+AHEAD_DAYS = 30
+MANAGER_DAYS = 7
+CENTRAL_DAYS = 30
+#: OS8-2: the SMS to the owner of a personal mark when their account has no phone that receives pushes. Fixed text:
+#: no name, no address, no reason (the reason is read in the app, behind the account's login).
+REVEAL_SMS = (
+    "ء-حماية: اطّلعت فرق الحماية المدنية على اسمك ورقمك بسبب بلاغ قريب من عنوانك. "
+    "التفاصيل في التطبيق: الملف الطبي ثم «من اطّلع على بياناتي»."
+)
+REVEAL_PUSH_TITLE = outbox.localized(
+    "اطّلعت فرق الحماية على اسمك", "Les secours ont consulté votre nom", "Rescue teams viewed your name"
+)
+REVEAL_PUSH_BODY = outbox.localized(
+    "بسبب بلاغ قريب من عنوانك. انقر لمعرفة السبب.",
+    "Suite à un signalement près de chez vous. Touchez pour voir le motif.",
+    "Because of an incident near your address. Tap to see why.",
+)
 
 
 def _now() -> datetime:
@@ -167,6 +194,8 @@ def marker_out(m: Marker, lat: float, lon: float) -> schemas.MarkerOut:
         decided_by_name=m.decided_by_name,
         decision_reason=m.decision_reason,
         confirmed_at=m.confirmed_at,
+        check_requested_at=m.check_requested_at,
+        check_requested_by_name=m.check_requested_by_name,
     )
 
 
@@ -326,6 +355,9 @@ async def decide(
         m.confirmed_at = now
     if action != "confirm":
         m.decided_at, m.decided_by_name, m.decision_reason = now, _name(principal), reason
+    if action in ("confirm", "archive"):
+        # OS8-3: the review is done; a field check asked from the reminder is no longer awaited.
+        m.check_requested_at = m.check_requested_by_name = None
     m.version += 1
     await _record(session, principal, action, m, reason=reason)
     return marker_out(m, lat, lon)
@@ -521,20 +553,20 @@ async def reveal(
         m = await session.get(Marker, marker_id)
         assert m is not None and m.owner_id is not None
         profile = await session.get(Profile, m.owner_id)
-        session.add(
-            Reveal(
-                marker_id=m.id,
-                owner_id=m.owner_id,
-                incident_id=incident.id,
-                gouvernorat_code=incident.gouvernorat_code,
-                by_subject=audit.actor_of(principal),
-                by_name=_name(principal),
-                reason=reason,
-            )
+        row = Reveal(
+            marker_id=m.id,
+            owner_id=m.owner_id,
+            incident_id=incident.id,
+            gouvernorat_code=incident.gouvernorat_code,
+            by_subject=audit.actor_of(principal),
+            by_name=_name(principal),
+            reason=reason,
         )
+        session.add(row)
         await session.flush()
         name = " ".join(p for p in (profile.first_name, profile.last_name) if p) if profile else ""
         phone = profile.phone if profile else None
+        row.notified_via = await _tell_owner(session, m.owner_id, row.id, phone)
     await audit.record(
         session,
         actor=audit.actor_of(principal),
@@ -547,6 +579,27 @@ async def reveal(
     return schemas.RevealOut(name=name or None, phone=phone)
 
 
+async def _tell_owner(session: AsyncSession, owner_id: uuid.UUID, reveal_id: int, phone: str | None) -> str | None:
+    """OS8-2: the owner learns at once that a room read their name. A content-free push to their phones (the app
+    fetches when and why behind the login); an SMS with a fixed text when the account has no phone for pushes."""
+    has_device = await session.scalar(select(func.count()).select_from(Device).where(Device.user_id == owner_id))
+    if has_device:
+        outbox.push(
+            session,
+            owner_id,
+            "address_warning_viewed",
+            {"id": str(reveal_id)},
+            alert=True,
+            title=REVEAL_PUSH_TITLE,
+            body=REVEAL_PUSH_BODY,
+        )
+        return "push"
+    if phone:
+        session.add(Outbox(channel="sms", address=phone, payload={"text": REVEAL_SMS}))
+        return "sms"
+    return None
+
+
 async def reveals(session: AsyncSession, principal: Principal) -> list[schemas.RevealRow]:
     query = select(Reveal, Marker.category, Marker.address).join(Marker, Marker.id == Reveal.marker_id)
     if principal.gouvernorat_code is not None:
@@ -554,7 +607,16 @@ async def reveals(session: AsyncSession, principal: Principal) -> list[schemas.R
     rows = (await session.execute(query.order_by(Reveal.at.desc()).limit(200))).all()
     return [
         schemas.RevealRow(
-            at=r.at, by_name=r.by_name, category=cat, address=address, incident_id=r.incident_id, reason=r.reason
+            id=r.id,
+            at=r.at,
+            by_name=r.by_name,
+            category=cat,
+            address=address,
+            incident_id=r.incident_id,
+            reason=r.reason,
+            notified_via=r.notified_via,
+            disputed_at=r.disputed_at,
+            dispute_note=r.dispute_note,
         )
         for r, cat, address in rows
     ]
@@ -628,7 +690,10 @@ async def my_warnings(session: AsyncSession, user_id: uuid.UUID) -> schemas.MyWa
             for m, _, _ in rows
         ],
         # The owner learns that a room read their name, when and why, never who.
-        reveals=[schemas.MyReveal(at=r.at, category=cat, reason=r.reason) for r, cat in reveal_rows],
+        reveals=[
+            schemas.MyReveal(id=r.id, at=r.at, category=cat, reason=r.reason, disputed_at=r.disputed_at)
+            for r, cat in reveal_rows
+        ],
         categories=[category_out(c) for c in cats.values() if c.personal],
     )
 
@@ -692,3 +757,150 @@ async def save_my_warnings(
         gouvernorats=[code] if code else None,
     )
     return await my_warnings(session, user_id)
+
+
+async def dispute(session: AsyncSession, user_id: uuid.UUID, actor: str, reveal_id: int, note: str | None) -> None:
+    """OS8-2: «لا علم لي بأي بلاغ عندي». The owner objects to a reading of their name; kept on the reading, audited
+    and followed by the central room (the reveals log and the reminder count)."""
+    async with as_system(session):
+        row = await session.get(Reveal, reveal_id, with_for_update=True)
+        if row is None or row.owner_id != user_id:
+            raise _not_found()
+        if row.disputed_at is not None:
+            return
+        row.disputed_at, row.dispute_note = _now(), note or None
+        code = row.gouvernorat_code
+        incident_id = row.incident_id
+        await session.flush()
+    await audit.record(
+        session,
+        actor=actor,
+        action="address_warnings.reveal_disputed",
+        target=f"aw_reveal:{reveal_id}",
+        details={"incident_id": str(incident_id) if incident_id else None},
+        gouvernorats=[code] if code else None,
+    )
+
+
+# ---------------------------------------------------------------- the review reminder (OS8-3)
+
+
+def reminder_level(days: int) -> schemas.ReminderLevel:
+    """days: past the review date (1 or more: review_on < today, like the register) or left before it (0 or less)."""
+    if days <= 0:
+        return "soon"
+    if days >= CENTRAL_DAYS:
+        return "central"
+    if days >= MANAGER_DAYS:
+        return "manager"
+    return "room"
+
+
+async def reminders(session: AsyncSession, principal: Principal) -> schemas.Reminders:
+    """The marks of the scope past their review date or within the notice, oldest first; personal marks are left out
+    (their owner renews their consent in the app)."""
+    personal = select(Category.key).where(Category.personal)
+    day = today()
+    horizon = date.fromordinal(day.toordinal() + AHEAD_DAYS)
+    query = _scoped(select(Marker, _LAT, _LON), principal).where(
+        Marker.status == "active", Marker.review_on <= horizon, Marker.category.not_in(personal)
+    )
+    rows = (await session.execute(query.order_by(Marker.review_on).limit(500))).all()
+    late: list[schemas.ReminderItem] = []
+    soon: list[schemas.ReminderItem] = []
+    for m, lat, lon in rows:
+        days = (day - m.review_on).days
+        item = schemas.ReminderItem(marker=marker_out(m, lat, lon), days=days, level=reminder_level(days))
+        (late if days > 0 else soon).append(item)
+    disputes = select(func.count()).select_from(Reveal).where(Reveal.disputed_at.is_not(None))
+    if principal.gouvernorat_code is not None:
+        disputes = disputes.where(Reveal.gouvernorat_code == principal.gouvernorat_code)
+    return schemas.Reminders(
+        late=late,
+        soon=soon,
+        disputes=await session.scalar(disputes) or 0,
+        settings=schemas.ReminderSettings(
+            hour=REMINDER_HOUR, ahead_days=AHEAD_DAYS, manager_days=MANAGER_DAYS, central_days=CENTRAL_DAYS
+        ),
+    )
+
+
+async def request_check(session: AsyncSession, principal: Principal, marker_id: uuid.UUID) -> schemas.MarkerOut:
+    """A field check of a mark asked from the reminder: kept on the mark until a confirm or an archive."""
+    m, lat, lon = await load(session, principal, marker_id)
+    if m.status != "active":
+        raise HTTPException(status.HTTP_409_CONFLICT, "marker_status")
+    m.check_requested_at, m.check_requested_by_name = _now(), _name(principal)
+    m.version += 1
+    await _record(session, principal, "check_requested", m)
+    return marker_out(m, lat, lon)
+
+
+async def send_reminders(session: AsyncSession, at: datetime | None = None) -> int:
+    """Once a day from 08:00 (Tunis), one live reminder per gouvernorat whose room has marks past or near their
+    review date. Kept in ``aw.reminder_day`` so that it goes once across processes. Returns the reminders sent."""
+    local = (at or _now()).astimezone(TUNIS)
+    if local.hour < REMINDER_HOUR:
+        return 0
+    day = local.date()
+    personal = select(Category.key).where(Category.personal)
+    horizon = date.fromordinal(day.toordinal() + AHEAD_DAYS)
+    late_days = day - Marker.review_on
+    rows = (
+        await session.execute(
+            select(
+                Marker.gouvernorat_code,
+                func.count().filter(Marker.review_on < day),
+                func.count().filter(Marker.review_on >= day),
+                func.count().filter(Marker.review_on < day, late_days >= MANAGER_DAYS),
+                func.count().filter(Marker.review_on < day, late_days >= CENTRAL_DAYS),
+            )
+            .where(
+                Marker.status == "active",
+                Marker.review_on <= horizon,
+                Marker.category.not_in(personal),
+                Marker.gouvernorat_code.is_not(None),
+            )
+            .group_by(Marker.gouvernorat_code)
+        )
+    ).all()
+    sent = 0
+    for code, late, soon, manager, central in rows:
+        done = await session.scalar(
+            pg_insert(ReminderDay)
+            .values(gouvernorat_code=code, day=day, late=late, soon=soon)
+            .on_conflict_do_nothing()
+            .returning(ReminderDay.day)
+        )
+        if done is None:
+            continue
+        await events.emit(
+            session,
+            "address_warnings.review_reminder",
+            {
+                "day": day.isoformat(),
+                "gouvernorat_code": code,
+                "gouvernorat_codes": [code],
+                "late": late,
+                "soon": soon,
+                "manager": manager,
+                "central": central,
+            },
+        )
+        sent += 1
+    return sent
+
+
+async def reminders_forever(sessionmaker: async_sessionmaker[AsyncSession], interval_s: float = 600) -> None:
+    """Worker loop: the morning review reminder (checked every ten minutes, sent once a day per gouvernorat)."""
+    while True:
+        try:
+            async with sessionmaker() as session, session.begin():
+                sent = await send_reminders(session)
+            if sent:
+                log.info("address_warnings.reminders_sent", count=sent)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            log.exception("address_warnings.reminders_failed")
+        await asyncio.sleep(interval_s)

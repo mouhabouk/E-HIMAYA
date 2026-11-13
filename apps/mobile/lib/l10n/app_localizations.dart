@@ -12670,6 +12670,30 @@ abstract class AppLocalizations {
   /// **'Withdraw all my consent'**
   String get awConsentWithdraw;
 
+  /// No description provided for @awViewedPushTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescue teams viewed your name'**
+  String get awViewedPushTitle;
+
+  /// No description provided for @awViewedPushBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Because of an incident near your address. Open e-Himaya to see why.'**
+  String get awViewedPushBody;
+
+  /// No description provided for @awDispute.
+  ///
+  /// In en, this message translates to:
+  /// **'I know of no incident at my home'**
+  String get awDispute;
+
+  /// No description provided for @awDisputed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your objection was sent to the central room, which will review it.'**
+  String get awDisputed;
+
   /// No description provided for @inspOpen.
   ///
   /// In en, this message translates to:

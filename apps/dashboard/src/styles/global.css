@@ -4257,6 +4257,44 @@ button.map-poi {
   font-size: 0.8rem;
   border-width: 3px;
 }
+/* Address warnings on the room's map (OS8-1): a rounded square in the category's colour; past its review date, a red
+   ring (the popup says it too); a group of marks is a circle with its count. */
+.map-poi--aw,
+.map-poi--aw_due {
+  border-radius: 8px;
+  inline-size: 28px;
+  block-size: 28px;
+  color: #fff;
+}
+.map-poi--aw_due {
+  outline: 3px solid var(--danger, #d7141a);
+  outline-offset: 2px;
+}
+.map-poi--aw_cluster {
+  border-radius: 50%;
+  inline-size: 36px;
+  block-size: 36px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-width: 3px;
+}
+.aw-layer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-block: 0.25rem 0.5rem;
+}
+.aw-layer__count {
+  margin-inline-start: 0.35rem;
+  border-radius: 999px;
+  padding: 0 0.45rem;
+  background: var(--danger, #d7141a);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
 .layer-swatch {
   display: inline-grid;
   place-items: center;
@@ -12951,6 +12989,43 @@ body::after {
   }
 }
 
+/* Address warnings follow-ups (OS8-2, OS8-3): the review reminder, its path, the owner's objection. */
+.aw-reminders {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .aw-reminders {
+    grid-template-columns: 1fr;
+  }
+}
+.aw-reminder--late {
+  border: 2px solid var(--tone-red);
+  background: var(--tone-red-tint);
+}
+.aw-reminder--soon {
+  border: 1px solid var(--tone-amber);
+  background: var(--tone-amber-tint);
+}
+.aw-path {
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.aw-dispute {
+  margin-block-start: 0.3rem;
+}
+.aw-tabs .aw-layer__count {
+  margin-inline-start: 0.4rem;
+}
+.toasts--aw {
+  inset-block-end: auto;
+  inset-block-start: 5rem;
+}
+
 /* OS2-3 and OS2-4 (Yamen 2026-11-13): statistics and review of the call-taking cards. */
 .cc-tone-green { background: var(--tone-green); }
 .cc-tone-teal { background: var(--tone-teal); }
@@ -13225,6 +13300,7 @@ body::after {
     margin-top: 14px;
   }
 }
+
 /* The subsystems page (2026-11-13): the systems of each block in cards. */
 .systems-block > h2 {
   display: flex;

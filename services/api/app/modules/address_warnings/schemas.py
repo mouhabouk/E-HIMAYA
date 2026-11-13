@@ -14,6 +14,7 @@ Reason = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, m
 Minutes = Annotated[int, Field(ge=0, le=1440)]
 RoomSource = Literal["room", "org", "municipality", "report"]
 Status = Literal["pending", "active", "archived", "rejected", "withdrawn"]
+ReminderLevel = Literal["soon", "room", "manager", "central"]
 
 #: Incident kinds a category can be critical with (the report categories of the rooms).
 INCIDENT_KINDS = (
@@ -110,6 +111,9 @@ class MarkerOut(BaseModel):
     decided_by_name: str | None
     decision_reason: str | None
     confirmed_at: datetime | None
+    # OS8-3: a field check asked from the review reminder (cleared by a confirm or an archive).
+    check_requested_at: datetime | None = None
+    check_requested_by_name: str | None = None
 
 
 class Counts(BaseModel):
@@ -181,12 +185,43 @@ class RevealOut(BaseModel):
 
 
 class RevealRow(BaseModel):
+    id: int
     at: datetime
     by_name: str | None
     category: str
     address: str
     incident_id: uuid.UUID | None
     reason: str
+    # OS8-2: how the owner was told (push, sms; none when the account has neither), and the owner's objection.
+    notified_via: Literal["push", "sms"] | None = None
+    disputed_at: datetime | None = None
+    dispute_note: str | None = None
+
+
+# ---------------------------------------------------------------- the review reminder (OS8-3)
+
+
+class ReminderItem(BaseModel):
+    marker: MarkerOut
+    #: Days past the review date (1 or more), or minus the days left before it (0 or less).
+    days: int
+    #: soon (within the notice), room (past), manager (past the manager's delay), central (past the central delay).
+    level: ReminderLevel
+
+
+class ReminderSettings(BaseModel):
+    hour: int
+    ahead_days: int
+    manager_days: int
+    central_days: int
+
+
+class Reminders(BaseModel):
+    late: list[ReminderItem]
+    soon: list[ReminderItem]
+    #: Reveals their owner objected to, in the caller's scope (the central room follows them).
+    disputes: int
+    settings: ReminderSettings
 
 
 # ---------------------------------------------------------------- the team
@@ -227,9 +262,17 @@ class MyNeed(BaseModel):
 
 
 class MyReveal(BaseModel):
+    id: int
     at: datetime
     category: str
     reason: str
+    disputed_at: datetime | None = None
+
+
+class DisputeIn(BaseModel):
+    """«لا علم لي بأي بلاغ عندي»: the owner knows of no incident at their address; an optional word."""
+
+    note: Annotated[str, StringConstraints(strip_whitespace=True, max_length=300)] | None = None
 
 
 class MyWarningsOut(BaseModel):

@@ -54,9 +54,13 @@ class MyAddressWarnings {
       reveals: [
         for (final r in j['reveals'] as List? ?? const [])
           (
-            at: DateTime.parse((r as Map<String, Object?>)['at']! as String),
+            id: ((r as Map<String, Object?>)['id'] as num?)?.toInt() ?? 0,
+            at: DateTime.parse(r['at']! as String),
             category: r['category'] as String? ?? '',
             reason: r['reason'] as String? ?? '',
+            disputedAt: r['disputed_at'] == null
+                ? null
+                : DateTime.parse(r['disputed_at']! as String),
           ),
       ],
     );
@@ -65,7 +69,16 @@ class MyAddressWarnings {
   final GeoPoint? location;
   final String? address;
   final Map<String, String> needs;
-  final List<({DateTime at, String category, String reason})> reveals;
+  final List<
+    ({
+      int id,
+      DateTime at,
+      String category,
+      String reason,
+      DateTime? disputedAt,
+    })
+  >
+  reveals;
 }
 
 final myAddressWarningsProvider =
@@ -250,6 +263,32 @@ class _ConsentFormState extends ConsumerState<_ConsentForm> {
                 '${needLabel(l10n, r.category)} · ${_date(r.at.toLocal())}',
               ),
             ),
+          // OS8-2: the owner knows of no incident at home: the central room follows the objection.
+          for (final r in current.reveals)
+            if (r.disputedAt != null)
+              Text(
+                l10n.awDisputed,
+                key: Key('aw-disputed-${r.id}'),
+                style: theme.textTheme.bodySmall,
+              )
+            else if (r.id > 0)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton.icon(
+                  key: Key('aw-dispute-${r.id}'),
+                  onPressed: _busy
+                      ? null
+                      : () => unawaited(
+                          _run(() async {
+                            final api = ref.read(apiProvider);
+                            await api.disputeAddressWarningReveal(r.id);
+                            return api.myAddressWarnings();
+                          }),
+                        ),
+                  icon: const Icon(Icons.flag_outlined),
+                  label: Text(l10n.awDispute),
+                ),
+              ),
         ],
         if (current.needs.isNotEmpty) ...[
           const SizedBox(height: 16),

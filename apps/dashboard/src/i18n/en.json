@@ -9615,7 +9615,8 @@
     "tab": {
       "register": "Register of marks",
       "settings": "Category settings",
-      "reveals": "Personal data read"
+      "reveals": "Personal data read",
+      "reminders": "Review reminder"
     },
     "kpi": {
       "active": "active marks",
@@ -9713,7 +9714,14 @@
       "at": "Time",
       "by": "By",
       "incident": "Incident",
-      "reason": "Reason"
+      "reason": "Reason",
+      "owner": "Owner told",
+      "told": {
+        "push": "Told in the app",
+        "sms": "Told by SMS",
+        "none": "No way to tell them"
+      },
+      "disputed": "Disputed by the owner on {{at}}: no incident known"
     },
     "panel": {
       "title": "Address warnings",
@@ -9743,6 +9751,57 @@
         "name": "Give the team their name to call out",
         "team": "Asked by the team on site"
       }
+    },
+    "layer": {
+      "toggle": "Address warnings",
+      "groups": "Address warning groups",
+      "group": {
+        "all": "All",
+        "haz": "Hazardous materials",
+        "bld": "Buildings and access",
+        "ppl": "People and animals",
+        "late": "Review overdue"
+      },
+      "count": "Marks shown: {{n}}",
+      "personal": "{{n}} personal marks are not on the map (only in the file of a nearby incident, without a name)",
+      "mark": "Mark",
+      "cluster": "{{n}} marks in this area",
+      "clusterDue": "{{n}} of them overdue for review",
+      "circle": "Circle",
+      "metres": "m"
+    },
+    "reminders": {
+      "late": "Past their review date ({{n}})",
+      "noneLate": "No overdue mark.",
+      "soon": "Review within {{days}} days ({{n}})",
+      "soonIn": "Due in {{n}} days",
+      "lateBy": "{{n}} days late",
+      "raised": {
+        "manager": "Raised to the room manager",
+        "central": "Raised to the central room"
+      },
+      "checkAsked": "Field check asked {{at}} · {{by}}",
+      "confirm": "Confirm ({{n}} months)",
+      "edit": "Edit in the register",
+      "askCheck": "Ask a team to check",
+      "disputes": "Disputes by owners of personal marks: {{n}}",
+      "pathTitle": "How the reminder goes",
+      "path": {
+        "aheadLabel": "{{n}} days before:",
+        "ahead": "“review soon”, in amber.",
+        "dueLabel": "On the day it passes:",
+        "due": "a reminder to the room every morning at {{hour}}; the mark stays on incidents as “review overdue”.",
+        "afterLabel": "After {{n}} days:",
+        "manager": "raised to the room manager.",
+        "central": "raised to the central room. Nothing is archived automatically: a person decides."
+      },
+      "personal": "Personal marks are not in this reminder: their owner renews their consent each year in the app.",
+      "toastRegion": "Address warnings review reminder",
+      "toastTitle": "Morning reminder: address warnings",
+      "toastBody": "Marks past their review date: {{late}} · due soon: {{soon}}.",
+      "toastCentral": "{{n}} of them raised to the central room.",
+      "toastManager": "{{n}} of them raised to the room manager.",
+      "open": "Open the reminders"
     }
   },
   "fleet": {

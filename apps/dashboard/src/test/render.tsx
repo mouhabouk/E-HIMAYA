@@ -464,6 +464,15 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     awDecide: vi.fn(),
     awImportOrgs: vi.fn(() => Promise.resolve({ created: 0 })),
     awReveals: vi.fn(() => Promise.resolve([])),
+    awReminders: vi.fn(() =>
+      Promise.resolve({
+        late: [],
+        soon: [],
+        disputes: 0,
+        settings: { hour: 8, ahead_days: 30, manager_days: 7, central_days: 30 },
+      }),
+    ),
+    awRequestCheck: vi.fn(),
     awIncident: vi.fn((id: string) =>
       Promise.resolve({ incident_id: id, incident_kind: "fire", location: null, items: [], unread: 0 }),
     ),

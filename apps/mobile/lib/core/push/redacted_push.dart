@@ -38,6 +38,10 @@ class RedactedPushResolver {
           title: _l10n.safetyHistoryViewedTitle,
           body: _l10n.safetyHistoryViewedBody,
         ),
+        PushKind.addressWarningViewed => p.withText(
+          title: _l10n.awViewedPushTitle,
+          body: _l10n.awViewedPushBody,
+        ),
         PushKind.medicalReferral => p.withText(
           title: _l10n.pushMedicalReferralTitle,
           body: _l10n.pushMedicalReferralBody,

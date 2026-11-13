@@ -12137,6 +12137,25 @@
         "title": "DispatchPage",
         "type": "object"
       },
+      "DisputeIn": {
+        "description": "«لا علم لي بأي بلاغ عندي»: the owner knows of no incident at their address; an optional word.",
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "DisputeIn",
+        "type": "object"
+      },
       "DocRef": {
         "description": "A document of the register (phase L3b) an axis points to.",
         "properties": {
@@ -26296,6 +26315,29 @@
             "title": "Category",
             "type": "string"
           },
+          "check_requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Check Requested At"
+          },
+          "check_requested_by_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Check Requested By Name"
+          },
           "confirmed_at": {
             "anyOf": [
               {
@@ -28597,12 +28639,29 @@
             "title": "Category",
             "type": "string"
           },
+          "disputed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputed At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
           "reason": {
             "title": "Reason",
             "type": "string"
           }
         },
         "required": [
+          "id",
           "at",
           "category",
           "reason"
@@ -37508,6 +37567,95 @@
         "title": "RemarkOut",
         "type": "object"
       },
+      "ReminderItem": {
+        "properties": {
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "level": {
+            "enum": [
+              "soon",
+              "room",
+              "manager",
+              "central"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "marker": {
+            "$ref": "#/components/schemas/MarkerOut"
+          }
+        },
+        "required": [
+          "marker",
+          "days",
+          "level"
+        ],
+        "title": "ReminderItem",
+        "type": "object"
+      },
+      "ReminderSettings": {
+        "properties": {
+          "ahead_days": {
+            "title": "Ahead Days",
+            "type": "integer"
+          },
+          "central_days": {
+            "title": "Central Days",
+            "type": "integer"
+          },
+          "hour": {
+            "title": "Hour",
+            "type": "integer"
+          },
+          "manager_days": {
+            "title": "Manager Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hour",
+          "ahead_days",
+          "manager_days",
+          "central_days"
+        ],
+        "title": "ReminderSettings",
+        "type": "object"
+      },
+      "Reminders": {
+        "properties": {
+          "disputes": {
+            "title": "Disputes",
+            "type": "integer"
+          },
+          "late": {
+            "items": {
+              "$ref": "#/components/schemas/ReminderItem"
+            },
+            "title": "Late",
+            "type": "array"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/ReminderSettings"
+          },
+          "soon": {
+            "items": {
+              "$ref": "#/components/schemas/ReminderItem"
+            },
+            "title": "Soon",
+            "type": "array"
+          }
+        },
+        "required": [
+          "late",
+          "soon",
+          "disputes",
+          "settings"
+        ],
+        "title": "Reminders",
+        "type": "object"
+      },
       "RepealIn": {
         "properties": {
           "by_document_id": {
@@ -39263,6 +39411,33 @@
             "title": "Category",
             "type": "string"
           },
+          "dispute_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dispute Note"
+          },
+          "disputed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputed At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
           "incident_id": {
             "anyOf": [
               {
@@ -39275,12 +39450,28 @@
             ],
             "title": "Incident Id"
           },
+          "notified_via": {
+            "anyOf": [
+              {
+                "enum": [
+                  "push",
+                  "sms"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notified Via"
+          },
           "reason": {
             "title": "Reason",
             "type": "string"
           }
         },
         "required": [
+          "id",
           "at",
           "by_name",
           "category",
@@ -78746,6 +78937,74 @@
         ]
       }
     },
+    "/api/v1/me/address-warnings/reveals/{reveal_id}/dispute": {
+      "post": {
+        "description": "OS8-2: «لا علم لي بأي بلاغ عندي». The owner objects to a reading of their name; the central room follows it.",
+        "operationId": "dispute_reveal_api_v1_me_address_warnings_reveals__reveal_id__dispute_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reveal_id",
+            "required": true,
+            "schema": {
+              "title": "Reveal Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisputeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dispute Reveal",
+        "tags": [
+          "address-warnings"
+        ]
+      }
+    },
     "/api/v1/me/availability": {
       "get": {
         "operationId": "mine_api_v1_me_availability_get",
@@ -87692,6 +87951,56 @@
         ]
       }
     },
+    "/api/v1/staff/address-warnings/markers/{marker_id}/check": {
+      "post": {
+        "description": "OS8-3: ask a field check of a mark from the review reminder (kept until a confirm or an archive).",
+        "operationId": "request_check_api_v1_staff_address_warnings_markers__marker_id__check_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "marker_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Marker Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Request Check",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
     "/api/v1/staff/address-warnings/markers/{marker_id}/{action}": {
       "post": {
         "operationId": "decide_api_v1_staff_address_warnings_markers__marker_id___action__post",
@@ -87760,6 +88069,34 @@
           }
         ],
         "summary": "Decide",
+        "tags": [
+          "staff",
+          "address-warnings"
+        ]
+      }
+    },
+    "/api/v1/staff/address-warnings/reminders": {
+      "get": {
+        "description": "OS8-3: the marks past their review date or within the notice, with their level (room, manager, central).",
+        "operationId": "reminders_api_v1_staff_address_warnings_reminders_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reminders"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reminders",
         "tags": [
           "staff",
           "address-warnings"

@@ -28,6 +28,7 @@ from app.modules.access.worker import breakglass_forever
 from app.modules.address_warnings.router import crew_router as address_warnings_crew_router
 from app.modules.address_warnings.router import me_router as address_warnings_me_router
 from app.modules.address_warnings.router import router as address_warnings_router
+from app.modules.address_warnings.service import reminders_forever as aw_reminders_forever
 from app.modules.ai.dictation import router as dictation_router
 from app.modules.ai.pipeline import analyze_forever
 from app.modules.ai.router import router as ai_router
@@ -213,6 +214,7 @@ WORKER_LOOPS: list[tuple[str, WorkerLoop]] = [
     ("plan-checklist", checklist_forever),
     ("learning", learning_forever),
     ("org-prealerts", prealerts_forever),
+    ("address-warning-reminders", aw_reminders_forever),
 ]
 # Paths a worker-role process still serves: probes and the metrics scrape, never SOS traffic.
 _WORKER_PATHS = ("/health/", "/metrics")
