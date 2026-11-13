@@ -271,12 +271,7 @@ export function useFleetMapLayers(): FleetMapLayers {
         on: ordersOn,
         onChange: setOrders,
         source: coverageSource,
-        note: (
-          <>
-            {legendOf([[COLOUR.purple, t("map.fleet.legendOrder")]])}
-            {hint}
-          </>
-        ),
+        note: legendOf([[COLOUR.purple, t("map.fleet.legendOrder")]]),
       },
     );
   }
@@ -287,7 +282,6 @@ export function useFleetMapLayers(): FleetMapLayers {
       on: readinessOn,
       onChange: setReadiness,
       source: { to: "/fleet/report", label: t("mapLayers.screen.fleet") },
-      note: hint,
     });
   }
   return { extras, pois, lines };
