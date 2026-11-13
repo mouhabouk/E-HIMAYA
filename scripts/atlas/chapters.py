@@ -126,14 +126,22 @@ def link_cards(cards: list[dict]) -> list[dict]:
     """One «الترابط» card per chapter: the functional story, and the routes and tables both sides share."""
     out = []
     write = ("POST", "PUT", "PATCH", "DELETE")
+    # A table every chapter "shares" comes from a route matched too widely (a generic path), not from a real link.
+    every = None
+    for ch in CHAPTERS:
+        ln = ch["link"]
+        a = {t for c in cards if _side_matches(c, ln["app"], False) for x in c["api"] for t in x["tables"]}
+        b = {t for c in cards if _side_matches(c, ln["board"], True) for x in c["api"] for t in x["tables"]}
+        every = (a & b) if every is None else every & (a & b)
+    noise = every or set()
     for ch in CHAPTERS:
         ln = ch["link"]
         app = [c for c in cards if _side_matches(c, ln["app"], False)]
         board = [c for c in cards if _side_matches(c, ln["board"], True)]
-        app_w = {t for c in app for a in c["api"] if a["verb"] in write for t in a["tables"]}
-        app_r = {t for c in app for a in c["api"] for t in a["tables"]}
-        board_w = {t for c in board for a in c["api"] if a["verb"] in write for t in a["tables"]}
-        board_r = {t for c in board for a in c["api"] for t in a["tables"]}
+        app_w = {t for c in app for a in c["api"] if a["verb"] in write for t in a["tables"]} - noise
+        app_r = {t for c in app for a in c["api"] for t in a["tables"]} - noise
+        board_w = {t for c in board for a in c["api"] if a["verb"] in write for t in a["tables"]} - noise
+        board_r = {t for c in board for a in c["api"] for t in a["tables"]} - noise
         shared = sorted(app_r & board_r)
         app_paths = sorted({(a["verb"], a["path"]) for c in app for a in c["api"]})
         board_paths = sorted({(a["verb"], a["path"]) for c in board for a in c["api"]})

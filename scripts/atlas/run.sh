@@ -2,6 +2,7 @@
 # Rebuilds the flowchart atlas (Yamen, 2026-11-13) on a local copy of the stack: the dashboard with its tabs and windows,
 # the public portal, and the citizen and staff apps (their widget tests, when Flutter is installed), in chapters.
 # Standing rule (Yamen, 2026-11-13): the atlas follows development automatically; scripts/refresh-all.sh runs this.
+# ATLAS_PREVIOUS=<published index.html> keeps the cards of detail screens an empty local database cannot open.
 #
 #   scripts/atlas/run.sh <out-dir>
 #
@@ -78,4 +79,4 @@ else
   echo "mobile atlas skipped: Flutter is not installed (set FLUTTER=/path/to/flutter)"
 fi
 python3 "$ROOT/scripts/atlas/build.py" "$OUT/capture.json" "$OUT" --portal "$WORK/portal-cap" --mobile "$WORK/mobile" \
-  --backend "$WORK/backend.json"
+  --backend "$WORK/backend.json" ${ATLAS_PREVIOUS:+--previous "$ATLAS_PREVIOUS"}

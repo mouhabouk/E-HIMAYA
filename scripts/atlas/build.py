@@ -94,6 +94,7 @@ def main() -> None:
     ap.add_argument("--portal", type=Path)
     ap.add_argument("--mobile", type=Path)
     ap.add_argument("--backend", type=Path)
+    ap.add_argument("--previous", type=Path, help="the atlas published before: its cards for screens this run could not open")
     args = ap.parse_args()
     cap = json.loads(Path(args.capture).read_text(encoding="utf-8")) if args.capture != "-" else {"screens": [], "personas": {}}
     out = Path(args.out)
@@ -140,6 +141,25 @@ def main() -> None:
                             "regions": w.get("regions", []), "flow": wflow, "window": w["kind"]})
     order = {k: i for i, k in enumerate(GROUP_ORDER)}
     screens.sort(key=lambda x: (order.get(x["gkey"], 99), x["detail"] and not x.get("window"), x["route"], x.get("window") or ""))
+    if args.previous and args.previous.exists():
+        # A detail screen needs a row to open (a plan, an incident…): on an empty local database the run cannot reach
+        # it, so the card and screenshot of the previous atlas are kept rather than dropping the screen.
+        import re
+
+        html = args.previous.read_text(encoding="utf-8")
+        blob_m = re.search(r'<script id="data" type="application/json">(.*?)</script>', html, re.S)
+        old = json.loads(blob_m.group(1).replace("<\\/", "</")) if blob_m else {"screens": []}
+        have = {x["route"] for x in screens}
+        missing = {x["route"] for x in cap["screens"] if not x.get("shot")}
+        kept = [x for x in old["screens"] if x.get("route") in missing and x["route"] not in have and x.get("shot")]
+        for x in kept:
+            x.setdefault("surface", "dashboard")
+            src = args.previous.parent / x["shot"]
+            if src.exists():
+                (out / "shots").mkdir(exist_ok=True)
+                (out / x["shot"]).write_bytes(src.read_bytes())
+        screens += kept
+        print(f"{len(kept)} cards kept from the previous atlas")
     screens += app_screens(args.portal, args.mobile, args.backend, out)
     # Chapters (Yamen's order): each card joins its chapter, in the order of the chapter's members, then the link card.
     for c in screens:
