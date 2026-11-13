@@ -303,14 +303,16 @@ test.describe("OS8 follow-ups", () => {
       i < 6 && (await page.locator(".map-poi--aw_due").count()) < 2;
       i++
     ) {
-      const groups = page.locator(".map-poi--aw_cluster");
-      let best: { x: number; y: number; n: number } | null = null;
-      for (const g of await groups.all()) {
-        const n = Number((await g.textContent())?.replace(/\D/g, "") || 0);
-        const b = await g.boundingBox();
-        if (b && (!best || n > best.n))
-          best = { x: b.x + b.width / 2, y: b.y + b.height / 2, n };
-      }
+      // Read every group in one pass in the page: the markers are re-rendered while the map moves.
+      const best = await page.evaluate(() => {
+        let top: { x: number; y: number; n: number } | null = null;
+        for (const el of document.querySelectorAll(".map-poi--aw_cluster")) {
+          const n = Number(el.textContent.replace(/\D/g, "") || 0);
+          const b = el.getBoundingClientRect();
+          if (b.width > 0 && (!top || n > top.n)) top = { x: b.x + b.width / 2, y: b.y + b.height / 2, n };
+        }
+        return top;
+      });
       if (!best) break;
       await page.mouse.move(best.x, best.y);
       for (let k = 0; k < 3; k++) await page.mouse.wheel(0, -300);
