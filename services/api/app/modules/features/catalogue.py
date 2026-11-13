@@ -210,6 +210,7 @@ CATALOGUE: tuple[Spec, ...] = (
             "POST /address-warnings/markers",
             "PATCH /address-warnings/markers/{marker_id}",
             "POST /address-warnings/markers/{marker_id}/{action}",
+            "POST /address-warnings/markers/{marker_id}/check",
             "POST /address-warnings/import-orgs",
             act_as=R.OPERATOR,
         ),

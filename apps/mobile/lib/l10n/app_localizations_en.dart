@@ -7183,6 +7183,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get awConsentWithdraw => 'Withdraw all my consent';
 
   @override
+  String get awViewedPushTitle => 'Rescue teams viewed your name';
+
+  @override
+  String get awViewedPushBody =>
+      'Because of an incident near your address. Open e-Himaya to see why.';
+
+  @override
+  String get awDispute => 'I know of no incident at my home';
+
+  @override
+  String get awDisputed =>
+      'Your objection was sent to the central room, which will review it.';
+
+  @override
   String get inspOpen => 'Inspector\'s space';
 
   @override

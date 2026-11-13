@@ -7,6 +7,7 @@ import { FiltersBar } from "../components/FiltersBar";
 import { LazyMapView } from "../components/LazyMap";
 import { useSavedPlaces } from "../components/SavedPlaces";
 import { useAdminLayer } from "../components/AdminLayer";
+import { useAddressWarningsLayer } from "../components/AddressWarningsLayer";
 import { useBasemap } from "../components/BasemapSwitch";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
@@ -28,6 +29,7 @@ import { areaRings, type Message } from "../lib/opsTypes";
 import { errorMessageKey } from "../lib/api";
 import {
   canOpenDrones,
+  canReadAddressWarnings,
   canOpenSensors,
   canOpenTowers,
   canReadOrgs,
@@ -53,6 +55,7 @@ const VOLUNTEER_LAYER_KEY = "ehimaya.mapVolunteerLayer";
 const ALERT_LAYER_KEY = "ehimaya.mapAlertLayer";
 const WEATHER_LAYER_KEY = "ehimaya.mapWeatherLayer";
 const SENSOR_LAYER_KEY = "ehimaya.mapSensorLayer";
+const AW_LAYER_KEY = "ehimaya.mapAddressWarningsLayer";
 const TOWER_LAYER_KEY = "ehimaya.mapTowerLayer";
 // The wedge of a tower's view: MapLibre paints plain colours, the same in both themes.
 const TOWER_VIEW = "#ea580c";
@@ -173,6 +176,9 @@ export function MapPage() {
   const sensorLayerAllowed = canOpenSensors(user?.identity.roles ?? []);
   const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY);
   const showSensors = sensorLayerAllowed && sensorLayer;
+  // OS8-1: the address warnings of the room's register on its map.
+  const awLayerAllowed = canReadAddressWarnings(user?.identity.roles ?? []);
+  const [awLayer, setAwLayer] = useLayer(AW_LAYER_KEY);
   const towerLayerAllowed = canOpenTowers(user?.identity.roles ?? []);
   const [towerLayer, setTowerLayer] = useLayer(TOWER_LAYER_KEY);
   const showTowers = towerLayerAllowed && towerLayer;
@@ -548,9 +554,10 @@ export function MapPage() {
   const folderExtras = useMemo(() => ({ civil_protection: civilProtection }), [civilProtection]);
   // Map data layers loaded from files (phase B1): hospitals, shelters… any number at once.
   const dataLayers = useMapDataLayers(bbox, folderExtras);
+  const awMarks = useAddressWarningsLayer(bbox, awLayerAllowed && awLayer);
   const allPois = useMemo(
-    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...savedPlaces.pois],
-    [pois, opsPois, resourceSearch.pois, dataLayers.pois, savedPlaces.pois],
+    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...awMarks.pois, ...savedPlaces.pois],
+    [pois, opsPois, resourceSearch.pois, dataLayers.pois, awMarks.pois, savedPlaces.pois],
   );
   const shapes = useMemo(
     () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
@@ -657,6 +664,9 @@ export function MapPage() {
         {sensorLayerAllowed && (
           <LayerToggle checked={sensorLayer} onChange={setSensorLayer} label={t("sensors.map.toggle")} />
         )}
+        {awLayerAllowed && (
+          <LayerToggle checked={awLayer} onChange={setAwLayer} label={t("addressWarnings.layer.toggle")} />
+        )}
         {towerLayerAllowed && (
           <LayerToggle checked={towerLayer} onChange={setTowerLayer} label={t("towers.map.toggle")} />
         )}
@@ -679,6 +689,7 @@ export function MapPage() {
         {legend.length > 0 && <MapLegend items={legend} />}
         {basemap.control}
       </div>
+      {awMarks.controls}
       {dataLayers.controls}
       {adminLayer.controls}
       {showWeather && (

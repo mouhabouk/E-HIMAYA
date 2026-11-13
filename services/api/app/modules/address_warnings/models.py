@@ -70,6 +70,9 @@ class Marker(Base):
     decided_by_name: Mapped[str | None] = mapped_column(Text)
     decision_reason: Mapped[str | None] = mapped_column(Text)
     confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # OS8-3: a field check asked from the review reminder, cleared by a confirm or an archive.
+    check_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    check_requested_by_name: Mapped[str | None] = mapped_column(Text)
     version: Mapped[int] = mapped_column(Integer, server_default="1")
 
 
@@ -109,4 +112,21 @@ class Reveal(Base):
     by_subject: Mapped[str] = mapped_column(Text)
     by_name: Mapped[str | None] = mapped_column(Text)
     reason: Mapped[str] = mapped_column(Text)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # OS8-2: how the owner was told (push, sms, or none), and the owner's objection.
+    notified_via: Mapped[str | None] = mapped_column(Text)
+    disputed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    dispute_note: Mapped[str | None] = mapped_column(Text)
+
+
+class ReminderDay(Base):
+    """OS8-3: the morning review reminder went to a gouvernorat's room that day (sent once across workers)."""
+
+    __tablename__ = "reminder_day"
+    __table_args__ = _SCHEMA
+
+    gouvernorat_code: Mapped[int] = mapped_column(SmallInteger, ForeignKey("geo.gouvernorat.code"), primary_key=True)
+    day: Mapped[date] = mapped_column(Date, primary_key=True)
+    late: Mapped[int] = mapped_column(Integer)
+    soon: Mapped[int] = mapped_column(Integer)
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

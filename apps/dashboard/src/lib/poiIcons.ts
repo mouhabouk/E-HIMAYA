@@ -29,6 +29,10 @@ export const POI_KINDS = [
   // Map data layers loaded from files (phase B1): the icon and colour come from the layer (lib/layers.ts).
   "place",
   "place_cluster",
+  // Address warnings (OS8-1): the category's icon and colour; past its review date adds a red ring.
+  "aw",
+  "aw_due",
+  "aw_cluster",
 ] as const;
 export type PoiKind = (typeof POI_KINDS)[number];
 
@@ -69,6 +73,10 @@ export const POI_ICON_PATHS: Record<PoiKind, string> = {
   // Map pin (a place whose layer icon is unknown); clusters show their count instead.
   place: "M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 4.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z",
   place_cluster: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z",
+  // Warning triangle (the category's own icon replaces it); a group of marks shows its count.
+  aw: "M12 2 1 21h22L12 2zm-1 7h2v6h-2zm0 8h2v2h-2z",
+  aw_due: "M12 2 1 21h22L12 2zm-1 7h2v6h-2zm0 8h2v2h-2z",
+  aw_cluster: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z",
 };
 
 export function isPoiKind(v: unknown): v is PoiKind {
