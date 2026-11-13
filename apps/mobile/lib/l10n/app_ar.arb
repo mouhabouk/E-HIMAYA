@@ -2250,5 +2250,15 @@
   "parExitSend": "خرج الجميع",
   "parHeadcountIncomplete": "ما زال عون في الداخل",
   "parNote": "يُحفظ التفقّد مع التدخّل عند انتهائه.",
-  "parFailed": "لم يُرسل: تحقّق من الشبكة وأعد المحاولة"
+  "parFailed": "لم يُرسل: تحقّق من الشبكة وأعد المحاولة",
+  "staffRepositionTitle": "أمر تمركز",
+  "staffRepositionReinforce": "في تعزيز: من {from} إلى {to}",
+  "staffRepositionReturn": "عودة إلى الوحدة: من {from} إلى {to}",
+  "staffRepositionBy": "من {name} على الساعة {time}",
+  "staffRepositionSeen": "اطّلعت",
+  "staffRepositionDeparted": "انطلقنا",
+  "staffRepositionArrived": "وصلنا",
+  "staffRepositionStepDone": "{step} على الساعة {time}",
+  "staffRepositionClosed": "أُلغي الأمر",
+  "staffRepositionLeaderOnly": "رئيس الفريق يؤكد الخطوات."
 }

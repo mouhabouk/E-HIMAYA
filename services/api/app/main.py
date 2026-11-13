@@ -86,6 +86,9 @@ from app.modules.inspections.router import public_router as inspections_public_r
 from app.modules.inspections.router import rooms_router as inspections_rooms_router
 from app.modules.inspections.router import router as inspections_router
 from app.modules.inventory.fleet import router as fleet_router
+from app.modules.inventory.orders import crew_router as reposition_crew_router
+from app.modules.inventory.orders import staff_router as reposition_staff_router
+from app.modules.inventory.report import router as fleet_report_router
 from app.modules.inventory.router import router as inventory_router
 from app.modules.knowledge.indexer import knowledge_forever
 from app.modules.knowledge.router import router as knowledge_router
@@ -415,7 +418,10 @@ def create_app() -> FastAPI:
         schedule_router,
         inventory_router,
         fleet_router,
+        fleet_report_router,
         coverage_router,
+        reposition_staff_router,
+        reposition_crew_router,
         profiles_router,
         personnel_router,
         inspections_router,

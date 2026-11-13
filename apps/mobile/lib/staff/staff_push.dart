@@ -20,6 +20,12 @@ const staffMissionChannelId = 'ehimaya_staff_missions_v1';
 /// The notification of the mission that rings (one at a time: the newest replaces it).
 const _missionNotificationId = 4401;
 
+/// OS3-1: the repositioning order, on the same channel; it does not replace a mission.
+const _repositionNotificationId = 4402;
+
+/// The pushes the staff app shows and that refresh the missions (and the orders) at once.
+const _ringing = {'mission', 'reposition'};
+
 /// The mission push of the staff app. The server sends it data-only on Android (`type: mission`,
 /// the assignment id, a generic title and text): the app shows it itself, full screen.
 abstract class StaffPush {
@@ -71,8 +77,9 @@ Future<void> _showMission(
 ) async {
   final title = data['title'];
   final body = data['body'];
+  final reposition = data['type'] == 'reposition';
   await local.show(
-    id: _missionNotificationId,
+    id: reposition ? _repositionNotificationId : _missionNotificationId,
     title: title is String ? title : null,
     body: body is String ? body : null,
     notificationDetails: NotificationDetails(
@@ -83,14 +90,14 @@ Future<void> _showMission(
         interruptionLevel: InterruptionLevel.timeSensitive,
       ),
     ),
-    payload: 'mission',
+    payload: reposition ? 'reposition' : 'mission',
   );
 }
 
 /// A data-only mission push while the app is in the background or killed (Android).
 @pragma('vm:entry-point')
 Future<void> staffBackgroundMessage(RemoteMessage m) async {
-  if (m.notification != null || m.data['type'] != 'mission') return;
+  if (m.notification != null || !_ringing.contains(m.data['type'])) return;
   final local = FlutterLocalNotificationsPlugin();
   await local.initialize(
     settings: const InitializationSettings(
@@ -154,7 +161,7 @@ class FirebaseStaffPush implements StaffPush {
         final messaging = FirebaseMessaging.instance;
         await messaging.requestPermission();
         FirebaseMessaging.onMessage.listen((m) {
-          if (m.data['type'] == 'mission') _missions.add(null);
+          if (_ringing.contains(m.data['type'])) _missions.add(null);
         });
         _messaging = messaging;
       }

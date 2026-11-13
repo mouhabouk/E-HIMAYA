@@ -10,6 +10,7 @@ import '../../core/ui/components.dart';
 import '../../core/ui/tokens.dart';
 import '../../features/report/category_labels.dart';
 import '../../l10n/app_localizations.dart';
+import '../reposition.dart';
 import '../staff_chrome.dart';
 import '../staff_controller.dart';
 import '../staff_labels.dart';
@@ -97,6 +98,13 @@ class MissionsScreen extends ConsumerWidget {
                       subtitle: l10n.staffOpenMissionSub,
                       onTap: () => push(context, const OpenMissionScreen()),
                     ),
+                  if (shift != null &&
+                      (s.me?.shows('field_missions.reposition') ?? true)) ...[
+                    const SizedBox(height: 12),
+                    RepositionCards(
+                      leader: !readOnly && (s.me?.leader ?? true),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   SectionTitle(l10n.staffActiveMissions),
                   if (active.isEmpty)

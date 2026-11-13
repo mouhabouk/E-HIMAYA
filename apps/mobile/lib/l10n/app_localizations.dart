@@ -13605,6 +13605,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not sent: check the network and try again'**
   String get parFailed;
+
+  /// No description provided for @staffRepositionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repositioning order'**
+  String get staffRepositionTitle;
+
+  /// No description provided for @staffRepositionReinforce.
+  ///
+  /// In en, this message translates to:
+  /// **'As reinforcement: from {from} to {to}'**
+  String staffRepositionReinforce(String from, String to);
+
+  /// No description provided for @staffRepositionReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the unit: from {from} to {to}'**
+  String staffRepositionReturn(String from, String to);
+
+  /// No description provided for @staffRepositionBy.
+  ///
+  /// In en, this message translates to:
+  /// **'From {name} at {time}'**
+  String staffRepositionBy(String name, String time);
+
+  /// No description provided for @staffRepositionSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Seen'**
+  String get staffRepositionSeen;
+
+  /// No description provided for @staffRepositionDeparted.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get staffRepositionDeparted;
+
+  /// No description provided for @staffRepositionArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get staffRepositionArrived;
+
+  /// No description provided for @staffRepositionStepDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{step} at {time}'**
+  String staffRepositionStepDone(String step, String time);
+
+  /// No description provided for @staffRepositionClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Order cancelled'**
+  String get staffRepositionClosed;
+
+  /// No description provided for @staffRepositionLeaderOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The team leader confirms the steps.'**
+  String get staffRepositionLeaderOnly;
 }
 
 class _AppLocalizationsDelegate

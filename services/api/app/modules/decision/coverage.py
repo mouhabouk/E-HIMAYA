@@ -14,27 +14,38 @@ road time of ``routing.travel``) against the SNACR target of its zone (urban, pe
   reinforcement (``POST /inventory/vehicles/{id}/state``); the log keeps the decision and its gain.
 
 Only what the room sees: the units of its gouvernorat (row-level security), never a neighbour's.
+
+Follow-ups (OS3-2 and OS3-4, docs/phase-os3/design-os3b.md §2 and §4; Yamen 2026-11-13):
+
+* the turnout of each unit is measured on its missions (median of the call to «on the way» over
+  ``coverage.turnout_days``) when it has at least ``coverage.turnout_min_missions``; otherwise, or when
+  ``coverage.turnout_measured`` is 0, the default ``coverage.turnout_minutes``. The road time is the routing engine's
+  (Valhalla, set by default in production), a straight-line estimate when it is down;
+* the central room may count the units of the neighbouring gouvernorats within ``coverage.neighbour_m`` of a
+  délégation (``neighbours=true``): the coverage then says which délégation a neighbour covers, and a suggestion may
+  bring a neighbour's ready vehicle to a unit of the gouvernorat (sent by the central room, which decides between two
+  gouvernorats).
 """
 
 import time
 import uuid
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography, Geometry
 from pydantic import BaseModel
 from sqlalchemy import cast, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from app.core.db import get_session
+from app.core.db import as_system, get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.decision import routing
 from app.modules.geo.models import Delegation
-from app.modules.ops.models import Resource, Unit
+from app.modules.ops.models import Assignment, Resource, Unit
 from app.modules.reports.staff_router import READ_ROLES
 from app.modules.settings import service as settings
 from app.modules.snacr import domain as snacr
@@ -158,6 +169,8 @@ class FamilyCell(BaseModel):
     covered: bool
     baseline_covered: bool
     unit_name: str | None
+    # OS3-4: the quickest unit belongs to a neighbouring gouvernorat.
+    neighbour: bool = False
 
 
 class PlaceOut(BaseModel):
@@ -180,6 +193,8 @@ class FamilyOut(BaseModel):
     ready: int
     fleet: int
     out: int
+    # OS3-4: the coverage now with the gouvernorat's own units only (equal to ``covered_pct`` without neighbours).
+    own_pct: float
 
 
 class UnitOut(BaseModel):
@@ -190,6 +205,13 @@ class UnitOut(BaseModel):
     lon: float
     ready: dict[str, int]
     hosted: int
+    gouvernorat_code: int
+    neighbour: bool = False
+    # OS3-2: the turnout used for this unit, measured on its missions or the default.
+    turnout_minutes: float
+    turnout_source: Literal["measured", "default"]
+    turnout_missions: int
+    turnout_p90_minutes: float | None
 
 
 class AlertOut(BaseModel):
@@ -214,12 +236,16 @@ class SuggestionOut(BaseModel):
     newly_covered: list[str]
     lost: list[str]
     version: int
+    from_gouvernorat_code: int
 
 
 class CoverageOut(BaseModel):
     gouvernorat_code: int
     engine: str
     turnout_minutes: int
+    turnout_mode: Literal["measured", "uniform"]
+    neighbours: bool
+    neighbour_m: int
     targets: dict[str, dict[str, int]]
     families: list[FamilyOut]
     delegations: list[PlaceOut]
@@ -235,9 +261,14 @@ class CoverageOut(BaseModel):
 _grid_cache: dict[tuple[Any, ...], tuple[float, Grid, str]] = {}
 
 
-async def _grid(units: dict[uuid.UUID, tuple[float, float]], places: list[Place], turnout_s: float) -> tuple[Grid, str]:
+async def _grid(
+    units: dict[uuid.UUID, tuple[float, float]], places: list[Place], turnout_s: dict[uuid.UUID, float]
+) -> tuple[Grid, str]:
     """Road time from every unit to every délégation (one matrix per délégation), kept ten minutes."""
-    key = (tuple(sorted((str(k), v) for k, v in units.items())), tuple(p.id for p in places), turnout_s)
+    key = (
+        tuple(sorted((str(k), v, turnout_s[k]) for k, v in units.items())),
+        tuple(p.id for p in places),
+    )
     hit = _grid_cache.get(key)
     if hit is not None and time.monotonic() - hit[0] < CACHE_S:
         return hit[1], hit[2]
@@ -249,7 +280,7 @@ async def _grid(units: dict[uuid.UUID, tuple[float, float]], places: list[Place]
         legs, engine = await routing.travel(sources, routing.Point(p.lat, p.lon), "truck")
         engines.add(engine)
         for unit, leg in zip(ids, legs, strict=True):
-            grid.seconds[(unit, p.id)] = turnout_s + leg.duration_s
+            grid.seconds[(unit, p.id)] = turnout_s[unit] + leg.duration_s
     engine = "fallback" if not engines or "fallback" in engines else engines.pop()
     if len(_grid_cache) > 64:
         _grid_cache.clear()
@@ -263,11 +294,61 @@ async def _targets(session: AsyncSession) -> dict[str, dict[str, int]]:
     }
 
 
-async def compute(session: AsyncSession, principal: Principal, code: int) -> CoverageOut:
+@dataclass(frozen=True, slots=True)
+class Turnout:
+    seconds: float
+    source: Literal["measured", "default"]
+    missions: int
+    p90_s: float | None
+
+
+async def turnouts(
+    session: AsyncSession, unit_ids: list[uuid.UUID], default_s: float, *, measured: bool, days: int, least: int
+) -> dict[uuid.UUID, Turnout]:
+    """OS3-2: the median time from the order to «on the way» of each unit's vehicles over the last days (missions
+    with both times, between a second and half an hour), when the unit has enough of them; the default otherwise."""
+    out = {u: Turnout(default_s, "default", 0, None) for u in unit_ids}
+    if not unit_ids:
+        return out
+    secs = func.extract("epoch", Assignment.en_route_at - Assignment.created_at)
+    # Aggregates of the caller's own units only (listed above), whatever gouvernorat their missions were in.
+    async with as_system(session):
+        rows = (
+            await session.execute(
+                select(
+                    Resource.unit_id,
+                    func.count(),
+                    func.percentile_cont(0.5).within_group(secs),
+                    func.percentile_cont(0.9).within_group(secs),
+                )
+                .join(Resource, Resource.id == Assignment.resource_id)
+                .where(
+                    Resource.unit_id.in_(unit_ids),
+                    Assignment.en_route_at.is_not(None),
+                    Assignment.created_at >= datetime.now(UTC) - timedelta(days=days),
+                    secs >= 1,
+                    secs <= 1800,
+                )
+                .group_by(Resource.unit_id)
+            )
+        ).all()
+    for unit, n, median, p90 in rows:
+        if measured and n >= least:
+            out[unit] = Turnout(float(median), "measured", int(n), float(p90))
+        else:
+            out[unit] = Turnout(default_s, "default", int(n), float(p90) if n >= least else None)
+    return out
+
+
+async def compute(session: AsyncSession, principal: Principal, code: int, neighbours: bool = False) -> CoverageOut:
     urban = await settings.threshold(session, "snacr.density.urban")
     periurban = await settings.threshold(session, "snacr.density.periurban")
     turnout = await settings.threshold(session, "coverage.turnout_minutes")
     limit = await settings.threshold(session, "coverage.suggestions_max")
+    measured = await settings.threshold(session, "coverage.turnout_measured") == 1
+    turnout_days = await settings.threshold(session, "coverage.turnout_days")
+    least = await settings.threshold(session, "coverage.turnout_min_missions")
+    reach = await settings.threshold(session, "coverage.neighbour_m")
     targets = await _targets(session)
 
     point = func.coalesce(Delegation.label, func.ST_PointOnSurface(Delegation.boundary))
@@ -290,14 +371,24 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
         ).all()
     ]
     geometry = cast(Unit.location, Geometry)
+    within = Unit.gouvernorat_code == code
+    if neighbours:
+        # OS3-4: a neighbour's unit near enough to one of the gouvernorat's délégations.
+        near = (
+            select(Delegation.id)
+            .where(Delegation.gouvernorat_code == code, func.ST_DWithin(Unit.location, cast(point, Geography), reach))
+            .exists()
+        )
+        within = within | near
     unit_rows = (
         await session.execute(
             select(Unit, func.ST_Y(geometry), func.ST_X(geometry))
-            .where(Unit.gouvernorat_code == code)
+            .where(within, Unit.location.is_not(None))
             .order_by(Unit.name_ar)
         )
     ).all()
     units = {u.id: u for u, _, _ in unit_rows}
+    own = [u.id for u in units.values() if u.gouvernorat_code == code]
     where = {u.id: (float(la), float(lo)) for u, la, lo in unit_rows}
 
     host = aliased(Unit)
@@ -308,7 +399,10 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
             select(Resource, kind)
             .join(Unit, Unit.id == Resource.unit_id)
             .outerjoin(host, host.id == Resource.stationed_unit_id)
-            .where(or_(Unit.gouvernorat_code == code, host.gouvernorat_code == code), kind.in_(kinds))
+            .where(
+                or_(Unit.gouvernorat_code == code, host.gouvernorat_code == code, Unit.id.in_(list(units))),
+                kind.in_(kinds),
+            )
         )
     ).all()
     vehicles: list[Vehicle] = []
@@ -331,7 +425,9 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
         )
     versions = {r.id: r.version for r, _ in rows}
 
-    grid, engine = await _grid(where, places, turnout * 60.0)
+    timing = await turnouts(session, list(units), turnout * 60.0, measured=measured, days=turnout_days, least=least)
+    grid, engine = await _grid(where, places, {u: t.seconds for u, t in timing.items()})
+    own_set = set(own)
     seconds = {z: 0.0 for z in snacr.ZONES}
     out_families: list[FamilyOut] = []
     cells: dict[int, dict[str, FamilyCell]] = {p.id: {} for p in places}
@@ -346,6 +442,7 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
         base_units = {v.home for v in mine if v.in_fleet}
         now = covered(grid, ready_units, places, target_s)
         base = covered(grid, base_units, places, target_s)
+        own_now = covered(grid, ready_units & own_set, places, target_s) if neighbours else now
         for p in places:
             t, unit = grid.best(ready_units, p.id)
             bt, _ = grid.best(base_units, p.id)
@@ -355,6 +452,7 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
                 covered=p.id in now,
                 baseline_covered=p.id in base,
                 unit_name=units[unit].name_ar if unit is not None else None,
+                neighbour=unit is not None and unit not in own_set,
             )
             if p.id in base and p.id not in now:
                 alerts.append(
@@ -378,10 +476,12 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
                 ready=sum(v.ready for v in mine),
                 fleet=len(mine),
                 out=sum(not v.ready for v in mine),
+                own_pct=round(100 * population(places, own_now) / total, 1) if total else 0.0,
             )
         )
         family_vehicles = [Vehicle(v.id, v.label, v.family, v.home, v.at, v.ready, v.in_fleet) for v in mine if v.ready]
-        for move in suggest(grid, family_vehicles, list(units), places, target_s, limit):
+        # The moves go to the gouvernorat's own units (from a neighbour's too, with ``neighbours``).
+        for move in suggest(grid, family_vehicles, own, places, target_s, limit):
             v = move["vehicle"]
             origin = next(x.at for x in mine if x.id == v.id)
             suggestions.append(
@@ -397,6 +497,7 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
                     newly_covered=[names[i] for i in move["newly"]],
                     lost=[names[i] for i in move["lost"]],
                     version=versions[v.id],
+                    from_gouvernorat_code=units[origin].gouvernorat_code,
                 )
             )
     alerts.sort(key=lambda a: -a.population)
@@ -408,10 +509,14 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
                 ready_by_unit[v.at][name] += 1
             if v.at != v.home:
                 hosted[v.at] += 1
+    mode: Literal["measured", "uniform"] = "measured" if measured else "uniform"
     return CoverageOut(
         gouvernorat_code=code,
         engine=engine,
         turnout_minutes=turnout,
+        turnout_mode=mode,
+        neighbours=neighbours,
+        neighbour_m=reach,
         targets=targets,
         families=out_families,
         delegations=[
@@ -436,6 +541,12 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
                 lon=where[u.id][1],
                 ready=ready_by_unit[u.id],
                 hosted=hosted[u.id],
+                gouvernorat_code=u.gouvernorat_code,
+                neighbour=u.id not in own_set,
+                turnout_minutes=round(timing[u.id].seconds / 60, 1),
+                turnout_source=timing[u.id].source,
+                turnout_missions=timing[u.id].missions,
+                turnout_p90_minutes=round(p90 / 60, 1) if (p90 := timing[u.id].p90_s) is not None else None,
             )
             for u in units.values()
         ],
@@ -443,19 +554,35 @@ async def compute(session: AsyncSession, principal: Principal, code: int) -> Cov
         suggestions=suggestions,
         computed_at=datetime.now(UTC),
         assumptions=[
-            f"turnout {turnout} min, then the road time ({engine})",
+            (
+                f"turnout measured per unit over {turnout_days} days (at least {least} missions), else {turnout} min"
+                if measured
+                else f"turnout {turnout} min"
+            )
+            + f", then the road time ({engine})",
             "targets of the SNACR plan by family and zone (2024 density)",
             "demand point: the label point of each délégation, weighted by its 2024 population",
-            "units of the gouvernorat only; a reinforcement counts at its host unit",
+            (
+                f"units of the gouvernorat and of its neighbours within {reach // 1000} km"
+                if neighbours
+                else "units of the gouvernorat only"
+            )
+            + "; a reinforcement counts at its host unit",
         ],
     )
 
 
 @router.get("/coverage", response_model=CoverageOut)
 async def coverage(
-    principal: Reader, session: Session, gouvernorat: Annotated[int | None, Query(ge=1, le=99)] = None
+    principal: Reader,
+    session: Session,
+    gouvernorat: Annotated[int | None, Query(ge=1, le=99)] = None,
+    neighbours: bool = False,
 ) -> CoverageOut:
-    """The live coverage of a gouvernorat: the caller's own, or the one the central room names."""
+    """The live coverage of a gouvernorat: the caller's own, or the one the central room names (which may count the
+    units of the neighbouring gouvernorats, OS3-4)."""
+    if neighbours and not principal.is_national:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "national_only")
     if principal.is_national:
         if gouvernorat is None:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "gouvernorat_required")
@@ -465,4 +592,4 @@ async def coverage(
             raise HTTPException(status.HTTP_403_FORBIDDEN, "out_of_scope")
         assert principal.gouvernorat_code is not None
         code = principal.gouvernorat_code
-    return await compute(session, principal, code)
+    return await compute(session, principal, code, neighbours)

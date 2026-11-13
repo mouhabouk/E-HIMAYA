@@ -1,5 +1,6 @@
 import uuid
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -293,7 +294,21 @@ class MaintenanceIn(BaseModel):
     version: int | None = None
 
 
-class MaintenanceEndIn(BaseModel):
+Money = Annotated[Decimal, Field(ge=0, le=10_000_000, max_digits=12, decimal_places=3)]
+MaintKind = Literal["repair", "periodic", "accident"]
+
+
+class CostIn(BaseModel):
+    """OS3-3: what a stay in the workshop cost, in dinars (three decimals): at the exit or later."""
+
+    maint_kind: MaintKind | None = None
+    cost_parts: Money | None = None
+    cost_labour: Money | None = None
+    cost_external: Money | None = None
+    invoice_ref: str | None = Field(default=None, max_length=60)
+
+
+class MaintenanceEndIn(CostIn):
     note: str | None = Field(default=None, max_length=500)
     odometer_km: int | None = Field(default=None, ge=0, le=5_000_000)
     version: int | None = None
@@ -319,10 +334,112 @@ class VehicleEventOut(BaseModel):
     details: dict[str, Any]
     created_by_name: str | None
     created_at: datetime
+    # OS3-3: the cost of the stay in the workshop (``maintenance_end`` only).
+    maint_kind: MaintKind | None = None
+    cost_parts: Decimal | None = None
+    cost_labour: Decimal | None = None
+    cost_external: Decimal | None = None
+    invoice_ref: str | None = None
+    cost_by_name: str | None = None
+    cost_at: datetime | None = None
 
 
 class VehicleEventsOut(BaseModel):
     items: list[VehicleEventOut]
+
+
+# ---------------------------------------------------------------- OS3-1: repositioning orders
+
+OrderState = Literal["sent", "seen", "departed", "arrived", "closed"]
+
+
+class RepositionOrderOut(BaseModel):
+    id: uuid.UUID
+    resource_id: uuid.UUID
+    label: str
+    plate: str | None
+    kind: Literal["reinforce", "return"]
+    from_unit_id: uuid.UUID
+    from_unit: str
+    to_unit_id: uuid.UUID
+    to_unit: str
+    from_point: list[float] | None
+    to_point: list[float] | None
+    gouvernorat_code: int
+    host_gouvernorat_code: int | None
+    note: str | None
+    gain_population: int | None
+    leader_name: str | None
+    pushed: bool
+    created_by_name: str | None
+    created_at: datetime
+    seen_at: datetime | None
+    seen_by_name: str | None
+    departed_at: datetime | None
+    arrived_at: datetime | None
+    closed_at: datetime | None
+    close_reason: Literal["replaced", "state", "maintenance", "retired"] | None
+    state: OrderState
+    # Not seen by the crew after ``coverage.order_ack_minutes``.
+    overdue: bool
+
+
+class RepositionOrdersOut(BaseModel):
+    items: list[RepositionOrderOut]
+    ack_minutes: int
+
+
+class RepositionStepIn(BaseModel):
+    # The phone's time of the step, kept when it arrives late (no network); the server's time otherwise.
+    at: datetime | None = None
+
+
+# ---------------------------------------------------------------- OS3-3: monthly report of the fleet
+
+
+class FleetMonth(BaseModel):
+    month: str
+    readiness_pct: float | None
+    cost_total: Decimal
+
+
+class FleetReportRow(BaseModel):
+    gouvernorat_code: int
+    name_ar: str
+    name_fr: str
+    point: list[float] | None
+    vehicles: int
+    vehicle_days: float
+    down_days: float
+    readiness_pct: float | None
+    workshop_entries: int
+    retired: int
+    cost_parts: Decimal
+    cost_labour: Decimal
+    cost_external: Decimal
+    cost_total: Decimal
+    cost_per_vehicle: Decimal | None
+    series: list[FleetMonth]
+
+
+class FleetCostlyVehicle(BaseModel):
+    resource_id: uuid.UUID
+    label: str
+    plate: str | None
+    gouvernorat_code: int
+    cost_total: Decimal
+    stays: int
+
+
+class FleetReportOut(BaseModel):
+    month: str
+    months: list[str]
+    rows: list[FleetReportRow]
+    total: FleetReportRow | None
+    costly: list[FleetCostlyVehicle]
+    red_below: int
+    amber_below: int
+    computed_at: datetime
 
 
 class StockListOut(BaseModel):

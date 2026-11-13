@@ -2313,6 +2313,30 @@ erDiagram
         datetime approved_at
         datetime retired_at
     }
+    ops__reposition_order {
+        uuid id PK
+        uuid resource_id FK
+        uuid vehicle_event_id FK
+        text kind
+        uuid from_unit_id FK
+        uuid to_unit_id FK
+        smallint gouvernorat_code FK
+        smallint host_gouvernorat_code FK
+        text note
+        integer gain_population
+        uuid shift_id FK
+        text leader_name
+        boolean pushed
+        text created_by
+        text created_by_name
+        datetime created_at
+        datetime seen_at
+        text seen_by_name
+        datetime departed_at
+        datetime arrived_at
+        datetime closed_at
+        text close_reason
+    }
     ops__resource {
         uuid id PK
         uuid unit_id FK
@@ -2445,6 +2469,13 @@ erDiagram
         text created_by
         text created_by_name
         datetime created_at
+        text maint_kind
+        numeric_12__3 cost_parts
+        numeric_12__3 cost_labour
+        numeric_12__3 cost_external
+        text invoice_ref
+        text cost_by_name
+        datetime cost_at
     }
     geo__delegation ||--o{ ops__incident : "delegation_id"
     geo__delegation ||--o{ ops__saved_place : "delegation_id"
@@ -2454,6 +2485,8 @@ erDiagram
     geo__gouvernorat ||--o{ ops__incident : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__incident_gouvernorat : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__level_state : "gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__reposition_order : "gouvernorat_code"
+    geo__gouvernorat ||--o{ ops__reposition_order : "host_gouvernorat_code"
     geo__gouvernorat ||--o{ ops__resource_request : "to_gouvernorat_code"
     geo__gouvernorat ||--o{ ops__saved_place : "gouvernorat_code"
     geo__gouvernorat ||--o{ ops__shift : "gouvernorat_code"
@@ -2491,15 +2524,20 @@ erDiagram
     ops__report_template ||--o{ ops__field_report : "template_id"
     ops__resource ||--o{ ops__assignment : "resource_id"
     ops__resource ||--o{ ops__crew_position : "resource_id"
+    ops__resource ||--o{ ops__reposition_order : "resource_id"
     ops__resource ||--o{ ops__resource_request : "resource_id"
     ops__resource ||--o{ ops__shift : "resource_id"
     ops__resource ||--o{ ops__vehicle_event : "resource_id"
     ops__resource_request ||--o{ ops__assignment : "request_id"
     ops__shift ||--o{ ops__assignment : "shift_id"
     ops__shift ||--o{ ops__crew_event : "shift_id"
+    ops__shift ||--o{ ops__reposition_order : "shift_id"
     ops__staff_device ||--o{ ops__shift : "device_id"
+    ops__unit ||--o{ ops__reposition_order : "from_unit_id"
+    ops__unit ||--o{ ops__reposition_order : "to_unit_id"
     ops__unit ||--o{ ops__resource : "stationed_unit_id"
     ops__unit ||--o{ ops__resource : "unit_id"
+    ops__vehicle_event ||--o{ ops__reposition_order : "vehicle_event_id"
 ```
 
 ## org

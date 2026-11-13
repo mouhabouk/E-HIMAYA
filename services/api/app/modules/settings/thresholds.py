@@ -33,6 +33,18 @@ SPECS: dict[str, Spec] = {
     "coverage.turnout_minutes": Spec("snacr", "minutes", 2, 0, 15),
     # Repositioning suggestions per family of vehicles, best first.
     "coverage.suggestions_max": Spec("snacr", "count", 3, 0, 10),
+    # OS3-1: an order the crew has not seen after these minutes is flagged to the room.
+    "coverage.order_ack_minutes": Spec("snacr", "minutes", 2, 1, 30),
+    # OS3-2: the turnout of each unit measured on its missions (call to «on the way»), 1 = on, 0 = the same for all;
+    # over these days, and only with at least this many missions (fewer: the default above).
+    "coverage.turnout_measured": Spec("snacr", "count", 1, 0, 1),
+    "coverage.turnout_days": Spec("snacr", "days", 90, 14, 365),
+    "coverage.turnout_min_missions": Spec("snacr", "count", 20, 5, 500),
+    # OS3-4: the units of a neighbouring gouvernorat counted for the central room, up to this far from a délégation.
+    "coverage.neighbour_m": Spec("snacr", "metres", 40_000, 5_000, 100_000),
+    # OS3-3: the monthly readiness of the fleet, red under the first, amber under the second.
+    "fleet.readiness_red": Spec("fleet", "percent", 80, 0, 100),
+    "fleet.readiness_amber": Spec("fleet", "percent", 85, 0, 100),
     "forecast.flood_radius_m": Spec("crisis", "metres", 3_000, 100, 50_000),
     # Alerts to the population.
     "alerts.max_days": Spec("alerts", "days", 7, 1, 30),

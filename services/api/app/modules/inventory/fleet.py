@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import as_system, get_session
 from app.core.security import Principal
 from app.modules.audit import service as audit
-from app.modules.inventory import domain, schemas
+from app.modules.inventory import domain, orders, schemas
 from app.modules.inventory.router import (
     Reader,
     _now,
@@ -65,20 +65,32 @@ def _log(
     kind: str,
     before: str,
     details: dict[str, Any],
-) -> None:
-    session.add(
-        VehicleEvent(
-            resource_id=r.id,
-            gouvernorat_code=unit.gouvernorat_code,
-            host_gouvernorat_code=host.gouvernorat_code if host is not None else None,
-            kind=kind,
-            from_state=before,
-            to_state=_state(r),
-            details={k: v for k, v in details.items() if v is not None},
-            created_by=audit.actor_of(principal),
-            created_by_name=audit.name_of(principal),
-        )
+    **columns: Any,
+) -> VehicleEvent:
+    event = VehicleEvent(
+        resource_id=r.id,
+        gouvernorat_code=unit.gouvernorat_code,
+        host_gouvernorat_code=host.gouvernorat_code if host is not None else None,
+        kind=kind,
+        from_state=before,
+        to_state=_state(r),
+        details={k: v for k, v in details.items() if v is not None},
+        created_by=audit.actor_of(principal),
+        created_by_name=audit.name_of(principal),
+        **columns,
     )
+    session.add(event)
+    return event
+
+
+def _costs(body: schemas.CostIn, principal: Principal) -> dict[str, Any]:
+    """OS3-3: the cost columns of a ``maintenance_end`` event; who entered them and when, if anything was given."""
+    values = body.model_dump(include={"maint_kind", "cost_parts", "cost_labour", "cost_external", "invoice_ref"})
+    if body.invoice_ref is not None:
+        values["invoice_ref"] = body.invoice_ref.strip() or None
+    if any(v is not None for v in values.values()):
+        values |= {"cost_by_name": audit.name_of(principal) or audit.actor_of(principal), "cost_at": _now()}
+    return values
 
 
 def _touch(r: Resource, principal: Principal) -> None:
@@ -139,6 +151,8 @@ async def set_state(
         raise HTTPException(status.HTTP_409_CONFLICT, f"vehicle_{before}")
     kind = "state"
     details: dict[str, Any] = {"note": body.note, "suggested_gain": body.suggested_gain}
+    # OS3-1: where the vehicle stands now, the start of the move the crew is ordered to make.
+    origin = host or unit
     if body.state == "reinforcement":
         if body.host_unit_id is None or body.host_unit_id == r.unit_id:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "host_unit_required")
@@ -170,7 +184,15 @@ async def set_state(
     if body.state != "reinforcement":
         _release(r)
     _touch(r, principal)
-    _log(session, principal, r, unit, host, kind, before, details)
+    event = _log(session, principal, r, unit, host, kind, before, details)
+    await session.flush()
+    if kind == "reinforce" and host is not None and host.id != origin.id:
+        await orders.send(session, principal, r, unit, "reinforce", origin, host, event, body.note, body.suggested_gain)
+    elif kind == "reinforce_end" and body.state == "ready" and host is not None:
+        await orders.send(session, principal, r, unit, "return", host, unit, event, body.note, None)
+    else:
+        # A breakdown, or a state that keeps the vehicle where it is: an order under way no longer holds.
+        await orders.close_open(session, r.id, "state")
     return await _finish(session, principal, r, unit, f"vehicle.{kind}", details)
 
 
@@ -203,6 +225,7 @@ async def start_maintenance(
         "fault": r.fault,
     }
     _log(session, principal, r, unit, host, "maintenance_start", before, details)
+    await orders.close_open(session, r.id, "maintenance")
     return await _finish(session, principal, r, unit, "vehicle.maintenance_start", details)
 
 
@@ -234,7 +257,7 @@ async def end_maintenance(
     r.maint_since = None
     r.maint_until = None
     _touch(r, principal)
-    _log(session, principal, r, unit, None, "maintenance_end", before, details)
+    _log(session, principal, r, unit, None, "maintenance_end", before, details, **_costs(body, principal))
     return await _finish(session, principal, r, unit, "vehicle.maintenance_end", details)
 
 
@@ -262,6 +285,7 @@ async def retire(
     _touch(r, principal)
     details = {"decision": body.decision, "retired_on": body.retired_on.isoformat(), "reason": body.reason}
     _log(session, principal, r, unit, host, "retire", before, details)
+    await orders.close_open(session, r.id, "retired")
     return await _finish(session, principal, r, unit, "vehicle.retire", details)
 
 
@@ -313,7 +337,69 @@ async def vehicle_events(
                 details=e.details or {},
                 created_by_name=e.created_by_name,
                 created_at=e.created_at,
+                maint_kind=e.maint_kind,
+                cost_parts=e.cost_parts,
+                cost_labour=e.cost_labour,
+                cost_external=e.cost_external,
+                invoice_ref=e.invoice_ref,
+                cost_by_name=e.cost_by_name,
+                cost_at=e.cost_at,
             )
             for e, r, u in rows
         ]
     )
+
+
+@router.post("/vehicle-events/{event_id}/cost", response_model=schemas.VehicleEventOut)
+async def set_cost(
+    principal: Reader, session: Session, event_id: uuid.UUID, body: schemas.CostIn
+) -> schemas.VehicleEventOut:
+    """OS3-3: the cost of a stay in the workshop entered or corrected later, when the invoice arrives."""
+    event = await session.get(VehicleEvent, event_id)
+    if event is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    if event.kind != "maintenance_end":
+        raise HTTPException(status.HTTP_409_CONFLICT, "not_a_workshop_stay")
+    _require_fleet(principal, event.gouvernorat_code)
+    values = _costs(body, principal)
+    if "cost_at" not in values:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "cost_required")
+    # The log is written once by the API (its update policy is the system's): the cost is the only thing added.
+    async with as_system(session):
+        for key, value in values.items():
+            setattr(event, key, value)
+        await session.flush()
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="vehicle.cost",
+        target=f"vehicle_event:{event.id}",
+        details={k: str(v) for k, v in values.items() if v is not None and k != "cost_at"},
+        gouvernorats=[event.gouvernorat_code],
+    )
+    r = await session.get(Resource, event.resource_id)
+    unit = await session.get(Unit, r.unit_id) if r is not None else None
+    assert r is not None and unit is not None
+    out = schemas.VehicleEventOut(
+        id=event.id,
+        resource_id=r.id,
+        label=r.label,
+        plate=r.plate,
+        unit_name=unit.name_ar,
+        gouvernorat_code=event.gouvernorat_code,
+        kind="maintenance_end",
+        from_state=event.from_state,
+        to_state=event.to_state,
+        details=event.details or {},
+        created_by_name=event.created_by_name,
+        created_at=event.created_at,
+        maint_kind=event.maint_kind,
+        cost_parts=event.cost_parts,
+        cost_labour=event.cost_labour,
+        cost_external=event.cost_external,
+        invoice_ref=event.invoice_ref,
+        cost_by_name=event.cost_by_name,
+        cost_at=event.cost_at,
+    )
+    await session.commit()
+    return out

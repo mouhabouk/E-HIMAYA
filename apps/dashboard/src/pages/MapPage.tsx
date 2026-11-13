@@ -10,6 +10,7 @@ import { useSavedPlaces } from "../components/SavedPlaces";
 import { useAdminLayer } from "../components/AdminLayer";
 import { useAddressWarningsLayer } from "../components/AddressWarningsLayer";
 import { useBasemap } from "../components/BasemapSwitch";
+import { useFleetMapLayers } from "../components/FleetMapLayers";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
 import {
@@ -579,6 +580,8 @@ export function MapPage() {
   // «موارد الحماية المدنية» folder of the layer panel, beside the file layers of that folder.
   const resourceSearch = useResourceSearchLayer(bbox);
   const awMarks = useAddressWarningsLayer(bbox, awLayerAllowed && awLayer);
+  // OS3 follow-ups: the live coverage, the repositioning orders and the fleet readiness, in the civil protection folder.
+  const fleetLayers = useFleetMapLayers();
   // Yamen 2026-11-13: every layer of the system in its folder of the panel, with a link to the screen that owns it.
   const src = (to: string, key: string) => ({ to, label: t(key) });
   const folderExtras = useMemo<Record<string, FolderExtra[]>>(() => {
@@ -625,6 +628,7 @@ export function MapPage() {
     if (resourceLayerAllowed) {
       civil.push(extra("ops-resources", t("ops.map.resourcesToggle"), resourceLayer, setResourceLayer, src("/resources", "mapLayers.screen.resources")));
     }
+    civil.push(...fleetLayers.extras);
     civil.push(extra("volunteers", t("ops.map.volunteersToggle"), showVolunteers, setVolunteerLayer, src("/volunteers", "mapLayers.screen.volunteers")));
     const monitoring: FolderExtra[] = [];
     if (sensorLayerAllowed) monitoring.push(extra("sensors", t("sensors.map.toggle"), sensorLayer, setSensorLayer, src("/sensors", "mapLayers.screen.sensors")));
@@ -681,6 +685,7 @@ export function MapPage() {
     crisisLayer,
     exposureLayer,
     resourceSearch.extra,
+    fleetLayers.extras,
     resourceLayerAllowed,
     resourceLayer,
     showVolunteers,
@@ -715,6 +720,7 @@ export function MapPage() {
       ...coastal.pois,
       ...crisis.pois,
       ...streams.pois,
+      ...fleetLayers.pois,
     ],
     [
       pois,
@@ -728,8 +734,10 @@ export function MapPage() {
       coastal.pois,
       crisis.pois,
       streams.pois,
+      fleetLayers.pois,
     ],
   );
+  const allLines = useMemo(() => [...lines, ...fleetLayers.lines], [lines, fleetLayers.lines]);
   const shapes = useMemo(
     () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
     [dataLayers.shapes, resourceSearch.shapes],
@@ -906,7 +914,7 @@ export function MapPage() {
               onOpenPoi={onOpenPoi}
               polygons={polygons}
               hexes={hexes}
-              lines={lines}
+              lines={allLines}
               heat={heat}
               shapes={shapes}
               weather={mapWeather}
