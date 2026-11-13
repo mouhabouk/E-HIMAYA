@@ -63,6 +63,8 @@ export function RoomReportPage() {
   const [lon, setLon] = useState("");
   const [receivedAt, setReceivedAt] = useState(() => localInput(params.get("at")));
   const [tried, setTried] = useState(false);
+  // When the agent opened the form: the time of a radio or walk-in entry, for the cards' statistics (OS2-3).
+  const [startedAt] = useState(() => new Date().toISOString());
   const [bounds] = useState(() => initialBoundsFor(user?.identity.gouvernoratCode ?? null));
   const point = parsePoint(lat, lon);
   const timer = useCallTimer(answeredMs(params.get("at")));
@@ -91,6 +93,7 @@ export function RoomReportPage() {
         location: point ?? { lat: 0, lon: 0 },
         text: text.trim() || undefined,
         received_at: receivedAt ? new Date(receivedAt).toISOString() : undefined,
+        started_at: startedAt,
         call_id: callId ?? undefined,
         call_card:
           activeCard

@@ -62,6 +62,9 @@ class Report(Base):
     intake_channel: Mapped[str | None] = mapped_column(Text)
     entered_by: Mapped[str | None] = mapped_column(Text)
     entered_by_name: Mapped[str | None] = mapped_column(Text)
+    # The room that wrote it down ("central" or "g:<code>") and when its agent opened the form (OS2-3, migration 0109).
+    entered_room: Mapped[str | None] = mapped_column(Text)
+    entry_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     embedding: Mapped[list[float] | None] = mapped_column(Vector(768), deferred=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -231,6 +234,28 @@ class CallCard(Base):
     created_by: Mapped[str] = mapped_column(Text)
     created_by_name: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_by_name: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    # The review of a draft (OS2-4, migration 0109): handed over by the Office, sent back with a note, the [SIM] text
+    # confirmed as it is, and the reviewer's note per question ("_card" for the whole card).
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    submitted_by_name: Mapped[str | None] = mapped_column(Text)
+    returned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    returned_by_name: Mapped[str | None] = mapped_column(Text)
+    returned_reason: Mapped[str | None] = mapped_column(Text)
+    unchanged: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    notes: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default="{}")
+
+
+class CallCardReviewer(Base):
+    """Who reviews the card of a category: the Office's reviewer and the doctor, as names (OS2-4)."""
+
+    __tablename__ = "call_card_reviewer"
+    __table_args__ = {"schema": "reports"}
+
+    category: Mapped[str] = mapped_column(Text, primary_key=True)
+    office: Mapped[str | None] = mapped_column(Text)
+    doctor: Mapped[str | None] = mapped_column(Text)
     updated_by_name: Mapped[str | None] = mapped_column(Text)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 

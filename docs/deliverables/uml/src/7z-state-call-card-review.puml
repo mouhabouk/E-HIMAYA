@@ -1,0 +1,18 @@
+@startuml
+!include style.iuml
+title Diagramme d'états : revue d'une fiche d'appel guidée (OS2-4)
+[*] --> TexteDEssai : fiche [SIM] approuvée (migration 0100)
+TexteDEssai --> AuBureau : brouillon du bureau
+TexteDEssai --> ChezLeMédecin : « sans changement »\n(fiche médicale)
+TexteDEssai --> ÀApprouver : « sans changement »
+AuBureau --> ChezLeMédecin : transmis (fiche médicale)
+AuBureau --> ÀApprouver : transmis
+ChezLeMédecin --> ÀApprouver : validation médicale
+ChezLeMédecin --> AuBureau : renvoyé avec une note
+ÀApprouver --> AuBureau : renvoyé avec une note\n(médecin ou chef des opérations)
+ÀApprouver --> Approuvée : chef des opérations (motif)
+AuBureau --> AuBureau : modifié (validation retirée)
+Approuvée --> AuBureau : nouvelle version
+Approuvée --> [*]
+note right of Approuvée : le badge [SIM] disparaît ;\nla version précédente est retirée,\nchaque signalement garde la sienne
+@enduml

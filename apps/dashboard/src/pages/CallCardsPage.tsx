@@ -5,16 +5,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CallCardPanel } from "../components/CallCardPanel";
+import { CallCardReview, ReasonButton } from "../components/CallCardReview";
+import { CallCardStats } from "../components/CallCardStats";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { IconTile } from "../components/Icon";
 import { PageTitle } from "../components/PageTitle";
-import { ReasonField } from "../components/Phase9Bits";
 import { useAuth } from "../context/auth";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
 import {
   ANSWERS,
   CARD_BANDS,
+  CARD_NOTE,
   callCardKeys,
   checkContent,
   emptyContent,
@@ -30,7 +32,6 @@ import {
   type CardQuestion,
 } from "../lib/callCards";
 import { useFormat } from "../lib/hooks";
-import { reasonValid } from "../lib/phase9";
 import { callCardRights } from "../lib/roles";
 import { CATEGORY_TILE } from "../lib/categoryIcons";
 import { CATEGORIES, type Category } from "../lib/types";
@@ -388,56 +389,7 @@ function AddInstruction({ taken, onAdd }: { taken: string[]; onAdd: (key: string
   );
 }
 
-/** A reason, then the action (validate, approve, save). */
-function ReasonButton({
-  label,
-  explain,
-  pending,
-  onGo,
-  primary,
-}: {
-  label: string;
-  explain: string;
-  pending: boolean;
-  onGo: (reason: string) => void;
-  primary?: boolean;
-}) {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState("");
-  const [tried, setTried] = useState(false);
-  if (!open) {
-    return (
-      <button type="button" className={`btn${primary ? " btn--primary" : ""}`} onClick={() => setOpen(true)}>
-        {label}
-      </button>
-    );
-  }
-  return (
-    <div className="card call-cards__reason">
-      <p className="muted">{explain}</p>
-      <ReasonField label={t("callCards.reasonLabel")} value={reason} onChange={setReason} showError={tried} />
-      <div className="form-actions">
-        <button
-          type="button"
-          className={`btn${primary ? " btn--primary" : ""}`}
-          disabled={pending}
-          onClick={() => {
-            setTried(true);
-            if (reasonValid(reason)) onGo(reason.trim());
-          }}
-        >
-          {label}
-        </button>
-        <button type="button" className="btn" onClick={() => setOpen(false)}>
-          {t("common.cancel")}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function CardDetail({ category, cards }: { category: Category; cards: CallCard[] }) {
+function CardDetail({ category, cards, startEditing }: { category: Category; cards: CallCard[]; startEditing?: boolean }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const { user } = useAuth();
@@ -449,7 +401,9 @@ function CardDetail({ category, cards }: { category: Category; cards: CallCard[]
   });
   const approved = cards.find((c) => c.status === "approved") ?? null;
   const draft = cards.find((c) => c.status === "draft") ?? null;
-  const [editing, setEditing] = useState<CardContent | null>(null);
+  const [editing, setEditing] = useState<CardContent | null>(() =>
+    startEditing ? structuredClone((draft ?? approved)?.content ?? emptyContent(t(`category.${category}`))) : null,
+  );
   const [trial, setTrial] = useState<Answers>({});
   const [trialRead, setTrialRead] = useState<string[]>([]);
   const [problem, setProblem] = useState<string | null>(null);
@@ -465,9 +419,12 @@ function CardDetail({ category, cards }: { category: Category; cards: CallCard[]
     const error = checkContent(editing);
     setProblem(error);
     if (error) return;
+    // The Office's notes stay with the questions still on the card (OS2-4).
+    const ids = new Set([CARD_NOTE, ...editing.questions.map((q) => q.id)]);
+    const notes = Object.fromEntries(Object.entries(draft?.notes ?? {}).filter(([k]) => ids.has(k)));
     act.mutate(() =>
       draft
-        ? api.updateCardDraft(draft.id, editing, reason, draft.updated_at)
+        ? api.updateCardDraft(draft.id, editing, reason, draft.updated_at, notes)
         : api.createCardDraft(category, editing, reason),
     );
   };
@@ -576,14 +533,26 @@ function CardDetail({ category, cards }: { category: Category; cards: CallCard[]
   );
 }
 
+type Tab = "cards" | "stats" | "review";
+const TABS: Tab[] = ["cards", "stats", "review"];
+
 export function CallCardsPage() {
   const { t } = useTranslation();
   const { api } = useServices();
   const [include, setInclude] = useState<"current" | "all">("current");
   const [category, setCategory] = useState<Category>("medical");
+  const [tab, setTab] = useState<Tab>("cards");
+  // Opened from the review («write the new version»): the cards tab opens the category's editor.
+  const [writing, setWriting] = useState(false);
   const q = useQuery({
     queryKey: callCardKeys.list(include),
     queryFn: ({ signal }) => api.callCards(include, signal),
+  });
+  // The figures of each question (90 days) shown to the reviewers beside the changes.
+  const figures = useQuery({
+    queryKey: callCardKeys.stats(90, "phone,radio,in_person,other", null),
+    queryFn: ({ signal }) => api.cardStats(90, ["phone", "radio", "in_person", "other"], null, signal),
+    enabled: tab === "review",
   });
   const cards = q.data?.cards ?? [];
   return (
@@ -592,7 +561,35 @@ export function CallCardsPage() {
         {t("callCards.title")}
       </PageTitle>
       <p className="muted">{t("callCards.intro")}</p>
-      {q.isPending ? (
+      <div role="tablist" aria-label={t("callCards.tabs.label")} className="tabs no-print">
+        {TABS.map((k) => (
+          <button
+            key={k}
+            type="button"
+            role="tab"
+            aria-selected={tab === k}
+            className={`tabs__tab${tab === k ? " tabs__tab--active" : ""}`}
+            onClick={() => {
+              setTab(k);
+              setWriting(false);
+            }}
+          >
+            {t(`callCards.tabs.${k}`)}
+          </button>
+        ))}
+      </div>
+      {tab === "stats" ? (
+        <CallCardStats />
+      ) : tab === "review" ? (
+        <CallCardReview
+          figures={figures.data?.cards}
+          onWrite={(c) => {
+            setCategory(c);
+            setWriting(true);
+            setTab("cards");
+          }}
+        />
+      ) : q.isPending ? (
         <Loading />
       ) : q.isError ? (
         <ErrorBox error={q.error} />
@@ -627,7 +624,15 @@ export function CallCardsPage() {
                     .map((card) => (
                       <tr key={card.id} className={c === category ? "row--selected" : undefined}>
                         <td>
-                          <button type="button" className="call-cards__pick" onClick={() => setCategory(c)} aria-pressed={c === category}>
+                          <button
+                            type="button"
+                            className="call-cards__pick"
+                            onClick={() => {
+                              setCategory(c);
+                              setWriting(false);
+                            }}
+                            aria-pressed={c === category}
+                          >
                             <IconTile name={CATEGORY_ICON[c][0]} tone={CATEGORY_ICON[c][1]} size="sm" />
                             {card.content.title}
                           </button>
@@ -648,7 +653,12 @@ export function CallCardsPage() {
               </tbody>
             </table>
           </section>
-          <CardDetail key={category} category={category} cards={cards.filter((c) => c.category === category)} />
+          <CardDetail
+            key={`${category}-${writing ? "w" : "r"}`}
+            category={category}
+            cards={cards.filter((c) => c.category === category)}
+            startEditing={writing}
+          />
         </div>
       )}
     </div>
