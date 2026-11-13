@@ -8,14 +8,14 @@ enters reports of its own gouvernorat only; the central room enters reports anyw
 """
 
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
 from geoalchemy2 import Geography
 from sqlalchemy import cast, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.access import Action, authorize
+from app.core.access import Action, authorize, room_of
 from app.core.crypto import pseudonym
 from app.core.events import emit
 from app.core.security import Principal
@@ -38,6 +38,9 @@ from app.modules.reports.service import (
     staff_report,
 )
 
+# A form opened longer ago than this was left open: its time says nothing of the call (OS2-3).
+ENTRY_WINDOW = timedelta(hours=2)
+
 # The identity every room-entered report belongs to: the caller is not a user of the app (no consent, no account).
 ROOM_REPORTER = b"room-intake"
 
@@ -54,6 +57,9 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
     address = await admin_address(session, lat, lon)
     text = body.text.strip() if body.text and body.text.strip() else None
     created_at = min(body.received_at, now) if body.received_at is not None else now
+    started_at = min(body.started_at, now) if body.started_at is not None else None
+    if started_at is not None and now - started_at > ENTRY_WINDOW:
+        started_at = None
     report = Report(
         tracking_code=await next_tracking_code(session, now, gouvernorat),
         client_uuid=None,
@@ -72,6 +78,8 @@ async def create(session: AsyncSession, principal: Principal, body: schemas.Room
         intake_channel=body.channel,
         entered_by=audit.actor_of(principal),
         entered_by_name=audit.name_of(principal),
+        entered_room=room_of(principal),
+        entry_started_at=started_at,
         created_at=created_at,
         received_at=now,
         updated_at=now,

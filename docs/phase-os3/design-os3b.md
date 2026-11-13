@@ -8,7 +8,7 @@ page in the menu.
 ## 1. OS3-1: the repositioning order reaches the crew
 
 * A room's decision that sends a vehicle to another unit as reinforcement, or ends a reinforcement (back to its own
-  unit), writes an order in `ops.reposition_order` (migration 0109) and queues a content-free push (`type:
+  unit), writes an order in `ops.reposition_order` (migration 0110) and queues a content-free push (`type:
   reposition`, `order_id` only) to the phone of the leader holding the vehicle on shift. The staff app fetches the
   order from `GET /api/v1/crew/repositions` and shows it above the missions.
 * The leader taps «اطّلعت», «انطلقنا», «وصلنا»: `POST /api/v1/crew/repositions/{id}/{seen|departed|arrived}`. Each

@@ -46,6 +46,9 @@ describe("RoomReportPage", () => {
       location: { lat: 36.4513, lon: 10.7357 },
       text: "دخان كثيف قرب السوق",
       received_at: undefined,
+      // When the agent opened the form (OS2-3: the time of a radio entry).
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- an asymmetric matcher
+      started_at: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
     });
   });
 });

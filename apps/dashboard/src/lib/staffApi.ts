@@ -105,6 +105,8 @@ export interface RoomReportBody {
   channel: IntakeChannel;
   text?: string;
   received_at?: string;
+  /** When the agent opened the form (OS2-3: the time of a radio or walk-in entry). */
+  started_at?: string;
   /** The guided call-taking card answered during the call (OS2). */
   call_card?: CallCardBody;
   /** The call this report was entered from (softphone): linked to the report on save. */

@@ -68,6 +68,179 @@ export interface CallCard {
   updated_by_name: string | null;
   updated_at: string;
   used: number;
+  /** The review (OS2-4): handed over by the Office, sent back with a note, the [SIM] text confirmed as it is. */
+  submitted_at?: string | null;
+  submitted_by_name?: string | null;
+  returned_at?: string | null;
+  returned_by_name?: string | null;
+  returned_reason?: string | null;
+  unchanged?: boolean;
+  /** The Office's note per question id, `_card` for the whole card. */
+  notes?: Record<string, string>;
+}
+
+/** The key of the Office's note on the whole card. */
+export const CARD_NOTE = "_card";
+
+// ---------------------------------------------------------------- review of the [SIM] cards (OS2-4)
+
+export const REVIEW_STAGES = ["not_started", "office", "doctor", "approval", "done"] as const;
+export type ReviewStage = (typeof REVIEW_STAGES)[number];
+
+export interface ReviewItem {
+  category: Category;
+  title: string;
+  stage: ReviewStage;
+  medical: boolean;
+  approved: CallCard | null;
+  draft: CallCard | null;
+  office: string | null;
+  doctor: string | null;
+}
+
+export interface CardReview {
+  items: ReviewItem[];
+  done: number;
+  total: number;
+}
+
+/** One change between two versions of a card, for the reviewers. */
+export type CardChange =
+  | { kind: "added" | "removed"; question: CardQuestion }
+  | { kind: "changed"; question: CardQuestion; before: CardQuestion; fields: ("text" | "help" | "key" | "when" | "effects")[] };
+
+const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+
+/** What a draft changes in the questions of the approved version (matched by question id). */
+export function questionChanges(before: CardContent, after: CardContent): CardChange[] {
+  const old = new Map(before.questions.map((q) => [q.id, q]));
+  const changes: CardChange[] = [];
+  for (const q of after.questions) {
+    const b = old.get(q.id);
+    if (!b) {
+      changes.push({ kind: "added", question: q });
+      continue;
+    }
+    const fields = (["text", "help", "key", "when", "effects"] as const).filter((f) => !same(q[f], b[f]));
+    if (fields.length) changes.push({ kind: "changed", question: q, before: b, fields: [...fields] });
+  }
+  const now = new Set(after.questions.map((q) => q.id));
+  for (const q of before.questions) if (!now.has(q.id)) changes.push({ kind: "removed", question: q });
+  return changes;
+}
+
+/** Steps of an instruction, each marked kept, added or removed (a simple line comparison). */
+export function stepChanges(before: string[], after: string[]): { text: string; mark: "same" | "added" | "removed" }[] {
+  const out: { text: string; mark: "same" | "added" | "removed" }[] = [];
+  for (const s of after) out.push({ text: s, mark: before.includes(s) ? "same" : "added" });
+  for (const s of before) if (!after.includes(s)) out.push({ text: s, mark: "removed" });
+  return out;
+}
+
+// ---------------------------------------------------------------- statistics (OS2-3)
+
+export const INTAKE_CHANNELS = ["phone", "radio", "in_person", "other"] as const;
+export type StatsChannel = (typeof INTAKE_CHANNELS)[number];
+export const STATS_DAYS = [7, 30, 90] as const;
+export const STATS_CHECKS = [
+  "confirmed",
+  "nature_differs",
+  "lives_not_on_card",
+  "injured_not_on_card",
+  "band_below_toll",
+] as const;
+
+export interface StatsFigures {
+  entered: number;
+  with_card: number;
+  median_with_s: number | null;
+  median_without_s: number | null;
+  p90_s: number | null;
+  field_checked: number;
+  field_confirmed: number;
+}
+
+export interface RoomFigures extends StatsFigures {
+  room: string;
+}
+
+export interface QuestionFigures {
+  id: string;
+  text: string;
+  key: boolean;
+  yes: number;
+  no: number;
+  unknown: number;
+  field_changed: number;
+  field_answered: number;
+}
+
+export interface CardFigures {
+  category: Category;
+  title: string;
+  used: number;
+  median_s: number | null;
+  key_unknown: number;
+  key_answered: number;
+  field_checked: number;
+  checks: Record<(typeof STATS_CHECKS)[number], number>;
+  questions: QuestionFigures[];
+  read: Record<string, number>;
+  instruction_titles: Record<string, string>;
+}
+
+export interface CardStats {
+  days: number;
+  since: string;
+  room: string | null;
+  total: StatsFigures;
+  national: StatsFigures;
+  rooms: RoomFigures[];
+  cards: CardFigures[];
+}
+
+/** A whole percentage, or null when there is nothing to divide. */
+export const percent = (part: number, whole: number): number | null =>
+  whole > 0 ? Math.round((100 * part) / whole) : null;
+
+/** Seconds as m:ss (the call times). */
+export function minutes(seconds: number | null): string {
+  if (seconds === null) return "—";
+  const s = Math.round(seconds);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+/** The statistics as CSV: one line per room, then one per card (opened in a spreadsheet). */
+export function statsCsv(stats: CardStats, roomName: (room: string) => string): string {
+  const cell = (v: string | number | null) => {
+    const s = v === null ? "" : String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const lines = [
+    ["room", "entered", "with_card", "median_with_s", "median_without_s", "p90_s", "field_checked", "field_confirmed"],
+    ...stats.rooms.map((r) => [
+      roomName(r.room),
+      r.entered,
+      r.with_card,
+      r.median_with_s,
+      r.median_without_s,
+      r.p90_s,
+      r.field_checked,
+      r.field_confirmed,
+    ]),
+    [],
+    ["card", "used", "median_s", "key_unknown", "key_answered", "field_checked", ...STATS_CHECKS],
+    ...stats.cards.map((c) => [
+      c.title,
+      c.used,
+      c.median_s,
+      c.key_unknown,
+      c.key_answered,
+      c.field_checked,
+      ...STATS_CHECKS.map((k) => c.checks[k]),
+    ]),
+  ];
+  return lines.map((l) => l.map(cell).join(",")).join("\n");
 }
 
 export interface CardOutcome {
@@ -244,6 +417,8 @@ export const callCardKeys = {
   all: ["call-cards"] as const,
   list: (include: "current" | "all") => ["call-cards", include] as const,
   reportAll: ["call-cards", "report"] as const,
+  review: ["call-cards", "review"] as const,
+  stats: (days: number, channels: string, room: string | null) => ["call-cards", "stats", days, channels, room] as const,
   report: (id: string) => ["call-cards", "report", id] as const,
 };
 
@@ -254,13 +429,39 @@ export function callCardsApi(api: ApiClient) {
   return {
     callCards: (include: "current" | "all" = "current", signal?: AbortSignal) =>
       api.request<{ cards: CallCard[] }>(C, { query: { include }, signal }),
-    createCardDraft: (category: Category, content: CardContent, reason: string) =>
+    createCardDraft: (category: Category, content: CardContent, reason: string, notes: Record<string, string> = {}) =>
       api.request<CallCard>(`${C}/${encodeURIComponent(category)}/draft`, {
         method: "POST",
-        body: { content, reason },
+        body: { content, reason, notes },
       }),
-    updateCardDraft: (id: string, content: CardContent, reason: string, updatedAt: string) =>
-      api.request<CallCard>(cardPath(id), { method: "PUT", body: { content, reason, updated_at: updatedAt } }),
+    updateCardDraft: (
+      id: string,
+      content: CardContent,
+      reason: string,
+      updatedAt: string,
+      notes: Record<string, string> = {},
+    ) =>
+      api.request<CallCard>(cardPath(id), {
+        method: "PUT",
+        body: { content, reason, updated_at: updatedAt, notes },
+      }),
+    cardReview: (signal?: AbortSignal) => api.request<CardReview>(`${C}/review`, { signal }),
+    setCardReviewers: (category: Category, office: string | null, doctor: string | null, reason: string) =>
+      api.request<ReviewItem>(`${C}/${encodeURIComponent(category)}/reviewers`, {
+        method: "PUT",
+        body: { office, doctor, reason },
+      }),
+    confirmCard: (category: Category, reason: string) =>
+      api.request<CallCard>(`${C}/${encodeURIComponent(category)}/confirm`, { method: "POST", body: { reason } }),
+    submitCard: (id: string, reason: string, updatedAt: string) =>
+      api.request<CallCard>(`${cardPath(id)}/submit`, { method: "POST", body: { reason, updated_at: updatedAt } }),
+    returnCard: (id: string, reason: string, updatedAt: string) =>
+      api.request<CallCard>(`${cardPath(id)}/return`, { method: "POST", body: { reason, updated_at: updatedAt } }),
+    cardStats: (days: number, channels: readonly string[], room: string | null, signal?: AbortSignal) =>
+      api.request<CardStats>(`${C}/stats`, {
+        query: { days, channel: channels.join(","), ...(room ? { room } : {}) },
+        signal,
+      }),
     discardCardDraft: (id: string) => api.request<undefined>(cardPath(id), { method: "DELETE" }),
     validateCardMedical: (id: string, reason: string, updatedAt: string) =>
       api.request<CallCard>(`${cardPath(id)}/medical-validation`, {
