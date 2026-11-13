@@ -20,6 +20,7 @@ already in a layer.
 | الأزمات والمحاور `crisis` | Open axes: areas, shelters, evacuation zones (new) | `/disasters` | `api.crisisAxes` + `api.disasterMap` | `canOpenDisasters` |
 | | People and places exposed (moved, OS14 hook) | `/disasters`, axis tab | `api.crisisExposureMap` | `canOpenDisasters` |
 | موارد الحماية المدنية `civil_protection` | Units and resources, register search (kept) | `/resources` | `api.resourcesMap` | `canReadResources` |
+| | Live coverage, repositioning orders, fleet readiness (moved, OS3 follow-ups hook `useFleetMapLayers`) | `/coverage`, `/fleet/report` | `api.coverage`, orders, readiness | `canReadCoverage`, `canReadFleet` |
 | | Ready volunteers (moved) | `/volunteers` | `api.volunteersMap` | map readers |
 | الرصد والاستشعار `monitoring` | Sensors, towers, drones (moved) | their pages | `api.sensors`, `api.towers`, `api.drones` | their gates |
 | | Live streams and cameras (new) | `/streams/wall` | `api.streams` (live) | map readers |
@@ -30,7 +31,7 @@ already in a layer.
 Prevention programmes were already a file layer (`programme.layer_key`). Not done here because they need the
 administrative fill the map already uses for boundaries: the SNACR choropleth and the level of the gouvernorats of the
 command screen (the axis areas carry the level). Data with coordinates that no map draws yet (inspection sites, last
-vehicle positions, PAR teams, OS3 coverage) are proposed for later.
+vehicle positions, PAR teams) are proposed for later.
 
 ## Rules
 
