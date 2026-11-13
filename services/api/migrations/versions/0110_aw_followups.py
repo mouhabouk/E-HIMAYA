@@ -7,8 +7,8 @@
 * ``aw.reminder_day``: one row per gouvernorat and day once the morning review reminder went to its room (08:00), so
   that several worker processes send it once.
 
-Revision ID: 0109_aw_followups
-Revises: 0108_feature_systems
+Revision ID: 0110_aw_followups
+Revises: 0109_call_card_review
 Create Date: 2026-11-13
 """
 
@@ -16,8 +16,8 @@ from collections.abc import Sequence
 
 from migrations.sqlutil import run_script
 
-revision: str = "0109_aw_followups"
-down_revision: str | None = "0108_feature_systems"
+revision: str = "0110_aw_followups"
+down_revision: str | None = "0109_call_card_review"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
