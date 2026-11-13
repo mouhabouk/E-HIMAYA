@@ -6,7 +6,8 @@
 #   ehimaya-ui-reference.xlsx the workbook of every element of every surface (scripts/ui_reference/build.py)
 #   model/                    the relational model: DBML, draw.io, PNG, Word (docs/deliverables/data-model)
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
-#   atlas/                    the flowchart atlas with screenshots and narration (scripts/atlas/run.sh)
+#   atlas/                    the flowchart atlas in chapters: the dashboard, the portal and both apps with every tab and
+#                             window, and the links between each app and the dashboard (scripts/atlas/run.sh)
 #   sim-guide.html            the guide to the [SIM] data and how each item becomes real, with what is still [SIM] in
 #                             the database (scripts/sim_guide/build.py); docs/sql/sim-guide.md is rewritten with it
 #
@@ -18,7 +19,8 @@
 #
 # Needs what the API tests need (a migrated local database in DATABASE_URL and MIGRATION_DATABASE_URL,
 # services/api/.venv), plus openpyxl, Graphviz, docs/deliverables/node_modules and, for the atlas,
-# apps/dashboard/node_modules and Playwright's Chromium. The tables, schemas and relations are counted on that
+# apps/dashboard/node_modules, apps/portal/node_modules and Playwright's Chromium; Flutter (on PATH or in FLUTTER) for the
+# two mobile apps, whose screens are skipped otherwise. The tables, schemas and relations are counted on that
 # database. The DBML and draw.io files are also written back to docs/data-model/ so the repository keeps them.
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)

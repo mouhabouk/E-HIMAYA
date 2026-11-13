@@ -27,10 +27,14 @@ Checklist at the end of a phase:
    local database. It writes the request tracker, the mind maps of each phase, the UI reference workbook
    (`ehimaya-ui-reference.xlsx`), the relational model (DBML, draw.io, PNG, Word and PDF, also written back to
    `docs/data-model/`), the spider web of surfaces, screens, server modules and tables, and the flowchart atlas
-   (screenshots, regions, who opens each screen, narration). Republish each one to its artifact and copy them to
+   in six chapters (Yamen's order: the citizen app; the central room, the command board and the staff app; inspections,
+   prevention and the portal; fleet and personnel; the mother system; positioning, smoke detection and the rest), with
+   every screen, tab and window of the dashboard, the portal and both apps, and one «الترابط» card per chapter. Republish each one to its artifact and copy them to
    `tracking/`, `guides/`, `database/model/` and `atlas/` in the project files. New `docs/versions.md` items join
    the tracker and the mind maps on their own; a request that changes status is edited in
-   `scripts/tracking/requests.py`, and the texts of the atlas are in `scripts/atlas/content.py`.
+   `scripts/tracking/requests.py`, and the texts of the atlas are in `scripts/atlas/content.py` (dashboard), `apps_content.py` and
+   `apps_catalog.py` (portal and apps) and `chapters.py` (chapters and links). Standing rule: these references are
+   rebuilt automatically at every phase end, so they follow development without hand edits.
    The menu (4 blocks, 20 systems) has one source, `apps/dashboard/src/menu/menu.json`: the workbook's «القائمة»
    sheet, the atlas groups, the web's screens and the menu's mind maps read it, and the run stops first if the menu
    and the screens drifted apart (`scripts/menu/check.py`, also in CI). After editing it, `python3 scripts/menu/sync.py`.
