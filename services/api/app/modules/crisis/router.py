@@ -9,17 +9,18 @@ a reporter, a phone number or a victim's identity.
 
 import json
 import uuid
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from geoalchemy2 import Geometry
 from sqlalchemy import cast, func, select
+from sqlalchemy.dialects.postgresql import distinct_on
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
-from app.modules.crisis import domain, schemas, service
+from app.modules.crisis import domain, exposure, schemas, service
 from app.modules.crisis.models import (
     Axis,
     AxisEvent,
@@ -266,7 +267,13 @@ async def get_axis(principal: Reader, session: Session, axis_id: uuid.UUID) -> s
         directives=await _directives(session, principal, members),
         sitreps=await _sitreps(session, principal, ids),
         timeline=[
-            schemas.EventOut(at=e.at, actor_name=e.actor_name if room else None, kind=e.kind, payload=e.payload)
+            schemas.EventOut(
+                at=e.at,
+                actor_name=e.actor_name if room else None,
+                kind=e.kind,
+                # An estimate (OS14) is read whole from its own endpoint; the timeline keeps its figures only.
+                payload={"brief": e.payload.get("brief")} if e.kind == EXPOSURE else e.payload,
+            )
             for e in events
         ],
         documents=[_doc_ref(d) for d in await register.axis_documents(session, principal, ids)],
@@ -330,6 +337,10 @@ async def update_axis(
             gouvernorats=codes,
         )
         await service.notify(session, "updated", axis, codes)
+    if "area" in changes and (await _latest_exposure(session, [axis.id])):
+        # A new area makes the last estimate (OS14) wrong: recompute it with the same ring.
+        await session.flush()
+        await estimate_exposure(session, principal, axis, None)
     await session.flush()
     await session.refresh(axis)
     out = await _axis_out(session, principal, axis, await service.gouvernorat_names(session))
@@ -828,3 +839,115 @@ async def boundaries(principal: Reader, session: Session, response: Response) ->
             for code, ar, fr, en, g in rows.all()
         ],
     }
+
+
+# ---------------------------------------------------------------- OS14: people and places exposed (exposure.py)
+
+EXPOSURE = "exposure"
+
+
+async def _latest_exposure(session: AsyncSession, axis_ids: list[uuid.UUID]) -> dict[uuid.UUID, AxisEvent]:
+    """The latest estimate of each axis."""
+    rows = await session.scalars(
+        select(AxisEvent)
+        .where(AxisEvent.axis_id.in_(axis_ids), AxisEvent.kind == EXPOSURE)
+        .order_by(AxisEvent.axis_id, AxisEvent.at.desc(), AxisEvent.id.desc())
+        .ext(distinct_on(AxisEvent.axis_id))
+    )
+    return {e.axis_id: e for e in rows}
+
+
+async def _area_changed_since(session: AsyncSession, axis_ids: list[uuid.UUID], since: Any) -> bool:
+    later = await session.scalar(
+        select(func.count())
+        .select_from(AxisEvent)
+        .where(
+            AxisEvent.axis_id.in_(axis_ids),
+            AxisEvent.kind == "updated",
+            AxisEvent.at > since,
+            AxisEvent.payload.has_key("area"),
+        )
+    )
+    return bool(later)
+
+
+def _exposure_out(axis: Axis, event: AxisEvent, principal: Principal, *, stale: bool = False) -> schemas.ExposureOut:
+    p = event.payload
+    return schemas.ExposureOut(
+        axis_id=axis.id,
+        axis_number=axis.number,
+        axis_name=axis.name,
+        kind=axis.kind,
+        ring_m=p["ring_m"],
+        core_km2=p["core_km2"],
+        area_km2=p["area_km2"],
+        population=p["population"],
+        delegations=p["delegations"],
+        groups=p["groups"],
+        lines=p["lines"],
+        brief=p["brief"],
+        sources=p["sources"],
+        ring=p.get("ring"),
+        computed_at=p["computed_at"],
+        computed_by=event.actor_name if domain.is_room(principal) else None,
+        stale=stale,
+    )
+
+
+async def estimate_exposure(session: AsyncSession, principal: Principal, axis: Axis, ring_m: int | None) -> AxisEvent:
+    """Computes and records the estimate of the axis (its sub-axes included); 409 when no area is drawn."""
+    members = await service.family(session, axis)
+    if ring_m is None:
+        last = (await _latest_exposure(session, [axis.id])).get(axis.id)
+        ring_m = int(last.payload["ring_m"]) if last else exposure.DEFAULT_RING.get(axis.kind, 500)
+    result = await exposure.compute(session, [m.id for m in members], ring_m, service.now())
+    if result is None:
+        raise service.conflict("axis_no_area")
+    await service.add_event(session, axis.id, principal, EXPOSURE, result)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="crisis.exposure_estimated",
+        target=str(axis.id),
+        details={"number": axis.number, **result["brief"]},
+        gouvernorats=await service.codes_of(session, axis),
+    )
+    await session.flush()
+    return (await _latest_exposure(session, [axis.id]))[axis.id]
+
+
+@router.get("/axes/{axis_id}/exposure", response_model=schemas.ExposureState)
+async def get_exposure(principal: Reader, session: Session, axis_id: uuid.UUID) -> schemas.ExposureState:
+    axis = await service.get_axis(session, axis_id)
+    members = await service.family(session, axis)
+    last = (await _latest_exposure(session, [axis.id])).get(axis.id)
+    has_area = any(m.area is not None for m in members)
+    stale = bool(last) and await _area_changed_since(session, [m.id for m in members], last.at if last else None)
+    return schemas.ExposureState(
+        estimate=_exposure_out(axis, last, principal, stale=stale) if last else None,
+        default_ring_m=exposure.DEFAULT_RING.get(axis.kind, 500),
+        rings=list(exposure.RINGS),
+        can_compute=axis.status == "open" and domain.can_manage_axis(principal, axis.gouvernorat_code),
+        has_area=has_area,
+    )
+
+
+@router.post("/axes/{axis_id}/exposure", response_model=schemas.ExposureOut)
+async def compute_exposure(
+    principal: Reader, session: Session, axis_id: uuid.UUID, body: schemas.ExposureIn
+) -> schemas.ExposureOut:
+    axis = await service.get_axis(session, axis_id, lock=True)
+    _open(axis)
+    _require(domain.can_manage_axis(principal, axis.gouvernorat_code))
+    event = await estimate_exposure(session, principal, axis, body.ring_m)
+    out = _exposure_out(axis, event, principal)
+    await session.commit()
+    return out
+
+
+@router.get("/exposure/map", response_model=schemas.ExposureMap)
+async def exposure_map(principal: Reader, session: Session) -> schemas.ExposureMap:
+    """The latest estimate of each open top axis the caller sees (the optional layer of the interactive map)."""
+    axes = await _top_axes(session, "open")
+    latest = await _latest_exposure(session, [a.id for a in axes])
+    return schemas.ExposureMap(items=[_exposure_out(a, latest[a.id], principal) for a in axes if a.id in latest])

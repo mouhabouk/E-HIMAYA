@@ -128,6 +128,7 @@ export const WINDOW_NOW: WindowNow = {
       plan_document_id: "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f",
       plan_title: "[SIM] مخطط مجابهة حرائق الغابات",
       incidents: 7,
+      exposure: { population: 18000, core_population: 12000, health: 1, elderly: 0, education: 2, lines_cut: 1, ring_m: 1000, at: "2026-10-28T08:40:00Z" },
     },
   ],
   open_incidents: [

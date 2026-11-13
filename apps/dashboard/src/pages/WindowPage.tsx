@@ -163,6 +163,20 @@ function NowTab() {
                       ? t("window.now.planText")
                       : t("window.now.noPlan")}
                 </p>
+                {a.exposure && (
+                  <p className="win-axis__exposure">
+                    <strong>{t("window.now.exposure")}</strong>
+                    <span>{t("window.now.exposurePeople", { n: fmt.number(a.exposure.population), core: fmt.number(a.exposure.core_population) })}</span>
+                    <span>{t("window.now.exposureHealth", { n: a.exposure.health })}</span>
+                    <span>{t("window.now.exposureEducation", { n: a.exposure.education })}</span>
+                    <span>{t("window.now.exposureElderly", { n: a.exposure.elderly })}</span>
+                    <span>{t("window.now.exposureLines", { n: a.exposure.lines_cut })}</span>
+                    <span className="muted">{t("window.now.exposureAt", { at: fmt.time(a.exposure.at) })}</span>
+                    {toAxis && !now.delegated && (
+                      <Link to={`/axes/${a.id}?tab=exposure`}>{t("window.now.exposureOpen")}</Link>
+                    )}
+                  </p>
+                )}
                 {toAxis && !now.delegated && (
                   <p>
                     <Link className="btn btn--small btn--ghost" to={`/axes/${a.id}?tab=resources`}>

@@ -2,6 +2,9 @@
 
 - Replies to the project owner (Yamen) are in Arabic.
 - Every surface follows `docs/design-system.md` (standing rule).
+- Integration first (Yamen, 2026-11-13, standing rule): a new feature joins the screens, pages and data that already
+  exist (crisis axis, decision window, interactive map ...) instead of a new standalone page; no duplicated element or
+  hazard drawn twice. Any data on a map is also an optional layer of the interactive map, without removing its source.
 - At the end of every phase, update the design reference, the UML diagrams, the project description, the
   specification and the presentation for officials together, as described in `docs/phase-end.md`. Not after each element.
 - One HTML report per phase, plus `docs/versions.md`. Simulations carry the amber [SIM] badge.

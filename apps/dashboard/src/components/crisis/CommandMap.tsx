@@ -3,7 +3,17 @@ import type { GeoJSONSource, Map as MlMap, Marker, StyleSpecification } from "ma
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { Area, AxisIncident, Evacuation, Shelter } from "../../lib/crisis";
+import {
+  DRAWN_GROUPS,
+  EXPOSURE_CORE,
+  EXPOSURE_GROUPS,
+  EXPOSURE_RING,
+  type Area,
+  type AxisIncident,
+  type Evacuation,
+  type Exposure,
+  type Shelter,
+} from "../../lib/crisis";
 import type { BBox } from "../../lib/filters";
 import { maplibregl } from "../../lib/maplibre";
 import { OSM_RASTER_STYLE } from "../../lib/mapStyle";
@@ -30,6 +40,8 @@ export interface CommandMapProps {
   shelters?: Shelter[];
   evacuations?: Evacuation[];
   decisionAreas?: { id: string; area: Area | null }[];
+  /** OS14: the latest estimate of the axis: its band and the sensitive places inside (a layer of its own). */
+  exposure?: Exposure | null;
   /** Gouvernorat names drawn on the map (code → name). */
   labels?: Readonly<Record<number, string>>;
   onSelectGouvernorat?: (code: number) => void;
@@ -47,8 +59,8 @@ function framePadding(el: HTMLElement | null, framed: boolean | undefined) {
   return { top: 96, bottom: Math.round(el.clientHeight * 0.34) + 24, left: side, right: side };
 }
 
-type LayerKey = "gouvernorats" | "axes" | "incidents" | "shelters" | "evacuations" | "decisions";
-const LAYER_KEYS: LayerKey[] = ["gouvernorats", "axes", "incidents", "shelters", "evacuations", "decisions"];
+type LayerKey = "gouvernorats" | "axes" | "incidents" | "shelters" | "evacuations" | "decisions" | "exposure";
+const LAYER_KEYS: LayerKey[] = ["gouvernorats", "axes", "incidents", "shelters", "evacuations", "decisions", "exposure"];
 const LAYER_IDS: Record<LayerKey, string[]> = {
   gouvernorats: ["g-fill", "g-extrude", "g-line"],
   axes: ["axis-fill", "axis-glow", "axis-line"],
@@ -56,6 +68,7 @@ const LAYER_IDS: Record<LayerKey, string[]> = {
   shelters: ["shelter-core"],
   evacuations: ["evac-fill", "evac-line"],
   decisions: ["dec-line"],
+  exposure: ["expo-fill", "expo-line", "expo-place"],
 };
 
 /** Colours of the design system (light / dark values, docs/design-system.md §2). */
@@ -141,6 +154,7 @@ export function CommandMap(props: CommandMapProps) {
     shelters: true,
     evacuations: true,
     decisions: true,
+    exposure: true,
   });
   const [panelOpen, setPanelOpen] = useState(true);
   const panelId = useId();
@@ -187,8 +201,20 @@ export function CommandMap(props: CommandMapProps) {
       ),
       evacuations: areas(props.evacuations ?? [], () => ({})),
       decisions: areas(props.decisionAreas ?? [], () => ({})),
+      exposure: collection(
+        props.exposure
+          ? [
+              ...(props.exposure.ring ? [feature(props.exposure.ring, { ring: true })] : []),
+              ...EXPOSURE_GROUPS.filter((g) => DRAWN_GROUPS.includes(g)).flatMap((g) =>
+                (props.exposure?.groups[g].items ?? []).map((p) =>
+                  feature({ type: "Point", coordinates: [p.lon, p.lat] }, { core: p.zone === "core", group: g }),
+                ),
+              ),
+            ]
+          : [],
+      ),
     };
-  }, [props.boundaries, props.levels, props.focus, props.axisAreas, props.incidents, props.shelters, props.evacuations, props.decisionAreas]);
+  }, [props.boundaries, props.levels, props.focus, props.axisAreas, props.incidents, props.shelters, props.evacuations, props.decisionAreas, props.exposure]);
 
   // Create the map once per theme (the base style and the colours follow the theme).
   useEffect(() => {
@@ -272,6 +298,20 @@ export function CommandMap(props: CommandMapProps) {
         paint: { "line-color": levelColour as never, "line-width": 2 },
       });
       instance.addLayer({
+        id: "expo-fill",
+        type: "fill",
+        source: "exposure",
+        filter: ["has", "ring"],
+        paint: { "fill-color": EXPOSURE_RING, "fill-opacity": 0.12 },
+      });
+      instance.addLayer({
+        id: "expo-line",
+        type: "line",
+        source: "exposure",
+        filter: ["has", "ring"],
+        paint: { "line-color": EXPOSURE_RING, "line-width": 2, "line-dasharray": [3, 2] },
+      });
+      instance.addLayer({
         id: "dec-line",
         type: "line",
         source: "decisions",
@@ -296,6 +336,18 @@ export function CommandMap(props: CommandMapProps) {
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 3.5, 12, 7] as never,
           "circle-color": band as never,
+          "circle-stroke-color": dark ? "#0e1426" : "#ffffff",
+          "circle-stroke-width": 1.5,
+        },
+      });
+      instance.addLayer({
+        id: "expo-place",
+        type: "circle",
+        source: "exposure",
+        filter: ["!", ["has", "ring"]],
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 3, 12, 6] as never,
+          "circle-color": ["case", ["get", "core"], EXPOSURE_CORE, EXPOSURE_RING] as never,
           "circle-stroke-color": dark ? "#0e1426" : "#ffffff",
           "circle-stroke-width": 1.5,
         },
@@ -424,7 +476,7 @@ export function CommandMap(props: CommandMapProps) {
           </svg>
         </button>
         <ul id={panelId} hidden={!panelOpen}>
-          {LAYER_KEYS.map((key) => (
+          {LAYER_KEYS.filter((key) => key !== "exposure" || props.exposure).map((key) => (
             <li key={key}>
               <button
                 type="button"

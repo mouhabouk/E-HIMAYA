@@ -4,6 +4,7 @@ import { lazy, Suspense, useId, useMemo, useState, type SyntheticEvent } from "r
 import { useTranslation } from "react-i18next";
 import { Link, useParams, useSearchParams } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
+import { ExposurePanel } from "../components/crisis/ExposurePanel";
 import { Bars, Clock, DirectiveItem, FigureTiles, LevelPill, Panel, SimBadge } from "../components/crisis/CrisisBits";
 import { useServices } from "../context/services";
 import { errorMessageKey } from "../lib/api";
@@ -19,7 +20,7 @@ import { initialBoundsFor } from "../lib/mapStyle";
 
 const CommandMap = lazy(() => import("../components/crisis/CommandMap").then((m) => ({ default: m.CommandMap })));
 
-type Tab = "decisions" | "tasks" | "documents" | "sitreps" | "timeline" | "resources";
+type Tab = "decisions" | "tasks" | "documents" | "sitreps" | "timeline" | "resources" | "exposure";
 
 function useInvalidate() {
   const qc = useQueryClient();
@@ -343,8 +344,13 @@ export function AxisPage() {
   const { api, mapStyleUrl } = useServices();
   const { nameOf } = useGouvernorats();
   const [params] = useSearchParams();
-  const [tab, setTab] = useState<Tab>(() => (params.get("tab") === "resources" ? "resources" : "decisions"));
+  const [tab, setTab] = useState<Tab>(() => {
+    const asked = params.get("tab");
+    return asked === "resources" || asked === "exposure" ? asked : "decisions";
+  });
   const detail = useQuery({ queryKey: crisisKeys.axis(id), queryFn: ({ signal }) => api.crisisAxis(id, signal), refetchInterval: 30_000 });
+  // OS14: the latest estimate of the people and places exposed, drawn on the axis map (its own layer).
+  const exposure = useQuery({ queryKey: crisisKeys.exposure(id), queryFn: ({ signal }) => api.crisisExposure(id, signal) });
   const boundaries = useQuery({ queryKey: crisisKeys.boundaries, queryFn: ({ signal }) => api.crisisBoundaries(signal), staleTime: Infinity });
   const d = detail.data;
   const family = useMemo(() => (d ? [d.axis, ...d.axis.children] : []), [d]);
@@ -377,6 +383,7 @@ export function AxisPage() {
             shelters={d.shelters}
             evacuations={d.evacuations}
             decisionAreas={d.directives.filter((x) => !x.overridden_by).map((x) => ({ id: x.id, area: x.area }))}
+            exposure={exposure.data?.estimate ?? null}
             tilted={false}
           />
         </Suspense>
@@ -484,7 +491,7 @@ export function AxisPage() {
 
       <section className="ops-bottom" aria-label={t("crisis.command.follow")}>
         <div role="tablist" className="ops-tabs" aria-label={t("crisis.command.follow")}>
-          {(["decisions", "tasks", "documents", "sitreps", "timeline", "resources"] as const).map((k) => (
+          {(["decisions", "tasks", "documents", "sitreps", "timeline", "resources", "exposure"] as const).map((k) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} className="ops-tab" onClick={() => setTab(k)}>
               {t(`crisis.command.tab.${k}`)}
             </button>
@@ -510,6 +517,7 @@ export function AxisPage() {
           {tab === "tasks" && <PlanChecklist owner={{ kind: "axis", id: a.id }} />}
           {tab === "sitreps" && <Sitreps d={d} />}
           {tab === "resources" && <AreaResources axis={a} />}
+          {tab === "exposure" && <ExposurePanel axis={a} />}
           {tab === "timeline" && (
             <ol className="timeline">
               {d.timeline.map((e, n) => (
