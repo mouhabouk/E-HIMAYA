@@ -106,6 +106,17 @@ class StaffApi {
   Future<Map<String, dynamic>> addressWarnings(String missionId) =>
       _call('GET', '/missions/$missionId/address-warnings');
 
+  /// OS7 (optional module): the danger-zone check of a mission; 404 while the module is off.
+  Future<Map<String, dynamic>> par(String missionId) =>
+      _call('GET', '/missions/$missionId/par');
+
+  /// OS7: enter, confirm, away, back, missing, sitrep or exit; the new state comes back.
+  Future<Map<String, dynamic>> parAction(
+    String missionId,
+    String action, [
+    Map<String, dynamic> body = const {},
+  ]) => _call('POST', '/missions/$missionId/par/$action', body: body);
+
   /// OS8: «قرأت التحذيرات», every warning shown at once.
   Future<Map<String, dynamic>> ackAddressWarnings(String missionId) => _call(
     'POST',

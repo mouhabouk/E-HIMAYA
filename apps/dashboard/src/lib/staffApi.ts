@@ -30,6 +30,7 @@ import { crewApi } from "./crewApi";
 import { guideApi } from "./guide";
 import { addressWarningsApi } from "./addressWarnings";
 import { liaisonApi } from "./liaison";
+import { parApi } from "./par";
 import { callCardsApi, type CallCardBody } from "./callCards";
 import { layersApi } from "./layersApi";
 import { phase7Api } from "./phase7Api";
@@ -313,6 +314,7 @@ export function staffApi(api: ApiClient) {
     ...callCardsApi(api),
     ...addressWarningsApi(api),
     ...liaisonApi(api),
+    ...parApi(api),
     ...preventionApi(api),
     ...contactApi(api),
     ...safetyApi(api),

@@ -7520,4 +7520,185 @@ class AppLocalizationsEn extends AppLocalizations {
   String inspErrGeneric(String code) {
     return 'The server refused ($code).';
   }
+
+  @override
+  String get parTitle => 'Danger-zone check';
+
+  @override
+  String get parEnterHint =>
+      'Before going into the danger zone, start the timer: the room sees your team and you confirm it is complete at every check.';
+
+  @override
+  String get parEnterHot => 'We enter the hot zone';
+
+  @override
+  String get parEnterWarm => 'We enter the warm zone';
+
+  @override
+  String get parClosed => 'Check ended and archived with the intervention';
+
+  @override
+  String get parPaused => 'Check paused by the commander or the room';
+
+  @override
+  String parLeft(String time) {
+    return '$time to the next check';
+  }
+
+  @override
+  String get parUntilCheck => 'to the next check';
+
+  @override
+  String parZoneHot(int min) {
+    return 'Hot zone · every $min min';
+  }
+
+  @override
+  String parZoneWarm(int min) {
+    return 'Warm zone · every $min min';
+  }
+
+  @override
+  String parLastConfirmed(String time) {
+    return 'Last confirmed $time';
+  }
+
+  @override
+  String parSetTime(String time) {
+    return 'Set time $time';
+  }
+
+  @override
+  String parOutAt(String time) {
+    return 'Out of the zone at $time';
+  }
+
+  @override
+  String parCrew(int n) {
+    return 'Crew in the zone ($n)';
+  }
+
+  @override
+  String get parLeader => 'Team leader';
+
+  @override
+  String get parAway => 'Out for a while';
+
+  @override
+  String get parBack => 'Back';
+
+  @override
+  String parAwayNow(String why) {
+    return 'Out: $why';
+  }
+
+  @override
+  String parAwayTitle(String name) {
+    return 'Why is $name out?';
+  }
+
+  @override
+  String get parAwayNote =>
+      'Not counted at the checks until back; the room sees it.';
+
+  @override
+  String get parAwayAir => 'Air refill';
+
+  @override
+  String get parAwayWater => 'Water or fuel';
+
+  @override
+  String get parAwayCare => 'Care';
+
+  @override
+  String get parAwayRest => 'Rest';
+
+  @override
+  String get parAwayOther => 'Other task';
+
+  @override
+  String get parAllHere => 'All here now';
+
+  @override
+  String get parSitrep => 'Word from the scene';
+
+  @override
+  String get parMissing => 'Missing resource';
+
+  @override
+  String get parWeAreOut => 'We are out';
+
+  @override
+  String parMissingLine(String resource, String name) {
+    return 'Missing: $resource · with $name';
+  }
+
+  @override
+  String get parMissingWhat => 'What is missing?';
+
+  @override
+  String get parMissingWho => 'Who had it?';
+
+  @override
+  String get parMissingPlace => 'Last known place (optional)';
+
+  @override
+  String get parAddResource => 'Add a resource or equipment';
+
+  @override
+  String get parMissingSend => 'Report the missing resource';
+
+  @override
+  String get parSitrepTitle => 'Is the incident under control?';
+
+  @override
+  String get parSituationControlled => 'Under control';
+
+  @override
+  String get parSituationProgress => 'Being brought under control';
+
+  @override
+  String get parSituationNot => 'Not under control';
+
+  @override
+  String get parReinforcement => 'Ask for reinforcement';
+
+  @override
+  String get parSpeak => 'Speak: turned into text';
+
+  @override
+  String get parSitrepText => 'Message (typed)';
+
+  @override
+  String get parSitrepCorrect => 'The text heard: correct it before sending';
+
+  @override
+  String get parSitrepSend => 'Send to the commander and the room';
+
+  @override
+  String parLastWord(String situation) {
+    return 'Last word sent: $situation';
+  }
+
+  @override
+  String parExitTitle(int out, int all) {
+    return 'Headcount at the exit: $out of $all';
+  }
+
+  @override
+  String get parExitHint =>
+      'Tick every member out of the zone: the timer stops only when everyone is out.';
+
+  @override
+  String get parExitSend => 'Everyone is out';
+
+  @override
+  String get parHeadcountIncomplete => 'A member is still inside';
+
+  @override
+  String get parNote =>
+      'The check is filed with the intervention when it ends.';
+
+  @override
+  String get parFailed => 'Not sent: check the network and try again';
 }

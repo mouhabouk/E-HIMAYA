@@ -7587,4 +7587,185 @@ class AppLocalizationsFr extends AppLocalizations {
   String inspErrGeneric(String code) {
     return 'Le serveur a refusé ($code).';
   }
+
+  @override
+  String get parTitle => 'Contrôle en zone de danger';
+
+  @override
+  String get parEnterHint =>
+      'Avant d\'entrer dans la zone de danger, lancez le compteur : la salle voit l\'équipe et vous confirmez qu\'elle est au complet à chaque contrôle.';
+
+  @override
+  String get parEnterHot => 'Entrée en zone chaude';
+
+  @override
+  String get parEnterWarm => 'Entrée en zone tiède';
+
+  @override
+  String get parClosed => 'Contrôle clos et archivé avec l\'intervention';
+
+  @override
+  String get parPaused => 'Contrôle suspendu par le commandant ou la salle';
+
+  @override
+  String parLeft(String time) {
+    return '$time avant le prochain contrôle';
+  }
+
+  @override
+  String get parUntilCheck => 'avant le contrôle';
+
+  @override
+  String parZoneHot(int min) {
+    return 'Zone chaude · toutes les $min min';
+  }
+
+  @override
+  String parZoneWarm(int min) {
+    return 'Zone tiède · toutes les $min min';
+  }
+
+  @override
+  String parLastConfirmed(String time) {
+    return 'Dernière confirmation $time';
+  }
+
+  @override
+  String parSetTime(String time) {
+    return 'Heure fixée $time';
+  }
+
+  @override
+  String parOutAt(String time) {
+    return 'Sortie de la zone à $time';
+  }
+
+  @override
+  String parCrew(int n) {
+    return 'Équipage dans la zone ($n)';
+  }
+
+  @override
+  String get parLeader => 'Chef d\'équipe';
+
+  @override
+  String get parAway => 'Sortie temporaire';
+
+  @override
+  String get parBack => 'Revenu';
+
+  @override
+  String parAwayNow(String why) {
+    return 'Sorti : $why';
+  }
+
+  @override
+  String parAwayTitle(String name) {
+    return 'Pourquoi $name sort-il ?';
+  }
+
+  @override
+  String get parAwayNote =>
+      'Non compté aux contrôles jusqu\'à son retour ; la salle le voit.';
+
+  @override
+  String get parAwayAir => 'Recharge d\'air';
+
+  @override
+  String get parAwayWater => 'Eau ou carburant';
+
+  @override
+  String get parAwayCare => 'Soins';
+
+  @override
+  String get parAwayRest => 'Repos';
+
+  @override
+  String get parAwayOther => 'Autre tâche';
+
+  @override
+  String get parAllHere => 'Tous présents';
+
+  @override
+  String get parSitrep => 'Compte rendu';
+
+  @override
+  String get parMissing => 'Ressource manquante';
+
+  @override
+  String get parWeAreOut => 'Nous sommes sortis';
+
+  @override
+  String parMissingLine(String resource, String name) {
+    return 'Manquant : $resource · avec $name';
+  }
+
+  @override
+  String get parMissingWhat => 'Qu\'est-ce qui manque ?';
+
+  @override
+  String get parMissingWho => 'Qui l\'avait ?';
+
+  @override
+  String get parMissingPlace => 'Dernier lieu connu (facultatif)';
+
+  @override
+  String get parAddResource => 'Ajouter une ressource ou un équipement';
+
+  @override
+  String get parMissingSend => 'Signaler';
+
+  @override
+  String get parSitrepTitle => 'L\'incident est-il maîtrisé ?';
+
+  @override
+  String get parSituationControlled => 'Maîtrisé';
+
+  @override
+  String get parSituationProgress => 'En voie de maîtrise';
+
+  @override
+  String get parSituationNot => 'Non maîtrisé';
+
+  @override
+  String get parReinforcement => 'Demander un renfort';
+
+  @override
+  String get parSpeak => 'Dicter : transcrit en texte';
+
+  @override
+  String get parSitrepText => 'Message (saisi)';
+
+  @override
+  String get parSitrepCorrect => 'Texte entendu : corrigez-le avant l\'envoi';
+
+  @override
+  String get parSitrepSend => 'Envoyer au commandant et à la salle';
+
+  @override
+  String parLastWord(String situation) {
+    return 'Dernier compte rendu : $situation';
+  }
+
+  @override
+  String parExitTitle(int out, int all) {
+    return 'Comptage à la sortie : $out sur $all';
+  }
+
+  @override
+  String get parExitHint =>
+      'Cochez chaque membre sorti : le compteur ne s\'arrête que lorsque tous sont sortis.';
+
+  @override
+  String get parExitSend => 'Tous sont sortis';
+
+  @override
+  String get parHeadcountIncomplete => 'Un membre est encore dans la zone';
+
+  @override
+  String get parNote =>
+      'Le contrôle est archivé avec l\'intervention à la fin.';
+
+  @override
+  String get parFailed => 'Non envoyé : vérifiez le réseau et réessayez';
 }

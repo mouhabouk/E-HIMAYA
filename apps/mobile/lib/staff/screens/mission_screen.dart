@@ -22,6 +22,7 @@ import 'call_card_screen.dart';
 import 'detailed_report_screen.dart';
 import 'field_flow.dart';
 import 'field_widgets.dart';
+import 'par_screen.dart';
 import 'record_screen.dart';
 import 'situation_screen.dart';
 import 'staff_live_screen.dart';
@@ -77,6 +78,8 @@ class MissionScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 // OS8: what the room knows about this address, read before going in.
                 AddressWarningsCard(missionId: m.id),
+                // OS7 (optional module): the danger-zone check; absent while the module is off.
+                if (shows('field_par')) ParCard(missionId: m.id),
                 for (final a in m.alerts) AlertLine(alert: a),
                 _Timeline(mission: m, away: away),
                 const SizedBox(height: 12),
