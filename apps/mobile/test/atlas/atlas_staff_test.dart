@@ -321,8 +321,9 @@ void main() {
             store = await signedInStore();
             await StaffVault(store).setPin('123456', 'salt');
         }
-        if (c.who == Who.onShift || c.who == Who.onScene)
+        if (c.who == Who.onShift || c.who == Who.onScene) {
           server.shiftOpen = true;
+        }
         if (c.who == Who.onShift) server.missions.add(FakeCrewServer.mission());
         if (c.who == Who.onScene) {
           server.missions.add(onSceneMission());
@@ -372,8 +373,9 @@ void main() {
             }
             continue;
           }
-          if (k.startsWith('mission-') || k == 'open-inspector')
+          if (k.startsWith('mission-') || k == 'open-inspector') {
             since = server.adapter.requests.length;
+          }
           await tapKey(tester, k);
         }
         if (c.push != null && !c.taps.contains('__pin')) {
