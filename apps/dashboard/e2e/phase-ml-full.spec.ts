@@ -251,4 +251,60 @@ test.describe("Interactive map: full picture", () => {
     await map.screenshot({ path: `${SHOTS}/ml-full-map.png` });
     await page.screenshot({ path: `${SHOTS}/ml-full-page.png`, fullPage: true });
   });
+
+  test("a layer hides and another shows, one switch at a time", async ({ page }) => {
+    test.setTimeout(120_000);
+    await mockApi(page);
+    await signIn(page, ["operator"], "القاعة الوطنية");
+    await page.addInitScript(() => window.localStorage.setItem("ehimaya.lang", "ar"));
+    await page.goto("/map?layers=incidents,hotspots");
+    const map = page.locator(".maplibregl-map").first();
+    const box = (name: string) => page.getByRole("checkbox", { name, exact: true });
+    const fire = page.getByRole("button", { name: /^حريق غابة —/ });
+    const tabarka = page.getByRole("button", { name: /^شاطئ طبرقة \[SIM\] —/ });
+    const shelter = page.getByRole("button", { name: /^ملجأ المعهد الثانوي بجندوبة —/ });
+    const camera = page.getByRole("button", { name: /^كاميرا برج عين دراهم \[SIM\] —/ });
+    const shot = async (n: number) => {
+      await page.waitForTimeout(2500);
+      await map.screenshot({ path: `${SHOTS}/ml-toggle-${n}.png` });
+    };
+
+    // 1. Interventions and hotspots, as a source screen opened them.
+    await expect(fire).toBeVisible();
+    await map.scrollIntoViewIfNeeded();
+    await shot(1);
+
+    // 2. The interventions hidden, the beaches shown.
+    await box("التدخّلات المفتوحة").uncheck();
+    await expect(fire).toHaveCount(0);
+    await page.getByRole("button", { name: /المواسم والسواحل/ }).click();
+    await box("الشواطئ ورايات الخطر").check();
+    await expect(tabarka).toBeVisible();
+    await shot(2);
+
+    // 3. The hotspots and the beaches hidden, the open axes shown.
+    await box("البؤر الساخنة (7 أيام)").uncheck();
+    await box("الشواطئ ورايات الخطر").uncheck();
+    await expect(tabarka).toHaveCount(0);
+    await page.getByRole("button", { name: /الأزمات والمحاور/ }).click();
+    await box("المحاور المفتوحة: مناطقها وملاجئها ومناطق الإخلاء").check();
+    await expect(shelter).toBeVisible();
+    await shot(3);
+
+    // 4. The live streams added over the axes.
+    await page.getByRole("button", { name: /الرصد والاستشعار/ }).click();
+    await box("البث المباشر والكاميرات").check();
+    await expect(camera).toBeVisible();
+    await shot(4);
+
+    // 5. The folder's own switch: all its layers on (it was mixed), then all off; only the streams remain.
+    const folder = page.getByRole("checkbox", { name: /إظهار كل طبقات الأزمات والمحاور/ });
+    await folder.check();
+    await expect(box("المعرّضون للخطر")).toBeChecked();
+    await folder.uncheck();
+    await expect(box("المحاور المفتوحة: مناطقها وملاجئها ومناطق الإخلاء")).not.toBeChecked();
+    await expect(shelter).toHaveCount(0);
+    await expect(camera).toBeVisible();
+    await shot(5);
+  });
 });
