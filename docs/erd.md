@@ -3249,6 +3249,13 @@ erDiagram
         datetime created_at
         text updated_by_name
         datetime updated_at
+        datetime submitted_at
+        text submitted_by_name
+        datetime returned_at
+        text returned_by_name
+        text returned_reason
+        boolean unchanged
+        jsonb notes
     }
     reports__call_card_answer {
         uuid report_id PK,FK
@@ -3264,6 +3271,13 @@ erDiagram
         text field_by
         text field_by_name
         datetime field_at
+    }
+    reports__call_card_reviewer {
+        text category PK
+        text office
+        text doctor
+        text updated_by_name
+        datetime updated_at
     }
     reports__camera_event {
         bigint id PK
@@ -3432,6 +3446,8 @@ erDiagram
         text intake_channel
         text entered_by
         text entered_by_name
+        text entered_room
+        datetime entry_started_at
         vector_768 embedding
         datetime created_at
         datetime received_at

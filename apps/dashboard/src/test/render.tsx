@@ -420,6 +420,22 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
     discardCardDraft: vi.fn(),
     validateCardMedical: vi.fn(),
     approveCard: vi.fn(),
+    cardReview: vi.fn(() => Promise.resolve({ items: [], done: 0, total: 0 })),
+    setCardReviewers: vi.fn(),
+    confirmCard: vi.fn(),
+    submitCard: vi.fn(),
+    returnCard: vi.fn(),
+    cardStats: vi.fn(() =>
+      Promise.resolve({
+        days: 30,
+        since: "2026-10-14T00:00:00Z",
+        room: null,
+        total: { entered: 0, with_card: 0, median_with_s: null, median_without_s: null, p90_s: null, field_checked: 0, field_confirmed: 0 },
+        national: { entered: 0, with_card: 0, median_with_s: null, median_without_s: null, p90_s: null, field_checked: 0, field_confirmed: 0 },
+        rooms: [],
+        cards: [],
+      }),
+    ),
     reportCallCard: vi.fn(() => Promise.reject(new ApiError(404, "no_call_card"))),
     // OS8: address warnings.
     awCategories: vi.fn(() => Promise.resolve([])),

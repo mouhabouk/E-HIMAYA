@@ -7,14 +7,18 @@
   coordinator, or the content editor naming the doctor who validated it, as for the emergency guide).
 * A national room manager approves a draft: it replaces the approved version, which is retired (kept, as every
   report keeps the version it was entered with).
+* The review of the nine [SIM] cards (OS2-4, docs/phase-os2b/design-os2b.md §3): the Office writes a draft (or
+  confirms the [SIM] text as it is), notes its reasons per question and hands it over; the doctor validates the
+  medical cards or sends the draft back with a note, as the room manager may; the room manager approves. Who reviews
+  each card is recorded by name. The statistics of the cards (OS2-3) are at ``/call-cards/stats``.
 """
 
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from pydantic import BaseModel, StringConstraints
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,11 +26,12 @@ from app.core.access import NATIONAL_SCOPE_REQUIRED, Action, authorize, require
 from app.core.db import as_system, get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit import service as audit
+from app.modules.reports import callcard_stats as stats
 from app.modules.reports import callcards as cc
 from app.modules.reports import service
 from app.modules.reports.callcards import AnswerOut
 from app.modules.reports.domain import Category
-from app.modules.reports.models import CallCard, CallCardAnswer, Report
+from app.modules.reports.models import CallCard, CallCardAnswer, CallCardReviewer, Report
 
 router = APIRouter(prefix="/api/v1/staff", tags=["staff", "call-cards"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -37,6 +42,8 @@ Reader = Annotated[
 Editor = Annotated[Principal, Depends(require_roles(Role.CONTENT_EDITOR, Role.OPS_MANAGER))]
 MedicalValidator = Annotated[Principal, Depends(require_roles(Role.MEDICAL_COORDINATOR, Role.CONTENT_EDITOR))]
 Approver = Annotated[Principal, Depends(require_roles(Role.OPS_MANAGER))]
+# Who may send a handed-over draft back to the Office with a note: the doctor, the room manager.
+Returner = Annotated[Principal, Depends(require_roles(Role.MEDICAL_COORDINATOR, Role.OPS_MANAGER))]
 ReportReader = Annotated[
     Principal,
     Depends(
@@ -47,6 +54,10 @@ ReportReader = Annotated[
 ]
 
 Reason = Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=500)]
+Note = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
+Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+# The key of the reviewer's note on the whole card, beside the notes per question.
+CARD_NOTE = "_card"
 
 
 class CardOut(BaseModel):
@@ -67,6 +78,13 @@ class CardOut(BaseModel):
     updated_by_name: str | None
     updated_at: datetime
     used: int = 0
+    submitted_at: datetime | None = None
+    submitted_by_name: str | None = None
+    returned_at: datetime | None = None
+    returned_by_name: str | None = None
+    returned_reason: str | None = None
+    unchanged: bool = False
+    notes: dict[str, str] = {}
 
 
 class CardsOut(BaseModel):
@@ -76,6 +94,8 @@ class CardsOut(BaseModel):
 class DraftIn(BaseModel):
     content: cc.CardContent
     reason: Reason
+    # The Office's note per question id (``_card`` for the whole card): why it changed, for the reviewers.
+    notes: dict[str, Note] = Field(default_factory=dict, max_length=21)
 
 
 class DraftUpdateIn(DraftIn):
@@ -139,7 +159,21 @@ def _out(card: CallCard, used: int = 0) -> CardOut:
         updated_by_name=card.updated_by_name,
         updated_at=card.updated_at,
         used=used,
+        submitted_at=card.submitted_at,
+        submitted_by_name=card.submitted_by_name,
+        returned_at=card.returned_at,
+        returned_by_name=card.returned_by_name,
+        returned_reason=card.returned_reason,
+        unchanged=card.unchanged,
+        notes=card.notes or {},
     )
+
+
+def _notes(content: cc.CardContent, notes: dict[str, str]) -> dict[str, str]:
+    ids = {q.id for q in content.questions} | {CARD_NOTE}
+    if any(k not in ids for k in notes):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "call_card_note")
+    return dict(notes)
 
 
 async def _card(session: AsyncSession, card_id: uuid.UUID, lock: bool = False) -> CallCard:
@@ -185,6 +219,7 @@ async def create_draft(principal: Editor, session: Session, category: Category, 
         content=body.content.model_dump(mode="json"),
         sim=False,
         medical=_is_medical(category.value, body.content),
+        notes=_notes(body.content, body.notes),
         created_by=audit.actor_of(principal),
         created_by_name=audit.name_of(principal),
         updated_by_name=audit.name_of(principal),
@@ -216,7 +251,11 @@ async def update_draft(principal: Editor, session: Session, card_id: uuid.UUID, 
         raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
     card.content = body.content.model_dump(mode="json")
     card.medical = _is_medical(card.category, body.content)
+    card.notes = _notes(body.content, body.notes)
     card.medical_validated_by = card.medical_validated_at = card.medical_reason = None
+    # The text changed: the Office hands it over again, and it is no longer the [SIM] text confirmed as it is.
+    card.submitted_at = card.submitted_by_name = None
+    card.unchanged = False
     card.updated_by_name = audit.name_of(principal)
     card.updated_at = datetime.now(UTC)
     await audit.record(
@@ -315,6 +354,233 @@ async def approve(principal: Approver, session: Session, card_id: uuid.UUID, bod
     )
     await session.commit()
     return _out(card)
+
+
+# ---------------------------------------------------------------- the review of the [SIM] cards (OS2-4)
+
+Stage = Literal["not_started", "office", "doctor", "approval", "done"]
+
+
+class ReviewItem(BaseModel):
+    category: Category
+    title: str
+    #: ``not_started``: the [SIM] text, no draft; ``office``: a draft the Office writes (or got back);
+    #: ``doctor``: handed over, waiting for the medical validation; ``approval``: waiting for the room manager;
+    #: ``done``: the approved version is the Office's own.
+    stage: Stage
+    medical: bool
+    approved: CardOut | None
+    draft: CardOut | None
+    office: str | None
+    doctor: str | None
+
+
+class ReviewOut(BaseModel):
+    items: list[ReviewItem]
+    done: int
+    total: int
+
+
+class ReviewersIn(BaseModel):
+    office: Name | None = None
+    doctor: Name | None = None
+    reason: Reason
+
+
+def stage_of(approved_card: CallCard | None, draft: CallCard | None) -> Stage:
+    if draft is not None:
+        if draft.submitted_at is None:
+            return "office"
+        if draft.medical and draft.medical_validated_at is None:
+            return "doctor"
+        return "approval"
+    if approved_card is None or approved_card.sim:
+        return "not_started"
+    return "done"
+
+
+@router.get("/call-cards/review", response_model=ReviewOut)
+async def review(principal: Reader, session: Session) -> ReviewOut:
+    """Where the review of each category's card stands, with its reviewers."""
+    cards = list(await session.scalars(select(CallCard).where(CallCard.status != "retired")))
+    reviewers = {r.category: r for r in await session.scalars(select(CallCardReviewer))}
+    items: list[ReviewItem] = []
+    for category in Category:
+        approved_card = next((c for c in cards if c.category == category and c.status == "approved"), None)
+        draft = next((c for c in cards if c.category == category and c.status == "draft"), None)
+        shown = draft or approved_card
+        if shown is None:
+            continue
+        who = reviewers.get(category.value)
+        content = cc.CardContent.model_validate(shown.content)
+        items.append(
+            ReviewItem(
+                category=category,
+                title=content.title,
+                stage=stage_of(approved_card, draft),
+                medical=_is_medical(category.value, content),
+                approved=_out(approved_card) if approved_card else None,
+                draft=_out(draft) if draft else None,
+                office=who.office if who else None,
+                doctor=who.doctor if who else None,
+            )
+        )
+    return ReviewOut(items=items, done=sum(i.stage == "done" for i in items), total=len(items))
+
+
+@router.put("/call-cards/{category}/reviewers", response_model=ReviewItem)
+async def set_reviewers(principal: Editor, session: Session, category: Category, body: ReviewersIn) -> ReviewItem:
+    """Name who reviews this card: the Office's reviewer and, for the medical cards, the doctor."""
+    _national(principal)
+    row = await session.get(CallCardReviewer, category.value, with_for_update=True)
+    if row is None:
+        row = CallCardReviewer(category=category.value)
+        session.add(row)
+    row.office, row.doctor = body.office, body.doctor
+    row.updated_by_name = audit.name_of(principal)
+    row.updated_at = datetime.now(UTC)
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="call_card.reviewers",
+        target=f"call_card_reviewer:{category.value}",
+        reason=body.reason,
+        details={"category": category.value, "office": body.office, "doctor": body.doctor},
+    )
+    await session.commit()
+    return next(i for i in (await review(principal, session)).items if i.category == category)
+
+
+class ConfirmIn(BaseModel):
+    reason: Reason
+
+
+@router.post("/call-cards/{category}/confirm", response_model=CardOut, status_code=status.HTTP_201_CREATED)
+async def confirm_unchanged(principal: Editor, session: Session, category: Category, body: ConfirmIn) -> CardOut:
+    """The Office keeps the approved [SIM] text as it is: a new version with the same content, handed over at once.
+    It still goes through the medical validation (medical cards) and the room manager's approval."""
+    _national(principal)
+    if await session.scalar(select(CallCard.id).where(CallCard.category == category, CallCard.status == "draft")):
+        raise HTTPException(status.HTTP_409_CONFLICT, "draft_exists")
+    current = await approved(session, category.value)
+    if current is None or not current.sim:
+        raise HTTPException(status.HTTP_409_CONFLICT, "call_card_not_sim")
+    content = cc.CardContent.model_validate(current.content)
+    now = datetime.now(UTC)
+    name = audit.name_of(principal)
+    card = CallCard(
+        category=category.value,
+        version=current.version + 1,
+        status="draft",
+        content=current.content,
+        sim=False,
+        medical=_is_medical(category.value, content),
+        unchanged=True,
+        notes={CARD_NOTE: body.reason},
+        submitted_at=now,
+        submitted_by_name=name or audit.actor_of(principal),
+        created_by=audit.actor_of(principal),
+        created_by_name=name,
+        updated_by_name=name,
+        created_at=now,
+        updated_at=now,
+    )
+    session.add(card)
+    await session.flush()
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="call_card.confirm",
+        target=f"call_card:{card.id}",
+        reason=body.reason,
+        details={"category": category.value, "version": card.version, "from": current.version},
+    )
+    await session.commit()
+    return _out(card)
+
+
+@router.post("/call-cards/{card_id}/submit", response_model=CardOut)
+async def submit(principal: Editor, session: Session, card_id: uuid.UUID, body: ReasonIn) -> CardOut:
+    """The Office hands the draft over: to the doctor for a medical card, otherwise to the room manager."""
+    _national(principal)
+    card = await _card(session, card_id, lock=True)
+    if card.status != "draft":
+        raise HTTPException(status.HTTP_409_CONFLICT, "call_card_not_draft")
+    if card.updated_at != body.updated_at:
+        raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
+    if card.submitted_at is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "call_card_submitted")
+    now = datetime.now(UTC)
+    card.submitted_at = now
+    card.submitted_by_name = audit.name_of(principal) or audit.actor_of(principal)
+    card.returned_at = card.returned_by_name = card.returned_reason = None
+    card.updated_at = now
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="call_card.submit",
+        target=f"call_card:{card.id}",
+        reason=body.reason,
+        details={"category": card.category, "version": card.version},
+    )
+    await session.commit()
+    return _out(card)
+
+
+@router.post("/call-cards/{card_id}/return", response_model=CardOut)
+async def send_back(principal: Returner, session: Session, card_id: uuid.UUID, body: ReasonIn) -> CardOut:
+    """The doctor or the room manager sends a handed-over draft back to the Office; the reason is the note it reads.
+    A medical validation already recorded is withdrawn: the text will change."""
+    _national(principal)
+    card = await _card(session, card_id, lock=True)
+    if card.status != "draft":
+        raise HTTPException(status.HTTP_409_CONFLICT, "call_card_not_draft")
+    if card.updated_at != body.updated_at:
+        raise HTTPException(status.HTTP_409_CONFLICT, "version_conflict")
+    if card.submitted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "call_card_not_submitted")
+    now = datetime.now(UTC)
+    card.submitted_at = card.submitted_by_name = None
+    card.medical_validated_by = card.medical_validated_at = card.medical_reason = None
+    card.returned_at = now
+    card.returned_by_name = audit.name_of(principal) or audit.actor_of(principal)
+    card.returned_reason = body.reason
+    card.updated_at = now
+    await audit.record(
+        session,
+        actor=audit.actor_of(principal),
+        action="call_card.return",
+        target=f"call_card:{card.id}",
+        reason=body.reason,
+        details={"category": card.category, "version": card.version},
+    )
+    await session.commit()
+    return _out(card)
+
+
+# ---------------------------------------------------------------- the statistics (OS2-3)
+
+ROOM_PATTERN = r"^(central|g:[0-9]{1,3})$"
+# One or more intake channels, comma separated (the dashboard's list query).
+CHANNELS_PATTERN = r"^(phone|radio|in_person|other)(,(phone|radio|in_person|other))*$"
+
+
+@router.get("/call-cards/stats", response_model=stats.StatsOut)
+async def card_stats(
+    principal: Reader,
+    session: Session,
+    days: Annotated[int, Query(ge=1, le=366)] = 30,
+    channel: Annotated[str | None, Query(pattern=CHANNELS_PATTERN)] = None,
+    room: Annotated[str | None, Query(pattern=ROOM_PATTERN)] = None,
+) -> stats.StatsOut:
+    """Card use and call time per room, and per card what callers answered and what the teams found. A regional
+    room gets its own room whatever ``room`` says, with the national figures beside it."""
+    contents = {
+        c.category: cc.CardContent.model_validate(c.content)
+        for c in await session.scalars(select(CallCard).where(CallCard.status == "approved"))
+    }
+    channels = channel.split(",") if channel else ["phone", "radio", "in_person", "other"]
+    return await stats.compute(session, principal, days, channels, room, contents)
 
 
 @router.get("/reports/{report_id}/call-card", response_model=AnswerOut)
