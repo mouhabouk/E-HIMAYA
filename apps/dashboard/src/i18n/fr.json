@@ -10882,7 +10882,41 @@
       "orgs": "Établissements",
       "coastal": "Sécurité littorale",
       "coverage": "Couverture en direct",
-      "fleet": "Rapport de la flotte"
+      "fleet": "Rapport de la flotte",
+      "inspections": "Inspections périodiques",
+      "par": "Contrôle des équipes (PAR)"
+    },
+    "unplaced": "{{n}} sans position connue",
+    "inspections": {
+      "toggle": "Lieux des inspections périodiques",
+      "count": "Lieux affichés : {{n}}",
+      "last": "Dernière inspection {{date}} : {{verdict}} ({{score}})",
+      "never": "Jamais inspecté",
+      "next": "Prochaine mission {{date}}",
+      "legendGood": "Conforme",
+      "legendReserved": "Conforme avec réserves",
+      "legendBad": "Non conforme",
+      "legendNone": "Sans rapport"
+    },
+    "vehicles": {
+      "toggle": "Dernière position des engins",
+      "count": "Engins affichés : {{n}}",
+      "at": "Position à {{time}}",
+      "noFix": "Position sans horodatage",
+      "legendEngaged": "En mission",
+      "legendFree": "Disponible",
+      "legendStale": "Position de plus de 30 min"
+    },
+    "par": {
+      "toggle": "Équipes PAR en zone de danger",
+      "count": "Équipes affichées : {{n}}",
+      "members": "{{n}} agents",
+      "confirmed": "Dernière confirmation {{time}}",
+      "atIncident": "Au lieu de l'intervention (pas de position du téléphone)",
+      "legendOk": "Confirmé",
+      "legendLate": "Contrôle proche ou délai de grâce",
+      "legendAlarm": "Non confirmé ou matériel manquant",
+      "legendPaused": "Contrôle suspendu"
     }
   }
 }

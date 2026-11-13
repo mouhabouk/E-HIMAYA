@@ -136,13 +136,15 @@ async def delete_unit(session: AsyncSession, principal: Principal, unit_id: uuid
 # ---------------------------------------------------------------- resources
 
 
-def _resource_select() -> Any:
+def _resource_select(live: bool = True) -> Any:
     active = (
         select(Assignment.id, Assignment.incident_id, Assignment.status, Assignment.resource_id)
         .where(Assignment.status.in_(ACTIVE_ASSIGNMENT))
         .subquery()
     )
-    location = func.coalesce(Resource.location, Unit.location)
+    # ``live``: the vehicle's last position from the leader's phone; else (and for anyone who may not see where the
+    # vehicles are now, Yamen 2026-11-13) the vehicle at its unit.
+    location = func.coalesce(Resource.location, Unit.location) if live else Unit.location
     return (
         select(
             Resource,
@@ -344,7 +346,10 @@ async def map_features(
                 },
             }
         )
-    rows = (await session.execute(_resource_select().where(unit_scope(principal)))).all()
+    from app.modules.ops.field_map import sees_vehicles
+
+    live = await sees_vehicles(principal)
+    rows = (await session.execute(_resource_select(live).where(unit_scope(principal)))).all()
     for row in rows:
         out = _resource_out(row)
         if out.location is None:

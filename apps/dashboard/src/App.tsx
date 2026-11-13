@@ -77,6 +77,7 @@ import {
   canReviewWeatherSuggestions,
   canUseNotifications,
   hasReadAccess,
+  canOpenMap,
   isCommittee,
   landingPath,
   canReadAddressWarnings,
@@ -461,7 +462,7 @@ export function AppRoutes() {
         <Route path="reports/:id" element={reports(<ReportDetailPage />)} />
         <Route path="incidents" element={reports(<IncidentsPage />)} />
         <Route path="incidents/:id" element={reports(<IncidentDetailPage />)} />
-        <Route path="map" element={reports(<MapPage />)} />
+        <Route path="map" element={<Gate allow={canOpenMap}><MapPage /></Gate>} />
         <Route path="map/room" element={reports(<OpsRoomPage />)} />
         <Route path="streams" element={reports(<StreamsPage />)} />
         <Route path="streams/wall" element={reports(<StreamWallPage />)} />

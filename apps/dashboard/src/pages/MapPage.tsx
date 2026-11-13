@@ -14,12 +14,16 @@ import { useFleetMapLayers } from "../components/FleetMapLayers";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
 import {
+  FieldLayerNote,
   layersFromUrl,
   useCoastalLayer,
   useCrisisLayer,
   useHotspotsLayer,
   useIncidentsLayer,
+  useInspectionSitesLayer,
+  useParLayer,
   useStreamsLayer,
+  useVehiclesLayer,
   type MapLayerId,
 } from "../components/SystemLayers";
 import { WhatWhereSearch } from "../components/WhatWhereSearch";
@@ -47,9 +51,14 @@ import {
   canOpenSensors,
   canOpenTowers,
   canReadOrgs,
+  canReadPar,
   canReadResources,
+  canSeeFieldUnits,
+  canSeeInspectionSites,
   canUseTelephony,
+  hasReadAccess,
 } from "../lib/roles";
+import { useCan } from "../lib/features";
 import { droneKeys, isFresh, TRACK_MINUTES, type DroneTrack } from "../lib/drones";
 import { sensorKeys, type SensorState } from "../lib/sensors";
 import { compassOf, recentEvent, towerKeys } from "../lib/towers";
@@ -81,6 +90,9 @@ const INCIDENTS_LAYER_KEY = "ehimaya.mapIncidentsLayer";
 const COASTAL_LAYER_KEY = "ehimaya.mapCoastalLayer";
 const CRISIS_LAYER_KEY = "ehimaya.mapCrisisLayer";
 const STREAMS_LAYER_KEY = "ehimaya.mapStreamsLayer";
+const INSPECTIONS_LAYER_KEY = "ehimaya.mapInspectionsLayer";
+const VEHICLES_LAYER_KEY = "ehimaya.mapVehiclesLayer";
+const PAR_LAYER_KEY = "ehimaya.mapParLayer";
 // Drones (L5b): the camera's view and the path in purple, work areas in green, no-fly zones in red.
 const DRONE_VIEW = "#7c3aed";
 const DRONE_WORK = "#16a34a";
@@ -181,14 +193,18 @@ export function MapPage() {
   const [asked] = useState(() => layersFromUrl(location.search));
   const wants = (id: MapLayerId) => asked.has(id);
   const roles = user?.identity.roles ?? [];
+  // The inspector general opens the map for the field layers only: the reports and the room's layers stay the readers'.
+  const reads = hasReadAccess(roles);
   const orgLayerAllowed = canReadOrgs(user?.identity.roles ?? []);
   const [orgLayer, setOrgLayer] = useLayer(ORG_LAYER_KEY, wants("orgs"));
   const showOrgs = orgLayerAllowed && orgLayer;
   const resourceLayerAllowed = canReadResources(user?.identity.roles ?? []);
   const [resourceLayer, setResourceLayer] = useLayer(RESOURCE_LAYER_KEY, wants("resources"));
   const showResources = resourceLayerAllowed && resourceLayer;
-  const [showVolunteers, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY, wants("volunteers"));
-  const [showAlerts, setAlertLayer] = useLayer(ALERT_LAYER_KEY, wants("alerts"));
+  const [volunteerLayer, setVolunteerLayer] = useLayer(VOLUNTEER_LAYER_KEY, wants("volunteers"));
+  const showVolunteers = reads && volunteerLayer;
+  const [alertLayer, setAlertLayer] = useLayer(ALERT_LAYER_KEY, wants("alerts"));
+  const showAlerts = reads && alertLayer;
   const sensorLayerAllowed = canOpenSensors(user?.identity.roles ?? []);
   const [sensorLayer, setSensorLayer] = useLayer(SENSOR_LAYER_KEY, wants("sensors"));
   const showSensors = sensorLayerAllowed && sensorLayer;
@@ -211,15 +227,29 @@ export function MapPage() {
   const [hotspotsLayer, setHotspotsLayer] = useLayer(HOTSPOTS_LAYER_KEY, wants("hotspots"));
   const hotspots = useHotspotsLayer(hotspotsAllowed && hotspotsLayer);
   const [incidentsLayer, setIncidentsLayer] = useLayer(INCIDENTS_LAYER_KEY, wants("incidents"));
-  const incidents = useIncidentsLayer(incidentsLayer);
+  const incidents = useIncidentsLayer(reads && incidentsLayer);
   const coastalAllowed = canOpenCoastal(roles);
   const [coastalLayer, setCoastalLayer] = useLayer(COASTAL_LAYER_KEY, wants("coastal"));
   const coastal = useCoastalLayer(coastalAllowed && coastalLayer);
   const [crisisLayer, setCrisisLayer] = useLayer(CRISIS_LAYER_KEY, wants("crisis"));
   const crisis = useCrisisLayer(exposureLayerAllowed && crisisLayer);
   const [streamsLayer, setStreamsLayer] = useLayer(STREAMS_LAYER_KEY, wants("streams"));
-  const streams = useStreamsLayer(streamsLayer);
-  const systemLayers = [hotspots, incidents, coastal, crisis, streams];
+  const streams = useStreamsLayer(reads && streamsLayer);
+  // Yamen 2026-11-13: the places of the periodic inspections (inspector general), the vehicles' last positions and the
+  // PAR teams (inspector general, head of the room, field commander only); the administrator reveals or hides each.
+  const inspectionsAllowed = useCan("map.inspections", canSeeInspectionSites(roles));
+  const [inspectionsLayer, setInspectionsLayer] = useLayer(INSPECTIONS_LAYER_KEY, wants("inspections"));
+  const inspectionSites = useInspectionSitesLayer(inspectionsAllowed && inspectionsLayer);
+  const vehiclesAllowed = useCan("map.vehicles", canSeeFieldUnits(roles));
+  const [vehiclesLayer, setVehiclesLayer] = useLayer(VEHICLES_LAYER_KEY, wants("vehicles"));
+  const vehicles = useVehiclesLayer(vehiclesAllowed && vehiclesLayer, {
+    incidents: reads,
+    resources: canReadResources(roles),
+  });
+  const parAllowed = useCan("map.par", canSeeFieldUnits(roles));
+  const [parLayer, setParLayer] = useLayer(PAR_LAYER_KEY, wants("par"));
+  const parTeams = useParLayer(parAllowed && parLayer, canReadPar(roles));
+  const systemLayers = [hotspots, incidents, coastal, crisis, streams, inspectionSites, vehicles, parTeams];
   const systemError = systemLayers.find((l) => l.error);
   // A minute is fine enough for "a fire or smoke in the last hour".
   const clock = useNow(60_000);
@@ -227,7 +257,7 @@ export function MapPage() {
   const gouvernorats = useGouvernorats();
   const basemap = useBasemap();
   const adminLayer = useAdminLayer();
-  const savedPlaces = useSavedPlaces();
+  const savedPlaces = useSavedPlaces(reads);
   // The view follows the last of two choices (phase N, design §6): the gouvernorats picked in the filters (their joint
   // box) or a saved place. Previous values kept in state, the pattern React recommends over an effect.
   const govKey = filters.gouvernorats.join(",");
@@ -269,7 +299,8 @@ export function MapPage() {
   );
 
   // Weather layer (phase 7 §1, FR-C-08 / FR-C-10): fire danger field, wind arrows, rain level, 48 h slider.
-  const [showWeather, setWeatherLayer] = useLayer(WEATHER_LAYER_KEY, wants("weather"));
+  const [weatherLayer, setWeatherLayer] = useLayer(WEATHER_LAYER_KEY, wants("weather"));
+  const showWeather = reads && weatherLayer;
   const [weatherViews, setWeatherViewsState] = useState<WeatherViews>(storedViews);
   const setWeatherViews = (v: WeatherViews) => {
     setWeatherViewsState(v);
@@ -383,7 +414,7 @@ export function MapPage() {
 
   const query = useQuery({
     queryKey: bbox ? mapKey(filters, bbox) : ["map-reports", "pending"],
-    enabled: bbox !== null,
+    enabled: reads && bbox !== null,
     placeholderData: keepPreviousData,
     queryFn: async ({ signal }): Promise<InfiniteData<Page<StaffReport>, string | null>> => {
       if (!bbox) throw new Error("no bbox");
@@ -468,7 +499,8 @@ export function MapPage() {
             href: "/resources",
             ...(p.phone ? { call: { number: p.phone } } : {}),
           });
-        } else {
+        } else if (!vehicles.ids.has(p.id)) {
+          // A vehicle on the vehicles' last positions layer is drawn there only.
           out.push({
             id: `resource-${p.id}`,
             lon,
@@ -563,6 +595,7 @@ export function MapPage() {
   }, [
     showResources,
     resourcesQuery.data,
+    vehicles.ids,
     showVolunteers,
     volunteersQuery.data,
     showSensors,
@@ -602,15 +635,15 @@ export function MapPage() {
       // A layer asked for by a source screen (`/map?layers=…`) opens its folder once.
       ...(asked.has(key === "ops-resources" ? "resources" : key) ? { reveal: true } : {}),
     });
-    const ops: FolderExtra[] = [
-      extra("incidents", t("mapLayers.incidents.toggle"), incidentsLayer, setIncidentsLayer, src("/incidents", "mapLayers.screen.incidents")),
-    ];
+    const ops: FolderExtra[] = reads
+      ? [extra("incidents", t("mapLayers.incidents.toggle"), incidentsLayer, setIncidentsLayer, src("/incidents", "mapLayers.screen.incidents"))]
+      : [];
     if (hotspotsAllowed) {
       ops.push(extra("hotspots", t("mapLayers.hotspots.toggle"), hotspotsLayer, setHotspotsLayer, src("/analytics", "mapLayers.screen.analytics")));
     }
-    const warnings: FolderExtra[] = [
-      extra("alerts", t("ops.map.alertsToggle"), showAlerts, setAlertLayer, src("/notifications", "mapLayers.screen.notifications")),
-    ];
+    const warnings: FolderExtra[] = reads
+      ? [extra("alerts", t("ops.map.alertsToggle"), showAlerts, setAlertLayer, src("/notifications", "mapLayers.screen.notifications"))]
+      : [];
     if (awLayerAllowed) {
       warnings.push(
         extra("aw", t("addressWarnings.layer.toggle"), awLayer, setAwLayer, src("/address-warnings", "mapLayers.screen.aw"), awMarks.controls),
@@ -628,19 +661,59 @@ export function MapPage() {
     if (resourceLayerAllowed) {
       civil.push(extra("ops-resources", t("ops.map.resourcesToggle"), resourceLayer, setResourceLayer, src("/resources", "mapLayers.screen.resources")));
     }
+    if (vehiclesAllowed) {
+      civil.push(
+        extra(
+          "vehicles",
+          t("mapLayers.vehicles.toggle"),
+          vehiclesLayer,
+          setVehiclesLayer,
+          resourceLayerAllowed ? src("/resources", "mapLayers.screen.resources") : undefined,
+          vehiclesLayer ? <FieldLayerNote layer={vehicles} kind="vehicles" /> : undefined,
+        ),
+      );
+    }
+    if (parAllowed) {
+      civil.push(
+        extra(
+          "par",
+          t("mapLayers.par.toggle"),
+          parLayer,
+          setParLayer,
+          canReadPar(roles) ? src("/par", "mapLayers.screen.par") : undefined,
+          parLayer ? <FieldLayerNote layer={parTeams} kind="par" /> : undefined,
+        ),
+      );
+    }
+    if (inspectionsAllowed) {
+      civil.push(
+        extra(
+          "inspections",
+          t("mapLayers.inspections.toggle"),
+          inspectionsLayer,
+          setInspectionsLayer,
+          src("/inspections", "mapLayers.screen.inspections"),
+          inspectionsLayer ? <FieldLayerNote layer={inspectionSites} kind="inspections" /> : undefined,
+        ),
+      );
+    }
     civil.push(...fleetLayers.extras);
-    civil.push(extra("volunteers", t("ops.map.volunteersToggle"), showVolunteers, setVolunteerLayer, src("/volunteers", "mapLayers.screen.volunteers")));
+    if (reads) {
+      civil.push(extra("volunteers", t("ops.map.volunteersToggle"), showVolunteers, setVolunteerLayer, src("/volunteers", "mapLayers.screen.volunteers")));
+    }
     const monitoring: FolderExtra[] = [];
     if (sensorLayerAllowed) monitoring.push(extra("sensors", t("sensors.map.toggle"), sensorLayer, setSensorLayer, src("/sensors", "mapLayers.screen.sensors")));
     if (towerLayerAllowed) monitoring.push(extra("towers", t("towers.map.toggle"), towerLayer, setTowerLayer, src("/towers", "mapLayers.screen.towers")));
     if (droneLayerAllowed) monitoring.push(extra("drones", t("drones.map.toggle"), droneLayer, setDroneLayer, src("/drones", "mapLayers.screen.drones")));
-    monitoring.push(
-      extra("streams", t("mapLayers.streams.toggle"), streamsLayer, setStreamsLayer, src("/streams/wall", "mapLayers.screen.streams")),
-      extra("weather", t("weather.toggle"), showWeather, (on) => {
-        setWeatherLayer(on);
-        if (!on) setWeatherPoint(null);
-      }),
-    );
+    if (reads) {
+      monitoring.push(
+        extra("streams", t("mapLayers.streams.toggle"), streamsLayer, setStreamsLayer, src("/streams/wall", "mapLayers.screen.streams")),
+        extra("weather", t("weather.toggle"), showWeather, (on) => {
+          setWeatherLayer(on);
+          if (!on) setWeatherPoint(null);
+        }),
+      );
+    }
     const prevention: FolderExtra[] = [];
     if (orgLayerAllowed) {
       prevention.push(
@@ -674,6 +747,17 @@ export function MapPage() {
     t,
     fmt,
     asked,
+    reads,
+    roles,
+    vehiclesAllowed,
+    vehiclesLayer,
+    vehicles,
+    parAllowed,
+    parLayer,
+    parTeams,
+    inspectionsAllowed,
+    inspectionsLayer,
+    inspectionSites,
     incidentsLayer,
     hotspotsAllowed,
     hotspotsLayer,
@@ -721,6 +805,9 @@ export function MapPage() {
       ...crisis.pois,
       ...streams.pois,
       ...fleetLayers.pois,
+      ...inspectionSites.pois,
+      ...vehicles.pois,
+      ...parTeams.pois,
     ],
     [
       pois,
@@ -735,6 +822,9 @@ export function MapPage() {
       crisis.pois,
       streams.pois,
       fleetLayers.pois,
+      inspectionSites.pois,
+      vehicles.pois,
+      parTeams.pois,
     ],
   );
   const allLines = useMemo(() => [...lines, ...fleetLayers.lines], [lines, fleetLayers.lines]);
@@ -820,12 +910,14 @@ export function MapPage() {
     <div className="page page--map">
       <div className="page__head">
         <PageTitle icon="map" tone="teal">{t("map.title")}</PageTitle>
-        <p className="muted" role="status" aria-live="polite">
-          {query.isFetching ? t("common.loading") : t("map.count", { count: fmt.number(reports.length) })}
-          {truncated && ` · ${t("map.truncated")}`}
-        </p>
+        {reads && (
+          <p className="muted" role="status" aria-live="polite">
+            {query.isFetching ? t("common.loading") : t("map.count", { count: fmt.number(reports.length) })}
+            {truncated && ` · ${t("map.truncated")}`}
+          </p>
+        )}
       </div>
-      <FiltersBar showGouvernorat={national} />
+      {reads && <FiltersBar showGouvernorat={national} />}
       {/* Yamen 2026-11-13: every switch sits in its folder of the layer panel; this row keeps the legend and basemap. */}
       <div className="map-layers" role="group" aria-label={t("ops.map.layers")}>
         {legend.length > 0 && <MapLegend items={legend} />}
@@ -895,7 +987,7 @@ export function MapPage() {
       <div className="map-with-side">
         <aside className="map-with-side__aside">
           <WhatWhereSearch onPick={(p) => setFocus([p.lon - 0.01, p.lat - 0.008, p.lon + 0.01, p.lat + 0.008])} />
-          {savedPlaces.controls}
+          {reads && savedPlaces.controls}
         </aside>
         <div className="map-with-side__map">
           <Suspense fallback={<Loading />}>

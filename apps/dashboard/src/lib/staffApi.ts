@@ -47,6 +47,7 @@ import { doctorsApi } from "./doctorsApi";
 import { inspectionsApi } from "./inspectionsApi";
 import { personnelApi } from "./personnelApi";
 import { fleetApi } from "./fleet";
+import { fieldMapApi } from "./fieldMap";
 import { preventionApi } from "./preventionApi";
 import type {
   AiSettings,
@@ -327,6 +328,7 @@ export function staffApi(api: ApiClient) {
     ...fleetApi(api),
     ...appFeedbackApi(api),
     ...boardsApi(api),
+    ...fieldMapApi(api),
   };
 }
 

@@ -278,6 +278,14 @@ export interface BinRow {
 /** The word the system administrator types to confirm a deletion (design-i §8). */
 export const CONFIRM_WORD = "حذف";
 
+/** The tone of a report's verdict: not compliant red, with reservations amber, compliant green, none slate. */
+export function verdictTone(verdict: string | null): "green" | "amber" | "red" | "slate" {
+  if (!verdict) return "slate";
+  if (verdict.includes("غير")) return "red";
+  if (verdict.includes("تحفّظ") || verdict.includes("تحفظ")) return "amber";
+  return "green";
+}
+
 export const inspectionKeys = {
   all: ["inspections"] as const,
   dashboard: ["inspections", "dashboard"] as const,

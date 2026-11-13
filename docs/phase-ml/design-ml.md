@@ -30,8 +30,8 @@ already in a layer.
 
 Prevention programmes were already a file layer (`programme.layer_key`). Not done here because they need the
 administrative fill the map already uses for boundaries: the SNACR choropleth and the level of the gouvernorats of the
-command screen (the axis areas carry the level). Data with coordinates that no map draws yet (inspection sites, last
-vehicle positions, PAR teams) are proposed for later.
+command screen (the axis areas carry the level). The data with coordinates that no map drew (inspection sites, last
+vehicle positions, PAR teams) became the field layers of §7.
 
 ## Rules
 
@@ -52,4 +52,28 @@ vehicle positions, PAR teams) are proposed for later.
 - `apps/dashboard/src/components/MapDataLayers.tsx`: `SYSTEM_GROUPS`, `FolderExtra.source`.
 - `apps/dashboard/src/pages/MapPage.tsx`: the folders, `?layers=`.
 - Tests: `e2e/phase-ml.spec.ts`; the map specs open the folder before ticking a layer.
-- No API change, no migration, no new package or setting.
+- No migration, no new package or setting. The field layers (§7) add `GET /api/v1/staff/field-map/*`.
+
+## 7. The field layers (Yamen 2026-11-13)
+
+«خريطة تفاعلية للمتفقّد العام بها أماكن التفقّدات الدورية وآخر موقع للآليات و PAR، ونفس الخريطة بآخر موقع للآليات و PAR
+لرئيس القاعة والقائد الميداني دون سواهما، ومدير النظام يتصرّف في الكشف والحجب.» Integration first: the same interactive
+map (`/map`), three layers in the «موارد الحماية المدنية» folder, no new page.
+
+| Layer | Who by default | Source (no copy) | Drawn |
+| --- | --- | --- | --- |
+| أماكن التفقّدات الدورية (`map.inspections`) | inspector general | the places of the inspections screen (`unit_status`) | at the unit (`ops.unit`), else where the inspector arrived, else where the report was signed; a regional room at its regional directorate; coloured by the verdict of the last report |
+| آخر موقع للآليات (`map.vehicles`) | inspector general, head of the room (`ops_manager`), field commander | `ops.resource.location` / `location_at` (the leader's phone during a mission) | engaged orange, free blue, grey past 30 minutes |
+| فرق PAR داخل مناطق الخطر (`map.par`) | the same three | `par.team` inside a zone of an incident not closed, at the last `ops.crew_position` of its mission, else at the incident | coloured by the state of the check (OS7) |
+
+- API: `GET /api/v1/staff/field-map/inspections`, `/vehicles`, `/par` (`app/modules/ops/field_map.py`). A regional
+  account sees its own gouvernorat (row level security and the units' scope).
+- Reveal and hide: the three are tabs of the «الخريطة» page of the permissions catalogue (`features/catalogue.py`). The
+  system administrator hides one from a role, an account or a gouvernorat, or grants it to another role or account, from
+  the permissions screen, with a start, an end and a reason; the API refuses a hidden layer (`feature_hidden`) and the
+  panel leaves it out (`useCan`).
+- «دون سواهما»: the units and resources layer and the operations room's map draw a vehicle at its unit for anyone who
+  may not see the vehicles layer; for the others, a vehicle on the vehicles layer is drawn there only (one mark).
+- The inspector general opens `/map` (menu gate `map`) for these layers only: no reports, filters, saved places or room
+  layers are read for that account.
+- Tests: `services/api/tests/test_field_map.py`, `e2e/phase-ml-field.spec.ts` (pictures `ml-field-*.png`).

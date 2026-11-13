@@ -231,6 +231,24 @@ export function canManageInspections(roles: readonly string[]): boolean {
   return INSPECTION_ROLES.some((r) => roles.includes(r));
 }
 
+/**
+ * The field layers of the interactive map (Yamen 2026-11-13): the places of the inspections for the inspector general,
+ * the vehicles' last positions and the PAR teams for the inspector general, the head of the room and the field
+ * commander only. The system administrator reveals or hides each one (features `map.inspections`, `map.vehicles`,
+ * `map.par`); the API enforces the same rules.
+ */
+export const FIELD_LAYER_ROLES = ["inspector_general", "ops_manager", "field_commander"] as const;
+export function canSeeInspectionSites(roles: readonly string[]): boolean {
+  return canManageInspections(roles);
+}
+export function canSeeFieldUnits(roles: readonly string[]): boolean {
+  return FIELD_LAYER_ROLES.some((r) => roles.includes(r));
+}
+/** The interactive map: the report readers, and the inspector general for the field layers. */
+export function canOpenMap(roles: readonly string[]): boolean {
+  return hasReadAccess(roles) || canManageInspections(roles);
+}
+
 /** Phase I: what an operations room reads of the inspections of the rooms. */
 export function canReadInspectionResults(roles: readonly string[]): boolean {
   return INSPECTION_RESULT_ROLES.some((r) => roles.includes(r));

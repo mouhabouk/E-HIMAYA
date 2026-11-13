@@ -107,6 +107,7 @@ from app.modules.ops.command_router import router as command_router
 from app.modules.ops.crew_router import router as crew_router
 from app.modules.ops.crew_router import staff_router as crew_staff_router
 from app.modules.ops.crew_stream import router as crew_stream_router
+from app.modules.ops.field_map import router as field_map_router
 from app.modules.ops.field_router import crew_router as field_crew_router
 from app.modules.ops.field_router import router as field_router
 from app.modules.ops.field_router import staff_router as field_staff_router
@@ -464,6 +465,7 @@ def create_app() -> FastAPI:
     app.include_router(drill_router)
     app.include_router(par_router)
     app.include_router(par_crew_router)
+    app.include_router(field_map_router)
     features_registry.install(app.routes)
     return app
 

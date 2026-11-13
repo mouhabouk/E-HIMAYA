@@ -202,7 +202,7 @@
               "path": "/map",
               "icon": "map",
               "tone": "teal",
-              "gate": "reads"
+              "gate": "map"
             },
             {
               "key": "geoQueue",
