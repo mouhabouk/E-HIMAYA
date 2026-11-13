@@ -1221,6 +1221,15 @@ class EHimayaApi {
     return r.data!;
   });
 
+  /// OS8-2: «لا علم لي بأي بلاغ عندي», the owner objects to a reading of their name.
+  Future<void> disputeAddressWarningReveal(int id, {String? note}) =>
+      guardApi(() async {
+        await _dio.post<void>(
+          '/api/v1/me/address-warnings/reveals/$id/dispute',
+          data: {'note': ?note},
+        );
+      });
+
   /// OS8: every need withdrawn in one tap.
   Future<Map<String, Object?>> withdrawMyAddressWarnings() =>
       guardApi(() async {

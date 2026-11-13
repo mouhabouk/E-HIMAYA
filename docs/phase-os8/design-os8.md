@@ -75,3 +75,47 @@ The team sees only categories marked for the team and marks the room made visibl
 Migration `0103_address_warnings`: schema `aw` with `category` (11 seeded), `marker` (PostGIS point, row-level security
 by gouvernorat, the owner's own rows for the citizen, change journal attached), `ack` and `reveal` (append-only logs,
 left out of the change journal like the other streams).
+
+## 8. Follow-up OS8-1: the layer on the interactive map
+
+Approved by Yamen on 2026-11-13 from the isolated mockup (`/mnt/project-files/prototypes/address-warnings-followups/`);
+the version before it is kept on `backup/pre-os8-followups-2026-11-13`.
+
+- The map page (`/map`) has a switch «تحذيرات العناوين» for those who read the register (`canReadAddressWarnings`),
+  remembered for the tab like the other layers (`components/AddressWarningsLayer.tsx`). It reads the same register
+  (`GET …/markers`, row-level security by gouvernorat): the active room and team marks, in the category's icon and colour,
+  a red ring past their review date, a popup with the description, the circle, the review date and the source.
+- Over a whole gouvernorat (zoom below 12) the marks are grouped by cells of the visible area: the count, the colour of
+  the heaviest mark (past review, then hazards, then buildings). Closer, one by one.
+- Group chips: all, hazardous materials, buildings and access, people and animals, past review.
+- Personal marks are never on the layer, not even per area: only their total count in the line under the switch. They
+  stay in the file of a nearby incident, without a name, as in §4.
+- Yamen's rule of 2026-11-13 (every map datum also a layer of the official interactive map) is met; the thread that
+  unifies the map layers moves this switch into its «الإنذار والتحذيرات» folder once its registry lands.
+
+## 9. Follow-up OS8-2: the owner told when a room reads their name
+
+- The reveal (§4) queues at once, in the same transaction, a content-free push `address_warning_viewed` with the
+  reveal's id only (contract A8): «اطّلعت فرق الحماية على اسمك · بسبب بلاغ قريب من عنوانك». The app fetches when and
+  why behind the login and opens the consent screen.
+- An account with no phone registered for pushes gets one SMS with a fixed text (no name, address nor reason) to the
+  profile's number; with neither, nothing is sent. How the owner was told is kept on the reveal (`notified_via`: push,
+  sms, none) and shown in the reveals log of the room.
+- The owner may object: «لا علم لي بأي بلاغ عندي» (`POST /api/v1/me/address-warnings/reveals/{id}/dispute`, optional
+  note, once). The objection is kept on the reveal, audited (`address_warnings.reveal_disputed`), shown red in the
+  reveals log with the note, and counted in the reminders of the room (the central room: every one).
+
+## 10. Follow-up OS8-3: the review reminder
+
+- `GET /api/v1/staff/address-warnings/reminders`: the active marks of the scope past their review date, or within 30 days
+  of it, the oldest first, with their days and level: `soon`, `room` (past), `manager` (7 days or more past),
+  `central` (30 days or more past). Personal marks are left out: their owner renews the consent each year in the app.
+- The tab «تذكير المراجعة» of the page lists them (red past, amber soon) with: confirm (the category's period), edit in
+  the register, archive with a reason, ask a field check (`POST …/markers/{id}/check`: who and when, kept on the mark
+  until a confirm or an archive). Nothing is archived automatically.
+- Worker loop `address-warning-reminders`: from 08:00 Tunis time, once a day per gouvernorat with marks past or near their
+  date (`aw.reminder_day`, safe across processes), the live event `address_warnings.review_reminder` (late, soon, raised
+  to the manager, raised to the central room) to the rooms of the gouvernorat and the national room. The dashboard
+  shows it as a toast that opens the tab.
+- The hour and the delays are constants in this version (08:00, 30, 7 and 30 days); making them settings is OS8-6.
+

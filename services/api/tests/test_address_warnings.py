@@ -420,6 +420,7 @@ async def test_the_review_reminder(client: httpx.AsyncClient, staff: Staff, sess
         assert await service.send_reminders(session, morning.replace(hour=7)) == 0
     async with session.begin():
         await session.execute(text_("DELETE FROM aw.reminder_day WHERE day = :d"), {"d": today})
+        await session.execute(text_("DELETE FROM events.outbox WHERE subject = 'address_warnings.review_reminder'"))
         assert await service.send_reminders(session, morning.replace(hour=8, minute=5)) >= 1
     async with session.begin():
         assert await service.send_reminders(session, morning.replace(hour=9)) == 0
