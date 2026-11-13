@@ -16,7 +16,7 @@ class FeatureRule(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
     feature_key: Mapped[str] = mapped_column(Text)
-    # grant | hide
+    # grant | hide | suspend (a whole system, 2026-11-13)
     effect: Mapped[str] = mapped_column(Text)
     # user (target = the account's subject) | role (target = the role)
     target_kind: Mapped[str] = mapped_column(Text)
@@ -38,6 +38,8 @@ class FeatureRule(Base):
         UUID(as_uuid=True), ForeignKey("access.feature_profile.id", ondelete="SET NULL")
     )
     profile_assignment_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    # A suspended system's message to its users, {"ar", "fr", "en"} (migration 0108).
+    message: Mapped[dict[str, str] | None] = mapped_column(JSONB(none_as_null=True))
 
 
 class FeatureProfile(Base):

@@ -178,9 +178,9 @@ test.describe("OS7: crew accountability in danger zones", () => {
     await expect(page.getByRole("heading", { level: 1, name: "تفقّد الأعوان في منطقة الخطر" })).toBeVisible();
     await expect(page.getByRole("article", { name: "VSR 4 · الفريق 2" })).toBeVisible();
     await expect(page.getByRole("alert").first()).toContainText("لم يؤكّد الحضور");
-    await page.getByRole("navigation").getByRole("button", { name: "العمليات اليومية" }).click();
+    await page.getByRole("navigation").getByRole("button", { name: "المجال العملياتي" }).click();
     await expect(page.getByRole("navigation").getByRole("link", { name: "تفقّد الأعوان" })).toBeVisible();
-    await page.getByRole("navigation").getByRole("button", { name: "العمليات اليومية" }).click();
+    await page.getByRole("navigation").getByRole("button", { name: "المجال العملياتي" }).click();
     await page.screenshot({ path: `${SHOTS}/os7-board.png` });
   });
 

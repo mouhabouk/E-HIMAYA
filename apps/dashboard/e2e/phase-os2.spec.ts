@@ -57,7 +57,7 @@ test.describe("OS2: guided call-taking cards", () => {
     await expect(page.getByRole("heading", { level: 1, name: "دليل إجراءات عون القاعة" })).toBeVisible();
     await expect(page.getByText("القيم من الإعدادات الوطنية الحالية.")).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/os2-room-guide.png` });
-    await page.getByRole("button", { name: "العمليات اليومية" }).click();
+    await page.getByRole("button", { name: "المجال العملياتي" }).click();
     await expect(page.getByRole("link", { name: "دليل إجراءات عون القاعة" })).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/os2-menu.png` });
   });

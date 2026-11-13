@@ -12,6 +12,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from app.core.security import Role
+from app.modules.features.registry import menu_systems
 from app.modules.settings import thresholds
 
 SLA_BANDS = "sla.bands"
@@ -48,7 +49,9 @@ MENU_ORDER = "menu.order"
 # dashboard (no new release of the apps).
 ANNOUNCEMENT = "app.announcement"
 SURFACES = ("citizen_app", "field_app", "portal", "dashboard")
-MENU_GROUPS = ("ops", "crisis", "strategies", "disasters", "alerts", "people", "orgs", "knowledge", "system")
+# The groups of the menu: the first screen («home») and the 20 systems of the menu's one source (Yamen 2026-11-13).
+MENU_GROUPS: tuple[str, ...] = ("home", *(s.key for s in menu_systems()))
+MENU_TONES = ("red", "navy", "purple", "green", "amber", "teal", "slate", "pink", "sky", "orange")
 MENU_PATH = r"^/[a-z0-9/_-]{0,80}$"
 LEARNING_TASKS = (
     "report_category",
@@ -201,16 +204,39 @@ def shown(value: Any, surface: str, now: datetime | None = None) -> dict[str, st
     return {"tone": a.tone, **a.text.model_dump()}
 
 
-class MenuOrder(BaseModel):
-    """The groups of the dashboard's menu in order, and the links of each group (their paths) in order."""
+class SystemNames(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ar: str | None = Field(default=None, max_length=80)
+    fr: str | None = Field(default=None, max_length=80)
+    en: str | None = Field(default=None, max_length=80)
+
+
+class SystemOverride(BaseModel):
+    """What the administrator changed on a system: its name, colour or icon (left out: the menu source's)."""
 
     model_config = ConfigDict(extra="forbid")
 
-    groups: list[Literal[MENU_GROUPS]] = Field(default_factory=list, max_length=len(MENU_GROUPS))  # type: ignore[valid-type]
-    items: dict[Literal[MENU_GROUPS], list[str]] = Field(default_factory=dict)  # type: ignore[valid-type]
+    names: SystemNames | None = None
+    tone: Literal[MENU_TONES] | None = None  # type: ignore[valid-type]
+    icon: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9]{2,40}$")
+
+
+class MenuOrder(BaseModel):
+    """The groups of the dashboard's menu in order, the links of each group (their paths) in order, and what the
+    administrator changed on each system (2026-11-13)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    groups: list[str] = Field(default_factory=list, max_length=len(MENU_GROUPS))
+    items: dict[str, list[str]] = Field(default_factory=dict)
+    systems: dict[str, SystemOverride] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def _unique(self) -> "MenuOrder":
+        unknown = {*self.groups, *self.items, *self.systems} - set(MENU_GROUPS)
+        if unknown:
+            raise ValueError(f"unknown menu group: {sorted(unknown)[0]}")
         if len(set(self.groups)) != len(self.groups):
             raise ValueError("a group is named twice")
         for paths in self.items.values():
@@ -258,7 +284,7 @@ DEFAULTS: dict[str, Any] = {
     CRISIS_SITREP_HOURS: {"1": 24, "2": 12, "3": 6, "4": 2},
     LEARNING_SCHEDULE: {key: {"enabled": False, "every_days": 7} for key in LEARNING_TASKS},
     THRESHOLDS: thresholds.DEFAULTS,
-    MENU_ORDER: {"groups": [], "items": {}},
+    MENU_ORDER: {"groups": [], "items": {}, "systems": {}},
     ANNOUNCEMENT: {
         "active": False,
         "tone": "info",

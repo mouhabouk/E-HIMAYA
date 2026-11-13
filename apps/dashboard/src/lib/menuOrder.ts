@@ -1,16 +1,28 @@
 // Phase D, review point 9: the order of the menu, a national setting (`menu.order`) the system administrator saves
 // from the drag-and-drop editor. Groups and links not named keep their built-in order after the named ones; a link the
 // user may not open is never added (the order only sorts what the roles already allow).
+import { iconOr, toneOr } from "../components/Icon";
 import type { NavGroup } from "../components/Navigation";
+import type { Language } from "../i18n";
+import { localized } from "./localized";
 
 export const MENU_ORDER_KEY = "menu.order";
+
+/** What the administrator changed on a system (2026-11-13): its name, colour or icon; left out = the built-in one. */
+export interface SystemOverride {
+  names?: Partial<Record<Language, string>>;
+  tone?: string;
+  icon?: string;
+}
 
 export interface MenuOrder {
   groups: string[];
   items: Record<string, string[]>;
+  /** Per system key; absent from an order saved before 2026-11-13. */
+  systems?: Record<string, SystemOverride>;
 }
 
-export const EMPTY_ORDER: MenuOrder = { groups: [], items: {} };
+export const EMPTY_ORDER: MenuOrder = { groups: [], items: {}, systems: {} };
 
 /** The stored value, or the empty order when it is missing or not of the expected shape. */
 export function menuOrderOf(value: unknown): MenuOrder {
@@ -26,7 +38,38 @@ export function menuOrderOf(value: unknown): MenuOrder {
         items[k] = paths.filter((p): p is string => typeof p === "string");
     }
   }
-  return { groups, items };
+  const systems: Record<string, SystemOverride> = {};
+  if (v.systems && typeof v.systems === "object") {
+    for (const [k, raw] of Object.entries(v.systems as Record<string, unknown>)) {
+      if (!raw || typeof raw !== "object") continue;
+      const o = raw as Record<string, unknown>;
+      const out: SystemOverride = {};
+      if (typeof o.names === "object" && o.names !== null) {
+        const names: Partial<Record<Language, string>> = {};
+        for (const l of ["ar", "fr", "en"] as const) {
+          const n = (o.names as Record<string, unknown>)[l];
+          if (typeof n === "string" && n.trim()) names[l] = n.trim();
+        }
+        if (Object.keys(names).length > 0) out.names = names;
+      }
+      if (typeof o.tone === "string") out.tone = o.tone;
+      if (typeof o.icon === "string") out.icon = o.icon;
+      systems[k] = out;
+    }
+  }
+  return { groups, items, systems };
+}
+
+/** A system as the administrator renamed, recoloured or gave another icon. */
+export function overridden(group: NavGroup, o: SystemOverride | undefined, lang: Language): NavGroup {
+  if (!o) return group;
+  const label = o.names ? localized(o.names, lang) : "";
+  return {
+    ...group,
+    label: label || group.label,
+    tone: o.tone ? toneOr(o.tone, group.tone) : group.tone,
+    icon: o.icon ? iconOr(o.icon, group.icon) : group.icon,
+  };
 }
 
 function byOrder<T>(
@@ -50,6 +93,7 @@ function byOrder<T>(
 export function applyMenuOrder(
   groups: readonly NavGroup[],
   order: MenuOrder,
+  lang: Language = "ar",
 ): NavGroup[] {
   const home = new Map<string, string>();
   for (const [key, paths] of Object.entries(order.items)) {
@@ -57,18 +101,23 @@ export function applyMenuOrder(
     for (const p of paths) if (!home.has(p)) home.set(p, key);
   }
   const all = groups.flatMap((g) => g.items.map((i) => ({ i, from: g.key })));
-  const placed = groups.map((g) => ({
-    ...g,
-    items: all
-      .filter(({ i, from }) => (home.get(i.to) ?? from) === g.key)
-      .map(({ i }) => i),
-  }));
+  const placed = groups.map((g) => {
+    const seen = new Set<string>();
+    return {
+      ...overridden(g, order.systems?.[g.key], lang),
+      items: all
+        .filter(({ i, from }) => (home.get(i.to) ?? from) === g.key)
+        .map(({ i }) => i)
+        // A page shown in two systems (an alias) and moved to one of them appears there once.
+        .filter((i) => !seen.has(i.to) && Boolean(seen.add(i.to))),
+    };
+  });
   return byOrder(placed, (g) => g.key, order.groups)
     .map((g) => ({
       ...g,
       items: byOrder(g.items, (i) => i.to, order.items[g.key] ?? []),
     }))
-    .filter((g) => g.items.length > 0);
+    .filter((g) => g.items.length > 0 || g.suspended);
 }
 
 /** Moves the link at `path` to the end of group `to` (phase 5: from one axis to another). */

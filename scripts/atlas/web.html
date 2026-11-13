@@ -171,7 +171,7 @@ function select(id, zoom = true) {
   sel = id; if (zoom && typeof viewer !== 'undefined') { const z = byId[id]; viewer.focus(z.x, z.y, z.k === 'surface' ? 1.2 : 2.4); } const n = byId[id], on = highlight(id);
   const near = k => [...on].filter(x => byId[x] && byId[x].k === k && x !== id).map(x => byId[x]);
   const list = (title, arr, f) => arr.length ? `<h3>${title} (${arr.length})</h3><ul>${arr.slice(0, 40).map(f).join('')}${arr.length > 40 ? '<li>…</li>' : ''}</ul>` : '';
-  let h = `<h2>${esc(n.l)}</h2><div class="k">${KIND[n.k]}${n.k === 'screen' ? ' في ' + SF[n.sf] : ''}</div>`;
+  let h = `<h2>${esc(n.l)}</h2><div class="k">${KIND[n.k]}${n.k === 'screen' ? ' في ' + SF[n.sf] : ''}${n.sys ? ' · النظام ' + esc(n.sys) : ''}</div>`;
   if (n.files && n.files.length) h += list('الملفات', n.files, f => `<li><code>${esc(f)}</code></li>`);
   if (n.k !== 'surface') h += list('الواجهات', near('surface'), x => `<li>${esc(x.l)}</li>`);
   if (n.k !== 'screen') h += list('الشاشات', near('screen'), x => `<li>${esc(x.l)} <span class="k">${SF[x.sf]}</span></li>`);

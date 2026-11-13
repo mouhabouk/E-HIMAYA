@@ -20,8 +20,11 @@ from content import GROUP_VALUE, SCREENS  # noqa: E402
 
 KIND_AR = {"menu": "القائمة", "title": "الصفحة", "lead": "الغرض", "tabs": "التبويبات", "map": "الخريطة",
            "section": "قسم", "table": "جدول", "form": "استمارة", "action": "إجراء"}
-GROUP_ORDER = ["ops", "fleet", "crisis", "strategies", "disasters", "alerts", "people", "orgs", "knowledge",
-               "system", "dev"]
+sys.path.insert(0, str(HERE.parent / "menu"))
+from menu import systems as menu_systems  # noqa: E402
+
+# The order of the menu's one source: the home page, then the 20 systems.
+GROUP_ORDER = ["home", *(s["key"] for s in menu_systems())]
 
 
 def scope(access: dict[str, bool]) -> list[str]:

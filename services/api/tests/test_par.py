@@ -61,7 +61,7 @@ async def test_the_catalogue_names_the_check(par: httpx.AsyncClient) -> None:
     assert len(mine) == 20
     for method, path in mine:
         chain = reg.match(method, path)
-        assert chain and chain[-1].key in ("par", "field_par"), (method, path)
+        assert chain and [f for f in chain if f.kind == "page"][-1].key in ("par", "field_par"), (method, path)
         # A write is granted or hidden by its own button.
         assert method == "GET" or chain[0].kind == "button", (method, path)
     for key in ("par", "field_par"):

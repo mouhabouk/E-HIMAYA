@@ -29,11 +29,11 @@ describe("system development", () => {
     expect(canUseDevTools({ roles: ["sysadmin"], national: false })).toBe(false);
     const t = ((k: string) => k) as never;
     const admin = identityFromClaims({ sub: "a", realm_access: { roles: ["sysadmin"] }, scope_level: "national" });
-    const dev = navGroups(admin, t).find((g) => g.key === "dev");
-    expect(dev?.items.map((i) => i.to)).toEqual(["/sql", "/dev/map"]);
-    expect(navGroups(admin, t).find((g) => g.key === "system")?.items.some((i) => i.to === "/sql")).toBe(false);
+    // 2026-11-13: under the system settings, in their own «أدوات المطوّر» section.
+    const settings = navGroups(admin, t).find((g) => g.key === "settings");
+    expect(settings?.items.filter((i) => i.section === "dev").map((i) => i.to)).toEqual(["/sql", "/dev/map"]);
     const ops = identityFromClaims({ sub: "b", realm_access: { roles: ["ops_manager"] }, scope_level: "national" });
-    expect(navGroups(ops, t).some((g) => g.key === "dev")).toBe(false);
+    expect(navGroups(ops, t).flatMap((g) => g.items).some((i) => i.section === "dev")).toBe(false);
   });
 
   it("places every node once, the same way on every visit", () => {
