@@ -336,7 +336,16 @@ erDiagram
         text decided_by_name
         text decision_reason
         datetime confirmed_at
+        datetime check_requested_at
+        text check_requested_by_name
         integer version
+    }
+    aw__reminder_day {
+        smallint gouvernorat_code PK,FK
+        date day PK
+        integer late
+        integer soon
+        datetime at
     }
     aw__reveal {
         bigint id PK
@@ -348,12 +357,16 @@ erDiagram
         text by_name
         text reason
         datetime at
+        text notified_via
+        datetime disputed_at
+        text dispute_note
     }
     aw__category ||--o{ aw__marker : "category"
     aw__marker ||--o{ aw__ack : "marker_id"
     aw__marker ||--o{ aw__reveal : "marker_id"
     geo__gouvernorat ||--o{ aw__ack : "gouvernorat_code"
     geo__gouvernorat ||--o{ aw__marker : "gouvernorat_code"
+    geo__gouvernorat ||--o{ aw__reminder_day : "gouvernorat_code"
     geo__gouvernorat ||--o{ aw__reveal : "gouvernorat_code"
     identity__account ||--o{ aw__marker : "owner_id"
     identity__account ||--o{ aw__reveal : "owner_id"

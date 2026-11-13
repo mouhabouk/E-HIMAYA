@@ -2,11 +2,13 @@
 citizen's consent and the reading of a personal mark's owner."""
 
 import secrets
+import uuid
 from collections.abc import Callable
 from datetime import UTC, date, datetime
 from typing import Any
 
 import httpx
+from sqlalchemy import text as text_
 
 from app.modules.address_warnings import service
 from tests.test_crew import _on_shift
@@ -274,3 +276,154 @@ async def test_the_team_reads_its_warnings_and_proposes_a_mark(client: httpx.Asy
     # Another leader's mission is not found.
     other, _ = await _on_shift(client, staff)
     assert (await other.get(path)).status_code == 404
+
+
+# ---------------------------------------------------------------- follow-ups OS8-2 and OS8-3
+
+
+async def test_the_owner_is_told_and_may_object(
+    client: httpx.AsyncClient, staff: Staff, citizen: dict[str, str], make_token: Any, session: Any
+) -> None:
+    """OS8-2: a reveal sends a content-free push to the owner's phone; the owner objects from the app."""
+    from sqlalchemy import text
+
+    from tests.conftest import bearer
+
+    token = "fcm-" + secrets.token_hex(16)
+    r = await client.put("/api/v1/devices", json={"token": token, "platform": "android"}, headers=citizen)
+    assert r.status_code == 204, r.text
+    place = _place()
+    body = {
+        "location": _north(place, 20),
+        "address": "نهج الاختبار عدد 3",
+        "needs": [{"category": "mob", "description": "يستعمل كرسيا متحركا"}],
+    }
+    assert (await client.put(ME, json=body, headers=citizen)).status_code == 200
+    room = staff(["operator"], SFAX, name="رئيس القاعة")
+    incident_id, _ = await new_incident(client, staff, {**place, "accuracy_m": 10.0})
+    out = (await client.get(f"{URL}/incidents/{incident_id}", headers=room)).json()
+    mob = next(w for w in out["items"] if w["category"] == "mob")
+    reason = "لإبلاغ الفريق باسمه للمناداة"
+    r = await client.post(
+        f"{URL}/incidents/{incident_id}/reveal/{mob['marker_id']}", json={"reason": reason}, headers=room
+    )
+    assert r.status_code == 200, r.text
+    row = next(x for x in (await client.get(f"{URL}/reveals", headers=room)).json() if x["reason"] == reason)
+    assert row["notified_via"] == "push" and row["disputed_at"] is None
+    # The push carries an identifier only: no name, no address, no reason.
+    payload = (
+        await session.execute(
+            text(
+                "SELECT payload FROM notify.outbox WHERE channel = 'push'"
+                " AND payload->>'type' = 'address_warning_viewed' AND payload->'data'->>'id' = :id"
+            ),
+            {"id": str(row["id"])},
+        )
+    ).scalar_one()
+    assert set(payload["data"]) == {"id", "redacted"} and reason not in str(payload)
+    mine = (await client.get(ME, headers=citizen)).json()
+    seen = next(x for x in mine["reveals"] if x["id"] == row["id"])
+    assert seen["reason"] == reason and seen["disputed_at"] is None
+    # Another account cannot object to it; the owner can, once.
+    other = bearer(make_token(roles=["citizen"], email="other@example.tn", email_verified=True))
+    url = f"{ME}/reveals/{row['id']}/dispute"
+    assert (await client.post(url, json={}, headers=other)).status_code == 404
+    assert (await client.post(url, json={"note": "لا أحد اتصل بي"}, headers=citizen)).status_code == 204
+    assert (await client.post(url, json={}, headers=citizen)).status_code == 204
+    row = next(x for x in (await client.get(f"{URL}/reveals", headers=room)).json() if x["id"] == row["id"])
+    assert row["disputed_at"] and row["dispute_note"] == "لا أحد اتصل بي"
+    assert (await client.get(ME, headers=citizen)).json()["reveals"][0]["disputed_at"]
+    # The central room counts the objections.
+    assert (await client.get(f"{URL}/reminders", headers=staff(["ops_manager"], None))).json()["disputes"] >= 1
+
+
+async def test_without_a_phone_for_pushes_the_owner_gets_an_sms(
+    client: httpx.AsyncClient, staff: Staff, citizen: dict[str, str], session: Any
+) -> None:
+    place = _place()
+    body = {
+        "location": _north(place, 20),
+        "address": "نهج الاختبار عدد 5",
+        "needs": [{"category": "deaf", "description": "لا يسمع الإنذار"}],
+    }
+    assert (await client.put(ME, json=body, headers=citizen)).status_code == 200
+    me = (await client.get(ME, headers=citizen)).json()
+    marker_id = me["needs"][0]["id"]
+    from app.modules.address_warnings.models import Marker
+    from app.modules.identity.models import Profile
+
+    async with session.begin():
+        owner = (await session.get(Marker, uuid.UUID(marker_id))).owner_id
+        profile = await session.get(Profile, owner)
+        if profile is None:
+            profile = Profile(user_id=owner)
+            session.add(profile)
+        profile.phone = "+21698123456"
+    room = staff(["operator"], SFAX)
+    incident_id, _ = await new_incident(client, staff, {**place, "accuracy_m": 10.0})
+    r = await client.post(f"{URL}/incidents/{incident_id}/reveal/{marker_id}", json={"reason": "للاتصال"}, headers=room)
+    assert r.status_code == 200, r.text
+    # No phone receiving pushes: one SMS with the fixed text (no name, no address, no reason).
+    row = next(x for x in (await client.get(f"{URL}/reveals", headers=room)).json() if x["reason"] == "للاتصال")
+    assert row["notified_via"] == "sms"
+    sms = (
+        await session.execute(
+            text_("SELECT payload FROM notify.outbox WHERE channel = 'sms' AND address = :p ORDER BY id DESC"),
+            {"p": "+21698123456"},
+        )
+    ).first()
+    assert sms is not None and sms[0]["text"] == service.REVEAL_SMS
+
+
+async def test_the_review_reminder(client: httpx.AsyncClient, staff: Staff, session: Any) -> None:
+    """OS8-3: past or near their review date, with their level; a field check; the morning live reminder once."""
+    from datetime import timedelta
+
+    from tests.conftest import outbox_events
+
+    room = staff(["operator"], SFAX, name="عون القاعة")
+    today = service.today()
+    marks = {}
+    for days in (40, 10, 2, -10, -60):
+        marks[days] = await _mark(
+            client,
+            room,
+            category="dog",
+            location=_place(),
+            description=f"كلب · {days}",
+            review_on=(today - timedelta(days=days)).isoformat(),
+        )
+    out = (await client.get(f"{URL}/reminders", headers=room)).json()
+    late = {x["marker"]["id"]: x for x in out["late"]}
+    soon = {x["marker"]["id"]: x for x in out["soon"]}
+    assert late[marks[40]["id"]]["level"] == "central" and late[marks[40]["id"]]["days"] == 40
+    assert late[marks[10]["id"]]["level"] == "manager" and late[marks[2]["id"]]["level"] == "room"
+    assert soon[marks[-10]["id"]]["level"] == "soon" and soon[marks[-10]["id"]]["days"] == -10
+    assert marks[-60]["id"] not in late | soon
+    assert out["settings"] == {"hour": 8, "ahead_days": 30, "manager_days": 7, "central_days": 30}
+    # Another gouvernorat's room does not see them.
+    other = (await client.get(f"{URL}/reminders", headers=staff(["operator"], 11))).json()
+    assert marks[40]["id"] not in {x["marker"]["id"] for x in other["late"]}
+    # A field check is kept until the mark is confirmed; confirmed, it leaves the reminder.
+    r = await client.post(f"{URL}/markers/{marks[2]['id']}/check", headers=room)
+    assert r.status_code == 200 and r.json()["check_requested_by_name"] == "عون القاعة"
+    assert (
+        await client.post(f"{URL}/markers/{marks[2]['id']}/check", headers=staff(["local_committee"], SFAX))
+    ).status_code == 403
+    r = await client.post(f"{URL}/markers/{marks[2]['id']}/confirm", json={}, headers=room)
+    assert r.status_code == 200 and r.json()["check_requested_at"] is None and not r.json()["review_due"]
+    out = (await client.get(f"{URL}/reminders", headers=room)).json()
+    assert marks[2]["id"] not in {x["marker"]["id"] for x in out["late"]}
+    # The morning reminder: not before 08:00, then once a day per gouvernorat.
+    morning = datetime.combine(today, datetime.min.time(), tzinfo=service.TUNIS)
+    async with session.begin():
+        assert await service.send_reminders(session, morning.replace(hour=7)) == 0
+    async with session.begin():
+        await session.execute(text_("DELETE FROM aw.reminder_day WHERE day = :d"), {"d": today})
+        assert await service.send_reminders(session, morning.replace(hour=8, minute=5)) >= 1
+    async with session.begin():
+        assert await service.send_reminders(session, morning.replace(hour=9)) == 0
+    sent = [
+        e for e in await outbox_events(session, "address_warnings.review_reminder") if e["gouvernorat_code"] == SFAX
+    ]
+    assert sent and sent[-1]["late"] >= 2 and sent[-1]["central"] >= 1 and sent[-1]["day"] == today.isoformat()
