@@ -7768,4 +7768,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get parFailed => 'Non envoyé : vérifiez le réseau et réessayez';
+
+  @override
+  String get staffRepositionTitle => 'Ordre de repositionnement';
+
+  @override
+  String staffRepositionReinforce(String from, String to) {
+    return 'En renfort : de $from à $to';
+  }
+
+  @override
+  String staffRepositionReturn(String from, String to) {
+    return 'Retour à l\'unité : de $from à $to';
+  }
+
+  @override
+  String staffRepositionBy(String name, String time) {
+    return 'De $name à $time';
+  }
+
+  @override
+  String get staffRepositionSeen => 'Vu';
+
+  @override
+  String get staffRepositionDeparted => 'Partis';
+
+  @override
+  String get staffRepositionArrived => 'Arrivés';
+
+  @override
+  String staffRepositionStepDone(String step, String time) {
+    return '$step à $time';
+  }
+
+  @override
+  String get staffRepositionClosed => 'Ordre annulé';
+
+  @override
+  String get staffRepositionLeaderOnly =>
+      'Le chef d\'équipe confirme les étapes.';
 }

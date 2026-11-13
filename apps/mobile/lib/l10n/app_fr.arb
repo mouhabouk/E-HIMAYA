@@ -2246,5 +2246,15 @@
   "parExitSend": "Tous sont sortis",
   "parHeadcountIncomplete": "Un membre est encore dans la zone",
   "parNote": "Le contrôle est archivé avec l'intervention à la fin.",
-  "parFailed": "Non envoyé : vérifiez le réseau et réessayez"
+  "parFailed": "Non envoyé : vérifiez le réseau et réessayez",
+  "staffRepositionTitle": "Ordre de repositionnement",
+  "staffRepositionReinforce": "En renfort : de {from} à {to}",
+  "staffRepositionReturn": "Retour à l'unité : de {from} à {to}",
+  "staffRepositionBy": "De {name} à {time}",
+  "staffRepositionSeen": "Vu",
+  "staffRepositionDeparted": "Partis",
+  "staffRepositionArrived": "Arrivés",
+  "staffRepositionStepDone": "{step} à {time}",
+  "staffRepositionClosed": "Ordre annulé",
+  "staffRepositionLeaderOnly": "Le chef d'équipe confirme les étapes."
 }

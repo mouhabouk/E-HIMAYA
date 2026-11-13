@@ -597,6 +597,13 @@
               "gate": "fleet"
             },
             {
+              "key": "fleetReport",
+              "path": "/fleet/report",
+              "icon": "analytics",
+              "tone": "green",
+              "gate": "fleet"
+            },
+            {
               "key": "resources",
               "path": "/resources",
               "icon": "localShipping",

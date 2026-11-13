@@ -27,7 +27,19 @@ export interface MaintenanceBody {
   version?: number;
 }
 
-export interface MaintenanceEndBody {
+/** OS3-3: what a stay in the workshop cost, in dinars (three decimals), at the exit or later. */
+export type MaintKind = "repair" | "periodic" | "accident";
+export const MAINT_KINDS: readonly MaintKind[] = ["repair", "periodic", "accident"];
+
+export interface CostBody {
+  maint_kind?: MaintKind | null;
+  cost_parts?: string | null;
+  cost_labour?: string | null;
+  cost_external?: string | null;
+  invoice_ref?: string | null;
+}
+
+export interface MaintenanceEndBody extends CostBody {
   note?: string | null;
   odometer_km?: number | null;
   version?: number;
@@ -61,6 +73,13 @@ export interface VehicleEvent {
   details: Record<string, string | number | boolean | null>;
   created_by_name: string | null;
   created_at: string;
+  maint_kind?: MaintKind | null;
+  cost_parts?: string | null;
+  cost_labour?: string | null;
+  cost_external?: string | null;
+  invoice_ref?: string | null;
+  cost_by_name?: string | null;
+  cost_at?: string | null;
 }
 
 export interface FamilyCell {
@@ -69,6 +88,8 @@ export interface FamilyCell {
   covered: boolean;
   baseline_covered: boolean;
   unit_name: string | null;
+  /** OS3-4: the quickest unit belongs to a neighbouring gouvernorat. */
+  neighbour?: boolean;
 }
 
 export interface CoveragePlace {
@@ -91,6 +112,8 @@ export interface CoverageFamilyRow {
   ready: number;
   fleet: number;
   out: number;
+  /** OS3-4: with the gouvernorat's own units only. */
+  own_pct: number;
 }
 
 export interface CoverageUnit {
@@ -101,6 +124,13 @@ export interface CoverageUnit {
   lon: number;
   ready: Record<CoverageFamily, number>;
   hosted: number;
+  gouvernorat_code: number;
+  neighbour: boolean;
+  /** OS3-2: the turnout used for the unit, measured on its missions or the default. */
+  turnout_minutes: number;
+  turnout_source: "measured" | "default";
+  turnout_missions: number;
+  turnout_p90_minutes: number | null;
 }
 
 export interface CoverageAlert {
@@ -125,12 +155,16 @@ export interface CoverageSuggestion {
   newly_covered: string[];
   lost: string[];
   version: number;
+  from_gouvernorat_code: number;
 }
 
 export interface Coverage {
   gouvernorat_code: number;
   engine: string;
   turnout_minutes: number;
+  turnout_mode: "measured" | "uniform";
+  neighbours: boolean;
+  neighbour_m: number;
   targets: Record<CoverageFamily, Record<Zone, number>>;
   families: CoverageFamilyRow[];
   delegations: CoveragePlace[];
@@ -139,6 +173,83 @@ export interface Coverage {
   suggestions: CoverageSuggestion[];
   computed_at: string;
   assumptions: string[];
+}
+
+/** OS3-1: a repositioning sent to the crew on the staff app, followed step by step. */
+export type OrderState = "sent" | "seen" | "departed" | "arrived" | "closed";
+
+export interface RepositionOrder {
+  id: string;
+  resource_id: string;
+  label: string;
+  plate: string | null;
+  kind: "reinforce" | "return";
+  from_unit_id: string;
+  from_unit: string;
+  to_unit_id: string;
+  to_unit: string;
+  /** [lon, lat] */
+  from_point: [number, number] | null;
+  to_point: [number, number] | null;
+  gouvernorat_code: number;
+  host_gouvernorat_code: number | null;
+  note: string | null;
+  gain_population: number | null;
+  leader_name: string | null;
+  pushed: boolean;
+  created_by_name: string | null;
+  created_at: string;
+  seen_at: string | null;
+  seen_by_name: string | null;
+  departed_at: string | null;
+  arrived_at: string | null;
+  closed_at: string | null;
+  close_reason: "replaced" | "state" | "maintenance" | "retired" | null;
+  state: OrderState;
+  overdue: boolean;
+}
+
+/** OS3-3: the monthly report of the fleet. */
+export interface FleetMonth {
+  month: string;
+  readiness_pct: number | null;
+  cost_total: string;
+}
+
+export interface FleetReportRow {
+  gouvernorat_code: number;
+  name_ar: string;
+  name_fr: string;
+  /** [lon, lat] */
+  point: [number, number] | null;
+  vehicles: number;
+  vehicle_days: number;
+  down_days: number;
+  readiness_pct: number | null;
+  workshop_entries: number;
+  retired: number;
+  cost_parts: string;
+  cost_labour: string;
+  cost_external: string;
+  cost_total: string;
+  cost_per_vehicle: string | null;
+  series: FleetMonth[];
+}
+
+export interface FleetReport {
+  month: string;
+  months: string[];
+  rows: FleetReportRow[];
+  total: FleetReportRow | null;
+  costly: { resource_id: string; label: string; plate: string | null; gouvernorat_code: number; cost_total: string; stays: number }[];
+  red_below: number;
+  amber_below: number;
+  computed_at: string;
+}
+
+export function readinessTone(pct: number | null, r: Pick<FleetReport, "red_below" | "amber_below">): "red" | "amber" | "green" | "slate" {
+  if (pct === null) return "slate";
+  return pct < r.red_below ? "red" : pct < r.amber_below ? "amber" : "green";
 }
 
 export type ProfileMode = "read" | "write";
@@ -200,7 +311,9 @@ export const fleetKeys = {
   vehicles: (gouvernorat: number | null) => ["inventory", "fleet", "vehicles", gouvernorat] as const,
   events: (gouvernorat: number | null, vehicle: string | null) =>
     ["inventory", "fleet", "events", gouvernorat, vehicle] as const,
-  coverage: (gouvernorat: number | null) => ["coverage", gouvernorat] as const,
+  coverage: (gouvernorat: number | null, neighbours = false) => ["coverage", gouvernorat, neighbours] as const,
+  orders: (gouvernorat: number | null) => ["coverage", "orders", gouvernorat] as const,
+  report: (month: string | null, gouvernorat: number | null) => ["inventory", "fleet", "report", month, gouvernorat] as const,
   profiles: ["feature-profiles"] as const,
   assignments: ["feature-profile-assignments"] as const,
 };
@@ -225,8 +338,23 @@ export function fleetApi(api: ApiClient) {
         query: { gouvernorat: q.gouvernorat ?? undefined, vehicle_id: q.vehicle ?? undefined },
         signal,
       }),
-    coverage: (gouvernorat: number | null, signal?: AbortSignal) =>
-      api.request<Coverage>("/api/v1/staff/coverage", { query: { gouvernorat: gouvernorat ?? undefined }, signal }),
+    coverage: (gouvernorat: number | null, signal?: AbortSignal, neighbours = false) =>
+      api.request<Coverage>("/api/v1/staff/coverage", {
+        query: { gouvernorat: gouvernorat ?? undefined, neighbours: neighbours ? true : undefined },
+        signal,
+      }),
+    repositionOrders: (gouvernorat: number | null, signal?: AbortSignal) =>
+      api.request<{ items: RepositionOrder[]; ack_minutes: number }>("/api/v1/staff/coverage/orders", {
+        query: { gouvernorat: gouvernorat ?? undefined },
+        signal,
+      }),
+    setEventCost: (id: string, body: CostBody) =>
+      api.request<VehicleEvent>(`${I}/vehicle-events/${enc(id)}/cost`, { method: "POST", body }),
+    fleetReport: (q: { month?: string | null; gouvernorat?: number | null; months?: number }, signal?: AbortSignal) =>
+      api.request<FleetReport>(`${I}/fleet-report`, {
+        query: { month: q.month ?? undefined, gouvernorat: q.gouvernorat ?? undefined, months: q.months ?? undefined },
+        signal,
+      }),
     featureProfiles: (signal?: AbortSignal) => api.request<Profile[]>(`${F}/profiles`, { signal }),
     saveFeatureProfile: (id: string | null, body: ProfileBody) =>
       id

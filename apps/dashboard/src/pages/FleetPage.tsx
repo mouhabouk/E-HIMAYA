@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
 import { ErrorBox, Loading } from "../components/Feedback";
 import { IconTile } from "../components/Icon";
+import { CostEditor, CostFields, costBody, costLine, costValid, EMPTY_COST, FleetReportView, type CostState } from "../components/FleetReport";
 import { categoryName, DeleteEntry, VehicleForm } from "../components/InventoryForms";
 import { PageTitle } from "../components/PageTitle";
 import { useAuth } from "../context/auth";
@@ -18,13 +19,14 @@ import { fleetKeys, vehiclesByState, type RoomState, type VehicleEvent } from ".
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { inventoryKeys, STATE_TONE, VEHICLE_STATES, type Vehicle, type VehicleState } from "../lib/inventory";
 
-export type FleetView = "dashboard" | "vehicles" | "maintenance" | "archive" | "log";
+export type FleetView = "dashboard" | "vehicles" | "maintenance" | "archive" | "log" | "report";
 const TABS: readonly [FleetView, string][] = [
   ["dashboard", "/fleet"],
   ["vehicles", "/fleet/vehicles"],
   ["maintenance", "/fleet/maintenance"],
   ["archive", "/fleet/archive"],
   ["log", "/fleet/log"],
+  ["report", "/fleet/report"],
 ];
 const MIN_REASON = 5;
 type Action = { vehicle: Vehicle; kind: "edit" | "state" | "workshop" | "back" | "retire" } | { kind: "new" };
@@ -96,8 +98,8 @@ export function FleetPage({ view }: { view: FleetView }) {
           </div>
         </div>
       )}
-      {list.isPending && <Loading />}
-      {list.isError && <ErrorBox error={list.error} onRetry={() => void list.refetch()} />}
+      {view !== "report" && list.isPending && <Loading />}
+      {view !== "report" && list.isError && <ErrorBox error={list.error} onRetry={() => void list.refetch()} />}
       {data && view === "dashboard" && <Dashboard items={data.items} gouvernorat={gouvernorat} />}
       {data && view === "vehicles" && (
         <Vehicles
@@ -119,7 +121,8 @@ export function FleetPage({ view }: { view: FleetView }) {
         />
       )}
       {data && view === "archive" && <Archive items={data.items.filter((v) => v.state === "retired")} />}
-      {view === "log" && <Log gouvernorat={gouvernorat} />}
+      {view === "log" && <Log gouvernorat={gouvernorat} canMaintain={data?.can_maintain ?? false} />}
+      {view === "report" && <FleetReportView gouvernorat={gouvernorat} />}
     </div>
   );
 }
@@ -367,8 +370,10 @@ function Decision({
   const [text2, setText2] = useState("");
   const [day, setDay] = useState(action.kind === "retire" ? new Date().toISOString().slice(0, 10) : "");
   const [odometer, setOdometer] = useState("");
+  const [cost, setCost] = useState<CostState>(EMPTY_COST);
   const [tried, setTried] = useState(false);
   const missing =
+    (action.kind === "back" && !costValid(cost)) ||
     (action.kind === "state" && state === "broken" && text1.trim().length < 3) ||
     (action.kind === "state" && state === "reinforcement" && !host) ||
     (action.kind === "workshop" && (text1.trim().length < 2 || text2.trim().length < 3)) ||
@@ -389,6 +394,7 @@ function Decision({
         return api.endMaintenance(v.id, {
           note: text2.trim() || null,
           odometer_km: odometer ? Number(odometer) : null,
+          ...costBody(cost),
           version: v.version,
         });
       return api.retireVehicle(v.id, { decision: text1.trim(), reason: text2.trim(), retired_on: day, version: v.version });
@@ -460,7 +466,10 @@ function Decision({
       >
         <input id={`${id}-t2`} dir="auto" maxLength={500} value={text2} onChange={(e) => setText2(e.target.value)} />
       </Field>
-      {tried && missing && <p className="alert alert--error">{t("inventory.form.missing")}</p>}
+      {action.kind === "back" && <CostFields value={cost} onChange={setCost} />}
+      {tried && missing && (
+        <p className="alert alert--error">{t(action.kind === "back" ? "fleet.cost.invalid" : "inventory.form.missing")}</p>
+      )}
       {mutation.isError && (
         <p className="alert alert--error" role="alert">
           {t(errorMessageKey(mutation.error))}
@@ -529,10 +538,11 @@ function eventText(e: VehicleEvent, t: (k: string, o?: Record<string, unknown>) 
   return parts.join(" — ");
 }
 
-function Log({ gouvernorat, limit }: { gouvernorat: number | null; limit?: number }) {
+function Log({ gouvernorat, limit, canMaintain = false }: { gouvernorat: number | null; limit?: number; canMaintain?: boolean }) {
   const { t } = useTranslation();
   const { api } = useServices();
   const fmt = useFormat();
+  const [editing, setEditing] = useState<string | null>(null);
   const q = useQuery({
     queryKey: fleetKeys.events(gouvernorat, null),
     queryFn: ({ signal }) => api.vehicleEvents({ gouvernorat }, signal),
@@ -541,8 +551,10 @@ function Log({ gouvernorat, limit }: { gouvernorat: number | null; limit?: numbe
   if (q.isError) return <ErrorBox error={q.error} onRetry={() => void q.refetch()} />;
   const items = limit ? q.data.items.slice(0, limit) : q.data.items;
   if (items.length === 0) return <p className="muted">{t("fleet.logEmpty")}</p>;
+  const open = items.find((e) => e.id === editing);
   return (
     <div className="table-wrap">
+      {open && <CostEditor event={open} onDone={() => setEditing(null)} />}
       <table className="table">
         <thead>
           <tr>
@@ -564,7 +576,17 @@ function Log({ gouvernorat, limit }: { gouvernorat: number | null; limit?: numbe
               <td>
                 <Pill state={e.from_state as VehicleState} /> ← <Pill state={e.to_state as VehicleState} />
               </td>
-              <td dir="auto">{eventText(e, t, (n) => fmt.number(n))}</td>
+              <td dir="auto">
+                {eventText(e, t, (n) => fmt.number(n))}
+                {costLine(e, t, (n) => fmt.number(n)) && (
+                  <span className="muted inventory-sub">{costLine(e, t, (n) => fmt.number(n))}</span>
+                )}
+                {canMaintain && e.kind === "maintenance_end" && !limit && (
+                  <button type="button" className="btn btn--small btn--ghost" onClick={() => setEditing(e.id)}>
+                    {t(costLine(e, t, String) ? "fleet.cost.edit" : "fleet.cost.add")}
+                  </button>
+                )}
+              </td>
               <td dir="auto">{e.created_by_name ?? "—"}</td>
             </tr>
           ))}

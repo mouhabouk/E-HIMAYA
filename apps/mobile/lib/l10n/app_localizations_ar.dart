@@ -7612,4 +7612,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get parFailed => 'لم يُرسل: تحقّق من الشبكة وأعد المحاولة';
+
+  @override
+  String get staffRepositionTitle => 'أمر تمركز';
+
+  @override
+  String staffRepositionReinforce(String from, String to) {
+    return 'في تعزيز: من $from إلى $to';
+  }
+
+  @override
+  String staffRepositionReturn(String from, String to) {
+    return 'عودة إلى الوحدة: من $from إلى $to';
+  }
+
+  @override
+  String staffRepositionBy(String name, String time) {
+    return 'من $name على الساعة $time';
+  }
+
+  @override
+  String get staffRepositionSeen => 'اطّلعت';
+
+  @override
+  String get staffRepositionDeparted => 'انطلقنا';
+
+  @override
+  String get staffRepositionArrived => 'وصلنا';
+
+  @override
+  String staffRepositionStepDone(String step, String time) {
+    return '$step على الساعة $time';
+  }
+
+  @override
+  String get staffRepositionClosed => 'أُلغي الأمر';
+
+  @override
+  String get staffRepositionLeaderOnly => 'رئيس الفريق يؤكد الخطوات.';
 }

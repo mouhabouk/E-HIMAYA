@@ -7701,4 +7701,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parFailed => 'Not sent: check the network and try again';
+
+  @override
+  String get staffRepositionTitle => 'Repositioning order';
+
+  @override
+  String staffRepositionReinforce(String from, String to) {
+    return 'As reinforcement: from $from to $to';
+  }
+
+  @override
+  String staffRepositionReturn(String from, String to) {
+    return 'Back to the unit: from $from to $to';
+  }
+
+  @override
+  String staffRepositionBy(String name, String time) {
+    return 'From $name at $time';
+  }
+
+  @override
+  String get staffRepositionSeen => 'Seen';
+
+  @override
+  String get staffRepositionDeparted => 'Left';
+
+  @override
+  String get staffRepositionArrived => 'Arrived';
+
+  @override
+  String staffRepositionStepDone(String step, String time) {
+    return '$step at $time';
+  }
+
+  @override
+  String get staffRepositionClosed => 'Order cancelled';
+
+  @override
+  String get staffRepositionLeaderOnly => 'The team leader confirms the steps.';
 }

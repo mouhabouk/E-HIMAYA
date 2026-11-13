@@ -8,6 +8,7 @@ import { LazyMapView } from "../components/LazyMap";
 import { useSavedPlaces } from "../components/SavedPlaces";
 import { useAdminLayer } from "../components/AdminLayer";
 import { useBasemap } from "../components/BasemapSwitch";
+import { useFleetMapLayers } from "../components/FleetMapLayers";
 import { useMapDataLayers, type FolderExtra } from "../components/MapDataLayers";
 import { useResourceSearchLayer } from "../components/ResourceSearchLayer";
 import { WhatWhereSearch } from "../components/WhatWhereSearch";
@@ -548,10 +549,13 @@ export function MapPage() {
   const folderExtras = useMemo(() => ({ civil_protection: civilProtection }), [civilProtection]);
   // Map data layers loaded from files (phase B1): hospitals, shelters… any number at once.
   const dataLayers = useMapDataLayers(bbox, folderExtras);
+  // OS3 follow-ups: the live coverage, the repositioning orders and the fleet readiness, as optional layers.
+  const fleetLayers = useFleetMapLayers();
   const allPois = useMemo(
-    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...savedPlaces.pois],
-    [pois, opsPois, resourceSearch.pois, dataLayers.pois, savedPlaces.pois],
+    () => [...pois, ...opsPois, ...resourceSearch.pois, ...dataLayers.pois, ...fleetLayers.pois, ...savedPlaces.pois],
+    [pois, opsPois, resourceSearch.pois, dataLayers.pois, fleetLayers.pois, savedPlaces.pois],
   );
+  const allLines = useMemo(() => [...lines, ...fleetLayers.lines], [lines, fleetLayers.lines]);
   const shapes = useMemo(
     () => ({ ...dataLayers.shapes, features: [...resourceSearch.shapes, ...dataLayers.shapes.features] }),
     [dataLayers.shapes, resourceSearch.shapes],
@@ -680,6 +684,7 @@ export function MapPage() {
         {basemap.control}
       </div>
       {dataLayers.controls}
+      {fleetLayers.controls}
       {adminLayer.controls}
       {showWeather && (
         <WeatherControls
@@ -760,7 +765,7 @@ export function MapPage() {
               poiOpenLabel={t("orgs.layer.open")}
               onOpenPoi={onOpenPoi}
               polygons={polygons}
-              lines={lines}
+              lines={allLines}
               heat={heat}
               shapes={shapes}
               weather={mapWeather}

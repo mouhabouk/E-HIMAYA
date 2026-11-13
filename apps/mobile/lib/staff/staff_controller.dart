@@ -12,6 +12,7 @@ import '../core/logging/log.dart';
 import '../core/storage/secure_store.dart';
 import '../features/report/sms_fallback.dart' show normalizeSmsNumber, smsUri;
 import 'mission_box.dart';
+import 'reposition.dart' show repositionsProvider;
 import 'staff_api.dart';
 import 'staff_auth.dart';
 import 'staff_config.dart';
@@ -637,6 +638,8 @@ class StaffController extends Notifier<StaffState> {
         _keep();
       }
     }
+    // OS3-1: the repositioning orders of the vehicle come with the missions.
+    ref.invalidate(repositionsProvider);
     final missions = await _guard(_api.missions);
     if (missions != null && state.phase == StaffPhase.onShift) {
       _server = [for (final m in missions) m.json];

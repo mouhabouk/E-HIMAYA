@@ -4074,5 +4074,55 @@
   "parExitSend": "Everyone is out",
   "parHeadcountIncomplete": "A member is still inside",
   "parNote": "The check is filed with the intervention when it ends.",
-  "parFailed": "Not sent: check the network and try again"
+  "parFailed": "Not sent: check the network and try again",
+  "staffRepositionTitle": "Repositioning order",
+  "staffRepositionReinforce": "As reinforcement: from {from} to {to}",
+  "@staffRepositionReinforce": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "staffRepositionReturn": "Back to the unit: from {from} to {to}",
+  "@staffRepositionReturn": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "staffRepositionBy": "From {name} at {time}",
+  "@staffRepositionBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "staffRepositionSeen": "Seen",
+  "staffRepositionDeparted": "Left",
+  "staffRepositionArrived": "Arrived",
+  "staffRepositionStepDone": "{step} at {time}",
+  "@staffRepositionStepDone": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "staffRepositionClosed": "Order cancelled",
+  "staffRepositionLeaderOnly": "The team leader confirms the steps."
 }

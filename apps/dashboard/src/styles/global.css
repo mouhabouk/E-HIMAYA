@@ -12247,6 +12247,119 @@ body::after {
 .kpi--current {
   outline: 2px solid var(--tone-navy);
 }
+/* OS3 follow-ups (docs/phase-os3/design-os3b.md): neighbours, orders to the crews, turnout, monthly report. */
+.coverage-neighbours {
+  align-self: end;
+  padding-block-end: 0.4rem;
+}
+.coverage-pill {
+  margin-inline-start: 0.4rem;
+}
+.coverage-orders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.coverage-order {
+  border-block-start: 1px solid var(--border);
+  padding-block-start: 0.5rem;
+}
+.coverage-order:first-child {
+  border-block-start: 0;
+  padding-block-start: 0;
+}
+.coverage-order p {
+  margin-block: 0.25rem;
+}
+.coverage-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0.25rem 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.coverage-steps li::before {
+  content: "○ ";
+}
+.coverage-steps li.is-done {
+  color: var(--text);
+}
+.coverage-steps li.is-done::before {
+  content: "● ";
+  color: var(--tone-green);
+}
+.fleet-report__bars {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 0.5rem;
+  block-size: 9rem;
+  margin-block: 0.5rem;
+}
+.fleet-report__bar {
+  display: grid;
+  align-content: end;
+  justify-items: center;
+  gap: 0.25rem;
+  block-size: 100%;
+  font-size: 0.75rem;
+}
+.fleet-report__bar span[aria-hidden] {
+  inline-size: 70%;
+  border-radius: 4px 4px 0 0;
+  min-block-size: 2px;
+}
+.fleet-report__bar.tone-red span[aria-hidden] { background: var(--tone-red); }
+.fleet-report__bar.tone-amber span[aria-hidden] { background: var(--tone-amber); }
+.fleet-report__bar.tone-green span[aria-hidden] { background: var(--tone-green); }
+.fleet-report__bar.tone-slate span[aria-hidden] { background: var(--tone-slate); }
+.fleet-map-layers {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+.fleet-map-layers legend {
+  font-weight: 700;
+  padding-inline: 0.25rem;
+}
+.fleet-map-layers p {
+  margin: 0;
+  flex-basis: 100%;
+}
+.fleet-map-swatch {
+  display: inline-block;
+  inline-size: 0.8rem;
+  block-size: 0.8rem;
+  border-radius: 50%;
+}
+.fleet-cost input {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-block-size: 2.25rem;
+}
+.fleet-cost legend {
+  font-weight: 700;
+  margin-block-end: 0.25rem;
+}
+.fleet-cost > p {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.fleet-cost {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.5rem 1rem;
+}
 
 /* Phase I2: the periodic inspections (docs/phase-i/design-i.md); tones follow docs/design-system.md. */
 .chip--insp-green { color: var(--tone-green-ink); background: var(--tone-green-tint); }
