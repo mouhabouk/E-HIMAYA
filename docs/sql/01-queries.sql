@@ -689,6 +689,7 @@ UNION ALL SELECT 'telephony.call (مكالمات محاكاة source=sim)', coun
 UNION ALL SELECT 'org.prealert (إنذارات كاميرا محاكاة)', count(*) FILTER (WHERE simulated AND state = 'pending'), count(*) FROM org.prealert
 UNION ALL SELECT 'forecast.run (توقعات على طقس محاكى)', count(*) FILTER (WHERE simulated), count(*) FROM forecast.run
 UNION ALL SELECT 'decision.command_decision (اقتراحات محاكاة)', count(*) FILTER (WHERE simulated AND status = 'proposed'), count(*) FROM decision.command_decision
+UNION ALL SELECT 'reports.call_card (بطاقات استقبال تجريبية معتمدة)', count(*) FILTER (WHERE sim AND status = 'approved'), count(*) FROM reports.call_card
 UNION ALL SELECT 'crisis.axis (محاور تمرين [SIM])', count(*) FILTER (WHERE name ~* '^\s*\[SIM\]' AND status = 'open'), count(*) FROM crisis.axis
 UNION ALL SELECT 'ops.unit (وحدات العرض [SIM])', count(*) FILTER (WHERE name_ar LIKE '[SIM]%'), count(*) FROM ops.unit
 UNION ALL SELECT 'ops.resource (وسائل العرض [SIM])', count(*) FILTER (WHERE label LIKE '[SIM]%'), count(*) FROM ops.resource

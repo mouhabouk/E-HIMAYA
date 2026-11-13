@@ -7,6 +7,8 @@
 #   model/                    the relational model: DBML, draw.io, PNG, Word (docs/deliverables/data-model)
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
 #   atlas/                    the flowchart atlas with screenshots and narration (scripts/atlas/run.sh)
+#   sim-guide.html            the guide to the [SIM] data and how each item becomes real, with what is still [SIM] in
+#                             the database (scripts/sim_guide/build.py); docs/sql/sim-guide.md is rewritten with it
 #
 # The menu's 4 blocks and 20 systems come from one file, apps/dashboard/src/menu/menu.json (Yamen 2026-11-13): the
 # workbook's «القائمة» sheet, the atlas's groups, the web's screens and the menu's mind maps all read it, so a change
@@ -29,6 +31,8 @@ DB=${DB/+asyncpg/}
 echo "0/6 menu: one source, every screen reached"
 python3 "$ROOT/scripts/menu/sync.py" --check
 python3 "$ROOT/scripts/menu/check.py"
+echo "0/6 [SIM] guide: every simulated source of the migrations is in the guide"
+python3 "$ROOT/scripts/sim_guide/build.py" --check
 
 echo "1/6 backend dump"
 (cd "$ROOT/services/api" && "$PY" ../../scripts/ui_reference/backend_dump.py >"$OUT/backend.json")
@@ -50,6 +54,9 @@ cp "$OUT/model/e-Himaya_Database.dbml" "$OUT/model/e-Himaya_Database.drawio" "$R
 
 echo "5/6 spider web"
 python3 "$ROOT/scripts/atlas/web.py" --xlsx "$OUT/ehimaya-ui-reference.xlsx" --backend "$OUT/backend.json" --out "$OUT/web.html"
+
+echo "5b/6 [SIM] data guide"
+python3 "$ROOT/scripts/sim_guide/build.py" --html "$OUT/sim-guide.html"
 
 if [ "$ATLAS" != "--no-atlas" ]; then
   echo "6/6 flowchart atlas"
