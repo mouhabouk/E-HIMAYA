@@ -43,6 +43,7 @@ from app.modules.audit.router import router as audit_router
 from app.modules.availability.router import router as availability_router
 from app.modules.basemap.router import router as basemap_router
 from app.modules.basemap.router import tiles_router as basemap_tiles_router
+from app.modules.boards.router import router as boards_router
 from app.modules.checklist.router import router as checklist_router
 from app.modules.checklist.service import checklist_forever
 from app.modules.coastal.router import public_router as coastal_router
@@ -70,6 +71,7 @@ from app.modules.features import registry as features_registry
 from app.modules.features.profiles import router as profiles_router
 from app.modules.features.router import public_router as features_public_router
 from app.modules.features.router import router as features_router
+from app.modules.features.systems import router as feature_systems_router
 from app.modules.forecast.router import router as forecast_router
 from app.modules.geo.router import router as geo_router
 from app.modules.health.router import metrics_router
@@ -447,6 +449,8 @@ def create_app() -> FastAPI:
         app.include_router(router)
     app.include_router(accounts.router)
     app.include_router(features_router)
+    app.include_router(feature_systems_router)
+    app.include_router(boards_router)
     app.include_router(features_public_router)
     app.include_router(window_router)
     app.include_router(drill_router)

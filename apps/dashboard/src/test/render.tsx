@@ -237,6 +237,23 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
       Promise.resolve({ days: 90, count: 0, average: null, by_stars: {}, by_build: [], remarks: [] }),
     ),
     kpis: vi.fn(),
+    // The four boards of the menu of 20 systems (2026-11-13).
+    visionOverview: vi.fn(() =>
+      Promise.resolve({
+        hours: 24,
+        counts: { fire: 0, smoke: 0, person: 0 },
+        confirmed: 0,
+        danger: { high: 0, medium: 0, low: 0 },
+        watching: 0,
+        alert_confidence: 0.6,
+        items: [],
+      }),
+    ),
+    forecastOverview: vi.fn(() =>
+      Promise.resolve({ hours: 48, from: "2026-11-13T00:00:00Z", simulated: false, gouvernorats: [], runs: [] }),
+    ),
+    citizensOverview: vi.fn(() => Promise.resolve({ days: 90, national: {}, gouvernorats: [] })),
+    adminBoardOverview: vi.fn(),
     // OS3: the fleet, the live coverage and the access profiles.
     fleetVehicles: vi.fn(() => Promise.resolve({ items: [], can_edit: false, can_set_state: false, can_maintain: false })),
     setVehicleState: vi.fn(),

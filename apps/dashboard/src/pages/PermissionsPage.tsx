@@ -11,29 +11,18 @@ import type { Effect, Feature, FeatureRule, TargetKind } from "../lib/features";
 import { useFormat, useGouvernorats, useLanguage } from "../lib/hooks";
 import { REASON_RANGE, reasonValid } from "../lib/phase9";
 import { STAFF_ROLES } from "../lib/roles";
+import { localized } from "../lib/localized";
+import { SYSTEMS } from "../menu/menu";
 
 const KEYS = {
   catalogue: ["features", "catalogue"] as const,
   rules: (ended: boolean) => ["features", "rules", ended] as const,
   preview: (role: string, gouvernorat: string) => ["features", "preview", role, gouvernorat] as const,
 };
-const GROUPS = [
-  "ops",
-  "crisis",
-  "disasters",
-  "alerts",
-  "people",
-  // OS3: the fleet and its maintenance.
-  "fleet",
-  "orgs",
-  "knowledge",
-  "system",
-  "dev",
-  // Phase 5: the field app, the citizen app and the portal.
-  "field_app",
-  "citizen_app",
-  "portal",
-] as const;
+// The first screen, the 20 systems of the menu (menu.json, Yamen 2026-11-13), then the field app, the citizen app and
+// the portal (phase 5).
+const SURFACE_GROUPS = ["field_app", "citizen_app", "portal"] as const;
+const GROUPS: readonly string[] = ["home", ...SYSTEMS.map((s) => s.key), ...SURFACE_GROUPS];
 /** The surfaces whose users are citizens and organisations: a public role, or everyone, is a target there. */
 const PUBLIC_GROUPS = new Set(["citizen_app", "portal"]);
 const PUBLIC_ROLES = ["citizen", "volunteer", "org_admin", "org_member"] as const;
@@ -352,7 +341,13 @@ function Rules({ features }: { features: Feature[] }) {
 
 function Catalogue({ features }: { features: Feature[] }) {
   const { t } = useTranslation();
+  const lang = useLanguage();
   const name = useName();
+  const groupName = (group: string) => {
+    const system = SYSTEMS.find((s) => s.key === group);
+    if (system) return `${system.number}. ${localized(system.names, lang)}`;
+    return group === "home" ? t("nav.home") : t(`nav.group.${group}`);
+  };
   const pages = tree(features);
   return (
     <section className="card" aria-labelledby="perm-catalogue">
@@ -364,7 +359,7 @@ function Catalogue({ features }: { features: Feature[] }) {
         return (
           <details key={group} className="perm-group">
             <summary>
-              {t(`nav.group.${group}`)} <span className="muted">({inGroup.length})</span>
+              {groupName(group)} <span className="muted">({inGroup.length})</span>
             </summary>
             <ul className="perm-tree">
               {inGroup.map(({ page, children }) => (

@@ -1,6 +1,7 @@
 import type { ApiClient } from "./api";
 import { bboxParam, filtersToQuery, type BBox, type ReportFilters } from "./filters";
 import { appFeedbackApi } from "./appFeedback";
+import { boardsApi } from "./boardsApi";
 import { coastalApi } from "./coastalApi";
 import { programmesApi } from "./programmes";
 import { checklistApi } from "./checklist";
@@ -325,6 +326,7 @@ export function staffApi(api: ApiClient) {
     ...inspectionsApi(api),
     ...fleetApi(api),
     ...appFeedbackApi(api),
+    ...boardsApi(api),
   };
 }
 

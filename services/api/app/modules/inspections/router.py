@@ -13,6 +13,7 @@
 """
 
 import uuid
+from collections.abc import Awaitable, Callable
 from datetime import date
 from typing import Annotated
 
@@ -23,6 +24,7 @@ from app.core import ratelimit
 from app.core.db import get_session
 from app.core.security import Principal, Role, require_roles
 from app.modules.audit.service import name_of
+from app.modules.features import service as features
 from app.modules.inspections import schemas, service
 from app.modules.inspections.models import Mission
 from app.modules.orgs import certificate
@@ -36,7 +38,27 @@ public_router = APIRouter(prefix="/api/v1/verify", tags=["inspections"])
 Session = Annotated[AsyncSession, Depends(get_session)]
 General = Annotated[Principal, Depends(require_roles(Role.INSPECTOR_GENERAL))]
 Room = Annotated[Principal, Depends(require_roles(Role.OPERATOR, Role.OPS_MANAGER))]
-Admin = Annotated[Principal, Depends(require_roles(Role.SYSADMIN))]
+
+
+def _bin_keeper(key: str) -> Callable[..., Awaitable[Principal]]:
+    """The system administrator deletes and restores inspections; the inspector general too, once the administrator
+    granted it (feature ``key``, Yamen 2026-11-13: «بيد مدير النظام ويمكن منحها لمسؤول التفقد حسب الحاجة»)."""
+
+    async def _dependency(
+        principal: Annotated[Principal, Depends(require_roles(Role.SYSADMIN, Role.INSPECTOR_GENERAL))],
+    ) -> Principal:
+        if Role.SYSADMIN in principal.roles or await features.granted(principal, key):
+            return principal
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient_role")
+
+    # The catalogue reads who holds it by default: the administrator alone.
+    _dependency.roles = frozenset({Role.SYSADMIN})  # type: ignore[attr-defined]
+    return _dependency
+
+
+AdminBin = Annotated[Principal, Depends(_bin_keeper("inspection_admin"))]
+AdminDelete = Annotated[Principal, Depends(_bin_keeper("inspection_admin.delete"))]
+AdminRestore = Annotated[Principal, Depends(_bin_keeper("inspection_admin.restore"))]
 InspectorApp = Annotated[Principal, Depends(require_roles(Role.INSPECTOR, Role.INSPECTOR_EXTERNAL))]
 
 #: Registrations, activations and refreshes tried from one address in an hour.
@@ -273,19 +295,19 @@ async def room_upcoming(principal: Room, session: Session) -> list[schemas.RoomU
 
 
 @admin_router.post("/delete", response_model=schemas.DeleteOut)
-async def delete_records(principal: Admin, session: Session, body: schemas.DeleteIn) -> schemas.DeleteOut:
+async def delete_records(principal: AdminDelete, session: Session, body: schemas.DeleteIn) -> schemas.DeleteOut:
     count = await service.delete_records(session, principal, body)
     await session.commit()
     return schemas.DeleteOut(deleted=count)
 
 
 @admin_router.get("/bin", response_model=list[schemas.BinRow])
-async def bin_rows(_: Admin, session: Session) -> list[schemas.BinRow]:
+async def bin_rows(_: AdminBin, session: Session) -> list[schemas.BinRow]:
     return await service.bin_rows(session)
 
 
 @admin_router.post("/bin/{inspection_id}/restore", status_code=status.HTTP_204_NO_CONTENT)
-async def restore(principal: Admin, session: Session, inspection_id: uuid.UUID) -> Response:
+async def restore(principal: AdminRestore, session: Session, inspection_id: uuid.UUID) -> Response:
     await service.restore(session, principal, inspection_id)
     await session.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

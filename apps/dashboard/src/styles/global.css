@@ -6899,6 +6899,69 @@ button.nav-card:hover {
   font-weight: 700;
 }
 
+/* Blocks of systems (Yamen 2026-11-13): one panel per block, its systems side by side, each with its number. */
+.nav-block__panel {
+  max-inline-size: min(70rem, calc(100vw - 2rem));
+  max-block-size: calc(100vh - 6rem);
+  overflow: auto;
+}
+
+.nav-block__systems {
+  display: grid;
+  grid-template-columns: repeat(var(--nav-cols, 1), minmax(13rem, 1fr));
+  gap: 0.5rem 0.9rem;
+}
+
+.nav-block__panel--2 { --nav-cols: 2; }
+.nav-block__panel--3 { --nav-cols: 3; }
+.nav-block__panel--4 { --nav-cols: 4; }
+
+@media (max-width: 1100px) {
+  .nav-block__systems { grid-template-columns: repeat(min(var(--nav-cols, 1), 2), minmax(12rem, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .nav-block__systems { grid-template-columns: 1fr; }
+}
+
+.nav-system {
+  min-inline-size: 0;
+}
+
+.nav-system__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.2rem 0.3rem 0.3rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.nav-system__number {
+  color: var(--muted);
+}
+
+.nav-system__subtitle {
+  margin: 0.45rem 0.5rem 0.2rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.nav-system__suspended {
+  display: flex;
+  gap: 0.35rem;
+  align-items: flex-start;
+  margin: 0.2rem 0.3rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 12px;
+  background: var(--tone-amber-tint);
+  color: var(--tone-amber-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 /* ---- Top bar ---- */
 .header--top {
   flex-wrap: nowrap;
@@ -13161,4 +13224,35 @@ body::after {
   .cc-pack__sign {
     margin-top: 14px;
   }
+}
+/* The subsystems page (2026-11-13): the systems of each block in cards. */
+.systems-block > h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: 0.9rem;
+}
+
+.system-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.system-card__head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.system-card__rules {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.4rem 0;
+  padding: 0;
+  list-style: none;
 }

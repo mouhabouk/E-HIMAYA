@@ -35,7 +35,7 @@ const ITEM: StrategyItem = {
 };
 
 describe("the strategies menu", () => {
-  it("gathers the strategies and keeps each page in its own group", () => {
+  it("gathers the strategies, each page once in the menu", () => {
     const identity = identityFromClaims(claims(["central_committee"]));
     const t = ((k: string) => k) as never;
     const groups = navGroups(identity, t, undefined, false, [
@@ -43,10 +43,17 @@ describe("the strategies menu", () => {
       { to: "/plans", icon: "menuBook", tone: "sky", label: "twice" },
     ]);
     const of = (key: string) => groups.find((g) => g.key === key)?.items.map((i) => i.to) ?? [];
-    expect(of("strategies")).toEqual(["/strategies", "/snacr", "/plans", "/programmes", "/memory", "/strategies/snrrc_2030"]);
-    expect(of("crisis")).toContain("/plans");
-    expect(of("crisis")).toContain("/programmes");
+    expect(of("strategies")).toEqual([
+      "/strategies",
+      "/snacr",
+      "/plans",
+      "/programmes",
+      "/register",
+      "/register/dispatches",
+      "/strategies/snrrc_2030",
+    ]);
     expect(of("knowledge")).toContain("/memory");
+    expect(groups.flatMap((g) => g.items).filter((i) => i.to === "/plans")).toHaveLength(1);
     const operator = navGroups(identityFromClaims(claims(["operator"], "21")), t);
     expect(operator.find((g) => g.key === "strategies")?.items.map((i) => i.to)).not.toContain("/snacr");
   });

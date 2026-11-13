@@ -528,19 +528,21 @@ async def test_menu_order_set_by_the_system_administrator(client: httpx.AsyncCli
     current = next(i for i in items if i["key"] == "menu.order")
     assert current["editable"] is False
     url = "/api/v1/staff/settings/menu.order"
-    order = {"groups": ["alerts", "ops"], "items": {"ops": ["/map", "/incidents", "/"]}}
+    # The groups are the first screen and the 20 systems of the menu (Yamen 2026-11-13).
+    order = {"groups": ["alerts", "reports"], "items": {"reports": ["/calls", "/incidents", "/reports"]}}
     body = {"value": order, "version": current["version"], "reason": "ترتيب القائمة للعرض"}
     assert (await client.put(url, json=body, headers=staff(["operator"], gouvernorat=None))).status_code == 403
     for bad in (
-        {"groups": ["ops", "ops"], "items": {}},
+        {"groups": ["reports", "reports"], "items": {}},
         {"groups": ["nowhere"], "items": {}},
-        {"groups": [], "items": {"ops": ["javascript:alert(1)"]}},
+        {"groups": ["ops"], "items": {}},
+        {"groups": [], "items": {"reports": ["javascript:alert(1)"]}},
     ):
         r = await client.put(url, json={**body, "value": bad}, headers=sysadmin)
         assert (r.status_code, r.json()["detail"]) == (422, "invalid_setting")
     r = await client.put(url, json=body, headers=sysadmin)
     assert r.status_code == 200, r.text
-    assert r.json()["value"] == order
+    assert {k: v for k, v in r.json()["value"].items() if k != "systems"} == order
     # Back to the built-in order for the other tests.
     reset = {
         "value": {"groups": [], "items": {}},

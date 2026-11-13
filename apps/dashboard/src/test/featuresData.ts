@@ -17,7 +17,7 @@ const f = (over: Partial<Feature> & Pick<Feature, "key" | "kind" | "names">): Fe
 });
 
 export const FEATURES: Feature[] = [
-  f({ key: "schedule", kind: "page", group: "ops", nav: "/schedule", names: { ar: "البرمجة", fr: "Programme", en: "Programme" } }),
+  f({ key: "schedule", kind: "page", group: "opscentres", nav: "/schedule", names: { ar: "البرمجة", fr: "Programme", en: "Programme" } }),
   f({
     key: "schedule.progress",
     kind: "tab",
@@ -42,7 +42,7 @@ export const FEATURES: Feature[] = [
   f({
     key: "incidents",
     kind: "page",
-    group: "ops",
+    group: "reports",
     nav: "/incidents",
     flags: ["personal"],
     names: { ar: "الحوادث", fr: "Incidents", en: "Incidents" },
@@ -50,7 +50,7 @@ export const FEATURES: Feature[] = [
   f({
     key: "layers",
     kind: "page",
-    group: "system",
+    group: "gis",
     nav: "/layers",
     flags: ["fixed"],
     roles: ["sysadmin"],

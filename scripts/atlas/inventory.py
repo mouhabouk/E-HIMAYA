@@ -1,7 +1,7 @@
 """Inventory of the dashboard's screens for the flowchart atlas (Yamen, 2026-11-13).
 
-For every route of apps/dashboard/src/App.tsx: the page file, its place in the main menu (group and item, in
-Arabic), the API endpoints the page and its own components call, and the database tables behind them. Everything
+For every route of apps/dashboard/src/App.tsx: the page file, its place in the main menu (system, block and item, in
+Arabic, from apps/dashboard/src/menu/menu.json), the API endpoints the page and its own components call, and the database tables behind them. Everything
 is read from the source, so running it again keeps the atlas true after each merge.
 
     cd services/api && .venv/bin/python ../../scripts/ui_reference/backend_dump.py > /tmp/backend.json
@@ -19,6 +19,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 DASH = REPO / "apps/dashboard/src"
+
+sys.path.insert(0, str(REPO / "scripts" / "menu"))
+from menu import items as menu_items  # noqa: E402
+from menu import load as load_menu  # noqa: E402
+from menu import systems as menu_systems  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location("ui_ref", REPO / "scripts/ui_reference/build.py")
 assert _spec and _spec.loader
@@ -39,20 +44,20 @@ def flatten(node: dict, prefix: str = "") -> dict[str, str]:
 
 
 def menu(ar: dict[str, str]) -> dict[str, dict]:
-    """{path: {group, group_key, item}} from the e(...) calls of Navigation.tsx, grouped by the `key:` they follow."""
-    text = (DASH / "components/Navigation.tsx").read_text(encoding="utf-8")
-    body = text[text.find("const groups: NavGroup[]") :]
+    """{path: {group, group_key, block, item}} from the menu's one source (apps/dashboard/src/menu/menu.json): the
+    group is the system ("7. مركز تحليل الصور والفيديو"), the block its place among the 4 blocks."""
     out: dict[str, dict] = {}
-    group = None
-    for m in re.finditer(r'key: "(\w+)"|e\(\s*[^"]*?"(/[^"]*)",\s*"\w+",\s*"\w+",\s*"(\w+)"', body, re.S):
-        if m.group(1):
-            group = m.group(1)
+    for e in menu_items(load_menu()):
+        if e.get("alias") or e.get("planned"):
             continue
-        path, key = m.group(2), m.group(3)
-        out.setdefault(
-            path,
-            {"group_key": group, "group": ar.get(f"nav.group.{group}", group), "item": ar.get(f"nav.{key}", key)},
-        )
+        sys_spec = next((s for s in menu_systems() if s["key"] == e["system"]), None)
+        group = f"{sys_spec['number']}. {sys_spec['names']['ar']}" if sys_spec else ar.get("nav.home", "الرئيسية")
+        out[e["path"]] = {
+            "group_key": e["system"] or "home",
+            "group": group,
+            "block": e["block"] or "home",
+            "item": ar.get(f"nav.{e['key']}", e["key"]),
+        }
     return out
 
 

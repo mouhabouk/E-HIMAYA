@@ -129,6 +129,8 @@ import { OrgsPage } from "./pages/OrgsPage";
 import { ReportDetailPage } from "./pages/ReportDetailPage";
 import { ReportsPage } from "./pages/ReportsPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
+import { ResourcesTabs } from "./components/ResourcesTabs";
+import { AdminBoardPage, CitizensPage, ForecastPage, VisionPage } from "./pages/BoardsPages";
 import { SafetyTipsPage } from "./pages/SafetyTipsPage";
 import { StreamArchivePage } from "./pages/StreamArchivePage";
 import { CamerasPage } from "./pages/CamerasPage";
@@ -139,6 +141,7 @@ import { VolunteerDetailPage } from "./pages/VolunteerDetailPage";
 import { VolunteersPage } from "./pages/VolunteersPage";
 import { WeatherSuggestionsPage } from "./pages/WeatherSuggestionsPage";
 import { MenuOrderPage } from "./pages/MenuOrderPage";
+import { SystemsPage } from "./pages/SystemsPage";
 
 // Phase 8 screens are loaded on demand: they bring the chart (uPlot) and Markdown (markdown-it, DOMPurify) code.
 const page = <K extends string>(
@@ -386,7 +389,9 @@ function Home() {
 const reports = (page: ReactNode) => <Gate allow={hasReadAccess}>{page}</Gate>;
 const orgs = (page: ReactNode) => <Gate allow={canReadOrgs}>{page}</Gate>;
 const resources = (page: ReactNode) => (
-  <Gate allow={canReadResources}>{page}</Gate>
+  <Gate allow={(roles) => canReadResources(roles) || canOpenInventory(roles)}>
+    <ResourcesTabs tab="resources">{page}</ResourcesTabs>
+  </Gate>
 );
 const notifications = (page: ReactNode) => (
   <Gate allow={canUseNotifications}>{page}</Gate>
@@ -480,6 +485,14 @@ export function AppRoutes() {
             (id) => hasReadAccess(id.roles) || canEditAiSettings(id),
             <AiSettingsPage />,
           )}
+        />
+        <Route path="settings/systems" element={scoped(canManagePermissions, <SystemsPage />)} />
+        <Route path="vision" element={reports(<VisionPage />)} />
+        <Route path="forecast" element={reports(<ForecastPage />)} />
+        <Route path="citizens" element={reports(<CitizensPage />)} />
+        <Route
+          path="admin"
+          element={scoped((id) => id.national && id.roles.includes("sysadmin"), <AdminBoardPage />)}
         />
         <Route
           path="settings/menu"
@@ -701,7 +714,7 @@ export function AppRoutes() {
         />
         <Route
           path="inventory"
-          element={gated(canOpenInventory, <InventoryPage />)}
+          element={gated(canOpenInventory, <ResourcesTabs tab="inventory"><InventoryPage /></ResourcesTabs>)}
         />
         <Route path="fleet" element={gated(canReadFleet, <FleetPage view="dashboard" />)} />
         <Route path="fleet/vehicles" element={gated(canReadFleet, <FleetPage view="vehicles" />)} />

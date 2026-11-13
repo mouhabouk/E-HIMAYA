@@ -100,7 +100,27 @@
     "inspectionResults": "Résultats des inspections",
     "inspectionAdmin": "Suppression des inspections",
     "liaison": "Système de contact",
-    "par": "Contrôle des équipes"
+    "par": "Contrôle des équipes",
+    "suspended": "Suspendu",
+    "readiness": "Niveau de préparation du jour",
+    "shiftSwaps": "Échanges de gardes",
+    "selfRegistration": "Auto-inscription aux gardes",
+    "forecast": "Prévision : feux et crues",
+    "vision": "Centre d'analyse d'images et de vidéos",
+    "citizens": "Citoyens",
+    "adminBoard": "Tableau mère",
+    "systems": "Sous-systèmes",
+    "menuOrder": "Ordre du menu",
+    "section": {
+      "dev": "Outils du développeur"
+    },
+    "centreScreen": "Grand écran du centre",
+    "exposure": "Population et sites exposés",
+    "damage": "Évaluation des dégâts aux bâtiments",
+    "shelters": "Capacité des hôpitaux et abris",
+    "training": "Formation continue",
+    "consumables": "Consommables et péremption",
+    "cap": "Export des alertes CAP"
   },
   "header": {
     "scope": "Périmètre géographique",
@@ -10392,6 +10412,190 @@
       "team_out": "L'équipe est sortie.",
       "paused": "Le contrôle est suspendu.",
       "gouvernorat_required": "Choisissez le gouvernorat."
+    }
+  },
+  "systems": {
+    "title": "Sous-systèmes",
+    "intro": "Agissez ici sur chacun des vingt systèmes en entier : le masquer ou le suspendre avec un message, l'accorder en lecture ou en écriture, le renommer, changer sa couleur et son icône. Les règles de sécurité restent un plafond, chaque changement est audité et le classement par défaut peut être rétabli à tout moment.",
+    "toMenuOrder": "Déplacer et ordonner les éléments",
+    "toPermissions": "Autorisations des pages, onglets et boutons",
+    "target": "Pour qui",
+    "everyone": "Tout le monde",
+    "role": "Rôle",
+    "account": "Compte",
+    "accountId": "Identifiant du compte",
+    "gouvernorat": "Gouvernorat",
+    "allGouvernorats": "Tous les gouvernorats",
+    "close": "Masquer ou suspendre",
+    "effect": {
+      "hide": "Masqué",
+      "suspend": "Suspendu",
+      "grant": "Accordé"
+    },
+    "message": {
+      "ar": "Message en arabe",
+      "fr": "Message en français",
+      "en": "Message en anglais"
+    },
+    "until": "Jusqu'au (facultatif)",
+    "reason": "Motif (audité)",
+    "apply": {
+      "hide": "Masquer le système",
+      "suspend": "Suspendre le système"
+    },
+    "applied": "Appliqué.",
+    "grant": "Accorder le système entier",
+    "mode": {
+      "read": "Lecture seule",
+      "write": "Lecture et écriture"
+    },
+    "ceiling": "Ce que le plafond de sécurité interdit (données personnelles pour un gouverneur ou un ministre, pages nationales pour un compte régional, comptes et audit) est écarté et signalé.",
+    "grantButton": "Accorder",
+    "granted": "{{count}} éléments accordés",
+    "skipped": "{{count}} écartés par le plafond de sécurité",
+    "name": {
+      "ar": "Nom en arabe",
+      "fr": "Nom en français",
+      "en": "Nom en anglais"
+    },
+    "tone": "Couleur",
+    "icon": "Icône",
+    "builtIn": "Par défaut",
+    "tones": {
+      "red": "Rouge",
+      "navy": "Bleu marine",
+      "purple": "Violet",
+      "green": "Vert",
+      "amber": "Ambre",
+      "teal": "Sarcelle",
+      "slate": "Ardoise",
+      "pink": "Rose",
+      "sky": "Ciel",
+      "orange": "Orange"
+    },
+    "saveLook": "Enregistrer l'apparence",
+    "resetLook": "Rétablir l'apparence par défaut",
+    "revoke": "Révoquer",
+    "revokeReason": "Révoqué depuis la page des sous-systèmes",
+    "planned": "En préparation",
+    "actions": {
+      "close": "Masquer ou suspendre",
+      "grant": "Accorder",
+      "look": "Nom, couleur et icône"
+    },
+    "saved": "Enregistré.",
+    "resetTitle": "Rétablir le classement par défaut",
+    "resetIntro": "Efface l'ordre, les déplacements, les noms et les couleurs enregistrés : le menu redevient celui du fichier source. Les règles de masquage, de suspension et d'accès restent ; chacune se révoque à part.",
+    "reset": "Rétablir"
+  },
+  "resourcesTabs": {
+    "resources": "Unités et moyens",
+    "inventory": "Inventaire"
+  },
+  "boards": {
+    "period": "Période",
+    "hours": "{{n}} dernières heures",
+    "days": "{{n}} derniers jours",
+    "at": "Heure",
+    "gouvernorat": "Gouvernorat",
+    "open": "Ouvrir",
+    "danger": {
+      "high": "Danger élevé",
+      "medium": "Danger moyen",
+      "low": "Danger faible"
+    },
+    "vision": {
+      "title": "Centre d’analyse d’images et de vidéos",
+      "intro": "Ce que les modèles de vision ont détecté dans les flux en direct, les tours, les drones et les photos des signalements, avec une première estimation du danger. C’est une aide à la décision : l’alerte reste humaine.",
+      "kpis": "Chiffres des détections",
+      "confirmed": "Détections confirmées",
+      "confirmedOne": "confirmée",
+      "watching": "Flux sous surveillance",
+      "threshold": "Seuil d’alerte : confiance {{value}}.",
+      "toStreams": "Flux en direct",
+      "empty": "Aucune détection sur la période.",
+      "table": "Dernières détections",
+      "label": "Détection",
+      "confidence": "Confiance",
+      "danger": "Danger estimé",
+      "origin": "Source",
+      "report": "Signalement",
+      "reportImage": "Photo de signalement"
+    },
+    "forecast": {
+      "title": "Prévision et anticipation",
+      "intro": "Le danger d’incendie (indice FWI) et les fortes pluies des prochaines heures par gouvernorat, et les dernières prévisions de propagation et d’inondation des incidents.",
+      "sim": "Données météo simulées : ne pas décider sur cette base.",
+      "next": "Les {{n}} prochaines heures",
+      "empty": "Pas encore de prévisions météo.",
+      "table": "Prévisions par gouvernorat",
+      "fireAt": "Pic du danger",
+      "rain24": "Pluie 24 h (mm)",
+      "gust": "Rafale max (km/h)",
+      "runs": "Dernières prévisions de propagation et d’inondation",
+      "noRuns": "Aucune prévision lancée.",
+      "incident": "Incident",
+      "model": "Modèle"
+    },
+    "citizens": {
+      "title": "Citoyens",
+      "intro": "Des chiffres sur les citoyens par gouvernorat, sans aucune identité : signaleurs, signalements retenus et rejetés, bénévoles.",
+      "kpis": "Chiffres des citoyens",
+      "reporters": "Signaleurs",
+      "reports": "Signalements",
+      "kept": "Signalements suivis d’une intervention",
+      "rejected": "Signalements rejetés",
+      "volunteers": "Bénévoles agréés",
+      "accounts": "Comptes citoyens",
+      "anonymous": "Comptes anonymes",
+      "rating": "Note de l’application",
+      "privacy": "Le gouvernorat est le lieu du signalement ; aucune identité n’apparaît ici. Les récompenses vont aux bénévoles, aux citoyens et aux établissements :",
+      "empty": "Aucun signalement sur la période.",
+      "table": "Citoyens par gouvernorat"
+    },
+    "admin": {
+      "title": "Tableau de bord de l’administrateur",
+      "intro": "L’état des services, les nouveaux comptes, les règles sur les fonctionnalités et les sous-systèmes, et les derniers changements.",
+      "services": "Services",
+      "service": {
+        "database": "Base de données",
+        "ai": "Intelligence artificielle",
+        "vision": "Analyse d’images",
+        "telephony": "Téléphonie",
+        "notifications": "Notifications"
+      },
+      "state": {
+        "ok": "En service",
+        "error": "Erreur",
+        "unreachable": "Injoignable",
+        "not_configured": "Non configuré (simulation)",
+        "real": "Envoi réel",
+        "simulated": "Simulation"
+      },
+      "activity": "Activité",
+      "accountsWeek": "Nouveaux comptes cette semaine",
+      "grants": "Attributions en cours",
+      "hidden": "Pages masquées",
+      "assignments": "Profils attribués",
+      "systems": "Règles des sous-systèmes",
+      "noSystemRules": "Tous les sous-systèmes sont ouverts.",
+      "effect": {
+        "hide": "Masqué",
+        "suspend": "Suspendu",
+        "grant": "Accordé"
+      },
+      "target": {
+        "everyone": "Tout le monde",
+        "role": "Rôle",
+        "user": "Utilisateur",
+        "gouvernorat": "Gouvernorat"
+      },
+      "until": "jusqu’au {{at}}",
+      "recent": "Derniers changements",
+      "noRecent": "Aucun changement enregistré.",
+      "action": "Action",
+      "targetCol": "Cible",
+      "reason": "Motif"
     }
   }
 }

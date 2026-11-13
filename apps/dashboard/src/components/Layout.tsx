@@ -315,8 +315,9 @@ export function Layout() {
   }));
   // Phase D (review point 9): the order the system administrator saved.
   const groups = applyMenuOrder(
-    navGroups(identity, t, access, windowOpen, strategies),
+    navGroups(identity, t, access, windowOpen, strategies, lang),
     menuOrderOf(settingOf(platformSettings.data, MENU_ORDER_KEY)?.value),
+    lang,
   );
 
   return (

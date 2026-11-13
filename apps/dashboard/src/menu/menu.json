@@ -1,0 +1,1010 @@
+{
+  "$comment": "The one source of the dashboard menu (Yamen 2026-11-13): 20 systems in 4 blocks. Navigation.tsx, the API's features catalogue (copy in services/api/app/modules/features/menu.json, written by scripts/menu/sync.py), the atlas, the spider web, the mind maps, the UI reference workbook and refresh-all.sh read it. Edit here, then run python3 scripts/menu/sync.py; scripts/menu/check.py fails CI on a menu entry without a screen or a screen without an entry.",
+  "version": 1,
+  "home": {
+    "key": "home",
+    "path": "/",
+    "end": true,
+    "icon": "home",
+    "tone": "navy",
+    "gate": "reads"
+  },
+  "blocks": [
+    {
+      "key": "operational",
+      "names": {
+        "ar": "المجال العملياتي",
+        "fr": "Domaine opérationnel",
+        "en": "Operations"
+      },
+      "icon": "localFireDepartment",
+      "tone": "red",
+      "systems": [
+        {
+          "key": "reports",
+          "number": 1,
+          "icon": "description",
+          "tone": "red",
+          "names": {
+            "ar": "البلاغات والإنذارات وعمليات النجدة",
+            "fr": "Signalements, alertes et secours",
+            "en": "Reports, alerts and rescue"
+          },
+          "items": [
+            {
+              "key": "reports",
+              "path": "/reports",
+              "icon": "description",
+              "tone": "red",
+              "gate": "reads"
+            },
+            {
+              "key": "incidents",
+              "path": "/incidents",
+              "icon": "localFireDepartment",
+              "tone": "red",
+              "gate": "reads"
+            },
+            {
+              "key": "calls",
+              "path": "/calls",
+              "icon": "call",
+              "tone": "green",
+              "gate": "reads"
+            },
+            {
+              "key": "callCards",
+              "path": "/call-cards",
+              "icon": "call",
+              "tone": "red",
+              "gate": "callCards"
+            },
+            {
+              "key": "late",
+              "path": "/reports/late",
+              "icon": "schedule",
+              "tone": "orange",
+              "gate": "nationalQueues"
+            },
+            {
+              "key": "resourceRequests",
+              "path": "/resource-requests",
+              "icon": "inventory2",
+              "tone": "amber",
+              "gate": "reads"
+            }
+          ]
+        },
+        {
+          "key": "opscentres",
+          "number": 2,
+          "icon": "monitoring",
+          "tone": "navy",
+          "names": {
+            "ar": "إدارة مراكز العمليات وتوزيع الوحدات",
+            "fr": "Centres opérationnels et engagement des unités",
+            "en": "Operations centres and unit dispatch"
+          },
+          "items": [
+            {
+              "key": "opsRoom",
+              "path": "/map/room",
+              "icon": "monitoring",
+              "tone": "red",
+              "gate": "reads"
+            },
+            {
+              "key": "readiness",
+              "path": "/readiness",
+              "icon": "militaryTech",
+              "tone": "orange",
+              "gate": "reads",
+              "planned": true,
+              "ref": "OS13"
+            },
+            {
+              "key": "roomGuide",
+              "path": "/room-guide",
+              "icon": "menuBook",
+              "tone": "navy",
+              "gate": "roomGuide"
+            },
+            {
+              "key": "crew",
+              "path": "/crew",
+              "icon": "groups",
+              "tone": "green",
+              "gate": "crew"
+            },
+            {
+              "key": "fieldAgents",
+              "path": "/crew/agents",
+              "icon": "manageAccounts",
+              "tone": "green",
+              "gate": "fieldAgents"
+            },
+            {
+              "key": "schedule",
+              "path": "/schedule",
+              "icon": "calendarMonth",
+              "tone": "teal",
+              "gate": "schedule"
+            },
+            {
+              "key": "shiftSwaps",
+              "path": "/schedule/swaps",
+              "icon": "calendarMonth",
+              "tone": "teal",
+              "gate": "schedule",
+              "planned": true,
+              "ref": "OS4"
+            },
+            {
+              "key": "selfRegistration",
+              "path": "/schedule/self",
+              "icon": "accountCircle",
+              "tone": "green",
+              "gate": "schedule",
+              "planned": true,
+              "ref": "OS4"
+            },
+            {
+              "key": "coverage",
+              "path": "/coverage",
+              "icon": "crisisAlert",
+              "tone": "red",
+              "gate": "coverage"
+            },
+            {
+              "key": "centreScreen",
+              "path": "/map/room/wall",
+              "icon": "monitoring",
+              "tone": "navy",
+              "gate": "reads",
+              "planned": true,
+              "ref": "OS17"
+            }
+          ]
+        },
+        {
+          "key": "par",
+          "number": 3,
+          "icon": "groups",
+          "tone": "red",
+          "names": {
+            "ar": "تفقد الأعوان عند الخطر",
+            "fr": "Contrôle des agents en zone de danger",
+            "en": "Crew accountability in danger"
+          },
+          "items": [
+            {
+              "key": "par",
+              "path": "/par",
+              "icon": "groups",
+              "tone": "red",
+              "gate": "par"
+            }
+          ]
+        },
+        {
+          "key": "gis",
+          "number": 4,
+          "icon": "map",
+          "tone": "teal",
+          "names": {
+            "ar": "نظم المعلومات الجغرافية ومناطق الخطر",
+            "fr": "Information géographique et zones à risque",
+            "en": "GIS and hazard zones"
+          },
+          "items": [
+            {
+              "key": "map",
+              "path": "/map",
+              "icon": "map",
+              "tone": "teal",
+              "gate": "reads"
+            },
+            {
+              "key": "geoQueue",
+              "path": "/reports/geo-queue",
+              "icon": "wrongLocation",
+              "tone": "orange",
+              "gate": "nationalQueues"
+            },
+            {
+              "key": "addressWarnings",
+              "path": "/address-warnings",
+              "icon": "warning",
+              "tone": "amber",
+              "gate": "addressWarnings"
+            },
+            {
+              "key": "layers",
+              "path": "/layers",
+              "icon": "layers",
+              "tone": "teal",
+              "gate": "layers"
+            },
+            {
+              "key": "exposure",
+              "path": "/exposure",
+              "icon": "groups",
+              "tone": "orange",
+              "gate": "reads",
+              "planned": true,
+              "ref": "OS14"
+            }
+          ]
+        },
+        {
+          "key": "forecast",
+          "number": 5,
+          "icon": "thunderstorm",
+          "tone": "sky",
+          "names": {
+            "ar": "التنبؤ بالحرائق والفيضانات والكوارث",
+            "fr": "Prévision des feux, crues et catastrophes",
+            "en": "Fire, flood and disaster forecasting"
+          },
+          "items": [
+            {
+              "key": "forecast",
+              "path": "/forecast",
+              "icon": "thunderstorm",
+              "tone": "sky",
+              "gate": "reads"
+            },
+            {
+              "key": "weatherSuggestions",
+              "path": "/weather/suggestions",
+              "icon": "partlyCloudyDay",
+              "tone": "sky",
+              "gate": "weatherSuggestions"
+            },
+            {
+              "key": "sensors",
+              "path": "/sensors",
+              "icon": "water",
+              "tone": "sky",
+              "gate": "reads"
+            }
+          ]
+        },
+        {
+          "key": "coastal",
+          "number": 6,
+          "icon": "healthAndSafety",
+          "tone": "sky",
+          "names": {
+            "ar": "إدارة الشواطئ والإنقاذ البحري",
+            "fr": "Plages et sauvetage en mer",
+            "en": "Beaches and sea rescue"
+          },
+          "items": [
+            {
+              "key": "coastal",
+              "path": "/coastal",
+              "icon": "healthAndSafety",
+              "tone": "sky",
+              "gate": "coastal"
+            }
+          ]
+        },
+        {
+          "key": "vision",
+          "number": 7,
+          "icon": "visibility",
+          "tone": "purple",
+          "names": {
+            "ar": "تحليل الصور والفيديو بالذكاء الاصطناعي",
+            "fr": "Analyse d'images et de vidéos par l'IA",
+            "en": "AI image and video analysis"
+          },
+          "items": [
+            {
+              "key": "vision",
+              "path": "/vision",
+              "icon": "visibility",
+              "tone": "purple",
+              "gate": "reads"
+            },
+            {
+              "key": "streams",
+              "path": "/streams",
+              "icon": "videocam",
+              "tone": "red",
+              "gate": "reads"
+            },
+            {
+              "key": "towers",
+              "path": "/towers",
+              "icon": "videocam",
+              "tone": "orange",
+              "gate": "reads"
+            },
+            {
+              "key": "drones",
+              "path": "/drones",
+              "icon": "drone",
+              "tone": "purple",
+              "gate": "reads"
+            },
+            {
+              "key": "modelCards",
+              "path": "/settings/ai/models",
+              "icon": "science",
+              "tone": "slate",
+              "gate": "modelCards"
+            }
+          ]
+        },
+        {
+          "key": "decision",
+          "number": 8,
+          "icon": "insights",
+          "tone": "navy",
+          "names": {
+            "ar": "لوحات القيادة والإحصائيات ودعم القرار",
+            "fr": "Tableaux de bord, statistiques et aide à la décision",
+            "en": "Dashboards, statistics and decision support"
+          },
+          "items": [
+            {
+              "key": "window",
+              "path": "/window",
+              "icon": "insights",
+              "tone": "navy",
+              "gate": "window"
+            },
+            {
+              "key": "command",
+              "path": "/command",
+              "icon": "militaryTech",
+              "tone": "navy",
+              "gate": "command"
+            },
+            {
+              "key": "committee",
+              "path": "/committee",
+              "icon": "monitoring",
+              "tone": "navy",
+              "gate": "committee"
+            },
+            {
+              "key": "analytics",
+              "path": "/analytics",
+              "icon": "analytics",
+              "tone": "navy",
+              "gate": "analytics"
+            }
+          ]
+        },
+        {
+          "key": "strategies",
+          "number": 9,
+          "icon": "insights",
+          "tone": "purple",
+          "names": {
+            "ar": "الاستراتيجيات",
+            "fr": "Stratégies",
+            "en": "Strategies"
+          },
+          "items": [
+            {
+              "key": "strategies",
+              "path": "/strategies",
+              "end": true,
+              "icon": "insights",
+              "tone": "purple",
+              "gate": "always"
+            },
+            {
+              "key": "snacr",
+              "path": "/snacr",
+              "icon": "analytics",
+              "tone": "purple",
+              "gate": "snacr"
+            },
+            {
+              "key": "plans",
+              "path": "/plans",
+              "icon": "menuBook",
+              "tone": "sky",
+              "gate": "register"
+            },
+            {
+              "key": "programmes",
+              "path": "/programmes",
+              "icon": "schedule",
+              "tone": "orange",
+              "gate": "programmes"
+            },
+            {
+              "key": "register",
+              "path": "/register",
+              "end": true,
+              "icon": "folderOpen",
+              "tone": "navy",
+              "gate": "register"
+            },
+            {
+              "key": "dispatches",
+              "path": "/register/dispatches",
+              "icon": "campaign",
+              "tone": "red",
+              "gate": "register"
+            }
+          ]
+        },
+        {
+          "key": "disasters",
+          "number": 10,
+          "icon": "crisisAlert",
+          "tone": "red",
+          "names": {
+            "ar": "إدارة الكوارث والتصرف في الأزمات",
+            "fr": "Gestion des catastrophes et des crises",
+            "en": "Disaster and crisis management"
+          },
+          "items": [
+            {
+              "key": "disasters",
+              "path": "/disasters",
+              "icon": "warning",
+              "tone": "red",
+              "gate": "disasters"
+            },
+            {
+              "key": "axes",
+              "path": "/axes",
+              "icon": "crisisAlert",
+              "tone": "red",
+              "gate": "axes"
+            },
+            {
+              "key": "drills",
+              "path": "/drills",
+              "icon": "militaryTech",
+              "tone": "amber",
+              "gate": "granted"
+            },
+            {
+              "key": "damage",
+              "path": "/disasters/damage",
+              "icon": "warning",
+              "tone": "orange",
+              "gate": "disasters",
+              "planned": true,
+              "ref": "OS15"
+            },
+            {
+              "key": "shelters",
+              "path": "/disasters/shelters",
+              "icon": "apartment",
+              "tone": "teal",
+              "gate": "disasters",
+              "planned": true,
+              "ref": "OS5"
+            }
+          ]
+        },
+        {
+          "key": "partners",
+          "number": 11,
+          "icon": "call",
+          "tone": "teal",
+          "names": {
+            "ar": "الجهات المشاركة والمتداخلة",
+            "fr": "Partenaires et intervenants",
+            "en": "Partner agencies"
+          },
+          "items": [
+            {
+              "key": "liaison",
+              "path": "/liaison",
+              "icon": "call",
+              "tone": "teal",
+              "gate": "liaison"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "support",
+      "names": {
+        "ar": "الدعم واللوجستي",
+        "fr": "Soutien et logistique",
+        "en": "Support and logistics"
+      },
+      "icon": "localShipping",
+      "tone": "amber",
+      "systems": [
+        {
+          "key": "hr",
+          "number": 12,
+          "icon": "manageAccounts",
+          "tone": "navy",
+          "names": {
+            "ar": "إدارة الموارد البشرية",
+            "fr": "Ressources humaines",
+            "en": "Human resources"
+          },
+          "items": [
+            {
+              "key": "personnel",
+              "path": "/personnel",
+              "icon": "manageAccounts",
+              "tone": "navy",
+              "gate": "personnel"
+            },
+            {
+              "key": "training",
+              "path": "/personnel/training",
+              "icon": "historyEdu",
+              "tone": "purple",
+              "gate": "personnel",
+              "planned": true,
+              "ref": "OS16"
+            }
+          ]
+        },
+        {
+          "key": "fleet",
+          "number": 13,
+          "icon": "localShipping",
+          "tone": "amber",
+          "names": {
+            "ar": "الأسطول والوسائل والصيانة",
+            "fr": "Flotte, moyens et maintenance",
+            "en": "Fleet, means and maintenance"
+          },
+          "items": [
+            {
+              "key": "fleetDashboard",
+              "path": "/fleet",
+              "end": true,
+              "icon": "dashboard",
+              "tone": "amber",
+              "gate": "fleet"
+            },
+            {
+              "key": "fleetVehicles",
+              "path": "/fleet/vehicles",
+              "icon": "localShipping",
+              "tone": "amber",
+              "gate": "fleet"
+            },
+            {
+              "key": "fleetMaintenance",
+              "path": "/fleet/maintenance",
+              "icon": "settings",
+              "tone": "orange",
+              "gate": "fleet"
+            },
+            {
+              "key": "fleetArchive",
+              "path": "/fleet/archive",
+              "icon": "folderOpen",
+              "tone": "navy",
+              "gate": "fleet"
+            },
+            {
+              "key": "fleetLog",
+              "path": "/fleet/log",
+              "icon": "schedule",
+              "tone": "teal",
+              "gate": "fleet"
+            },
+            {
+              "key": "resources",
+              "path": "/resources",
+              "icon": "localShipping",
+              "tone": "amber",
+              "gate": "resourcesHub"
+            },
+            {
+              "key": "inventory",
+              "path": "/inventory",
+              "icon": "inventory2",
+              "tone": "teal",
+              "gate": "inventory",
+              "tabOf": "/resources"
+            },
+            {
+              "key": "consumables",
+              "path": "/inventory/consumables",
+              "icon": "inventory2",
+              "tone": "orange",
+              "gate": "inventory",
+              "planned": true,
+              "ref": "OS6"
+            }
+          ]
+        },
+        {
+          "key": "inspections",
+          "number": 14,
+          "icon": "verified",
+          "tone": "teal",
+          "names": {
+            "ar": "التصرف في التفقدات",
+            "fr": "Gestion des inspections",
+            "en": "Inspections"
+          },
+          "items": [
+            {
+              "key": "inspections",
+              "path": "/inspections",
+              "icon": "verified",
+              "tone": "navy",
+              "gate": "inspections"
+            },
+            {
+              "key": "inspectionResults",
+              "path": "/inspection-results",
+              "icon": "verified",
+              "tone": "teal",
+              "gate": "inspectionResults"
+            },
+            {
+              "key": "inspectionAdmin",
+              "path": "/inspection-admin",
+              "icon": "delete",
+              "tone": "red",
+              "gate": "inspectionAdmin"
+            }
+          ]
+        },
+        {
+          "key": "knowledge",
+          "number": 15,
+          "icon": "historyEdu",
+          "tone": "purple",
+          "names": {
+            "ar": "التحليل والمعرفة",
+            "fr": "Analyse et connaissance",
+            "en": "Analysis and knowledge"
+          },
+          "items": [
+            {
+              "key": "reportsLibrary",
+              "path": "/reports-library",
+              "icon": "folderOpen",
+              "tone": "slate",
+              "gate": "analytics"
+            },
+            {
+              "key": "reportTemplates",
+              "path": "/report-templates",
+              "icon": "description",
+              "tone": "purple",
+              "gate": "reads"
+            },
+            {
+              "key": "memory",
+              "path": "/memory",
+              "icon": "historyEdu",
+              "tone": "purple",
+              "gate": "knowledge"
+            },
+            {
+              "key": "library",
+              "path": "/library",
+              "icon": "menuBook",
+              "tone": "purple",
+              "gate": "knowledge"
+            },
+            {
+              "key": "learning",
+              "path": "/settings/ai/learning",
+              "icon": "science",
+              "tone": "slate",
+              "gate": "learning"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "partnerSpaces",
+      "names": {
+        "ar": "الفضاءات الشريكة",
+        "fr": "Espaces partenaires",
+        "en": "Partner spaces"
+      },
+      "icon": "apartment",
+      "tone": "green",
+      "systems": [
+        {
+          "key": "orgs",
+          "number": 16,
+          "icon": "apartment",
+          "tone": "navy",
+          "names": {
+            "ar": "إدارة المؤسسات",
+            "fr": "Établissements",
+            "en": "Organisations"
+          },
+          "items": [
+            {
+              "key": "orgs",
+              "path": "/orgs",
+              "end": true,
+              "icon": "apartment",
+              "tone": "navy",
+              "gate": "orgs"
+            },
+            {
+              "key": "certificates",
+              "path": "/orgs/certificates",
+              "icon": "workspacePremium",
+              "tone": "amber",
+              "gate": "reviewOrgs"
+            },
+            {
+              "key": "counter",
+              "path": "/orgs/certificates/counter",
+              "icon": "verified",
+              "tone": "green",
+              "gate": "orgs"
+            },
+            {
+              "key": "prevention",
+              "path": "/orgs/prevention",
+              "icon": "policy",
+              "tone": "purple",
+              "gate": "reviewOrgs"
+            },
+            {
+              "key": "rewards",
+              "path": "/rewards",
+              "icon": "militaryTech",
+              "tone": "pink",
+              "gate": "rewards",
+              "alias": "citizens"
+            }
+          ]
+        },
+        {
+          "key": "citizens",
+          "number": 17,
+          "icon": "volunteerActivism",
+          "tone": "green",
+          "names": {
+            "ar": "المواطنون والمتطوعون والأطباء",
+            "fr": "Citoyens, bénévoles et médecins",
+            "en": "Citizens, volunteers and doctors"
+          },
+          "items": [
+            {
+              "key": "citizens",
+              "path": "/citizens",
+              "icon": "accountCircle",
+              "tone": "green",
+              "gate": "reads"
+            },
+            {
+              "key": "volunteers",
+              "path": "/volunteers",
+              "icon": "volunteerActivism",
+              "tone": "green",
+              "gate": "reads"
+            },
+            {
+              "key": "doctors",
+              "path": "/doctors",
+              "icon": "stethoscope",
+              "tone": "purple",
+              "gate": "doctors"
+            },
+            {
+              "key": "medicalCommittee",
+              "path": "/medical-committee",
+              "icon": "groups",
+              "tone": "purple",
+              "gate": "medicalCommittee"
+            },
+            {
+              "key": "rewards",
+              "path": "/rewards",
+              "icon": "militaryTech",
+              "tone": "pink",
+              "gate": "rewards"
+            }
+          ]
+        },
+        {
+          "key": "alerts",
+          "number": 18,
+          "icon": "campaign",
+          "tone": "sky",
+          "names": {
+            "ar": "إدارة التنبيهات والتواصل",
+            "fr": "Alertes et communication",
+            "en": "Alerts and communication"
+          },
+          "items": [
+            {
+              "key": "notifications",
+              "path": "/notifications",
+              "icon": "campaign",
+              "tone": "sky",
+              "gate": "notifications"
+            },
+            {
+              "key": "safetyTips",
+              "path": "/safety-tips",
+              "icon": "healthAndSafety",
+              "tone": "green",
+              "gate": "tips"
+            },
+            {
+              "key": "emergencyGuide",
+              "path": "/emergency-guide",
+              "icon": "medicalServices",
+              "tone": "red",
+              "gate": "tips"
+            },
+            {
+              "key": "contact",
+              "path": "/contact",
+              "icon": "mail",
+              "tone": "sky",
+              "gate": "contact"
+            },
+            {
+              "key": "cap",
+              "path": "/notifications/cap",
+              "icon": "campaign",
+              "tone": "navy",
+              "gate": "notifications",
+              "planned": true,
+              "ref": "OS1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mother",
+      "names": {
+        "ar": "اللوحات الأم وإعدادات النظام",
+        "fr": "Tableaux mères et paramètres",
+        "en": "Mother boards and settings"
+      },
+      "icon": "adminPanelSettings",
+      "tone": "slate",
+      "systems": [
+        {
+          "key": "admin",
+          "number": 19,
+          "icon": "dashboard",
+          "tone": "slate",
+          "names": {
+            "ar": "اللوحة الأم لمدير النظام",
+            "fr": "Tableau mère de l'administrateur",
+            "en": "Administrator's mother board"
+          },
+          "items": [
+            {
+              "key": "adminBoard",
+              "path": "/admin",
+              "icon": "dashboard",
+              "tone": "slate",
+              "gate": "sysadmin"
+            }
+          ]
+        },
+        {
+          "key": "settings",
+          "number": 20,
+          "icon": "adminPanelSettings",
+          "tone": "slate",
+          "names": {
+            "ar": "إعدادات النظام والحسابات",
+            "fr": "Paramètres du système et comptes",
+            "en": "System settings and accounts"
+          },
+          "items": [
+            {
+              "key": "settings",
+              "path": "/settings",
+              "end": true,
+              "icon": "settings",
+              "tone": "slate",
+              "gate": "platformSettings"
+            },
+            {
+              "key": "aiSettings",
+              "path": "/settings/ai",
+              "end": true,
+              "icon": "smartToy",
+              "tone": "slate",
+              "gate": "aiSettings"
+            },
+            {
+              "key": "references",
+              "path": "/references",
+              "icon": "menuBook",
+              "tone": "slate",
+              "gate": "reads"
+            },
+            {
+              "key": "accounts",
+              "path": "/accounts",
+              "icon": "manageAccounts",
+              "tone": "slate",
+              "gate": "accounts"
+            },
+            {
+              "key": "permissions",
+              "path": "/permissions",
+              "icon": "adminPanelSettings",
+              "tone": "slate",
+              "gate": "permissions"
+            },
+            {
+              "key": "systems",
+              "path": "/settings/systems",
+              "icon": "hub",
+              "tone": "slate",
+              "gate": "sysadmin"
+            },
+            {
+              "key": "menuOrder",
+              "path": "/settings/menu",
+              "icon": "menu",
+              "tone": "slate",
+              "gate": "sysadmin"
+            },
+            {
+              "key": "breakGlass",
+              "path": "/break-glass",
+              "icon": "lockOpen",
+              "tone": "red",
+              "gate": "breakGlass"
+            },
+            {
+              "key": "audit",
+              "path": "/audit",
+              "icon": "policy",
+              "tone": "slate",
+              "gate": "audit"
+            },
+            {
+              "key": "systemLogs",
+              "path": "/system-logs",
+              "icon": "monitoring",
+              "tone": "slate",
+              "gate": "systemTrail"
+            },
+            {
+              "key": "changes",
+              "path": "/changes",
+              "icon": "historyEdu",
+              "tone": "slate",
+              "gate": "systemTrail"
+            },
+            {
+              "key": "sqlConsole",
+              "path": "/sql",
+              "icon": "database",
+              "tone": "slate",
+              "gate": "sql",
+              "section": "dev"
+            },
+            {
+              "key": "repoMap",
+              "path": "/dev/map",
+              "icon": "hub",
+              "tone": "navy",
+              "gate": "devTools",
+              "section": "dev"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -31,3 +31,6 @@ Checklist at the end of a phase:
    `tracking/`, `guides/`, `database/model/` and `atlas/` in the project files. New `docs/versions.md` items join
    the tracker and the mind maps on their own; a request that changes status is edited in
    `scripts/tracking/requests.py`, and the texts of the atlas are in `scripts/atlas/content.py`.
+   The menu (4 blocks, 20 systems) has one source, `apps/dashboard/src/menu/menu.json`: the workbook's «القائمة»
+   sheet, the atlas groups, the web's screens and the menu's mind maps read it, and the run stops first if the menu
+   and the screens drifted apart (`scripts/menu/check.py`, also in CI). After editing it, `python3 scripts/menu/sync.py`.

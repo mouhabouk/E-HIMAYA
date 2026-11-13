@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-Effect = Literal["grant", "hide"]
+Effect = Literal["grant", "hide", "suspend"]
 TargetKind = Literal["user", "role", "everyone"]
 
 
@@ -16,7 +16,7 @@ class Names(BaseModel):
 
 class FeatureOut(BaseModel):
     key: str
-    kind: Literal["page", "tab", "button"]
+    kind: Literal["page", "tab", "button", "system"]
     names: Names
     parent: str | None
     group: str | None
@@ -26,6 +26,14 @@ class FeatureOut(BaseModel):
     act_as: str | None
     grantable: bool
     routes: list[str]
+
+
+class SystemMessage(BaseModel):
+    """What the users of a suspended system read in its place (one language at least)."""
+
+    ar: str = Field(default="", max_length=300)
+    fr: str = Field(default="", max_length=300)
+    en: str = Field(default="", max_length=300)
 
 
 class Announcement(BaseModel):
@@ -46,6 +54,8 @@ class Mine(BaseModel):
     lent: dict[str, str]
     # Phase 5: the administrator's message for the dashboard.
     announcement: Announcement | None = None
+    # The systems suspended for the caller (2026-11-13), with the administrator's message.
+    suspended: dict[str, "SystemMessage"] = {}
 
 
 class Hidden(BaseModel):
@@ -65,6 +75,8 @@ class RuleIn(BaseModel):
     reason: str = Field(min_length=5, max_length=500)
     starts_at: datetime | None = None
     ends_at: datetime | None = None
+    # A «suspend» rule's message (2026-11-13); ignored for the others.
+    message: SystemMessage | None = None
 
 
 class RuleOut(BaseModel):
@@ -83,6 +95,7 @@ class RuleOut(BaseModel):
     revoked_at: datetime | None
     revoked_by_name: str | None
     revoke_reason: str | None
+    message: SystemMessage | None = None
     state: Literal["active", "scheduled", "ended", "revoked"]
 
 
@@ -161,3 +174,32 @@ class AssignmentOut(BaseModel):
     state: str
     features: list[str]
     skipped: list[Skipped] = []
+
+
+# ---------------------------------------------------------------- systems (Yamen 2026-11-13)
+
+
+class SystemPage(BaseModel):
+    key: str
+    kind: Literal["page", "tab"]
+    names: Names
+    nav: str | None
+    flags: list[str]
+
+
+class SystemOut(BaseModel):
+    """One of the 20 systems of the menu: its pages and the rules set on it as a whole."""
+
+    key: str
+    number: int
+    block: str
+    names: Names
+    pages: list[SystemPage]
+    planned: list[str]
+    rules: list[RuleOut]
+
+
+class SystemGrantIn(AssignIn):
+    """Every page of the system, read only (its pages and tabs) or read and write (its buttons too)."""
+
+    mode: ProfileMode

@@ -23,7 +23,8 @@ from typing import Literal
 
 from app.core.security import Role
 
-Kind = Literal["page", "tab", "button"]
+# «system» (2026-11-13): one of the 20 systems of the menu (menu.json), a level above its pages.
+Kind = Literal["page", "tab", "button", "system"]
 Names = tuple[str, str, str]  # ar, fr, en
 
 
@@ -71,10 +72,10 @@ _PAR_M = "POST /@crew/missions/{assignment_id}/par"
 
 CATALOGUE: tuple[Spec, ...] = (
     # ------------------------------------------------------------------ operations
-    page("home", "ops", "/", ("الرئيسية", "Accueil", "Home"), ("GET /kpis",)),
+    page("home", "home", "/", ("الرئيسية", "Accueil", "Home"), ("GET /kpis",)),
     page(
         "reports",
-        "ops",
+        "reports",
         "/reports",
         ("البلاغات", "Signalements", "Reports"),
         ("* /reports",),
@@ -151,13 +152,13 @@ CATALOGUE: tuple[Spec, ...] = (
     # OS2 (Yamen 2026-11-10): the guided call-taking cards the rooms answer at intake, and the room agent's guide.
     page(
         "room_guide",
-        "ops",
+        "opscentres",
         "/room-guide",
         ("دليل إجراءات عون القاعة", "Guide de l'agent de salle", "Room agent's guide"),
     ),
     page(
         "call_cards",
-        "ops",
+        "reports",
         "/call-cards",
         ("بطاقات الاستقبال", "Fiches d'appel", "Call-taking cards"),
         ("* /call-cards",),
@@ -199,7 +200,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # Address warnings (OS8, Yamen 2026-11-12): the marks on dangerous addresses shown when a report falls near.
     page(
         "address_warnings",
-        "ops",
+        "gis",
         "/address-warnings",
         ("تحذيرات العناوين", "Alertes d'adresse", "Address warnings"),
         ("* /address-warnings",),
@@ -237,7 +238,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # bodies informed and their calls.
     page(
         "liaison",
-        "ops",
+        "partners",
         "/liaison",
         ("نظام الاتصال", "Système de contact", "Contact system"),
         ("* /liaison",),
@@ -268,7 +269,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # checks, the pause, the missing resources, the word from the scene and the end of the check.
     page(
         "par",
-        "ops",
+        "par",
         "/par",
         ("تفقّد الأعوان في منطقة الخطر", "Contrôle des équipes en zone de danger", "Crew accountability"),
         ("* /par",),
@@ -304,7 +305,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "incidents",
-        "ops",
+        "reports",
         "/incidents",
         ("الحوادث", "Incidents", "Incidents"),
         ("* /incidents", "* /assignments", "* /callouts", "* /conferences", "* /safety"),
@@ -412,7 +413,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "map",
-        "ops",
+        "gis",
         "/map",
         ("الخريطة", "Carte", "Map"),
         ("GET /layers", "GET /route", "GET /weather", "GET /basemap", "GET /places"),
@@ -428,7 +429,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "streams",
-        "ops",
+        "vision",
         "/streams",
         ("البث المباشر", "Directs", "Live streams"),
         ("* /streams", "* /media"),
@@ -459,7 +460,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # MediaMTX; a crossed threshold becomes a suggestion in the alert centre, never a message to citizens by itself.
     page(
         "sensors",
-        "ops",
+        "forecast",
         "/sensors",
         ("الحساسات", "Capteurs", "Sensors"),
         ("* /sensors",),
@@ -482,7 +483,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # computers confirm; an event becomes a suggestion in the alert centre, never an automatic report.
     page(
         "towers",
-        "ops",
+        "vision",
         "/towers",
         ("أبراج المراقبة", "Tours de guet", "Watch towers"),
         ("* /towers",),
@@ -505,7 +506,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # work areas and no-fly zones the room draws, and the alerts. Nothing is ever sent to a drone.
     page(
         "drones",
-        "ops",
+        "vision",
         "/drones",
         ("الدرون", "Drones", "Drones"),
         ("* /drones",),
@@ -531,7 +532,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "calls",
-        "ops",
+        "reports",
         "/calls",
         ("المكالمات", "Appels", "Calls"),
         ("* /calls", "* /telephony"),
@@ -558,7 +559,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "resource_requests",
-        "ops",
+        "reports",
         "/resource-requests",
         ("طلبات الموارد", "Demandes de moyens", "Resource requests"),
         ("* /resource-requests",),
@@ -578,7 +579,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "resources",
-        "ops",
+        "fleet",
         "/resources",
         ("الوحدات والموارد", "Unités et moyens", "Units and resources"),
         ("* /resources", "* /units"),
@@ -601,14 +602,14 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "coverage",
-        "ops",
+        "opscentres",
         "/coverage",
         ("التغطية الحية", "Couverture en direct", "Live coverage"),
         ("* /coverage",),
     ),
     page(
         "inventory",
-        "ops",
+        "fleet",
         "/inventory",
         ("سجل الموارد", "Inventaire", "Inventory"),
         ("* /inventory",),
@@ -715,7 +716,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "crew",
-        "ops",
+        "opscentres",
         "/crew",
         ("الفرق الميدانية", "Équipes", "Crews"),
         ("* /crew-devices", "* /crew-alerts", "* /shifts"),
@@ -735,7 +736,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "field_agents",
-        "ops",
+        "opscentres",
         "/crew/agents",
         ("فريق النوبة وأجهزة الأعوان", "Agents et appareils", "Agents and phones"),
         ("GET /field-agents",),
@@ -759,7 +760,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "schedule",
-        "ops",
+        "opscentres",
         "/schedule",
         ("البرمجة", "Programme", "Programme"),
         ("* /schedule",),
@@ -872,7 +873,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # The decision window opens through delegations (L4 §5), never through a grant: it can only be hidden.
     page(
         "window",
-        "crisis",
+        "decision",
         "/window",
         ("نافذة القرار", "Fenêtre de décision", "Decision window"),
         ("* /window",),
@@ -920,7 +921,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "command",
-        "crisis",
+        "decision",
         "/command",
         ("لوحة القيادة", "Commandement", "Command"),
         ("GET /crisis/command", "* /directives"),
@@ -1017,7 +1018,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "plans",
-        "crisis",
+        "strategies",
         "/plans",
         ("مخططات التدخل", "Plans d'intervention", "Intervention plans"),
         ("GET /register/plans", "* /register/hazards"),
@@ -1030,7 +1031,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "register",
-        "crisis",
+        "strategies",
         "/register",
         ("السجل", "Registre", "Register"),
         ("* /register",),
@@ -1061,7 +1062,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "dispatches",
-        "crisis",
+        "strategies",
         "/register/dispatches",
         ("المراسلات", "Envois", "Dispatches"),
         ("* /register/dispatches",),
@@ -1087,7 +1088,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "committee",
-        "crisis",
+        "decision",
         "/committee",
         ("اللجنة", "Comité", "Committee"),
         ("* /committee",),
@@ -1100,7 +1101,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "programmes",
-        "crisis",
+        "strategies",
         "/programmes",
         ("البرامج الموسمية", "Programmes saisonniers", "Seasonal programmes"),
         ("* /programmes",),
@@ -1179,7 +1180,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "coastal",
-        "disasters",
+        "coastal",
         "/coastal",
         ("الشريط الساحلي", "Littoral", "Coast"),
         ("* /coastal",),
@@ -1228,7 +1229,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "weather",
-        "alerts",
+        "forecast",
         "/weather/suggestions",
         ("مقترحات الطقس", "Suggestions météo", "Weather suggestions"),
         ("GET /weather/suggestions", "* /weather/rules", "WRITE /weather/suggestions", "GET /anomalies"),
@@ -1309,7 +1310,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # ------------------------------------------------------------------ people
     page(
         "volunteers",
-        "people",
+        "citizens",
         "/volunteers",
         ("المتطوعون", "Bénévoles", "Volunteers"),
         ("* /volunteers",),
@@ -1323,7 +1324,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "personnel",
-        "people",
+        "hr",
         "/personnel",
         ("التصرف في الأفراد", "Gestion du personnel", "Personnel management"),
         ("* /personnel",),
@@ -1362,7 +1363,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # The periodic inspections (phase I, Yamen 2026-11-11): the general inspectorate's page, national only.
     page(
         "inspections",
-        "people",
+        "inspections",
         "/inspections",
         ("التفقّدات الدورية", "Inspections périodiques", "Periodic inspections"),
         ("* /inspections",),
@@ -1432,7 +1433,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # What the operations rooms read of the inspections of the rooms; the live ones are dormant until granted.
     page(
         "inspection_results",
-        "people",
+        "inspections",
         "/inspection-results",
         ("نتائج تفقّد القاعات", "Résultats des inspections des salles", "Room inspection results"),
         ("* /inspection-results",),
@@ -1453,7 +1454,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "doctors",
-        "people",
+        "citizens",
         "/doctors",
         ("الأطباء", "Médecins", "Doctors"),
         ("* /doctors",),
@@ -1467,7 +1468,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "medical_committee",
-        "people",
+        "citizens",
         "/medical-committee",
         ("اللجنة الطبية", "Comité médical", "Medical committee"),
         ("* /medical-committee",),
@@ -1481,7 +1482,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "rewards",
-        "people",
+        "citizens",
         "/rewards",
         ("المكافآت", "Récompenses", "Rewards"),
         ("* /rewards",),
@@ -1599,7 +1600,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # ------------------------------------------------------------------ knowledge
     page(
         "analytics",
-        "knowledge",
+        "decision",
         "/analytics",
         ("التحليلات", "Analyses", "Analytics"),
         ("* /analytics",),
@@ -1691,7 +1692,7 @@ CATALOGUE: tuple[Spec, ...] = (
     # ------------------------------------------------------------------ system
     page(
         "layers",
-        "system",
+        "gis",
         "/layers",
         ("الطبقات", "Couches", "Layers"),
         (
@@ -1704,18 +1705,34 @@ CATALOGUE: tuple[Spec, ...] = (
         ),
         flags="fixed",
     ),
-    # Deleting inspection reports and restoring them: the system administrator only (phase I, Yamen 2026-11-11).
+    # Deleting inspection reports and restoring them: the system administrator's (phase I, Yamen 2026-11-11), who can
+    # grant it to the inspection officer when needed (Yamen 2026-11-13); national, as the bin is.
     page(
         "inspection_admin",
-        "system",
+        "inspections",
         "/inspection-admin",
         ("حذف التفقّدات واسترجاعها", "Suppression des inspections", "Delete and restore inspections"),
-        ("* /inspection-admin",),
-        flags="fixed",
+        ("GET /inspection-admin/bin",),
+        button(
+            "inspection_admin.delete",
+            ("حذف التفقّدات", "Supprimer des inspections", "Delete inspections"),
+            "POST /inspection-admin/delete",
+            flags="national",
+            act_as=R.INSPECTOR_GENERAL,
+        ),
+        button(
+            "inspection_admin.restore",
+            ("استرجاع التفقّدات", "Restaurer des inspections", "Restore inspections"),
+            "POST /inspection-admin/bin/{inspection_id}/restore",
+            flags="national",
+            act_as=R.INSPECTOR_GENERAL,
+        ),
+        flags="national",
+        act_as=R.INSPECTOR_GENERAL,
     ),
     page(
         "references",
-        "system",
+        "settings",
         "/references",
         ("القوائم المرجعية", "Listes de référence", "Reference lists"),
         ("* /references",),
@@ -1730,7 +1747,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "settings",
-        "system",
+        "settings",
         "/settings",
         ("الإعدادات", "Paramètres", "Settings"),
         ("* /settings", "* /basemap/settings", "* /app-feedback", "* /evidence"),
@@ -1751,7 +1768,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "ai_settings",
-        "system",
+        "settings",
         "/settings/ai",
         ("الذكاء الاصطناعي", "Intelligence artificielle", "AI"),
         # Phase D (review point 19): the corrections log of the dictation, read with the AI settings.
@@ -1766,7 +1783,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "ai_models",
-        "system",
+        "vision",
         "/settings/ai/models",
         ("بطاقات النماذج", "Fiches des modèles", "Model cards"),
         ("* /ai/models",),
@@ -1788,7 +1805,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "ai_learning",
-        "system",
+        "knowledge",
         "/settings/ai/learning",
         ("مركز التدريب", "Centre d'entraînement", "Training centre"),
         ("* /learning",),
@@ -1804,18 +1821,18 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "accounts",
-        "system",
+        "settings",
         "/accounts",
         ("الحسابات", "Comptes", "Accounts"),
         ("* /accounts",),
         flags="personal fixed",
     ),
-    page("audit", "system", "/audit", ("التدقيق", "Audit", "Audit"), ("* /audit",), flags="personal fixed"),
+    page("audit", "settings", "/audit", ("التدقيق", "Audit", "Audit"), ("* /audit",), flags="personal fixed"),
     # The technical administrators' windows (Yamen, 2026-11-08): their routes are under /api/v1/admin, outside the
     # staff surface this catalogue guards; the pages are listed so that the administrator can hide them.
     page(
         "system_logs",
-        "system",
+        "settings",
         "/system-logs",
         ("سجلات المنظومة", "Journaux système", "System logs"),
         flags="national fixed",
@@ -1823,28 +1840,28 @@ CATALOGUE: tuple[Spec, ...] = (
     # The «تطوير النظام» menu (Yamen, 2026-11-09): the SQL window and the repository map.
     page(
         "sql_console",
-        "dev",
+        "settings",
         "/sql",
         ("نافذة SQL", "Console SQL", "SQL console"),
         flags="national fixed",
     ),
     page(
         "repo_map",
-        "dev",
+        "settings",
         "/dev/map",
         ("خريطة المنظومة", "Carte du système", "System map"),
         flags="national fixed",
     ),
     page(
         "changes",
-        "system",
+        "settings",
         "/changes",
         ("سجل التغييرات", "Journal des modifications", "Change journal"),
         flags="national fixed",
     ),
     page(
         "break_glass",
-        "system",
+        "settings",
         "/break-glass",
         ("الوصول الاستثنائي", "Accès d'urgence", "Break-glass"),
         ("* /break-glass",),
@@ -1852,7 +1869,7 @@ CATALOGUE: tuple[Spec, ...] = (
     ),
     page(
         "permissions",
-        "system",
+        "settings",
         "/permissions",
         ("الصلاحيات", "Autorisations", "Permissions"),
         (
@@ -1863,6 +1880,52 @@ CATALOGUE: tuple[Spec, ...] = (
             "* /features/profile-assignments",
         ),
         flags="fixed",
+    ),
+    # ------------------------------------------------------------------ the screens of the 20 systems (2026-11-13)
+    # Yamen approved the menu of 20 systems in 4 blocks (apps/dashboard/src/menu/menu.json): four screens it lacked.
+    page(
+        "vision",
+        "vision",
+        "/vision",
+        ("مركز تحليل الصور والفيديو", "Centre d'analyse d'images et de vidéos", "Image and video analysis centre"),
+        ("* /vision",),
+    ),
+    page(
+        "forecast",
+        "forecast",
+        "/forecast",
+        ("التنبؤ: الحرائق والفيضانات", "Prévision : feux et crues", "Forecast: fires and floods"),
+        ("* /forecast",),
+    ),
+    page(
+        "citizens",
+        "citizens",
+        "/citizens",
+        ("المواطنون", "Citoyens", "Citizens"),
+        ("* /citizens",),
+    ),
+    page(
+        "admin_board",
+        "admin",
+        "/admin",
+        ("اللوحة الأم لمدير النظام", "Tableau mère de l'administrateur", "Administrator's mother board"),
+        ("* /admin-board",),
+        flags="fixed national",
+    ),
+    page(
+        "systems",
+        "settings",
+        "/settings/systems",
+        ("الأنظمة الفرعية", "Sous-systèmes", "Subsystems"),
+        ("* /features/systems",),
+        flags="fixed national",
+    ),
+    page(
+        "menu_order",
+        "settings",
+        "/settings/menu",
+        ("ترتيب القائمة", "Ordre du menu", "Menu order"),
+        flags="fixed national",
     ),
     # ------------------------------------------------------------------ the field app (phase 5, Yamen 2026-11-01)
     # The team leader's phone: what the administrator hides from a team, or lends to an agent (task distribution).

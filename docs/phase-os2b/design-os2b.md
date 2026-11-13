@@ -55,7 +55,7 @@ empty column for the reviewer's notes, with the names of the reviewers and a sig
 
 ## 4. Data
 
-Migration `0109_call_card_review` (after `0107_par`): `reports.report.entered_room`, `entry_started_at`;
+Migration `0109_call_card_review` (after `0108_feature_systems`): `reports.report.entered_room`, `entry_started_at`;
 `reports.call_card.submitted_at`, `submitted_by_name`, `returned_at`, `returned_by_name`, `returned_reason`,
 `unchanged`, `notes`; the table `reports.call_card_reviewer` (change journal attached). UML: `7z-state-call-card-review`.
 
