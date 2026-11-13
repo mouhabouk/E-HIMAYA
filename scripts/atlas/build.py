@@ -85,6 +85,10 @@ def main() -> None:
     for s in cap["screens"]:
         if not s.get("shot"):
             continue
+        locked = "لا تملك صلاحية" in (s.get("title") or "")
+        if locked:  # the national administrator is refused here (a regional-only or dormant page)
+            s["title"] = ""
+            s["lead"] = ""
         menu = s.get("menu") or parent_menu(s["route"], by_route) or {"group": "صفحات أخرى", "group_key": "other", "item": s.get("title", "")}
         detail = s.get("menu") is None
         s["menu"] = {**menu, "item": (s.get("title") or menu["item"]) if detail else menu["item"]}
@@ -96,11 +100,13 @@ def main() -> None:
             value = parent[1] if parent else GROUP_VALUE.get(menu.get("group_key", ""), "")
         else:
             purpose, value = SCREENS.get(s["route"], (s.get("lead") or s.get("title", ""), GROUP_VALUE.get(menu.get("group_key", ""), "")))
+        if locked:
+            purpose = "لا تُفتح هذه الصفحة لمدير النظام على المستوى الوطني، لذلك تُظهر لقطتها رسالة المنع. " + purpose
         tables = sorted({t for a in s.get("api", []) for t in a["tables"]})
         screens.append({
             "id": s["id"], "route": s["route"], "path": s.get("path"), "shot": s["shot"], "height": s.get("height", 900),
             "group": s["menu"]["group"], "gkey": s["menu"].get("group_key", "other"), "item": s["menu"]["item"],
-            "title": s.get("title") or s["menu"]["item"], "detail": detail, "purpose": purpose, "value": value,
+            "title": s.get("title") or s["menu"]["item"], "detail": detail, "locked": locked, "purpose": purpose, "value": value,
             "lead": s.get("lead", ""), "page": s["page"], "components": s.get("components", [])[:12],
             "api": s.get("api", []), "tables": tables, "regions": s.get("regions", []),
             "access": s.get("access", {}), "scope": scope(s.get("access", {})), "flow": flow(s),
