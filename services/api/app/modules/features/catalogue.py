@@ -427,6 +427,27 @@ CATALOGUE: tuple[Spec, ...] = (
             "DELETE /places/{place_id}",
             act_as=R.OPERATOR,
         ),
+        # The field layers (Yamen 2026-11-13): the places of the inspections for the general inspectorate, the vehicles'
+        # last positions and the PAR teams for the inspector general, the head of the room and the field commander
+        # only. The administrator reveals each one to another role or account, or hides it, here.
+        tab(
+            "map.inspections",
+            ("طبقة أماكن التفقّدات الدورية", "Couche des lieux d'inspection", "Inspection places layer"),
+            "GET /field-map/inspections",
+            act_as=R.INSPECTOR_GENERAL,
+        ),
+        tab(
+            "map.vehicles",
+            ("طبقة آخر موقع للآليات", "Couche des dernières positions des engins", "Vehicles' last positions layer"),
+            "GET /field-map/vehicles",
+            act_as=R.OPS_MANAGER,
+        ),
+        tab(
+            "map.par",
+            ("طبقة فرق PAR", "Couche des équipes PAR", "PAR teams layer"),
+            "GET /field-map/par",
+            act_as=R.OPS_MANAGER,
+        ),
     ),
     page(
         "streams",

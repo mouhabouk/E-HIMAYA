@@ -24,6 +24,9 @@ import {
   hasDashboardAccess,
   hasReadAccess,
   staffRoles,
+  canOpenMap,
+  canSeeFieldUnits,
+  canSeeInspectionSites,
 } from "./roles";
 
 describe("role gating (contract §5)", () => {
@@ -164,5 +167,19 @@ describe("identity from the access token", () => {
     expect(canManageCrewDevices(["operator"])).toBe(false);
     expect(canManageCrewDevices(["regional_account_admin"])).toBe(true);
     expect(canOpenCrew(["security_admin"])).toBe(true);
+  });
+
+  it("opens the field layers of the map to their roles only (Yamen 2026-11-13)", () => {
+    expect(canOpenMap(["inspector_general"])).toBe(true);
+    expect(canOpenMap(["operator"])).toBe(true);
+    expect(canOpenMap(["maintenance_officer"])).toBe(false);
+    expect(canSeeInspectionSites(["inspector_general"])).toBe(true);
+    expect(canSeeInspectionSites(["ops_manager"])).toBe(false);
+    for (const role of ["inspector_general", "ops_manager", "field_commander"]) {
+      expect(canSeeFieldUnits([role])).toBe(true);
+    }
+    for (const role of ["operator", "local_committee", "central_committee", "sysadmin", "governor"]) {
+      expect(canSeeFieldUnits([role])).toBe(false);
+    }
   });
 });

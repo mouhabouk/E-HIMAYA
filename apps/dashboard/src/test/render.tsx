@@ -237,6 +237,10 @@ export function fakeApi(overrides: Partial<StaffApi> = {}): StaffApi {
       Promise.resolve({ days: 90, count: 0, average: null, by_stars: {}, by_build: [], remarks: [] }),
     ),
     kpis: vi.fn(),
+    // The field layers of the interactive map (Yamen 2026-11-13): nothing placed.
+    fieldInspectionSites: vi.fn(() => Promise.resolve({ items: [], unplaced: 0 })),
+    fieldVehicles: vi.fn(() => Promise.resolve({ items: [], unplaced: 0 })),
+    fieldParTeams: vi.fn(() => Promise.resolve({ items: [] })),
     // The four boards of the menu of 20 systems (2026-11-13).
     visionOverview: vi.fn(() =>
       Promise.resolve({

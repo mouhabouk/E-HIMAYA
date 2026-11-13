@@ -18,6 +18,7 @@ import {
   UNIT_KINDS,
   exportCsv,
   inspectionKeys,
+  verdictTone,
   type Audience,
   type Inspector,
   type InspectorStatus,
@@ -123,13 +124,6 @@ function Verdict({ verdict, score }: { verdict: string | null; score?: number | 
       {score !== null && score !== undefined && <strong dir="ltr"> {score}%</strong>}
     </span>
   );
-}
-
-function verdictTone(verdict: string | null): "green" | "amber" | "red" | "slate" {
-  if (!verdict) return "slate";
-  if (verdict.includes("غير")) return "red";
-  if (verdict.includes("تحفّظ") || verdict.includes("تحفظ")) return "amber";
-  return "green";
 }
 
 export function InspectionsPage({ tab }: { tab: InspectionsTab }) {

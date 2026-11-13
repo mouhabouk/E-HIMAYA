@@ -96,7 +96,8 @@ function PlaceForm({
   );
 }
 
-export function useSavedPlaces() {
+/** `enabled`: the room's saved places are read by the report readers (the inspector general's map has none). */
+export function useSavedPlaces(enabled = true) {
   const { t } = useTranslation();
   const { api } = useServices();
   const fmt = useFormat();
@@ -107,7 +108,12 @@ export function useSavedPlaces() {
   const [filter, setFilter] = useState<PlaceKind | "all">("all");
   const [flyTo, setFlyTo] = useState<BBox | null>(null);
 
-  const query = useQuery({ queryKey: placeKeys.all, staleTime: 60_000, queryFn: ({ signal }) => api.places(signal) });
+  const query = useQuery({
+    queryKey: placeKeys.all,
+    staleTime: 60_000,
+    enabled,
+    queryFn: ({ signal }) => api.places(signal),
+  });
   const places = useMemo(() => query.data ?? [], [query.data]);
   const done = () => {
     void qc.invalidateQueries({ queryKey: placeKeys.all });

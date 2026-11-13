@@ -23895,6 +23895,182 @@
         "title": "InspectionItemOut",
         "type": "object"
       },
+      "InspectionSiteOut": {
+        "properties": {
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "last_inspection_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Inspection Id"
+          },
+          "last_on": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last On"
+          },
+          "last_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Score"
+          },
+          "last_verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Verdict"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__field_map__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "unit",
+                  "arrived",
+                  "report",
+                  "directorate"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Source"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next On"
+          },
+          "room": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room"
+          },
+          "target": {
+            "enum": [
+              "room",
+              "unit"
+            ],
+            "title": "Target",
+            "type": "string"
+          },
+          "unit_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Kind"
+          }
+        },
+        "required": [
+          "key",
+          "target",
+          "room",
+          "unit_kind",
+          "name",
+          "gouvernorat_code",
+          "location",
+          "location_source",
+          "last_inspection_id",
+          "last_on",
+          "last_score",
+          "last_verdict",
+          "next_on"
+        ],
+        "title": "InspectionSiteOut",
+        "type": "object"
+      },
+      "InspectionSitesOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InspectionSiteOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "unplaced": {
+            "title": "Unplaced",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "unplaced"
+        ],
+        "title": "InspectionSitesOut",
+        "type": "object"
+      },
       "InspectorOut": {
         "properties": {
           "activated_at": {
@@ -32397,6 +32573,138 @@
           "can_see_names"
         ],
         "title": "OverviewOut",
+        "type": "object"
+      },
+      "ParTeamOut": {
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          },
+          "entered_at": {
+            "format": "date-time",
+            "title": "Entered At",
+            "type": "string"
+          },
+          "gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gouvernorat Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "format": "uuid",
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "last_confirmed_at": {
+            "format": "date-time",
+            "title": "Last Confirmed At",
+            "type": "string"
+          },
+          "leader_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader Name"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/app__modules__ops__field_map__Point"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location_source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "crew",
+                  "incident"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Source"
+          },
+          "members": {
+            "title": "Members",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "zone": {
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "incident_id",
+          "gouvernorat_code",
+          "label",
+          "zone",
+          "leader_name",
+          "members",
+          "status",
+          "entered_at",
+          "last_confirmed_at",
+          "location",
+          "location_source",
+          "at"
+        ],
+        "title": "ParTeamOut",
+        "type": "object"
+      },
+      "ParTeamsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ParTeamOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ParTeamsOut",
         "type": "object"
       },
       "ParticipantIn": {
@@ -53388,295 +53696,6 @@
         "title": "VehicleIn",
         "type": "object"
       },
-      "VehicleOut": {
-        "properties": {
-          "acquired_on": {
-            "anyOf": [
-              {
-                "format": "date",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Acquired On"
-          },
-          "category_key": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category Key"
-          },
-          "code": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Code"
-          },
-          "fault": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Fault"
-          },
-          "gouvernorat_code": {
-            "title": "Gouvernorat Code",
-            "type": "integer"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "title": "Kind",
-            "type": "string"
-          },
-          "label": {
-            "title": "Label",
-            "type": "string"
-          },
-          "maint_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Maint Reason"
-          },
-          "maint_since": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Maint Since"
-          },
-          "maint_until": {
-            "anyOf": [
-              {
-                "format": "date",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Maint Until"
-          },
-          "notes": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Notes"
-          },
-          "odometer_km": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Odometer Km"
-          },
-          "plate": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Plate"
-          },
-          "retire_decision": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Retire Decision"
-          },
-          "retire_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Retire Reason"
-          },
-          "retired_on": {
-            "anyOf": [
-              {
-                "format": "date",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Retired On"
-          },
-          "specs": {
-            "additionalProperties": true,
-            "title": "Specs",
-            "type": "object"
-          },
-          "state": {
-            "enum": [
-              "ready",
-              "assigned",
-              "reinforcement",
-              "broken",
-              "maintenance",
-              "retired"
-            ],
-            "title": "State",
-            "type": "string"
-          },
-          "stationed_gouvernorat_code": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Stationed Gouvernorat Code"
-          },
-          "stationed_since": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Stationed Since"
-          },
-          "stationed_unit_id": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Stationed Unit Id"
-          },
-          "stationed_unit_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Stationed Unit Name"
-          },
-          "unit_id": {
-            "format": "uuid",
-            "title": "Unit Id",
-            "type": "string"
-          },
-          "unit_name": {
-            "title": "Unit Name",
-            "type": "string"
-          },
-          "updated_at": {
-            "format": "date-time",
-            "title": "Updated At",
-            "type": "string"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          },
-          "workshop": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Workshop"
-          },
-          "year": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Year"
-          }
-        },
-        "required": [
-          "id",
-          "unit_id",
-          "unit_name",
-          "gouvernorat_code",
-          "category_key",
-          "kind",
-          "label",
-          "code",
-          "specs",
-          "state",
-          "year",
-          "notes",
-          "version",
-          "updated_at"
-        ],
-        "title": "VehicleOut",
-        "type": "object"
-      },
       "VehiclePosition": {
         "properties": {
           "at": {
@@ -53788,37 +53807,6 @@
           "state"
         ],
         "title": "VehicleStateIn",
-        "type": "object"
-      },
-      "VehiclesOut": {
-        "properties": {
-          "can_edit": {
-            "title": "Can Edit",
-            "type": "boolean"
-          },
-          "can_maintain": {
-            "default": false,
-            "title": "Can Maintain",
-            "type": "boolean"
-          },
-          "can_set_state": {
-            "default": false,
-            "title": "Can Set State",
-            "type": "boolean"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/VehicleOut"
-            },
-            "title": "Items",
-            "type": "array"
-          }
-        },
-        "required": [
-          "items",
-          "can_edit"
-        ],
-        "title": "VehiclesOut",
         "type": "object"
       },
       "VerifyIn": {
@@ -60739,6 +60727,326 @@
         "title": "SearchOut",
         "type": "object"
       },
+      "app__modules__inventory__schemas__VehicleOut": {
+        "properties": {
+          "acquired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acquired On"
+          },
+          "category_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Key"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "fault": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fault"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "maint_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Reason"
+          },
+          "maint_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Since"
+          },
+          "maint_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maint Until"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "odometer_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Odometer Km"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "retire_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retire Decision"
+          },
+          "retire_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retire Reason"
+          },
+          "retired_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retired On"
+          },
+          "specs": {
+            "additionalProperties": true,
+            "title": "Specs",
+            "type": "object"
+          },
+          "state": {
+            "enum": [
+              "ready",
+              "assigned",
+              "reinforcement",
+              "broken",
+              "maintenance",
+              "retired"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "stationed_gouvernorat_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Gouvernorat Code"
+          },
+          "stationed_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Since"
+          },
+          "stationed_unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Unit Id"
+          },
+          "stationed_unit_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stationed Unit Name"
+          },
+          "unit_id": {
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "workshop": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workshop"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "id",
+          "unit_id",
+          "unit_name",
+          "gouvernorat_code",
+          "category_key",
+          "kind",
+          "label",
+          "code",
+          "specs",
+          "state",
+          "year",
+          "notes",
+          "version",
+          "updated_at"
+        ],
+        "title": "VehicleOut",
+        "type": "object"
+      },
+      "app__modules__inventory__schemas__VehiclesOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "can_maintain": {
+            "default": false,
+            "title": "Can Maintain",
+            "type": "boolean"
+          },
+          "can_set_state": {
+            "default": false,
+            "title": "Can Set State",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "can_edit"
+        ],
+        "title": "VehiclesOut",
+        "type": "object"
+      },
       "app__modules__knowledge__domain__Kind": {
         "enum": [
           "memory",
@@ -62346,6 +62654,114 @@
           "active"
         ],
         "title": "InboxItem",
+        "type": "object"
+      },
+      "app__modules__ops__field_map__Point": {
+        "properties": {
+          "lat": {
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "Point",
+        "type": "object"
+      },
+      "app__modules__ops__field_map__VehicleOut": {
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          },
+          "gouvernorat_code": {
+            "title": "Gouvernorat Code",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/app__modules__ops__field_map__Point"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "unit_name": {
+            "title": "Unit Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "kind",
+          "status",
+          "unit_name",
+          "gouvernorat_code",
+          "location",
+          "at",
+          "incident_id"
+        ],
+        "title": "VehicleOut",
+        "type": "object"
+      },
+      "app__modules__ops__field_map__VehiclesOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/app__modules__ops__field_map__VehicleOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "unplaced": {
+            "title": "Unplaced",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "unplaced"
+        ],
+        "title": "VehiclesOut",
         "type": "object"
       },
       "app__modules__ops__schemas__AckIn": {
@@ -100071,6 +100487,87 @@
         ]
       }
     },
+    "/api/v1/staff/field-map/inspections": {
+      "get": {
+        "operationId": "get_inspection_sites_api_v1_staff_field_map_inspections_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionSitesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Inspection Sites",
+        "tags": [
+          "staff",
+          "map"
+        ]
+      }
+    },
+    "/api/v1/staff/field-map/par": {
+      "get": {
+        "operationId": "get_par_teams_api_v1_staff_field_map_par_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParTeamsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Par Teams",
+        "tags": [
+          "staff",
+          "map"
+        ]
+      }
+    },
+    "/api/v1/staff/field-map/vehicles": {
+      "get": {
+        "operationId": "get_vehicles_api_v1_staff_field_map_vehicles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__ops__field_map__VehiclesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Vehicles",
+        "tags": [
+          "staff",
+          "map"
+        ]
+      }
+    },
     "/api/v1/staff/forecast/overview": {
       "get": {
         "operationId": "forecast_overview_api_v1_staff_forecast_overview_get",
@@ -105370,7 +105867,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehiclesOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehiclesOut"
                 }
               }
             },
@@ -105415,7 +105912,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
                 }
               }
             },
@@ -105525,7 +106022,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
                 }
               }
             },
@@ -105585,7 +106082,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
                 }
               }
             },
@@ -105645,7 +106142,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
                 }
               }
             },
@@ -105705,7 +106202,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
                 }
               }
             },
@@ -105765,7 +106262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleOut"
+                  "$ref": "#/components/schemas/app__modules__inventory__schemas__VehicleOut"
                 }
               }
             },

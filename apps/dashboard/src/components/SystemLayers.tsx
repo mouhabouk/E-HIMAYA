@@ -10,8 +10,11 @@ import { hexBreaks, hexClass, hexColour } from "../lib/analytics";
 import { coastalKeys } from "../lib/coastalApi";
 import { levelKey, RISK_COLOURS } from "../lib/coastal";
 import { crisisKeys, type Area } from "../lib/crisis";
+import { fieldMapKeys } from "../lib/fieldMap";
+import { verdictTone } from "../lib/inspectionsApi";
 import { useFormat } from "../lib/hooks";
 import { LAYER_ICON_PATHS } from "../lib/layers";
+import { POI_ICON_PATHS } from "../lib/poiIcons";
 import { p8Keys } from "../lib/phase8Api";
 import { streamKeys } from "../lib/streamsApi";
 import type { MapHex, MapPoi, MapPolygon } from "./MapView";
@@ -44,6 +47,9 @@ export const MAP_LAYER_IDS = [
   "streams",
   "weather",
   "orgs",
+  "inspections",
+  "vehicles",
+  "par",
 ] as const;
 export type MapLayerId = (typeof MAP_LAYER_IDS)[number];
 
@@ -281,4 +287,237 @@ export function useStreamsLayer(enabled: boolean): SystemLayer {
     });
   }, [enabled, q.data, t]);
   return { pois, polygons: EMPTY, hexes: EMPTY, error: enabled ? q.error : null, refetch: () => void q.refetch() };
+}
+
+// ---------------------------------------------------------------- the field layers (Yamen 2026-11-13)
+
+/** A layer and what it could not place (no position known yet), for the note beside its switch. */
+export interface FieldLayer extends SystemLayer {
+  unplaced: number;
+  count: number;
+}
+
+const TONE_COLOURS = { green: "#00806A", amber: "#F08C00", red: "#D7141A", slate: "#5B6B7F" } as const;
+// A clipboard with a tick: a place of the periodic inspections.
+const INSPECTION_ICON = "M9 2h6v2h3a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3V2zm1 2v2h4V4h-4zm5.3 6.3L11 14.6l-2.3-2.3-1.4 1.4 3.7 3.7 5.7-5.7-1.4-1.4z";
+// Three helmets: a team inside a danger zone.
+const PAR_ICON = "M12 3a5 5 0 0 0-5 5v1h10V8a5 5 0 0 0-5-5zM5 10h14v2H5v-2zm-3 4a3 3 0 0 1 6 0v1H2v-1zm14 0a3 3 0 0 1 6 0v1h-6v-1zM8 17h8v4H8v-4z";
+/** A vehicle whose phone has not given a position for this long is drawn grey: its place may be out of date. */
+export const VEHICLE_STALE_MS = 30 * 60_000;
+const VEHICLE_COLOURS = { engaged: "#F08C00", free: "#1976D2", stale: "#5B6B7F" } as const;
+const PAR_COLOURS: Readonly<Record<string, string>> = {
+  ok: "#00806A",
+  soon: "#F5B400",
+  late: "#F08C00",
+  alarm: "#D7141A",
+  missing: "#D7141A",
+  paused: "#5B6B7F",
+};
+
+/** The places of the periodic inspections, coloured by the verdict of their last report (inspector general). */
+export function useInspectionSitesLayer(enabled: boolean): FieldLayer {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const q = useQuery({
+    queryKey: fieldMapKeys.inspections,
+    queryFn: ({ signal }) => api.fieldInspectionSites(signal),
+    enabled,
+    staleTime: 5 * 60_000,
+  });
+  const pois = useMemo<MapPoi[]>(() => {
+    if (!enabled) return [];
+    return (q.data?.items ?? []).map((p) => ({
+      id: `inspection-${p.key}`,
+      lon: p.location.lon,
+      lat: p.location.lat,
+      kind: "place" as const,
+      title: p.name,
+      subtitle: [
+        p.target === "room" ? t(`inspections.room.${p.room ?? "central"}`) : t(`inspections.unitKind.${p.unit_kind ?? "other"}`),
+        p.last_on
+          ? t("mapLayers.inspections.last", {
+              date: fmt.date(p.last_on),
+              verdict: p.last_verdict ?? "—",
+              score: p.last_score === null ? "—" : `${fmt.number(p.last_score)}%`,
+            })
+          : t("mapLayers.inspections.never"),
+        p.next_on ? t("mapLayers.inspections.next", { date: fmt.date(p.next_on) }) : null,
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      iconPath: INSPECTION_ICON,
+      colour: TONE_COLOURS[verdictTone(p.last_verdict)],
+      href: p.last_inspection_id ? `/inspections/records/${encodeURIComponent(p.last_inspection_id)}` : "/inspections",
+    }));
+  }, [enabled, q.data, t, fmt]);
+  return {
+    pois,
+    polygons: EMPTY,
+    hexes: EMPTY,
+    error: enabled ? q.error : null,
+    refetch: () => void q.refetch(),
+    unplaced: enabled ? (q.data?.unplaced ?? 0) : 0,
+    count: pois.length,
+  };
+}
+
+/**
+ * The last known position of each vehicle (the leader's phone during a mission): engaged orange, free blue, grey when
+ * the position is older than 30 minutes. The popup opens the vehicle's intervention, or the resources screen, for whom
+ * may open them.
+ */
+export function useVehiclesLayer(
+  enabled: boolean,
+  opens: { incidents: boolean; resources: boolean },
+): FieldLayer & { ids: ReadonlySet<string> } {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const q = useQuery({
+    queryKey: fieldMapKeys.vehicles,
+    queryFn: ({ signal }) => api.fieldVehicles(signal),
+    enabled,
+    refetchInterval: 30_000,
+  });
+  const pois = useMemo<MapPoi[]>(() => {
+    if (!enabled) return [];
+    // The age of a position is read when the answer arrives (every 30 seconds).
+    const now = q.dataUpdatedAt;
+    return (q.data?.items ?? []).map((v) => {
+      const stale = v.at === null || now - new Date(v.at).getTime() > VEHICLE_STALE_MS;
+      const href =
+        v.incident_id && opens.incidents
+          ? `/incidents/${encodeURIComponent(v.incident_id)}`
+          : opens.resources
+            ? "/resources"
+            : undefined;
+      return {
+        id: `vehicle-${v.id}`,
+        lon: v.location.lon,
+        lat: v.location.lat,
+        kind: "place" as const,
+        title: `${v.label} · ${t(`resources.kind.${v.kind}`, { defaultValue: v.kind })}`,
+        subtitle: [
+          t(`resources.status.${v.status}`, { defaultValue: v.status }),
+          v.unit_name,
+          v.at ? t("mapLayers.vehicles.at", { time: fmt.dateTime(v.at) }) : t("mapLayers.vehicles.noFix"),
+        ].join(" · "),
+        iconPath: POI_ICON_PATHS[v.incident_id ? "resource_busy" : "resource"],
+        colour: stale ? VEHICLE_COLOURS.stale : v.incident_id ? VEHICLE_COLOURS.engaged : VEHICLE_COLOURS.free,
+        ...(href ? { href } : {}),
+      };
+    });
+  }, [enabled, q.data, q.dataUpdatedAt, opens.incidents, opens.resources, t, fmt]);
+  // The vehicles drawn here: the units and resources layer leaves them out (one vehicle, one mark on the map).
+  const ids = useMemo(() => new Set(enabled ? (q.data?.items ?? []).map((v) => v.id) : []), [enabled, q.data]);
+  return {
+    ids,
+    pois,
+    polygons: EMPTY,
+    hexes: EMPTY,
+    error: enabled ? q.error : null,
+    refetch: () => void q.refetch(),
+    unplaced: enabled ? (q.data?.unplaced ?? 0) : 0,
+    count: pois.length,
+  };
+}
+
+/** The teams inside a danger zone (PAR), at their vehicle's last position, coloured by the state of their check. */
+export function useParLayer(enabled: boolean, canOpenPar: boolean): FieldLayer {
+  const { t } = useTranslation();
+  const { api } = useServices();
+  const fmt = useFormat();
+  const q = useQuery({
+    queryKey: fieldMapKeys.par,
+    queryFn: ({ signal }) => api.fieldParTeams(signal),
+    enabled,
+    refetchInterval: 30_000,
+  });
+  const items = useMemo(() => (enabled ? (q.data?.items ?? []) : []), [enabled, q.data]);
+  const pois = useMemo<MapPoi[]>(
+    () =>
+      items.flatMap((team) =>
+        team.location
+          ? [
+              {
+                id: `par-${team.id}`,
+                lon: team.location.lon,
+                lat: team.location.lat,
+                kind: "place" as const,
+                title: `${team.label} · ${t(`par.zone.${team.zone}`, { defaultValue: team.zone })}`,
+                subtitle: [
+                  t(`par.status.${team.status}`, { defaultValue: team.status }),
+                  t("mapLayers.par.members", { n: fmt.number(team.members) }),
+                  team.leader_name,
+                  t("mapLayers.par.confirmed", { time: fmt.dateTime(team.last_confirmed_at) }),
+                  team.location_source === "incident" ? t("mapLayers.par.atIncident") : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · "),
+                iconPath: PAR_ICON,
+                colour: PAR_COLOURS[team.status] ?? PAR_COLOURS.paused,
+                ...(canOpenPar ? { href: "/par" } : {}),
+              },
+            ]
+          : [],
+      ),
+    [items, canOpenPar, t, fmt],
+  );
+  return {
+    pois,
+    polygons: EMPTY,
+    hexes: EMPTY,
+    error: enabled ? q.error : null,
+    refetch: () => void q.refetch(),
+    unplaced: items.length - pois.length,
+    count: pois.length,
+  };
+}
+
+/** The colours of each field layer, for its legend under the switch. */
+export function fieldLegend(layer: "inspections" | "vehicles" | "par"): [string, string][] {
+  if (layer === "inspections") {
+    return [
+      [TONE_COLOURS.green, "mapLayers.inspections.legendGood"],
+      [TONE_COLOURS.amber, "mapLayers.inspections.legendReserved"],
+      [TONE_COLOURS.red, "mapLayers.inspections.legendBad"],
+      [TONE_COLOURS.slate, "mapLayers.inspections.legendNone"],
+    ];
+  }
+  if (layer === "vehicles") {
+    return [
+      [VEHICLE_COLOURS.engaged, "mapLayers.vehicles.legendEngaged"],
+      [VEHICLE_COLOURS.free, "mapLayers.vehicles.legendFree"],
+      [VEHICLE_COLOURS.stale, "mapLayers.vehicles.legendStale"],
+    ];
+  }
+  return [
+    [PAR_COLOURS.ok ?? "", "mapLayers.par.legendOk"],
+    [PAR_COLOURS.late ?? "", "mapLayers.par.legendLate"],
+    [PAR_COLOURS.alarm ?? "", "mapLayers.par.legendAlarm"],
+    [PAR_COLOURS.paused ?? "", "mapLayers.par.legendPaused"],
+  ];
+}
+
+/** Under a field layer's switch: how many are drawn, how many have no position yet, and the legend. */
+export function FieldLayerNote({ layer, kind }: { layer: FieldLayer; kind: "inspections" | "vehicles" | "par" }) {
+  const { t } = useTranslation();
+  const fmt = useFormat();
+  return (
+    <div className="field-layer-note">
+      <span className="muted" role="status" aria-live="polite">
+        {t(`mapLayers.${kind}.count`, { n: fmt.number(layer.count) })}
+        {layer.unplaced > 0 ? ` · ${t("mapLayers.unplaced", { n: fmt.number(layer.unplaced) })}` : ""}
+      </span>
+      <ul className="map-legend">
+        {fieldLegend(kind).map(([colour, key]) => (
+          <li key={key}>
+            <span className="fleet-map-swatch" style={{ background: colour }} aria-hidden="true" />
+            <span>{t(key)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

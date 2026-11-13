@@ -10882,7 +10882,41 @@
       "orgs": "Institutions",
       "coastal": "Coastal safety",
       "coverage": "Live coverage",
-      "fleet": "Fleet report"
+      "fleet": "Fleet report",
+      "inspections": "Periodic inspections",
+      "par": "Crew accountability (PAR)"
+    },
+    "unplaced": "{{n}} with no known position yet",
+    "inspections": {
+      "toggle": "Places of the periodic inspections",
+      "count": "Places shown: {{n}}",
+      "last": "Last inspection {{date}}: {{verdict}} ({{score}})",
+      "never": "Not inspected yet",
+      "next": "Next mission {{date}}",
+      "legendGood": "Compliant",
+      "legendReserved": "Compliant with reservations",
+      "legendBad": "Not compliant",
+      "legendNone": "No report yet"
+    },
+    "vehicles": {
+      "toggle": "Vehicles' last positions",
+      "count": "Vehicles shown: {{n}}",
+      "at": "Position at {{time}}",
+      "noFix": "Position without a time",
+      "legendEngaged": "On a mission",
+      "legendFree": "Available",
+      "legendStale": "Position older than 30 min"
+    },
+    "par": {
+      "toggle": "PAR teams inside danger zones",
+      "count": "Teams shown: {{n}}",
+      "members": "{{n}} members",
+      "confirmed": "Last confirmed {{time}}",
+      "atIncident": "At the incident's place (no position from the phone)",
+      "legendOk": "Confirmed",
+      "legendLate": "Check due or in grace time",
+      "legendAlarm": "Not confirmed or missing equipment",
+      "legendPaused": "Check paused"
     }
   }
 }
