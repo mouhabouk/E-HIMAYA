@@ -11,6 +11,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { regions } from "./regions.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright");
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -77,43 +78,97 @@ async function resolve(page, route) {
   return href;
 }
 
-/** Regions a flowchart box can point at, in reading order (top to bottom, right to left). */
-function regions() {
-  const main = document.querySelector("main") ?? document.body;
+// Windows of a screen (Yamen, 2026-11-13: «بكل تفاصيل النوافذ»): each tab that is not shown first, and each dialog a
+// button of the page opens (add, new, edit, upload, invite…). Found on the page itself, so a new tab or dialog joins the
+// atlas on the next run. Deleting buttons are never pressed; a dialog is closed with Escape before the next one.
+// A button opens a window when, after the click, a dialog shows or the page gains fields (the dashboard opens its
+// forms as inline panels). Buttons that write or leave are never pressed.
+const NEVER = /(حذف|إلغاء|تأكيد|أكّد|أكد|إرسال|أرسل|حفظ|احفظ|موافقة|رفض|اعتماد|اعتمد|إغلاق|أغلق|خروج|تنفيذ|نفّذ|إطلاق|أطلق|تشغيل|إيقاف|تحديث|السابق|التالي|طباعة|تنزيل|نسخ|Delete|Save|Send)/;
+const MAX_TABS = 8, MAX_DIALOGS = 4;
+
+async function panelInfo(page, before) {
+  const win = await page.evaluate(() => {
+    const d = [...document.querySelectorAll('dialog[open], [role="dialog"], [aria-modal="true"]')].pop();
+    if (!d) return null;
+    const r = d.getBoundingClientRect();
+    const h = d.querySelector("h1,h2,h3");
+    return { kind: "window", label: (h?.textContent || d.textContent || "").trim().slice(0, 90),
+      x: Math.round(r.left + scrollX), y: Math.round(r.top + scrollY), w: Math.round(r.width), h: Math.round(r.height) };
+  });
+  const fields = await page.$$eval("main input:not([type=hidden]), main textarea, main select", (x) => x.length);
+  if (!win && fields <= before) return null;
+  return win;
+}
+
+async function shoot(page, file, win) {
+  let info = await page.evaluate(regions);
+  if (win) info = { ...info, regions: [win, ...info.regions.filter((r) => r.y >= win.y && r.y < win.y + win.h)] };
+  if (info.height > 900) {
+    await page.setViewportSize({ width: 1440, height: Math.min(MAX_H, Math.ceil(info.height)) });
+    await page.waitForTimeout(500);
+    const again = await page.evaluate(regions);
+    info = { ...(win ? { ...again, regions: [win, ...again.regions.filter((r) => r.y >= win.y && r.y < win.y + win.h)] } : again),
+      height: Math.min(MAX_H, Math.ceil(info.height)) };
+  }
+  await page.screenshot({ path: join(OUT, file), type: "jpeg", quality: 72 });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  return info;
+}
+
+async function windows(page, id, path, routes) {
   const out = [];
-  const seen = new Set();
-  const txt = (el) => (el?.innerText ?? "").replace(/\s+/g, " ").trim().slice(0, 90);
-  const add = (kind, el, label) => {
-    if (!el || seen.has(el)) return;
-    const r = el.getBoundingClientRect();
-    if (r.width < 24 || r.height < 12) return;
-    seen.add(el);
-    out.push({ kind, label: label || txt(el), x: Math.round(r.left + scrollX), y: Math.round(r.top + scrollY),
-      w: Math.round(r.width), h: Math.round(r.height) });
-  };
-  const nav = document.querySelector("nav[aria-label]");
-  if (nav) add("menu", nav, "القائمة الرئيسية");
-  const h1 = main.querySelector("h1");
-  if (h1) add("title", h1.closest("header") ?? h1, txt(h1));
-  const lead = h1?.closest("header")?.parentElement?.querySelector(":scope > p, header + p, p.muted");
-  if (lead) add("lead", lead);
-  [...main.querySelectorAll("[role=tablist], .tabs, .segmented")].slice(0, 2).forEach((t) => add("tabs", t, txt(t)));
-  [...main.querySelectorAll(".maplibregl-map")].slice(0, 1).forEach((m) => add("map", m, "الخريطة"));
-  [...main.querySelectorAll("h2, h3")].slice(0, 9).forEach((h) => {
-    const box = h.closest("section, article, .card, fieldset") ?? h;
-    add("section", box, txt(h));
-  });
-  [...main.querySelectorAll("table")].slice(0, 2).forEach((t) => {
-    const head = [...t.querySelectorAll("th")].map((th) => txt(th)).filter(Boolean).slice(0, 5).join("، ");
-    add("table", t.closest(".table-wrap, .card") ?? t, head ? `جدول: ${head}` : "جدول");
-  });
-  [...main.querySelectorAll("form")].slice(0, 2).forEach((f) => add("form", f, txt(f.querySelector("legend, h2, h3, label")) || "استمارة"));
-  [...main.querySelectorAll(".btn--primary, button[type=submit]")].slice(0, 3).forEach((b) => add("action", b, txt(b)));
-  const lead2 = out.find((o) => o.kind === "lead");
-  return { regions: out.sort((a, b) => (Math.abs(a.y - b.y) < 14 ? b.x - a.x : a.y - b.y)), lead: lead2?.label ?? "",
-    height: Math.min(Math.max(document.documentElement.scrollHeight,
-      ...[...document.querySelectorAll("main, main *")].filter((e) => /(auto|scroll)/.test(getComputedStyle(e).overflowY))
-        .map((e) => e.scrollHeight + e.getBoundingClientRect().top)), 2400), title: txt(h1) };
+  // Tabs that are links (nav.tabs): a tab whose path is not a screen of its own becomes a window of this screen.
+  const links = await page.$$eval("main nav.tabs a[href], main .tabs a[href]", (as) => as.map((a) => ({
+    href: a.getAttribute("href"), label: a.textContent.trim().replace(/\s+/g, " "), on: a.classList.contains("tabs__tab--active") })));
+  for (const [i, l] of links.entries()) {
+    if (l.on || !l.href || routes.has(l.href) || l.href === path || i >= MAX_TABS) continue;
+    try {
+      await page.goto(BASE + l.href);
+      await settle(page, 1200);
+      const file = `shots/${id}~link${i}.jpg`;
+      out.push({ id: `${id}~link${i}`, kind: "tab", label: l.label.slice(0, 60), shot: file, path: l.href, ...(await shoot(page, file, null)) });
+    } catch { /* left out */ }
+  }
+  const tabSel = 'main [role="tab"], main [role="group"] button[aria-pressed="false"]';
+  const tabs = await page.$$eval(tabSel, (ts) => ts.map((t, i) => ({ i, label: t.textContent.trim().replace(/\s+/g, " "),
+    sel: t.getAttribute("aria-selected") === "true" })));
+  for (const t of tabs.filter((x) => !x.sel && x.label && !NEVER.test(x.label)).slice(0, MAX_TABS)) {
+    try {
+      await page.goto(BASE + path);
+      await settle(page, 1200);
+      await page.locator(tabSel).nth(t.i).click({ timeout: 4000 });
+      await settle(page, 1200);
+      const file = `shots/${id}~tab${t.i}.jpg`;
+      out.push({ id: `${id}~tab${t.i}`, kind: "tab", label: t.label.slice(0, 60), shot: file, ...(await shoot(page, file, null)) });
+    } catch { /* a tab that does not answer is left out */ }
+  }
+  await page.goto(BASE + path);
+  await settle(page, 1200);
+  const labels = await page.$$eval('main button:not([disabled]):not([role="tab"]):not([aria-pressed])',
+    (bs) => bs.map((b) => b.textContent.trim().replace(/\s+/g, " ")));
+  const openers = [...new Set(labels.filter((l) => l.length > 1 && l.length < 50 && !NEVER.test(l)))].slice(0, 12);
+  let k = 0;
+  for (const label of openers) {
+    if (k >= MAX_DIALOGS) break;
+    try {
+      await page.goto(BASE + path);
+      await settle(page, 1200);
+      const before = await page.$$eval("main input:not([type=hidden]), main textarea, main select", (x) => x.length);
+      const urlBefore = page.url();
+      await page.locator('main button:not([disabled]):not([role="tab"]):not([aria-pressed])', { hasText: label }).first()
+        .click({ timeout: 4000 });
+      await page.waitForTimeout(900);
+      if (page.url() !== urlBefore) continue; // a link to another screen, which has its own card
+      const fields = await page.$$eval("main input:not([type=hidden]), main textarea, main select", (x) => x.length);
+      const win = await panelInfo(page, before);
+      if (!win && fields <= before) continue;
+      const file = `shots/${id}~win${k}.jpg`;
+      out.push({ id: `${id}~win${k}`, kind: "dialog", label, shot: file, ...(await shoot(page, file, win)) });
+      k++;
+      await page.keyboard.press("Escape");
+    } catch { /* a button that opens no window is not a window */ }
+  }
+  return out;
 }
 
 async function main() {
@@ -142,8 +197,9 @@ async function main() {
       const file = `shots/${id}.jpg`;
       await page.screenshot({ path: join(OUT, file), type: "jpeg", quality: 72 });
       await page.setViewportSize({ width: 1440, height: 900 });
-      result[s.route] = { id, path, shot: file, ...info, access: {} };
-      process.stdout.write(`✓ ${s.route} (${info.regions.length})\n`);
+      const wins = process.env.ATLAS_NO_WINDOWS ? [] : await windows(page, id, path, new Set(screens.map((x) => x.route)));
+      result[s.route] = { id, path, shot: file, ...info, access: {}, windows: wins };
+      process.stdout.write(`✓ ${s.route} (${info.regions.length}, ${wins.length} windows)\n`);
     } catch (e) {
       result[s.route] = { id, missing: String(e).slice(0, 120) };
       process.stdout.write(`✗ ${s.route} ${String(e).slice(0, 80)}\n`);

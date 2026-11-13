@@ -4,11 +4,15 @@ Writes <out>/index.html (every screen, chosen from a drop-down list), <out>/scre
 and keeps the screenshots in <out>/shots/. Each screen gets a card (purpose, added value, functional and technical
 detail), a flowchart whose boxes point at the screenshot, who can open it, and a spoken commentary.
 
-    python3 scripts/atlas/build.py <capture.json> <out-dir>
+    python3 scripts/atlas/build.py <capture.json> <out-dir> [--portal <dir>] [--mobile <dir>] [--backend <backend.json>]
+
+The portal and the two mobile apps (Yamen, 2026-11-13) are added from their own captures (apps.py): pass "-" as the
+capture to build their screens alone.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from datetime import date
@@ -16,10 +20,13 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+from apps import screens as app_screens  # noqa: E402
+from apps_content import SURFACES  # noqa: E402
+from chapters import CHAPTERS, chapter_of, link_cards  # noqa: E402
 from content import GROUP_VALUE, SCREENS  # noqa: E402
 
 KIND_AR = {"menu": "القائمة", "title": "الصفحة", "lead": "الغرض", "tabs": "التبويبات", "map": "الخريطة",
-           "section": "قسم", "table": "جدول", "form": "استمارة", "action": "إجراء"}
+           "section": "قسم", "table": "جدول", "form": "استمارة", "action": "إجراء", "window": "نافذة"}
 sys.path.insert(0, str(HERE.parent / "menu"))
 from menu import systems as menu_systems  # noqa: E402
 
@@ -81,8 +88,15 @@ def flow(s: dict) -> list[dict]:
 
 
 def main() -> None:
-    cap = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-    out = Path(sys.argv[2])
+    ap = argparse.ArgumentParser()
+    ap.add_argument("capture")
+    ap.add_argument("out")
+    ap.add_argument("--portal", type=Path)
+    ap.add_argument("--mobile", type=Path)
+    ap.add_argument("--backend", type=Path)
+    args = ap.parse_args()
+    cap = json.loads(Path(args.capture).read_text(encoding="utf-8")) if args.capture != "-" else {"screens": [], "personas": {}}
+    out = Path(args.out)
     by_route = {s["route"]: s for s in cap["screens"]}
     screens = []
     for s in cap["screens"]:
@@ -114,10 +128,38 @@ def main() -> None:
             "api": s.get("api", []), "tables": tables, "regions": s.get("regions", []),
             "access": s.get("access", {}), "scope": scope(s.get("access", {})), "flow": flow(s),
         })
+        for w in s.get("windows", []):  # its tabs and dialogs, each a card of its own after the screen
+            kind = "تبويب" if w["kind"] == "tab" else "نافذة"
+            win = {**s, "title": f"{s.get('title') or menu['item']} › {kind}: {w['label']}", "regions": w.get("regions", [])}
+            wflow = flow(win)
+            wflow[0] = {"t": "term", "l": "يُفتح من الصفحة", "s": f"{s.get('title') or menu['item']} ← «{w['label']}»", "r": None}
+            screens.append({**screens[-1],
+                            "id": w["id"].replace("~", "--"), "shot": w["shot"], "height": w.get("height", 900),
+                            "item": f"{kind}: {w['label']}", "title": win["title"], "detail": True,
+                            "purpose": f"{kind} «{w['label']}» في صفحة «{s.get('title') or menu['item']}». " + purpose,
+                            "regions": w.get("regions", []), "flow": wflow, "window": w["kind"]})
     order = {k: i for i, k in enumerate(GROUP_ORDER)}
-    screens.sort(key=lambda x: (order.get(x["gkey"], 99), x["detail"], x["route"]))
+    screens.sort(key=lambda x: (order.get(x["gkey"], 99), x["detail"] and not x.get("window"), x["route"], x.get("window") or ""))
+    screens += app_screens(args.portal, args.mobile, args.backend, out)
+    # Chapters (Yamen's order): each card joins its chapter, in the order of the chapter's members, then the link card.
+    for c in screens:
+        c.setdefault("surface", "dashboard")
+        c["chap"] = chapter_of(c["surface"], c["gkey"])
+    def rank(c: dict) -> tuple:
+        ch = next(i for i, x in enumerate(CHAPTERS) if x["key"] == c["chap"])
+        group = c["gkey"].split(":", 1)[1] if ":" in c["gkey"] else c["gkey"]
+        mem = CHAPTERS[ch]["members"]
+        pos = next((i for i, (sf, g) in enumerate(mem) if sf == c["surface"] and g in (group, "*")), len(mem))
+        return (ch, pos)
+    screens = sorted(screens, key=rank)  # stable: the order inside a member stays
+    links = link_cards(screens)
+    final = []
+    for ch in CHAPTERS:
+        final += [c for c in screens if c["chap"] == ch["key"]] + [x for x in links if x["chap"] == ch["key"]]
+    screens = final
     meta = {"built": date.today().isoformat(), "personas": cap["personas"], "count": len(screens),
-            "surface": "لوحة القيادة (مدير النظام)"}
+            "surface": "لوحة القيادة (مدير النظام)", "surfaces": {**SURFACES, "link": "الترابط"},
+            "chapters": {c["key"]: c["title"] for c in CHAPTERS}}
     tpl = (HERE / "template.html").read_text(encoding="utf-8")
     out.mkdir(parents=True, exist_ok=True)
     (out / "screens").mkdir(exist_ok=True)

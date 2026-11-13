@@ -1,0 +1,142 @@
+[
+ {
+  "id": "p-home",
+  "path": "/"
+ },
+ {
+  "id": "p-verify",
+  "path": "/verify"
+ },
+ {
+  "id": "p-verify-code",
+  "path": "/verify/EH-CERT-0000"
+ },
+ {
+  "id": "p-live",
+  "path": "/live"
+ },
+ {
+  "id": "p-invite",
+  "path": "/invite/demo-token"
+ },
+ {
+  "id": "p-orgs-mine",
+  "path": "/orgs/mine",
+  "signedIn": true
+ },
+ {
+  "id": "p-orgs-new",
+  "path": "/orgs/new",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-overview",
+  "path": "/orgs/:orgId",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-card",
+  "path": "/orgs/:orgId/card",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-team",
+  "path": "/orgs/:orgId/team",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-hazmat",
+  "path": "/orgs/:orgId/hazmat",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-equipment",
+  "path": "/orgs/:orgId/equipment",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-map",
+  "path": "/orgs/:orgId/map",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-documents",
+  "path": "/orgs/:orgId/documents",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-members",
+  "path": "/orgs/:orgId/members",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-activities",
+  "path": "/orgs/:orgId/activities",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-reports",
+  "path": "/orgs/:orgId/reports",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-reports-new",
+  "path": "/orgs/:orgId/reports/new",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-certificate",
+  "path": "/orgs/:orgId/certificate",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-prevention",
+  "path": "/orgs/:orgId/prevention",
+  "signedIn": true
+ },
+ {
+  "id": "p-org-changes",
+  "path": "/orgs/:orgId/changes",
+  "signedIn": true
+ },
+ {
+  "id": "pw-team-add",
+  "path": "/orgs/:orgId/team",
+  "signedIn": true,
+  "click": [
+   "إضافة عضو"
+  ]
+ },
+ {
+  "id": "pw-hazmat-add",
+  "path": "/orgs/:orgId/hazmat",
+  "signedIn": true,
+  "click": [
+   "إضافة مادة"
+  ]
+ },
+ {
+  "id": "pw-equipment-add",
+  "path": "/orgs/:orgId/equipment",
+  "signedIn": true,
+  "click": [
+   "إضافة تجهيز"
+  ]
+ },
+ {
+  "id": "pw-map-add",
+  "path": "/orgs/:orgId/map",
+  "signedIn": true,
+  "click": [
+   "إضافة نقطة"
+  ]
+ },
+ {
+  "id": "pw-activity-add",
+  "path": "/orgs/:orgId/activities",
+  "signedIn": true,
+  "click": [
+   "إضافة"
+  ]
+ }
+]
