@@ -29,7 +29,8 @@ Checklist at the end of a phase:
    `docs/data-model/`), the spider web of surfaces, screens, server modules and tables, and the flowchart atlas
    in six chapters (Yamen's order: the citizen app; the central room, the command board and the staff app; inspections,
    prevention and the portal; fleet and personnel; the mother system; positioning, smoke detection and the rest), with
-   every screen, tab and window of the dashboard, the portal and both apps, and one «الترابط» card per chapter. Republish each one to its artifact and copy them to
+   every screen, tab and window of the dashboard, the portal and both apps, and one «الترابط» card per chapter, plus the same atlas as a
+   book (`atlas/atlas.pdf`, scripts/atlas/pdf.py: cover, contents with page numbers, one page per card). Republish each one to its artifact and copy them to
    `tracking/`, `guides/`, `database/model/` and `atlas/` in the project files. New `docs/versions.md` items join
    the tracker and the mind maps on their own; a request that changes status is edited in
    `scripts/tracking/requests.py`, and the texts of the atlas are in `scripts/atlas/content.py` (dashboard), `apps_content.py` and
