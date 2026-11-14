@@ -58,7 +58,7 @@ def ease(u):
 
 def network(mode, out):
     c = PAL[mode]
-    pj = project(W / 2, 20, 680)
+    pj = project(320, 20, 680)
     land = [pj(*p) for p in points('schools') + points('delegation_hq')]
     units = [pj(*p) for p in points('civil_protection')]
     seats = [pj(*p) for p in SEATS]
@@ -210,7 +210,7 @@ def ground(c):
 
 def grid(mode, out):
     """The slide grid, alive: a soft band of light sweeps across it on the diagonal, lighting the lines it crosses and
-    making the crossings glint gold, while gold dots run along the lines like reports crossing the country; behind every slide of the deck."""
+    making the crossings glint gold, then the grid rests; behind every slide of the deck."""
     c = PAL[mode]
     # a fixed grain, the same in every frame: it hides the steps of the palette in the vignette without flicker
     base = ground_array(c) + np.random.default_rng(5).uniform(-2.5, 2.5, (H, W, 1))
@@ -218,10 +218,6 @@ def grid(mode, out):
     x, y = np.arange(W)[None, :], np.arange(H)[:, None]
     diag = (x * 0.8 + y * 0.6)                       # the band runs from the top left corner to the bottom right
     span = diag.max() + 600
-    r = random.Random(11)
-    flows = [dict(h=k % 2 == 0, at=r.random(), dir=r.choice([-1, 1]),
-                  line=(r.randrange(1, int(H / CELL)) if k % 2 == 0 else r.randrange(1, int(W / CELL))) * CELL)
-             for k in range(16)]
     frames = []
     n = 60
     for f in range(n):
@@ -231,21 +227,7 @@ def grid(mode, out):
         img = base * (1 - k) + hexa(c['glow'])[None, None, :] * k
         g = (band * cross)[..., None] * 0.95
         img = img * (1 - g) + hexa(c['gold'])[None, None, :] * g
-        frame = Image.fromarray(img.clip(0, 255).astype('uint8'), 'RGB').convert('RGBA')
-        lay = Image.new('RGBA', frame.size, (0, 0, 0, 0))
-        d = ImageDraw.Draw(lay)
-        for flow in flows:                           # gold reports running along the grid lines, end to end
-            span = W if flow['h'] else H
-            for k in range(14):                      # the dot, then its trail, 3 px a step
-                u = (flow['at'] + flow['dir'] * (f / n - k * 3 / span)) % 1.0
-                rr, a = (2.6 if k == 0 else 1.5), int(230 * (1 - k / 14))
-                if flow['h']:
-                    x0, y0 = u * W, flow['line']
-                else:
-                    x0, y0 = flow['line'], u * H
-                d.ellipse([x0 - rr, y0 - rr, x0 + rr, y0 + rr], fill=rgb(c['gold'], a))
-        frame.alpha_composite(lay)
-        frames.append(frame.convert('RGB'))
+        frames.append(Image.fromarray(img.clip(0, 255).astype('uint8'), 'RGB'))
     save(frames, out, ms=100, colors=256)
 
 
