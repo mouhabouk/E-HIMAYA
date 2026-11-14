@@ -10,6 +10,10 @@
 // Look, colour sets and writer: deck-kit.mjs. The AI part is ai-tools-slides.mjs, the same slides as the AI deck.
 import {createKit, DISP, DISPM, MONO, SYSTEM, ind} from './deck-kit.mjs';
 import {planAi, drawAi} from './ai-tools-slides.mjs';
+import {fileURLToPath} from 'node:url';
+
+// the animated backgrounds (trust-bubbles.py): bubbles with the emblem, and the ring of citizens and agents round it
+const BG = (kind, mode) => fileURLToPath(new URL(`./assets/trust-${kind}-${mode}.gif`, import.meta.url));
 
 const [out] = process.argv.slice(2);
 if (!out) { console.error('usage: pitch-pptx.mjs <out.pptx>'); process.exit(2); }
@@ -164,7 +168,7 @@ for (const mode of K.MODES) {
 
   // cover: the hero beside the eight spaces of the system in orbit, each a link to its value slide
   {
-    const s = K.newSlide(P.cover), cx = 3.2, cy = 3.75, R = 2.35;
+    const s = K.newSlide(P.cover, BG('field', mode)), cx = 3.2, cy = 3.75, R = 2.35;
     A(K.shape(s, pres.shapes.OVAL, {x: cx - R - 0.42, y: cy - R - 0.42, w: 2 * (R + 0.42), h: 2 * (R + 0.42), line: {color: C.gold, width: 1.5, dashType: 'sysDot', transparency: 55}}), 'fade', 0, 900);
     A(K.shape(s, pres.shapes.OVAL, {x: cx - R, y: cy - R, w: 2 * R, h: 2 * R, line: {color: C.edge, width: 0.75, dashType: 'dash'}}), 'fade', 0, 900);
     VALUES.forEach((v, i) => {
@@ -536,11 +540,11 @@ for (const mode of K.MODES) {
 
   // thanks: the closing words in gold
   {
-    const s = K.newSlide(P.thanks);
-    A(K.text(s, 'شكرا على حسن متابعتكم', {x: 0.5, y: 2.55, w: 12.33, h: 1.5, fontSize: 60, fontFace: DISP, bold: true, color: C.gold, align: 'center'}), 'zoom', 200, 900);
-    A(K.shape(s, pres.shapes.LINE, {x: 4.67, y: 4.25, w: 4.0, h: 0, line: {color: C.gold, width: 2}}), 'wipe', 700, 600, 'l');
-    A(K.text(s, 'ء-حماية · من التبليغ إلى أخذ القرار', {x: 0.5, y: 4.45, w: 12.33, h: 0.5, fontSize: 18, bold: true, color: C.ink, align: 'center'}), 'fade', 900, 600);
-    A(K.text(s, 'الديوان الوطني للحماية المدنية', {x: 0.5, y: 5.0, w: 12.33, h: 0.4, fontSize: 14, color: C.mute, align: 'center'}), 'fade', 1000, 600);
+    const s = K.newSlide(P.thanks, BG('ring', mode));
+    A(K.text(s, 'شكرا على حسن متابعتكم', {x: 0.5, y: 4.0, w: 12.33, h: 1.3, fontSize: 60, fontFace: DISP, bold: true, color: C.gold, align: 'center'}), 'zoom', 200, 900);
+    A(K.shape(s, pres.shapes.LINE, {x: 4.67, y: 5.4, w: 4.0, h: 0, line: {color: C.gold, width: 2}}), 'wipe', 700, 600, 'l');
+    A(K.text(s, 'ء-حماية · من التبليغ إلى أخذ القرار', {x: 0.5, y: 5.55, w: 12.33, h: 0.5, fontSize: 18, bold: true, color: C.ink, align: 'center'}), 'fade', 900, 600);
+    A(K.text(s, 'الديوان الوطني للحماية المدنية', {x: 0.5, y: 6.05, w: 12.33, h: 0.4, fontSize: 14, color: C.mute, align: 'center'}), 'fade', 1000, 600);
     K.button(s, 'الغلاف', 0.5, 0.6, 1.0, P.cover, true);
     K.counter(s, P.thanks);
   }

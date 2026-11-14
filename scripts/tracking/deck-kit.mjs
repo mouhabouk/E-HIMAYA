@@ -86,11 +86,13 @@ export async function createKit({title, footer = ''}) {
       const o = {data: EMBLEM, x, y, w, h: w, objectName: nm(), altText: 'شعار الديوان الوطني للحماية المدنية', ...K.link(K.home)};
       s.addImage(o); return o;
     },
-    newSlide(n) {
+    // under: an image laid over the whole slide beneath everything else, such as an animated GIF background
+    newSlide(n, under) {
       cur = n + OFF; seq = 0;
       const s = pres.addSlide();
       if (pres.slides.length !== cur) throw new Error(`slide ${pres.slides.length} built where the plan expects ${cur}`);
       s.background = {data: GRID};
+      if (under) s.addImage({path: under, x: 0, y: 0, w: 13.333, h: 7.5, objectName: nm(), altText: ''});
       if (plan[n - 1].t !== 'cover') K.emblem(s);
       if (MODES.length < 2) return s;
       // the day / night switch: the same slide in the other colour set
