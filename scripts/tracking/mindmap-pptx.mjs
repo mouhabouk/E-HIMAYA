@@ -33,10 +33,11 @@ if (!src || !out) { console.error('usage: mindmap-pptx.mjs <mindmaps-deck.html> 
 
 // ---------------------------------------------------------------- 1. read the data and every map's layout
 const browser = await chromium.launch();
-const page = await browser.newPage({viewport: {width: 1600, height: 1000}, colorScheme: 'dark'});   // the dark set of the maps
+const read = async colorScheme => {   // the maps as drawn in one colour set of the page
+const page = await browser.newPage({viewport: {width: 1600, height: 1000}, colorScheme});
 await page.goto('file://' + resolve(src));
 await page.waitForTimeout(1500);
-const X = await page.evaluate(() => {
+return page.evaluate(() => {
   const maps = {};
   for (const g of ['all', ...keys]) for (const fold of [true, false]) {
     model = build(g); step = -1; collapsed = new Set(fold ? model.kids.map(k => k.id) : []); render(false);
@@ -57,8 +58,13 @@ const X = await page.evaluate(() => {
   const st = {}; for (const k in ST) st[k] = [ST[k][0], css(ST[k][1])];
   return {D, keys, ST: st, PAL, maps, groups: keys.map(k => ({k, name: D.groups[k], rows: byG(k)}))};
 });
+};
+// the night deck reads the dark set, the day deck the light set (Yamen 2026-11-14: a day and night switch)
+const X = await read('dark'), XL = await read('light');
 await browser.close();
-const {D, keys, ST, PAL, maps, groups} = X;
+const {D, keys, PAL, groups} = X;
+const SETS = {night: {maps: X.maps, ST: X.ST}, day: {maps: XL.maps, ST: XL.ST}};
+let maps, ST;
 
 // ---------------------------------------------------------------- 2. palette and helpers
 // any colour of the page (#abc, #aabbcc, rgb(), rgba()) as the six hex digits PowerPoint wants
@@ -71,8 +77,14 @@ const hex = c => {
   return c.slice(0, 6).toUpperCase();
 };
 // the night set of the algorithm page (docs/design-system.md, dark colours)
-const C = {night: '08102A', deck: '0E1426', panel: '161E35', line: '26304D', grid: '16224A', edge: '3A4770',
-  ink: 'E8ECF5', mute: 'A6AFC4', gold: 'C9A24A', teal: '4DD0B8', white: 'FFFFFF', onGold: '1B1405'};
+// the two colour sets of the deck: the night of the algorithm page, and its day counterpart on the system's white base
+const PALETTES = {
+  night: {bg: '08102A', deck: '0E1426', panel: '161E35', line: '26304D', grid: '16224A', edge: '3A4770', root: '0E1426', shade: '050A1C',
+    ink: 'E8ECF5', mute: 'A6AFC4', gold: 'C9A24A', teal: '4DD0B8', white: 'FFFFFF', onGold: '1B1405'},
+  day: {bg: 'F6F8FC', deck: 'EEF2F9', panel: 'FFFFFF', line: 'D5DCEB', grid: 'E3E9F4', edge: 'B9C4DD', root: '1F3FA0', shade: 'DCE3F1',
+    ink: '0E1426', mute: '55607A', gold: '9C7A22', teal: '0E7C8F', white: 'FFFFFF', onGold: 'FFFFFF'},
+};
+let C;
 // fonts: the system's text face, the display face of the titles, the mono face of figures and routes; their files ship
 // beside the deck in a fonts folder (Yamen, 2026-11-14)
 const FONT = 'IBM Plex Sans Arabic', DISP = 'Reem Kufi', DISPM = 'Reem Kufi Medium', MONO = 'IBM Plex Mono Medium';
@@ -90,12 +102,14 @@ const ROOT = join(HERE, '../..');
 const EMBLEM = 'image/png;base64,' + readFileSync(join(HERE, 'assets/civil-protection-logo.png')).toString('base64');
 const WORD = 'image/png;base64,' + (await sharp(join(ROOT, 'infra/keycloak/themes/ehimaya/login/resources/img/logo-horizontal.png'))
   .extract({left: 0, top: 70, width: 590, height: 275}).png().toBuffer()).toString('base64');
-// the night ground with its blueprint grid, one picture for every slide
-const GRID = 'image/png;base64,' + (await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080">
-  <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0V40M0 40H40" stroke="#${C.grid}" stroke-width="2" fill="none"/></pattern>
-  <radialGradient id="v" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#${C.night}" stop-opacity="0"/><stop offset="1" stop-color="#050A1C" stop-opacity=".85"/></radialGradient></defs>
-  <rect width="1920" height="1080" fill="#${C.night}"/><rect width="1920" height="1080" fill="url(#g)"/><rect width="1920" height="1080" fill="url(#v)"/></svg>`))
+// the ground with its blueprint grid, one picture per colour set
+const ground = async c => 'image/png;base64,' + (await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080">
+  <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0V40M0 40H40" stroke="#${c.grid}" stroke-width="2" fill="none"/></pattern>
+  <radialGradient id="v" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#${c.bg}" stop-opacity="0"/><stop offset="1" stop-color="#${c.shade}" stop-opacity=".85"/></radialGradient></defs>
+  <rect width="1920" height="1080" fill="#${c.bg}"/><rect width="1920" height="1080" fill="url(#g)"/><rect width="1920" height="1080" fill="url(#v)"/></svg>`))
   .png().toBuffer()).toString('base64');
+const GROUNDS = {night: await ground(PALETTES.night), day: await ground(PALETTES.day)};
+let GRID, MODE, OFF = 0;
 
 // the atlas screenshots of the screens an element speaks of, made lighter for the deck
 const SHOT = {};
@@ -125,6 +139,7 @@ const PH = groups.map((gr, i) => {
   return o;
 });
 P.end = add('end');
+const N = plan.length;   // slides per colour set; the day deck follows the night one
 
 const pres = new pptxgen();
 pres.layout = 'LAYOUT_WIDE';
@@ -137,14 +152,19 @@ const anim = [];             // anim[slideNo] = [{name, fx, delay, dur, dir}]
 let cur = 0, seq = 0;
 const nm = () => `s${cur}_${++seq}`;
 const A = (o, fx, delay, dur = 500, dir) => { (anim[cur] ||= []).push({name: o.objectName, fx, delay, dur, dir}); return o; };
-const link = n => n ? {hyperlink: {slide: n, tooltip: ''}} : {};
+const link = n => n ? {hyperlink: {slide: n + OFF, tooltip: ''}} : {};
+const linkAbs = n => ({hyperlink: {slide: n, tooltip: ''}});
 
 function newSlide(n) {
-  cur = n; seq = 0;
+  cur = n + OFF; seq = 0;
   const s = pres.addSlide();
-  if (pres.slides.length !== n) throw new Error(`slide ${pres.slides.length} built where the plan expects ${n}`);
+  if (pres.slides.length !== cur) throw new Error(`slide ${pres.slides.length} built where the plan expects ${cur}`);
   s.background = {data: GRID};
   if (n !== P.cover) emblem(s);
+  // the day / night switch: the same slide in the other colour set
+  const other = MODE === 'night' ? n + N : n, w = 1.05;
+  shape(s, pres.shapes.ROUNDED_RECTANGLE, {x: 0.5, y: 0.14, w, h: 0.28, rectRadius: 0.14, fill: {color: C.panel}, line: {color: C.line}, ...linkAbs(other)});
+  text(s, MODE === 'night' ? '☀ نهاري' : '☾ ليلي', {x: 0.5, y: 0.14, w, h: 0.28, align: "center", fontSize: 9.5, color: C.ink, ...linkAbs(other)});
   return s;
 }
 // pptxgenjs writes no relationship for a link on a shape or a text box: keep the target and write it after (section 4)
@@ -181,7 +201,7 @@ function emblem(s, x = 12.23, y = 0.28, w = 0.6) {
   const o = {data: EMBLEM, x, y, w, h: w, objectName: nm(), altText: 'شعار الديوان الوطني للحماية المدنية', ...link(P.toc)};
   s.addImage(o); return o;
 }
-function counter(s, n) { text(s, `${n} / ${plan.length}`, {x: 0.5, y: 7.08, w: 1.4, h: 0.25, fontSize: 9, fontFace: MONO, align: 'left', color: C.mute}); }
+function counter(s, n) { text(s, `${n} / ${N}`, {x: 0.5, y: 7.08, w: 1.4, h: 0.25, fontSize: 9, fontFace: MONO, align: 'left', color: C.mute}); }
 // a figure of the page: a gold rule on top, the number in mono, the label under it
 function figure(s, x, y, w, v, l, dl) {
   A(shape(s, pres.shapes.LINE, {x, y, w, h: 0, line: {color: C.gold, width: 1.75}}), 'wipe', dl, 500, 'l');
@@ -190,6 +210,9 @@ function figure(s, x, y, w, v, l, dl) {
 }
 
 // ---------------------------------------------------------------- 3. the slides
+// built twice: the night set, then the day set, each slide linked to its twin by the switch at its foot
+for (const mode of ['night', 'day']) {
+MODE = mode; C = PALETTES[mode]; GRID = GROUNDS[mode]; ({maps, ST} = SETS[mode]); OFF = mode === 'night' ? 0 : N;
 // cover: the hero of the page beside the phases in orbit, each with its progress ring, each a link to its chapter
 {
   const s = newSlide(P.cover), all = D.rows, cx = 3.2, cy = 3.6, R = 2.3;
@@ -208,13 +231,14 @@ function figure(s, x, y, w, v, l, dl) {
     A(shape(s, pres.shapes.OVAL, {x: x - r, y: y - r, w: 2 * r, h: 2 * r, fill: {color: col}, ...link(p.chap)}), 'zoom', d0 + 100, 400);
     A(text(s, String(i + 1), {x: x - r, y: y - r, w: 2 * r, h: 2 * r, align: 'center', fontSize: 14, fontFace: MONO, bold: true, color: C.white, ...link(p.chap)}), 'zoom', d0 + 100, 400);
   });
-  A(shape(s, pres.shapes.OVAL, {x: cx - 1, y: cy - 1, w: 2, h: 2, fill: {color: C.deck}, line: {color: C.gold, width: 3}, ...link(P.toc)}), 'zoom', 0, 600);
+  A(shape(s, pres.shapes.OVAL, {x: cx - 1, y: cy - 1, w: 2, h: 2, fill: {color: C.root}, line: {color: C.gold, width: 3}, ...link(P.toc)}), 'zoom', 0, 600);
   A(text(s, [{text: 'ء-حماية', options: {fontSize: 24, fontFace: DISP, bold: true, color: C.white, breakLine: true}}, {text: `${all.length} عنصرا`, options: {fontSize: 12, color: C.gold}}],
     {x: cx - 1, y: cy - 0.6, w: 2, h: 1.2, align: 'center', ...link(P.toc)}), 'zoom', 0, 600);
   // the hero: the eyebrow, the Office, the wordmark, the system's full title in the display face, the deck's lead
   A(text(s, `e-HIMAYA · MIND MAPS · ${D.built}`, {x: 6.6, y: 0.42, w: 5.2, h: 0.28, fontSize: 10, fontFace: MONO, color: C.gold, rtlMode: false, lang: 'en-US', align: 'right', charSpacing: 2}), 'fade', 0, 600);
   A(emblem(s, 11.93, 0.3, 0.9), 'zoom', 0, 600);
   A(text(s, 'الديوان الوطني للحماية المدنية', {x: 6.6, y: 0.72, w: 5.2, h: 0.4, fontSize: 15, bold: true, color: C.ink}), 'fade', 150, 600);
+  if (MODE === 'day') shape(s, pres.shapes.ROUNDED_RECTANGLE, {x: 9.48, y: 1.22, w: 3.5, h: 3.2 * 275 / 590 + 0.2, rectRadius: 0.16, fill: {color: C.root}});   // the white wordmark needs the royal blue under it
   A(image(s, {data: WORD, x: 9.63, y: 1.32, w: 3.2, h: 3.2 * 275 / 590, altText: 'ء-حماية E-HIMAYA'}), 'fade', 300, 900);
   A(text(s, [{text: 'من التبليغ إلى ', options: {color: C.ink}}, {text: 'أخذ القرار', options: {color: C.gold}}],
     {x: 6.3, y: 2.85, w: 6.53, h: 0.85, fontSize: 40, fontFace: DISP, bold: true}), 'fade', 450, 800);
@@ -276,7 +300,7 @@ function drawMap(s, m, area, linkOf, rootLink, timed) {
         fill: {color: hex(it.fill)}, ...(lk ? link(lk) : {})});
       if (timed) A(o, 'zoom', delay(it, 'pill'), 400);
     } else if (it.tag === 'circle') {
-      const fill = /url/.test(it.fill) ? C.deck : (it.fill === 'none' ? null : hex(it.fill));
+      const fill = /url/.test(it.fill) ? C.root : (it.fill === 'none' ? null : hex(it.fill));
       const o = shape(s, pres.shapes.OVAL, {x: X(it.cx - it.r), y: Y(it.cy - it.r), w: L(2 * it.r), h: L(2 * it.r),
         ...(fill ? {fill: {color: fill, transparency: it.glow ? 55 : 0}} : {}),
         ...(it.stroke ? {line: {color: hex(it.stroke), width: Math.max(0.5, PT(it.sw)), ...(it.dash ? {dashType: 'sysDot'} : {})}} : {}),
@@ -328,7 +352,7 @@ function makeChapter(p) {
   const used = Object.keys(ST).filter(k => rs.some(r => r.status === k));
   s.addChart(pres.charts.DOUGHNUT, [{name: 'الحالات', labels: used.map(k => ST[k][0]), values: used.map(k => rs.filter(r => r.status === k).length)}],
     {x: 9.93, y: 3.6, w: 2.9, h: 2.9, holeSize: 64, chartColors: used.map(k => hex(ST[k][1])), showLegend: false, showValue: false, showPercent: false,
-      showLabel: false, showTitle: false, dataBorder: {pt: 1.5, color: C.night}, objectName: nm()});
+      showLabel: false, showTitle: false, dataBorder: {pt: 1.5, color: C.bg}, objectName: nm()});
   A(s._slideObjects.at(-1).options, 'wipe', 500, 900, 'cw');
   A(text(s, [{text: pct(doneOf(rs), rs.length) + '%', options: {fontSize: 26, fontFace: MONO, bold: true, color: C.ink, breakLine: true}}, {text: 'منجز ومعتمد', options: {fontSize: 11, color: C.mute}}],
     {x: 10.53, y: 4.6, w: 1.7, h: 0.9, align: 'center'}), 'fade', 1100, 500);
@@ -378,7 +402,7 @@ function makeBranch(p, r, j) {
   shape(s, pres.shapes.ROUNDED_RECTANGLE, {x: 0.4, y: 1.35, w: 7.95, h: 5.5, rectRadius: 0.2, fill: {color: C.deck, transparency: 15}, line: {color: C.line}});
   const rx = 7.35, ry = 4.1, R = 0.72;
   A(shape(s, pres.shapes.OVAL, {x: rx - R - 0.1, y: ry - R - 0.1, w: 2 * R + 0.2, h: 2 * R + 0.2, fill: {color: C.gold, transparency: 70}}), 'zoom', 0, 500);
-  A(shape(s, pres.shapes.OVAL, {x: rx - R, y: ry - R, w: 2 * R, h: 2 * R, fill: {color: C.deck}, line: {color: C.gold, width: 2.5}, ...link(p.fold)}), 'zoom', 0, 500);
+  A(shape(s, pres.shapes.OVAL, {x: rx - R, y: ry - R, w: 2 * R, h: 2 * R, fill: {color: C.root}, line: {color: C.gold, width: 2.5}, ...link(p.fold)}), 'zoom', 0, 500);
   A(text(s, p.name, {x: rx - R + 0.1, y: ry - 0.45, w: 2 * R - 0.2, h: 0.9, align: 'center', fontSize: 11, fontFace: DISPM, color: C.white, fit: 'shrink', ...link(p.fold)}), 'zoom', 0, 500);
   const label = kid.label, pw = Math.min(2.9, 0.9 + label.length * 0.09), px = rx - R - 0.35 - pw, py = ry - 0.25;
   A(shape(s, pres.shapes.LINE, {x: px + pw, y: ry, w: rx - R - px - pw, h: 0, line: {color: col, width: 4}}), 'wipe', 300, 400, 'r');
@@ -481,6 +505,7 @@ PH.forEach(p => { makeChapter(p); makeMaps(p); p.rows.forEach((r, j) => { makeBr
   });
   legend(s); counter(s, P.end);
 }
+}
 
 // ---------------------------------------------------------------- 4. write, then add the native transitions and animations
 const tmp = mkdtempSync(join(tmpdir(), 'mm-pptx-'));
@@ -510,14 +535,14 @@ function effect(e, spid, ids) {
 }
 const TRANS = {shot: '<p:fade/>', cover: '<p:fade/>', toc: '<p:push dir="l"/>', map: '<p:fade/>', chapter: '<p:push dir="l"/>', branch: '<p:fade/>', end: '<p:fade/>'};
 let nAnim = 0;
-for (let n = 1; n <= plan.length; n++) {
+for (let n = 1; n <= 2 * N; n++) {
   const f = `ppt/slides/slide${n}.xml`;
   let xml = await zip.file(f).async('string');
   const ids = {}; for (const m of xml.matchAll(/<p:cNvPr id="(\d+)" name="([^"]+)"/g)) ids[m[2]] = m[1];
   // what each object is, for its build entry: text shapes get bldP, charts bldGraphic, pictures none (as PowerPoint writes)
   const kind = {}; for (const m of xml.matchAll(/<p:(sp|pic|graphicFrame)>\s*<p:nv\w+Pr>\s*<p:cNvPr id="(\d+)"/g)) kind[m[2]] = m[1];
   const list = (anim[n] || []).filter(e => ids[e.name]).sort((a, b) => a.delay - b.delay);
-  const trans = `<p:transition spd="med">${TRANS[plan[n - 1].t]}</p:transition>`;
+  const trans = `<p:transition spd="med">${TRANS[plan[(n - 1) % N].t]}</p:transition>`;
   let timing = '';
   if (list.length) {
     const c = {n: 4};
@@ -586,4 +611,4 @@ rmSync(tmp, {recursive: true, force: true});
   // the display and mono faces of the algorithm page (Google Fonts, SIL OFL 1.1, like the text face)
   for (const f of readdirSync(join(HERE, 'assets/fonts'))) copyFileSync(join(HERE, 'assets/fonts', f), join(dst, f));
 }
-console.log(`${plan.length} slides, ${nAnim} animations → ${out}`);
+console.log(`${2 * N} slides (night and day), ${nAnim} animations → ${out}`);

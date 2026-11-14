@@ -170,6 +170,7 @@ header .logo{width:34px;height:34px;flex:none}
   <button id="skip" type="button" hidden title="الانتقال إلى الشريحة التالية دون المرور على بقية العناصر">تخطّ العناصر</button>
   <button id="grid" type="button" aria-pressed="false" title="كل الشرائح (G)">▦ الشرائح</button>
   <button id="full" type="button" title="ملء الشاشة (F)">⛶ ملء الشاشة</button>
+  <button id="theme" type="button" title="الوضع النهاري أو الليلي (T)" aria-label="تبديل الوضع النهاري والليلي"></button>
   <span class="sp"></span>
   <span id="count" aria-live="polite"></span>
 </header>
@@ -484,6 +485,18 @@ $('grid').onclick = () => sorter(!$('sorter').classList.contains('on'));
 $('sorter').querySelector('.grid').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { sorter(false); show(+b.dataset.i); } });
 function full() { document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.(); }
 $('full').onclick = full;
+// day or night (Yamen, 2026-11-14): follows the device until chosen, then keeps the choice on this browser
+const dark = () => (document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
+function themeLabel() { $('theme').textContent = dark() ? '☀ نهاري' : '☾ ليلي'; }
+function theme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('mm-deck-theme', t); } catch (e) {}
+  themeLabel();
+  const s = step; show(cur); if (SL[cur].t === 'map' && s >= 0) spot(s);   // the maps read their colours when drawn
+}
+try { const t = localStorage.getItem('mm-deck-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+themeLabel();
+$('theme').onclick = () => theme(dark() ? 'light' : 'dark');
 addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('select, input, textarea')) return;
   if (e.target.closest && e.target.closest('.node') && (e.key === 'Enter' || e.key === ' ')) return;
@@ -493,6 +506,7 @@ addEventListener('keydown', e => {
   else if (k === 'Home') show(0); else if (k === 'End') show(SL.length - 1);
   else if (k === 'f' || k === 'F') full();
   else if (k === 'g' || k === 'G') sorter(!$('sorter').classList.contains('on'));
+  else if (k === 't' || k === 'T') theme(dark() ? 'light' : 'dark');
   else if (k === 'Escape') sorter(false);
 });
 function place() { $('deck').style.top = $('sorter').style.top = document.querySelector('header').offsetHeight + 'px'; }
