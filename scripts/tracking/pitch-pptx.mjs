@@ -1,6 +1,6 @@
 // The system presentation for the high-level committee (Yamen, 2026-11-14): how the operations room works today
 // (the 198 call, the hand work of the agent, sending resources without a sound estimate, no location, no picture, no
-// decision indicators, about 7,300 outings without intervention between 2022 and 2025, volunteers, citizens and
+// decision indicators, the yearly volume and the 30,319 outings without intervention of 2022-2025, by day and night, volunteers, citizens and
 // institutions not connected), then how e-Himaya works and every value it adds, the local AI tools, and the vision
 // once the system is in use. No development phases: functions, added value, before and after.
 //
@@ -40,7 +40,7 @@ const TOMORROW = [
   ['القيادة تقرّر', 'بمؤشرات تُحدَّث آليا في كل لحظة'],
 ];
 const GAPS = [
-  ['قناة واحدة: الهاتف 198', 'البلاغ صوت فقط، والخط ينشغل في الذروة، ولا أثر مكتوب لما قيل.'],
+  ['ثلاث قنوات غير مربوطة', 'الهاتف 198 واللاسلكي والحضور المباشر أحيانا: صوت فقط، والخط ينشغل في الذروة، ولا أثر مكتوب.'],
   ['غياب التموقع الجغرافي', 'المكان يُوصف شفويا، والعنوان يُبحث عنه، والدقائق الأولى تضيع.'],
   ['تسخير دون تقدير دقيق', 'الوسائل تُقدَّر من كلام الجهة المبلّغة، فتزيد عن الحاجة أو تنقص.'],
   ['لا صورة ولا نقل ميداني', 'حجم الحادث الحقيقي يُكتشف عند الوصول لا قبله.'],
@@ -54,7 +54,7 @@ const GAPS = [
   ['لا إنذار موجّه للسكان', 'التحذير لا يصل حسب المنطقة المهددة إلى هواتف من فيها.'],
 ];
 const BRIDGE = [
-  ['الهاتف 198 وحده', 'تطبيق ورسالة قصيرة ومكالمة مدمجة وبث مباشر، في شاشة واحدة'],
+  ['هاتف 198 ولاسلكي وحضور', 'تطبيق ورسالة قصيرة ومكالمة مدمجة وبث مباشر، في شاشة واحدة'],
   ['وصف شفوي للمكان', 'موقع دقيق على الخريطة يصل مع البلاغ'],
   ['تقدير من كلام المبلّغ', 'أولوية مفسَّرة ووسائل مقترحة حسب الصنف وما هو مكلَّف'],
   ['لا صورة', 'صورة وصوت وبث، وكاميرات وأبراج ودرون، وكشف آلي للنار والدخان'],
@@ -71,7 +71,8 @@ const VALUES = [
   {k: 'citizen', name: 'المواطن', tone: 'red', tag: 'شريك لا متصل: يرى أثر بلاغه، فتُبنى الثقة.', figs: [['3', 'لمسات للنجدة'], ['دون إنترنت', 'البلاغ يُحفظ ويُرسل لاحقا']],
     items: [['النجدة في ثلاث لمسات', 'زر واحد يرسل الموقع، والمكالمة إلى 198 بلمسة.'], ['يعمل دون إنترنت', 'البلاغ يُحفظ مشفّرا ويُرسل عند عودة الشبكة، والرسالة القصيرة بديل.'],
       ['صورة وصوت وبث', 'من مكان الحادث، ليرى العون ما يراه المواطن.'], ['متابعة البلاغ', 'رقم تتبع يقول: تم التدخل، التدخل متواصل، أُغلق.'],
-      ['تنبيهات ونصائح', 'تحذيرات حسب منطقته، ودليل السلوك الآمن لكل خطر.'], ['«المواطن اليقظ»', 'نقاط وشارات وشهادات تكريم موقّعة لمن يساهم.']]},
+      ['تنبيهات ونصائح', 'تحذيرات حسب منطقته، ودليل السلوك الآمن لكل خطر.'], ['«المواطن اليقظ»', 'نقاط وشارات وشهادات تكريم موقّعة لمن يساهم.'],
+      ['حالة الشواطئ كل يوم', 'بلون يبيّن خطر الغرق: أخضر للسباحة الآمنة، وأصفر للحذر، وأحمر للمنع.'], ['تنبيه عند الاقتراب', 'من شاطئ خطير أو منطقة معلنة خطرة، يُحسب على الهاتف دون إرسال الموقع.']]},
   {k: 'room', name: 'قاعة العمليات', tone: 'navy', tag: 'العون يقرّر بمعطى دقيق، لا بالتقدير وحده.', figs: [['0.45 ث', 'من الإرسال إلى الشاشة'], ['0–100', 'أولوية مفسَّرة لكل بلاغ']],
     items: [['البلاغ على الخريطة', 'يصل بموقعه وصوره، ويظهر بجانب الوحدات والوسائل.'], ['أولوية مفسَّرة', 'من 0 إلى 100، مع سببها ومصداقية المبلّغ.'],
       ['تجميع المكرر', 'البلاغات عن حدث واحد تُقترح في حادثة واحدة.'], ['المكالمات في اللوحة', 'المقسم الهاتفي مدمج، وبطاقة استقبال موحّدة لكل مكالمة.'],
@@ -83,7 +84,8 @@ const VALUES = [
   {k: 'orgs', name: 'المؤسسات والوقاية', tone: 'teal', tag: 'العون يعرف المكان قبل أن يصله.', figs: [['QR', 'شهادة سلامة رقمية'], ['قبل الحادث', 'تُعرف المواد الخطرة']],
     items: [['بوابة المؤسسات', 'بطاقة المؤسسة ونشاطها وطاقة استيعابها وموقعها على الخريطة.'], ['ملف السلامة', 'المخطط وفريق السلامة بهواتفهم وتاريخ آخر تكوين.'],
       ['المواد الخطرة', 'مسجّلة قبل الحادث، وتظهر في محيطه للعون.'], ['شهادة رقمية', 'موقّعة، يُتحقق منها برمز QR.'],
-      ['التفقدات الدورية', 'بتطبيق المتفقد في الموقع، حتى دون شبكة.'], ['رسائل موجهة', 'للمؤسسات حسب صنفها وولايتها.']]},
+      ['التفقدات الدورية', 'بتطبيق المتفقد في الموقع، حتى دون شبكة.'], ['رسائل موجهة', 'للمؤسسات حسب صنفها وولايتها.'],
+      ['تنبيهات يقظة', 'تصل المؤسسة في المنطقة المعنية بالتطبيق والرسالة القصيرة والبريد، مع إشعار بالقراءة.']]},
   {k: 'volunteers', name: 'المتطوعون والأطباء', tone: 'green', tag: 'شبكة معروفة وجاهزة، تُستنفر في دقائق.', figs: [['الأقرب', 'حسب الاختصاص'], ['SMS', 'حين ينقطع الإنترنت']],
     items: [['سجل وطني للمتطوعين', 'باختصاصاتهم وفترات تطوعهم، بعد تأكيد الحماية المدنية.'], ['مواقع حية', 'المتطوعون الجاهزون على الخريطة، بموافقتهم.'],
       ['استنفار الأقرب', 'حسب الاختصاص، والمتطوع يقبل أو يعتذر.'], ['دون إنترنت', 'الاستنفار والرد بالرسالة القصيرة.'],
@@ -101,6 +103,20 @@ const VALUES = [
       ['تحقق بخطوتين', 'لكل حساب عون، مع إلغاء فوري للجلسات.'], ['سجل لا يُعدَّل', 'من اطّلع، متى، ماذا، ولماذا.'],
       ['أدلة موثوقة', 'بصمة رقمية لكل صورة وفيديو، وختم دوري لا يُزوَّر.'], ['عزل كل ولاية', 'قاعدة البيانات نفسها تمنع الاطلاع خارج النطاق.']]},
 ];
+// the operations of 2022-2025 (Yamen, 2026-11-14): interventions, outings without intervention by night and by day,
+// and those outings by cause
+const YEARS = [
+  {y: 2022, ops: 143308, out: 7248, night: 2926, day: 4322, cause: [3900, 2173, 890, 285]},
+  {y: 2023, ops: 151600, out: 6930, night: 2868, day: 4062, cause: [3852, 2063, 728, 287]},
+  {y: 2024, ops: 163682, out: 7783, night: 3191, day: 4592, cause: [4342, 2302, 815, 324]},
+  {y: 2025, ops: 181546, out: 8358, night: 3502, day: 4856, cause: [4508, 2506, 312, 1032]},
+];
+const CAUSES = ['الإسعاف في غير حوادث المرور', 'الإسعاف في حوادث المرور', 'الحرائق', 'مختلفة'];
+const sum = f => YEARS.reduce((a, r) => a + f(r), 0);
+const OPS = sum(r => r.ops), OUT = sum(r => r.out), NIGHT = sum(r => r.night), DAYS = 4 * 365 + 1;
+const num = n => Math.round(n).toLocaleString('en-US').replace(/,/g, ' ');
+const pct = (a, b, d = 0) => (100 * a / b).toFixed(d);
+for (const r of YEARS) if (r.night + r.day !== r.out || r.cause.reduce((a, b) => a + b, 0) !== r.out) throw new Error(`figures of ${r.y} do not add up`);
 const OUTINGS = [
   ['التثبت قبل التسخير', 'صورة وبث من المبلّغ، وكاميرات وأبراج ودرون، وكشف آلي للنار والدخان.'],
   ['موقع دقيق', 'لا بحث عن عنوان، ولا خروج إلى مكان خاطئ.'],
@@ -125,7 +141,7 @@ const KPIS = [
 const K = await createKit({title: 'ء-حماية: من التبليغ إلى أخذ القرار', footer: 'ء-حماية · من التبليغ إلى أخذ القرار'});
 const P = {cover: K.add('cover'), agenda: K.add('agenda')};
 P.act = [K.add('act', {a: 0})];
-P.today = K.add('journey'); P.outings = K.add('big'); P.gaps = K.add('grid'); P.cost = K.add('cost');
+P.today = K.add('journey'); P.volume = K.add('big'); P.outings = K.add('big'); P.night = K.add('big'); P.gaps = K.add('grid'); P.cost = K.add('cost');
 P.act.push(K.add('act', {a: 1}));
 P.glance = K.add('glance'); P.tomorrow = K.add('journey'); P.bridge = [K.add('bridge'), K.add('bridge')];
 P.act.push(K.add('act', {a: 2}));
@@ -167,7 +183,8 @@ for (const mode of K.MODES) {
     K.wordmark(s, 9.63, 1.32, 3.2);
     A(K.text(s, [{text: 'من التبليغ إلى ', options: {color: C.ink}}, {text: 'أخذ القرار', options: {color: C.gold}}], {x: 6.3, y: 2.95, w: 6.53, h: 0.85, fontSize: 40, fontFace: DISP, bold: true}), 'fade', 450, 800);
     A(K.text(s, SYSTEM, {x: 6.3, y: 3.85, w: 6.53, h: 0.8, fontSize: 14, lineSpacingMultiple: 1.05, bold: true, color: C.ink, valign: 'top'}), 'fade', 600, 800);
-    A(K.text(s, 'كيف تعمل القاعة اليوم، وكيف ستعمل مع ء-حماية، وما الذي يتغيّر لكل متدخّل.', {x: 6.3, y: 4.85, w: 6.53, h: 0.5, fontSize: 12.5, color: C.mute, valign: 'top'}), 'fade', 750, 700);
+    A(K.text(s, 'توقٍّ قبل الحادث · استجابة أسرع عند وقوعه · قيادة أوضح إذا صار أزمة', {x: 6.3, y: 4.7, w: 6.53, h: 0.4, fontSize: 14.5, bold: true, color: C.gold, valign: 'top'}), 'fade', 700, 700);
+    A(K.text(s, 'كيف تعمل القاعة اليوم، وكيف ستعمل مع ء-حماية، وما الذي يتغيّر لكل متدخّل.', {x: 6.3, y: 5.12, w: 6.53, h: 0.36, fontSize: 12, color: C.mute, valign: 'top'}), 'fade', 800, 700);
     K.button(s, 'ابدأ العرض', 10.73, 5.55, 2.1, P.agenda, true);
     K.button(s, 'الوضع اليوم', 8.48, 5.55, 2.1, P.act[0]);
   }
@@ -226,21 +243,83 @@ for (const mode of K.MODES) {
     A(K.text(s, 'كل خطوة تأخذ من الدقائق الأولى، وهي الدقائق التي تصنع الفرق في إنقاذ الأرواح.', {x: 0.5, y: 6.25, w: 12.33, h: 0.4, fontSize: 14, bold: true, color: C.gold, align: 'center'}), 'fade', 2000, 600);
     nav(s, P.today); }
 
-  // the outings without intervention
+  // the volume: four years of interventions
+  {
+    const s = K.newSlide(P.volume), red = K.tone('red'), first = YEARS[0], last = YEARS[YEARS.length - 1];
+    K.crumb(s, crumbOf(P.volume)); K.title(s, 'عمليات تتزايد كل سنة');
+    K.lead(s, `من ${num(first.ops)} عملية تدخل سنة ${first.y} إلى ${num(last.ops)} سنة ${last.y}، والقاعة تعمل بالأدوات نفسها.`);
+    const base = 5.75, top = 2.2, bw = 1.05, gap = 0.5, x0 = 12.6, max = Math.max(...YEARS.map(r => r.ops));
+    A(K.shape(s, pres.shapes.LINE, {x: 6.4, y: base, w: 6.43, h: 0, line: {color: C.edge, width: 1}}), 'fade', 200, 400);
+    YEARS.forEach((r, k) => {
+      const h = (base - top) * r.ops / max, x = x0 - (k + 1) * bw - k * gap, dl = 300 + k * 200;
+      A(K.shape(s, pres.shapes.RECTANGLE, {x, y: base - h, w: bw, h, fill: {color: red, transparency: k === YEARS.length - 1 ? 0 : 35}}), 'wipe', dl, 600, 'u');
+      A(K.text(s, num(r.ops), {x: x - 0.3, y: base - h - 0.42, w: bw + 0.6, h: 0.36, align: 'center', fontSize: 15, fontFace: MONO, bold: true, color: C.ink, rtlMode: false, lang: 'en-US'}), 'fade', dl + 300, 400);
+      A(K.text(s, String(r.y), {x, y: base + 0.06, w: bw, h: 0.3, align: 'center', fontSize: 12, fontFace: MONO, color: C.mute, rtlMode: false, lang: 'en-US'}), 'fade', dl, 400);
+    });
+    K.figure(s, 0.5, 1.95, 5.4, `+${pct(last.ops - first.ops, first.ops)}%`, `زيادة في عدد العمليات بين ${first.y} و${last.y}`, 900, red, 30);
+    K.figure(s, 0.5, 3.0, 5.4, num(OPS), 'عملية تدخل في أربع سنوات', 1050, red, 30);
+    K.figure(s, 0.5, 4.05, 5.4, `≈ ${num(OPS / 4)}`, 'عملية في السنة في المعدل', 1200, red, 30);
+    K.figure(s, 0.5, 5.1, 5.4, `≈ ${num(OPS / DAYS)}`, 'عملية كل يوم، أي عملية كل ثلاث دقائق تقريبا', 1350, red, 30);
+    A(K.text(s, 'المصدر: أرقام الديوان الوطني للحماية المدنية، 2022 إلى 2025.', {x: 6.4, y: 6.2, w: 6.43, h: 0.3, fontSize: 10, color: C.mute}), 'fade', 1300, 400);
+    nav(s, P.volume);
+  }
+
+  // the outings without intervention: the effort and the means spent for nothing
   {
     const s = K.newSlide(P.outings), red = K.tone('red');
     K.crumb(s, crumbOf(P.outings)); K.title(s, 'الكلفة التي لا تُرى');
-    A(K.text(s, '≈ 7300', {x: 6.4, y: 1.55, w: 6.43, h: 1.9, fontSize: 110, fontFace: MONO, bold: true, color: red, rtlMode: false, lang: 'en-US', align: 'right'}), 'zoom', 200, 800);
-    A(K.text(s, 'عملية خروج دون تدخل بين 2022 و2025', {x: 6.4, y: 3.45, w: 6.43, h: 0.55, fontSize: 22, fontFace: DISPM, color: C.ink}), 'fade', 600, 600);
-    K.figure(s, 9.73, 4.4, 3.1, '≈ 1825', 'في السنة', 900, red, 26);
-    K.figure(s, 6.4, 4.4, 3.1, '≈ 5', 'كل يوم', 1050, red, 26);
-    A(K.panel(s, 0.5, 1.6, 5.6, 4.6, {line: {color: red, width: 1.5}}), 'fade', 400, 500);
-    A(K.text(s, 'كل خروج دون تدخل هو:', {x: 0.8, y: 1.8, w: 5.0, h: 0.4, fontSize: 15, bold: true, color: red}), 'fade', 500, 400);
-    K.list(s, ['فريق يغيب عن حادث حقيقي في اللحظة نفسها', 'مركبة ووقود وتآكل للمعدات', 'خطر على الأعوان في الطريق دون سبب', 'إرهاق يتراكم على الفرق', 'ثقة تهتز في البلاغ القادم'], 0.8, 2.35, 5.0, 0.58, red, 700, 13.5);
-    A(K.text(s, 'وفي غياب صورة أو نقل ميداني مباشر، لا وسيلة للتثبت قبل التسخير.', {x: 0.8, y: 5.3, w: 5.0, h: 0.75, fontSize: 13, bold: true, color: C.gold, valign: 'top'}), 'fade', 1500, 500);
-    A(K.text(s, 'المصدر: أرقام الديوان الوطني للحماية المدنية، 2022 إلى 2025. المعدلات تقريبية.', {x: 6.4, y: 5.6, w: 6.43, h: 0.3, fontSize: 10, color: C.mute}), 'fade', 1300, 400);
-    K.button(s, 'الجواب', 1.62, 0.6, 1.0, P.answer);
+    K.lead(s, 'من بين هذه العمليات، آلاف الخروجات تنتهي دون أي تدخل: جهد أعوان ووسائل يُستنزف دون جدوى.');
+    A(K.text(s, num(OUT), {x: 6.4, y: 1.6, w: 6.43, h: 1.35, fontSize: 84, fontFace: MONO, bold: true, color: red, rtlMode: false, lang: 'en-US', align: 'right'}), 'zoom', 200, 800);
+    A(K.text(s, `عملية خروج دون تدخل بين ${YEARS[0].y} و${YEARS[YEARS.length - 1].y}`, {x: 6.4, y: 2.95, w: 6.43, h: 0.45, fontSize: 19, fontFace: DISPM, color: C.ink}), 'fade', 600, 600);
+    K.figure(s, 10.83, 3.6, 2.0, `≈ ${num(OUT / 4)}`, 'في السنة', 800, red, 22);
+    K.figure(s, 8.62, 3.6, 2.0, `≈ ${num(OUT / DAYS)}`, 'كل يوم', 900, red, 22);
+    K.figure(s, 6.4, 3.6, 2.0, `${pct(OUT, OPS, 1)}%`, 'من كل العمليات', 1000, red, 22);
+    A(K.text(s, 'حسب سبب الخروج، في أربع سنوات', {x: 6.4, y: 4.6, w: 6.43, h: 0.3, fontSize: 11.5, bold: true, color: C.mute}), 'fade', 1100, 400);
+    const tot = CAUSES.map((_, i) => sum(r => r.cause[i])), maxc = Math.max(...tot), xb = 10.0, lb = 2.35;
+    CAUSES.forEach((c, i) => {
+      const y = 4.98 + i * 0.36, len = lb * tot[i] / maxc, dl = 1200 + i * 120;
+      A(K.text(s, c, {x: xb + 0.1, y, w: 12.83 - xb - 0.1, h: 0.3, fontSize: 11, color: C.ink, fit: 'shrink'}), 'fade', dl, 400);
+      A(K.shape(s, pres.shapes.RECTANGLE, {x: xb - len, y: y + 0.05, w: len, h: 0.2, fill: {color: red}}), 'wipe', dl, 500, 'l');
+      A(K.text(s, `${num(tot[i])} · ${pct(tot[i], OUT)}%`, {x: 6.4, y, w: xb - len - 6.4 - 0.08, h: 0.3, fontSize: 10.5, fontFace: MONO, color: C.mute, align: 'right', rtlMode: false, lang: 'en-US'}), 'fade', dl + 100, 400);
+    });
+    A(K.panel(s, 0.5, 1.75, 5.6, 4.75, {line: {color: red, width: 1.5}}), 'fade', 400, 500);
+    A(K.text(s, 'كل خروج دون تدخل هو:', {x: 0.8, y: 1.95, w: 5.0, h: 0.4, fontSize: 15, bold: true, color: red}), 'fade', 500, 400);
+    K.list(s, ['فريق يغيب عن حادث حقيقي في اللحظة نفسها', 'مركبة ووقود وتآكل للمعدات', 'خطر على الأعوان في الطريق دون سبب', 'إرهاق يتراكم على الفرق', 'ثقة تهتز في البلاغ القادم'], 0.8, 2.5, 5.0, 0.58, red, 700, 13.5);
+    A(K.text(s, 'جهود ضائعة كان بإمكانها إنقاذ أرواح أخرى في الفترة الزمنية نفسها.', {x: 0.8, y: 5.5, w: 5.0, h: 0.8, fontSize: 13.5, bold: true, color: C.gold, valign: 'top'}), 'fade', 1500, 500);
     nav(s, P.outings);
+  }
+
+  // the night: the share of the outings without intervention that happen after dark
+  {
+    const s = K.newSlide(P.night), red = K.tone('red'), first = YEARS[0], last = YEARS[YEARS.length - 1];
+    K.crumb(s, crumbOf(P.night)); K.title(s, 'الليل: خطر داهم');
+    K.lead(s, `${pct(NIGHT, OUT)}% من الخروج دون تدخل يقع ليلا، حين يتعذر التحري وتخرج الفرق على الطرقات في الظلام.`);
+    const base = 5.3, top = 2.35, bw = 0.6, gw = 1.55, x0 = 12.75, max = Math.max(...YEARS.map(r => Math.max(r.day, r.night)));
+    A(K.shape(s, pres.shapes.LINE, {x: 6.4, y: base, w: 6.43, h: 0, line: {color: C.edge, width: 1}}), 'fade', 200, 400);
+    YEARS.forEach((r, k) => {
+      const xg = x0 - (k + 1) * gw, dl = 300 + k * 200;
+      [[r.night, red, 0], [r.day, C.gold, 1]].forEach(([v, col, j]) => {
+        const h = (base - top) * v / max, x = xg + 0.12 + (1 - j) * bw;
+        A(K.shape(s, pres.shapes.RECTANGLE, {x, y: base - h, w: bw - 0.06, h, fill: {color: col}}), 'wipe', dl + j * 100, 600, 'u');
+        A(K.text(s, num(v), {x: x - 0.2, y: base - h - 0.32, w: bw + 0.34, h: 0.28, align: 'center', fontSize: 10.5, fontFace: MONO, bold: true, color: C.ink, rtlMode: false, lang: 'en-US'}), 'fade', dl + 300, 400);
+      });
+      A(K.text(s, String(r.y), {x: xg + 0.12, y: base + 0.06, w: 2 * bw, h: 0.3, align: 'center', fontSize: 12, fontFace: MONO, color: C.mute, rtlMode: false, lang: 'en-US'}), 'fade', dl, 400);
+    });
+    [['ليلا', red], ['نهارا', C.gold]].forEach(([t, col], j) => {
+      const x = 12.5 - j * 1.3;
+      A(K.shape(s, pres.shapes.RECTANGLE, {x, y: 5.78, w: 0.22, h: 0.18, fill: {color: col}}), 'fade', 1200, 400);
+      A(K.text(s, t, {x: x - 1.0, y: 5.7, w: 0.95, h: 0.32, fontSize: 11.5, color: C.ink}), 'fade', 1200, 400);
+    });
+    const ng = pct(last.night - first.night, first.night), dg = pct(last.day - first.day, first.day);
+    K.figure(s, 0.5, 1.95, 5.4, num(NIGHT), 'خروج ليلي دون تدخل في أربع سنوات', 900, red, 28);
+    K.figure(s, 0.5, 2.95, 5.4, `≈ ${(NIGHT / DAYS).toFixed(1)}`, 'خروجات دون تدخل كل ليلة', 1050, red, 28);
+    K.figure(s, 0.5, 3.95, 5.4, `+${ng}%`, `نموها بين ${first.y} و${last.y}، مقابل ${dg}% نهارا`, 1200, red, 28);
+    A(K.panel(s, 0.5, 5.15, 5.6, 1.35, {fill: {color: C.root}, line: {color: C.gold, width: 1.5}}), 'fade', 1400, 500);
+    A(K.text(s, 'معدل الخروج دون تدخل يعكس غياب منظومة قادرة على التحري ونقل الخبر، وخاصة بالليل، وهو خطر داهم على سلامة الأفراد.',
+      {x: 0.75, y: 5.2, w: 5.1, h: 1.25, fontSize: 13.5, bold: true, color: night ? C.ink : C.white, valign: 'middle'}), 'fade', 1500, 500);
+    A(K.text(s, 'المصدر: أرقام الديوان الوطني للحماية المدنية، 2022 إلى 2025.', {x: 6.4, y: 6.2, w: 6.43, h: 0.3, fontSize: 10, color: C.mute}), 'fade', 1300, 400);
+    K.button(s, 'الجواب', 1.62, 0.6, 1.0, P.answer);
+    nav(s, P.night);
   }
 
   // the shortcomings
@@ -329,16 +408,17 @@ for (const mode of K.MODES) {
   VALUES.forEach((v, i) => {
     const n = P.values[i], s = K.newSlide(n), col = K.tone(v.tone);
     K.crumb(s, crumbOf(n)); K.title(s, v.name, i + 1);
-    const cw = 4.0, ch = 1.45, gx = 0.18, gy = 0.18, x0 = 12.83;
+    // six items in three rows; a space with seven or eight items takes four tighter rows in the same height
+    const cw = 4.0, gx = 0.18, gy = 0.18, x0 = 12.83, rows = Math.ceil(v.items.length / 2), ch = (3 * 1.45 + 2 * gy - (rows - 1) * gy) / rows, tight = rows > 3;
     v.items.forEach(([h, b], k) => {
       const c = k % 2, r = Math.floor(k / 2), x = x0 - (c + 1) * cw - c * gx, y = 1.45 + r * (ch + gy), dl = 300 + k * 140;
       A(K.panel(s, x, y, cw, ch), 'fade', dl, 400);
-      A(K.shape(s, pres.shapes.RECTANGLE, {x: x + cw - 0.07, y: y + 0.2, w: 0.07, h: ch - 0.4, fill: {color: col}}), 'fade', dl, 400);
-      A(K.text(s, h, {x: x + 0.22, y: y + 0.14, w: cw - 0.45, h: 0.42, fontSize: 14.5, bold: true, color: col}), 'fade', dl + 60, 400);
-      A(K.text(s, b, {x: x + 0.22, y: y + 0.6, w: cw - 0.45, h: ch - 0.7, fontSize: 12.5, color: C.ink, valign: 'top'}), 'fade', dl + 100, 400);
+      A(K.shape(s, pres.shapes.RECTANGLE, {x: x + cw - 0.07, y: y + 0.15, w: 0.07, h: ch - 0.3, fill: {color: col}}), 'fade', dl, 400);
+      A(K.text(s, h, {x: x + 0.22, y: y + (tight ? 0.06 : 0.14), w: cw - 0.45, h: 0.4, fontSize: tight ? 13.5 : 14.5, bold: true, color: col}), 'fade', dl + 60, 400);
+      A(K.text(s, b, {x: x + 0.22, y: y + (tight ? 0.44 : 0.6), w: cw - 0.45, h: ch - (tight ? 0.48 : 0.7), fontSize: tight ? 11.5 : 12.5, color: C.ink, valign: 'top', lineSpacingMultiple: tight ? 0.95 : 1}), 'fade', dl + 100, 400);
     });
     const xv = 0.5, wv = x0 - 2 * cw - gx - 0.25 - xv;
-    A(K.panel(s, xv, 1.45, wv, 3 * ch + 2 * gy, {fill: {color: C.root}, line: {color: C.gold, width: 1.5}}), 'fade', 1100, 500);
+    A(K.panel(s, xv, 1.45, wv, 3 * 1.45 + 2 * gy, {fill: {color: C.root}, line: {color: C.gold, width: 1.5}}), 'fade', 1100, 500);
     A(K.text(s, 'الفارق', {x: xv + 0.3, y: 1.6, w: wv - 0.6, h: 0.36, fontSize: 13, bold: true, color: C.gold}), 'fade', 1150, 400);
     A(K.text(s, v.tag, {x: xv + 0.3, y: 2.0, w: wv - 0.6, h: 1.6, fontSize: 19, bold: true, color: night ? C.ink : C.white, valign: 'top', lineSpacingMultiple: 1.05}), 'fade', 1200, 500);
     v.figs.forEach(([a, b], k) => {
@@ -374,7 +454,7 @@ for (const mode of K.MODES) {
       A(K.text(s, [{text: ind(k + 1) + '  ', options: {color: C.gold, fontFace: DISP}}, {text: h, options: {}}], {x: x + 0.3, y: y + 0.2, w: w - 0.6, h: 0.5, fontSize: 17, fontFace: DISPM, color: C.ink}), 'fade', dl + 80, 400);
       A(K.text(s, b, {x: x + 0.3, y: y + 0.8, w: w - 0.6, h: 1.0, fontSize: 12.5, color: C.mute, valign: 'top'}), 'fade', dl + 120, 400);
     });
-    A(K.text(s, [{text: '≈ 7300  ', options: {fontFace: MONO, color: K.tone('red'), bold: true}}, {text: 'خروج دون تدخل في أربع سنوات: رقم تستطيع المنظومة أن تقيسه كل يوم، حسب الولاية والسبب، وأن تتابع انخفاضه.', options: {color: C.ink, bold: true}}],
+    A(K.text(s, [{text: num(OUT) + '  ', options: {fontFace: MONO, color: K.tone('red'), bold: true}}, {text: `خروج دون تدخل في أربع سنوات، ${pct(NIGHT, OUT)}% منها ليلا: رقم تقيسه المنظومة كل يوم، حسب الولاية والسبب والساعة، وتتابع انخفاضه.`, options: {color: C.ink, bold: true}}],
       {x: 0.5, y: 6.25, w: 12.33, h: 0.45, fontSize: 13.5, align: 'center'}), 'fade', 1400, 600);
     K.button(s, 'الرقم', 1.62, 0.6, 1.0, P.outings);
     nav(s, P.answer);
@@ -415,7 +495,7 @@ for (const mode of K.MODES) {
   // the end: from the report to the decision
   {
     const s = K.newSlide(P.end);
-    K.crumb(s, 'ء-حماية · الخلاصة'); K.title(s, 'من التبليغ إلى أخذ القرار');
+    K.crumb(s, 'ء-حماية · الخلاصة'); K.title(s, 'من المواطن (البلاغ) إلى القيادة (أخذ القرار)');
     [['اليوم', 'بلاغ بالهاتف، ووصف شفوي، وتقدير، وخروج قد يكون دون تدخل.', 'red'],
      ['غدا', 'بلاغ بموقعه وصورته، يُقرأ ويُرتَّب، ووسائل بقدر الحاجة، وفريق مربوط بالقاعة.', 'green'],
      ['الرؤية', 'قرار مبني على الأرقام، ومواطن شريك، ومؤسسات معروفة، وذكاء سيادي يتعلم.', 'purple']].forEach(([h, b, t], k) => {
