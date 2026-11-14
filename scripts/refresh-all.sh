@@ -4,8 +4,10 @@
 #   requests-tracker.html     the request tracker (scripts/tracking/build.py)
 #   mindmaps.html             one mind map per phase (scripts/tracking/mindmap.py)
 #   mindmaps-deck.html        the same mind maps as a presentation, written by the same run
-#   mindmaps.pptx, fonts/     the same deck in PowerPoint, native shapes and animations, in the style of the algorithm
-#                             page, with the font files to install (scripts/tracking/mindmap-pptx.mjs, last step)
+#   mindmaps.pptx, mindmaps-day.pptx, fonts/
+#                             the same deck in PowerPoint, native shapes and animations, in the style of the algorithm
+#                             page: night and day with a switch, and the day set alone; with the font files to
+#                             install (scripts/tracking/mindmap-pptx.mjs, last step)
 #   ehimaya-ui-reference.xlsx the workbook of every element of every surface (scripts/ui_reference/build.py)
 #   model/                    the relational model: DBML, draw.io, PNG, Word (docs/deliverables/data-model)
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
@@ -71,4 +73,5 @@ else
 fi
 echo "7/7 mind maps deck in PowerPoint, with the atlas screenshots on the element cards when the atlas ran"
 node "$ROOT/scripts/tracking/mindmap-pptx.mjs" "$OUT/mindmaps-deck.html" "$OUT/mindmaps.pptx" "$OUT/atlas/shots"
+DECK_SETS=day node "$ROOT/scripts/tracking/mindmap-pptx.mjs" "$OUT/mindmaps-deck.html" "$OUT/mindmaps-day.pptx" "$OUT/atlas/shots"
 echo "done → $OUT"

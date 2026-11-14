@@ -29,6 +29,8 @@ const JSZip = req('jszip');
 const {chromium} = createRequire(import.meta.url)('playwright');
 
 const [src, out, shotsDir] = process.argv.slice(2);
+// the colour sets to build, in order: both by default (with the switch), or one (DECK_SETS=day writes the day deck alone)
+const MODES = (process.env.DECK_SETS || 'night,day').split(',').filter(m => ['night', 'day'].includes(m));
 if (!src || !out) { console.error('usage: mindmap-pptx.mjs <mindmaps-deck.html> <out.pptx> [atlas-shots-dir]'); process.exit(2); }
 
 // ---------------------------------------------------------------- 1. read the data and every map's layout
@@ -162,7 +164,8 @@ function newSlide(n) {
   s.background = {data: GRID};
   if (n !== P.cover) emblem(s);
   // the day / night switch: the same slide in the other colour set
-  const other = MODE === 'night' ? n + N : n, w = 1.05;
+  if (MODES.length < 2) return s;
+  const other = n + (MODES.indexOf(MODE) === 0 ? N : 0), w = 1.05;
   shape(s, pres.shapes.ROUNDED_RECTANGLE, {x: 0.5, y: 0.14, w, h: 0.28, rectRadius: 0.14, fill: {color: C.panel}, line: {color: C.line}, ...linkAbs(other)});
   text(s, MODE === 'night' ? '☀ نهاري' : '☾ ليلي', {x: 0.5, y: 0.14, w, h: 0.28, align: "center", fontSize: 9.5, color: C.ink, ...linkAbs(other)});
   return s;
@@ -211,8 +214,8 @@ function figure(s, x, y, w, v, l, dl) {
 
 // ---------------------------------------------------------------- 3. the slides
 // built twice: the night set, then the day set, each slide linked to its twin by the switch at its foot
-for (const mode of ['night', 'day']) {
-MODE = mode; C = PALETTES[mode]; GRID = GROUNDS[mode]; ({maps, ST} = SETS[mode]); OFF = mode === 'night' ? 0 : N;
+for (const mode of MODES) {
+MODE = mode; C = PALETTES[mode]; GRID = GROUNDS[mode]; ({maps, ST} = SETS[mode]); OFF = MODES.indexOf(mode) * N;
 // cover: the hero of the page beside the phases in orbit, each with its progress ring, each a link to its chapter
 {
   const s = newSlide(P.cover), all = D.rows, cx = 3.2, cy = 3.6, R = 2.3;
@@ -535,7 +538,7 @@ function effect(e, spid, ids) {
 }
 const TRANS = {shot: '<p:fade/>', cover: '<p:fade/>', toc: '<p:push dir="l"/>', map: '<p:fade/>', chapter: '<p:push dir="l"/>', branch: '<p:fade/>', end: '<p:fade/>'};
 let nAnim = 0;
-for (let n = 1; n <= 2 * N; n++) {
+for (let n = 1; n <= MODES.length * N; n++) {
   const f = `ppt/slides/slide${n}.xml`;
   let xml = await zip.file(f).async('string');
   const ids = {}; for (const m of xml.matchAll(/<p:cNvPr id="(\d+)" name="([^"]+)"/g)) ids[m[2]] = m[1];
@@ -611,4 +614,4 @@ rmSync(tmp, {recursive: true, force: true});
   // the display and mono faces of the algorithm page (Google Fonts, SIL OFL 1.1, like the text face)
   for (const f of readdirSync(join(HERE, 'assets/fonts'))) copyFileSync(join(HERE, 'assets/fonts', f), join(dst, f));
 }
-console.log(`${2 * N} slides (night and day), ${nAnim} animations → ${out}`);
+console.log(`${MODES.length * N} slides (${MODES.join(' and ')}), ${nAnim} animations → ${out}`);
