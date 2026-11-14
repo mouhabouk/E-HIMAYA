@@ -4,6 +4,9 @@ Reads the same rows as the request tracker (requests.py, plus the items of docs/
 phase or a changed status shows on the next run without hand edits.
 
     python3 scripts/tracking/mindmap.py <out.html>
+
+The same run writes <out>-deck.html beside it (Yamen, 2026-11-14): the mind maps as a presentation, a chapter slide
+and an interactive map slide per phase, with the folding branches and «next» walking through the branches.
 """
 
 from __future__ import annotations
@@ -49,9 +52,12 @@ def main() -> None:
     rows = rows + menu_rows
     data = {"groups": groups, "rows": rows, "built": date.today().isoformat(), "versions": nitems}
     viewer = (HERE.parent / "atlas" / "viewer.js").read_text(encoding="utf-8")
-    html = (HERE / "mindmap.html").read_text(encoding="utf-8").replace("__VIEWER__", viewer)
-    out.write_text(html.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8")
-    print(f"{len(groups)} mind maps, {len(rows)} items → {out}")
+    payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    deck = out.with_name(out.stem + "-deck.html")
+    for page, target in (("mindmap.html", out), ("mindmap-deck.html", deck)):
+        html = (HERE / page).read_text(encoding="utf-8").replace("__VIEWER__", viewer)
+        target.write_text(html.replace("__DATA__", payload), encoding="utf-8")
+    print(f"{len(groups)} mind maps, {len(rows)} items → {out} and {deck}")
 
 
 if __name__ == "__main__":

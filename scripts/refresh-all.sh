@@ -3,6 +3,7 @@
 #
 #   requests-tracker.html     the request tracker (scripts/tracking/build.py)
 #   mindmaps.html             one mind map per phase (scripts/tracking/mindmap.py)
+#   mindmaps-deck.html        the same mind maps as a presentation, written by the same run
 #   ehimaya-ui-reference.xlsx the workbook of every element of every surface (scripts/ui_reference/build.py)
 #   model/                    the relational model: DBML, draw.io, PNG, Word (docs/deliverables/data-model)
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
