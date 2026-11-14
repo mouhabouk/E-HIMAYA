@@ -12,7 +12,7 @@ import {createKit, DISP, DISPM, MONO, SYSTEM, ind} from './deck-kit.mjs';
 import {planAi, drawAi} from './ai-tools-slides.mjs';
 import {fileURLToPath} from 'node:url';
 
-// the animated backgrounds (trust-bubbles.py): bubbles with the emblem, and the ring of citizens and agents round it
+// the animated backgrounds (trust-backgrounds.py): Tunisia's network on the cover, the ring of citizens and agents round the emblem at the end
 const BG = (kind, mode) => fileURLToPath(new URL(`./assets/trust-${kind}-${mode}.gif`, import.meta.url));
 
 const [out] = process.argv.slice(2);
@@ -168,7 +168,7 @@ for (const mode of K.MODES) {
 
   // cover: the hero beside the eight spaces of the system in orbit, each a link to its value slide
   {
-    const s = K.newSlide(P.cover, BG('field', mode)), cx = 3.2, cy = 3.75, R = 2.35;
+    const s = K.newSlide(P.cover, BG('network', mode)), cx = 3.2, cy = 3.75, R = 2.35;
     A(K.shape(s, pres.shapes.OVAL, {x: cx - R - 0.42, y: cy - R - 0.42, w: 2 * (R + 0.42), h: 2 * (R + 0.42), line: {color: C.gold, width: 1.5, dashType: 'sysDot', transparency: 55}}), 'fade', 0, 900);
     A(K.shape(s, pres.shapes.OVAL, {x: cx - R, y: cy - R, w: 2 * R, h: 2 * R, line: {color: C.edge, width: 0.75, dashType: 'dash'}}), 'fade', 0, 900);
     VALUES.forEach((v, i) => {
@@ -182,9 +182,11 @@ for (const mode of K.MODES) {
     A(K.shape(s, pres.shapes.OVAL, {x: cx - 1.1, y: cy - 1.1, w: 2.2, h: 2.2, fill: {color: C.root}, line: {color: C.gold, width: 3}, ...K.link(P.agenda)}), 'zoom', 0, 600);
     A(K.text(s, [{text: 'ء-حماية', options: {fontSize: 26, fontFace: DISP, bold: true, color: C.white, breakLine: true}}, {text: 'منظومة واحدة', options: {fontSize: 12, color: C.gold}}],
       {x: cx - 1.1, y: cy - 0.62, w: 2.2, h: 1.24, align: 'center', ...K.link(P.agenda)}), 'zoom', 0, 600);
-    A(K.text(s, 'e-HIMAYA · 2026', {x: 6.6, y: 0.42, w: 5.2, h: 0.28, fontSize: 10, fontFace: MONO, color: C.gold, rtlMode: false, lang: 'en-US', align: 'right', charSpacing: 2}), 'fade', 0, 600);
+    A(K.text(s, 'e-HIMAYA · 2026', {x: 0.5, y: 6.95, w: 3.0, h: 0.28, fontSize: 10, fontFace: MONO, color: C.gold, rtlMode: false, lang: 'en-US', align: 'left', charSpacing: 2}), 'fade', 0, 600);
+    A(K.text(s, 'الجمهورية التونسية', {x: 6.6, y: 0.26, w: 5.2, h: 0.28, fontSize: 12, bold: true, color: C.mute}), 'fade', 50, 600);
+    A(K.text(s, 'وزارة الداخلية', {x: 6.6, y: 0.52, w: 5.2, h: 0.28, fontSize: 12, bold: true, color: C.mute}), 'fade', 100, 600);
     A(K.emblem(s, 11.93, 0.3, 0.9), 'zoom', 0, 600);
-    A(K.text(s, 'الديوان الوطني للحماية المدنية', {x: 6.6, y: 0.72, w: 5.2, h: 0.4, fontSize: 15, bold: true, color: C.ink}), 'fade', 150, 600);
+    A(K.text(s, 'الديوان الوطني للحماية المدنية', {x: 6.6, y: 0.78, w: 5.2, h: 0.36, fontSize: 15, bold: true, color: C.ink}), 'fade', 150, 600);
     K.wordmark(s, 9.63, 1.32, 3.2);
     A(K.text(s, [{text: 'من التبليغ إلى ', options: {color: C.ink}}, {text: 'أخذ القرار', options: {color: C.gold}}], {x: 6.3, y: 2.95, w: 6.53, h: 0.85, fontSize: 40, fontFace: DISP, bold: true}), 'fade', 450, 800);
     A(K.text(s, SYSTEM, {x: 6.3, y: 3.85, w: 6.53, h: 0.8, fontSize: 14, lineSpacingMultiple: 1.05, bold: true, color: C.ink, valign: 'top'}), 'fade', 600, 800);
@@ -544,7 +546,7 @@ for (const mode of K.MODES) {
     A(K.text(s, 'شكرا على حسن متابعتكم', {x: 0.5, y: 4.0, w: 12.33, h: 1.3, fontSize: 60, fontFace: DISP, bold: true, color: C.gold, align: 'center'}), 'zoom', 200, 900);
     A(K.shape(s, pres.shapes.LINE, {x: 4.67, y: 5.4, w: 4.0, h: 0, line: {color: C.gold, width: 2}}), 'wipe', 700, 600, 'l');
     A(K.text(s, 'ء-حماية · من التبليغ إلى أخذ القرار', {x: 0.5, y: 5.55, w: 12.33, h: 0.5, fontSize: 18, bold: true, color: C.ink, align: 'center'}), 'fade', 900, 600);
-    A(K.text(s, 'الديوان الوطني للحماية المدنية', {x: 0.5, y: 6.05, w: 12.33, h: 0.4, fontSize: 14, color: C.mute, align: 'center'}), 'fade', 1000, 600);
+    A(K.text(s, 'الجمهورية التونسية · وزارة الداخلية · الديوان الوطني للحماية المدنية', {x: 0.5, y: 6.05, w: 12.33, h: 0.4, fontSize: 14, color: C.mute, align: 'center'}), 'fade', 1000, 600);
     K.button(s, 'الغلاف', 0.5, 0.6, 1.0, P.cover, true);
     K.counter(s, P.thanks);
   }
