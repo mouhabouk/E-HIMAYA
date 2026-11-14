@@ -7,6 +7,7 @@ data/osm), twinkling, with a wave of light leaving the national room and crossin
 pulse running along every link: one national system, from the report to the decision.
 trust-ring-{night,day}.gif, for the closing slide: the emblem in thin gold circles, and round it a ring of citizens and
 Civil Protection agents hand in hand, drawn as line art and turning slowly: the trust between them.
+grid-{night,day}.gif, behind every other slide: the slide grid itself, a band of light sweeping across it.
 Every loop is seamless; colours are the deck kit's. PowerPoint plays the GIFs in the slide show.
 """
 import json
@@ -15,6 +16,7 @@ import random
 import sys
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw
 
 HERE = Path(__file__).resolve().parent
@@ -23,9 +25,10 @@ LOGO = Image.open(HERE / 'assets' / 'civil-protection-logo.png').convert('RGBA')
 W, H, SS = 1280, 720, 2          # frame size, supersampling
 FRAMES, MS = 48, 80              # a loop of 3.84 s
 PAL = {
-    'night': dict(bg='08102A', ink='E8ECF5', gold='C9A24A', red='FF6B6B', dot='8FA8FF', disc='0E1426'),
-    'day': dict(bg='F6F8FC', ink='1F3FA0', gold='9C7A22', red='D7141A', dot='1F3FA0', disc='FFFFFF'),
+    'night': dict(bg='08102A', ink='E8ECF5', gold='C9A24A', red='FF6B6B', dot='8FA8FF', disc='0E1426', grid='16224A', shade='050A1C', glow='3A4F94'),
+    'day': dict(bg='F6F8FC', ink='1F3FA0', gold='9C7A22', red='D7141A', dot='1F3FA0', disc='FFFFFF', grid='E3E9F4', shade='DCE3F1', glow='A9B9E0'),
 }
+CELL = 40 * W / 1920             # the deck kit's grid: 40 px cells on a 1920 px slide
 # the 24 governorate seats (lon, lat); Tunis first, the national room
 SEATS = [(10.18, 36.80), (10.19, 36.86), (10.23, 36.75), (10.10, 36.81), (10.74, 36.45), (10.14, 36.40), (9.87, 37.27),
          (9.18, 36.73), (8.78, 36.50), (8.71, 36.17), (9.37, 36.08), (10.64, 35.83), (10.83, 35.77), (11.06, 35.50),
@@ -55,7 +58,7 @@ def ease(u):
 
 def network(mode, out):
     c = PAL[mode]
-    pj = project(320, 20, 680)
+    pj = project(W / 2, 20, 680)
     land = [pj(*p) for p in points('schools') + points('delegation_hq')]
     units = [pj(*p) for p in points('civil_protection')]
     seats = [pj(*p) for p in SEATS]
@@ -64,7 +67,7 @@ def network(mode, out):
     starts = [r.random() for _ in seats]
     land = [((x, y), math.hypot(x - hub[0], y - hub[1]), r.random()) for x, y in land]
     reach = max(dist for _, dist, _ in land)
-    base = Image.new('RGBA', (W * SS, H * SS), rgb(c['bg']))
+    base = ground(c)
     lay = Image.new('RGBA', base.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
     for x, y in seats[1:]:
@@ -116,10 +119,11 @@ def figure(d, x, y, s, col, w, helmet):
 def ring(mode, out):
     c = PAL[mode]
     cx, cy, n, rx, ry, ey = W * SS / 2, 300 * SS, 14, 300 * SS, 64 * SS, 150 * SS
+    under = ground(c)
     frames = []
     for f in range(FRAMES):
         t = f / FRAMES
-        img = Image.new('RGBA', (W * SS, H * SS), rgb(c['bg']))
+        img = under.copy()
         lay = Image.new('RGBA', img.size, (0, 0, 0, 0))
         d = ImageDraw.Draw(lay)
         d.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], outline=rgb(c['gold'], 70), width=SS)  # the ground of the ring
@@ -174,37 +178,85 @@ def ring(mode, out):
     save(frames, out)
 
 
-def pulse(mode, out):
-    """Waves going out from the emblem, slow and even, like a signal heard across the country."""
+def hexa(h):
+    return np.array([int(h[i:i + 2], 16) for i in (0, 2, 4)], dtype=float)
+
+
+def grid_mask():
+    """1 on the lines of the slide grid, 0 between them; and 1 on the crossings."""
+    x, y = np.arange(W)[None, :], np.arange(H)[:, None]
+    lx = (np.abs(((x + 0.5) % CELL) - CELL + 0.5) < 1.0) | ((x + 0.5) % CELL < 0.5)
+    ly = (np.abs(((y + 0.5) % CELL) - CELL + 0.5) < 1.0) | ((y + 0.5) % CELL < 0.5)
+    lines = (lx | ly).astype(float)
+    cx, cy = np.minimum(x % CELL, CELL - x % CELL), np.minimum(y % CELL, CELL - y % CELL)
+    cross = np.clip(1 - np.hypot(cx, cy) / 2.6, 0, 1)
+    return np.broadcast_to(lines, (H, W)), cross
+
+
+def ground_array(c):
+    """The deck kit's ground: the colour, the grid and the vignette, as a float H×W×3 array."""
+    lines, _ = grid_mask()
+    img = hexa(c['bg'])[None, None, :] * (1 - lines[..., None]) + hexa(c['grid'])[None, None, :] * lines[..., None]
+    x, y = np.arange(W)[None, :] / W - 0.5, np.arange(H)[:, None] / H - 0.4
+    v = (np.clip(np.hypot(x, y) / 0.75, 0, 1) * 0.85)[..., None]   # the SVG's radial gradient, r = 75 % of each side
+    return img * (1 - v) + hexa(c['shade'])[None, None, :] * v
+
+
+def ground(c):
+    """The same ground as a supersampled RGBA image, under the cover and closing GIFs."""
+    a = ground_array(c)
+    return Image.fromarray(a.clip(0, 255).astype('uint8'), 'RGB').resize((W * SS, H * SS), Image.LANCZOS).convert('RGBA')
+
+
+def grid(mode, out):
+    """The slide grid, alive: a soft band of light sweeps across it on the diagonal, lighting the lines it crosses and
+    making the crossings glint gold, while gold dots run along the lines like reports crossing the country; behind every slide of the deck."""
     c = PAL[mode]
-    cx, cy = W * SS / 2, 250 * SS
+    # a fixed grain, the same in every frame: it hides the steps of the palette in the vignette without flicker
+    base = ground_array(c) + np.random.default_rng(5).uniform(-2.5, 2.5, (H, W, 1))
+    lines, cross = grid_mask()
+    x, y = np.arange(W)[None, :], np.arange(H)[:, None]
+    diag = (x * 0.8 + y * 0.6)                       # the band runs from the top left corner to the bottom right
+    span = diag.max() + 600
+    r = random.Random(11)
+    flows = [dict(h=k % 2 == 0, at=r.random(), dir=r.choice([-1, 1]),
+                  line=(r.randrange(1, int(H / CELL)) if k % 2 == 0 else r.randrange(1, int(W / CELL))) * CELL)
+             for k in range(16)]
     frames = []
-    for f in range(FRAMES):
-        t = f / FRAMES
-        img = Image.new('RGBA', (W * SS, H * SS), rgb(c['bg']))
-        lay = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    n = 60
+    for f in range(n):
+        front = -300 + span * f / n
+        band = np.exp(-((diag - front) / 90.0) ** 2)
+        k = (band * lines)[..., None] * 0.9
+        img = base * (1 - k) + hexa(c['glow'])[None, None, :] * k
+        g = (band * cross)[..., None] * 0.95
+        img = img * (1 - g) + hexa(c['gold'])[None, None, :] * g
+        frame = Image.fromarray(img.clip(0, 255).astype('uint8'), 'RGB').convert('RGBA')
+        lay = Image.new('RGBA', frame.size, (0, 0, 0, 0))
         d = ImageDraw.Draw(lay)
-        for k in range(5):                     # five waves, a fifth of a loop apart
-            ph = (t + k / 5) % 1.0
-            rr = (100 + 520 * ph) * SS
-            d.ellipse([cx - rr, cy - rr, cx + rr, cy + rr], outline=rgb(c['gold'], int(150 * (1 - ph) ** 1.5)), width=SS * 2)
-        r = 88 * SS
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=rgb(c['disc']), outline=rgb(c['gold']), width=2 * SS)
-        img.alpha_composite(lay)
-        s = int(140 * SS)
-        img.alpha_composite(LOGO.resize((s, s), Image.LANCZOS), (int(cx - s / 2), int(cy - s / 2)))
-        frames.append(img.resize((W, H), Image.LANCZOS).convert('RGB'))
-    save(frames, out)
+        for flow in flows:                           # gold reports running along the grid lines, end to end
+            span = W if flow['h'] else H
+            for k in range(14):                      # the dot, then its trail, 3 px a step
+                u = (flow['at'] + flow['dir'] * (f / n - k * 3 / span)) % 1.0
+                rr, a = (2.6 if k == 0 else 1.5), int(230 * (1 - k / 14))
+                if flow['h']:
+                    x0, y0 = u * W, flow['line']
+                else:
+                    x0, y0 = flow['line'], u * H
+                d.ellipse([x0 - rr, y0 - rr, x0 + rr, y0 + rr], fill=rgb(c['gold'], a))
+        frame.alpha_composite(lay)
+        frames.append(frame.convert('RGB'))
+    save(frames, out, ms=100, colors=256)
 
 
-def save(frames, out):
+def save(frames, out, ms=MS, colors=128):
     # one palette for every frame, so the colours do not flicker
     sample = Image.new('RGB', (W, H * 4))
-    for k, f in enumerate(frames[::FRAMES // 4]):
+    for k, f in enumerate(frames[::len(frames) // 4]):
         sample.paste(f, (0, H * k))
-    pal = sample.quantize(colors=128, method=Image.Quantize.MEDIANCUT)
+    pal = sample.quantize(colors=colors, method=Image.Quantize.MEDIANCUT)
     q = [f.quantize(palette=pal, dither=Image.Dither.NONE) for f in frames]
-    q[0].save(out, save_all=True, append_images=q[1:], duration=MS, loop=0, optimize=True, disposal=1)
+    q[0].save(out, save_all=True, append_images=q[1:], duration=ms, loop=0, optimize=True, disposal=1)
     print(f'{out} · {Path(out).stat().st_size // 1024} KiB')
 
 
@@ -212,5 +264,6 @@ if __name__ == '__main__':
     dst = Path(sys.argv[1] if len(sys.argv) > 1 else HERE / 'assets')
     dst.mkdir(parents=True, exist_ok=True)
     for mode in PAL:
+        grid(mode, dst / f'grid-{mode}.gif')
         network(mode, dst / f'trust-network-{mode}.gif')
         ring(mode, dst / f'trust-ring-{mode}.gif')

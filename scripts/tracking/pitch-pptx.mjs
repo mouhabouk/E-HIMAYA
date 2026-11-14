@@ -143,7 +143,7 @@ const KPIS = [
 ];
 
 // ---------------------------------------------------------------- 2. the plan
-const K = await createKit({title: 'ء-حماية: من التبليغ إلى أخذ القرار', footer: 'ء-حماية · من التبليغ إلى أخذ القرار'});
+const K = await createKit({title: 'ء-حماية: من التبليغ إلى أخذ القرار', footer: 'ء-حماية · من التبليغ إلى أخذ القرار', motion: true});
 const P = {cover: K.add('cover'), agenda: K.add('agenda')};
 P.act = [K.add('act', {a: 0})];
 P.today = K.add('journey'); P.volume = K.add('big'); P.outings = K.add('big'); P.night = K.add('big'); P.gaps = K.add('grid'); P.cost = K.add('cost');

@@ -44,7 +44,8 @@ const ground = async c => 'image/png;base64,' + (await sharp(Buffer.from(`<svg x
   .png().toBuffer()).toString('base64');
 
 // createKit({title}) → the kit; plan the slides with add(), then for each mode: begin(mode) and draw, then write(out)
-export async function createKit({title, footer = ''}) {
+// motion: true lays the living grid (assets/grid-{night,day}.gif, from trust-backgrounds.py) under every slide
+export async function createKit({title, footer = '', motion = false}) {
   const MODES = (process.env.DECK_SETS || 'night,day').split(',').filter(m => ['night', 'day'].includes(m));
   const EMBLEM = 'image/png;base64,' + readFileSync(join(HERE, 'assets/civil-protection-logo.png')).toString('base64');
   const WORD = 'image/png;base64,' + (await sharp(join(ROOT, 'infra/keycloak/themes/ehimaya/login/resources/img/logo-horizontal.png'))
@@ -92,6 +93,7 @@ export async function createKit({title, footer = ''}) {
       const s = pres.addSlide();
       if (pres.slides.length !== cur) throw new Error(`slide ${pres.slides.length} built where the plan expects ${cur}`);
       s.background = {data: GRID};
+      under = under || (motion ? join(HERE, 'assets', `grid-${MODE}.gif`) : null);
       if (under) s.addImage({path: under, x: 0, y: 0, w: 13.333, h: 7.5, objectName: nm(), altText: ''});
       if (plan[n - 1].t !== 'cover') K.emblem(s);
       if (MODES.length < 2) return s;
