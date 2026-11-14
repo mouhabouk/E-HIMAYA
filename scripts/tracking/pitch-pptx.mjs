@@ -2,7 +2,8 @@
 // (the 198 call, the hand work of the agent, sending resources without a sound estimate, no location, no picture, no
 // decision indicators, the yearly volume and the 30,319 outings without intervention of 2022-2025, by day and night, volunteers, citizens and
 // institutions not connected), then how e-Himaya works and every value it adds, the local AI tools, and the vision
-// once the system is in use. No development phases: functions, added value, before and after.
+// once the system is in use. No development phases: functions, added value, before and after. The room's present
+// system (recording reports and following events) is never put down: e-Himaya is a layer that supports it.
 //
 //   node scripts/tracking/pitch-pptx.mjs <out.pptx>            (DECK_SETS=day for the day set alone)
 //
@@ -15,8 +16,8 @@ if (!out) { console.error('usage: pitch-pptx.mjs <out.pptx>'); process.exit(2); 
 
 // ---------------------------------------------------------------- 1. the content
 const ACTS = [
-  {name: 'اليوم', title: 'كيف تعمل القاعة اليوم', lead: 'بلاغ بالهاتف، وعون يعمل بذاكرته وخبرته، وموارد تُسخَّر دون صورة ولا موقع.'},
-  {name: 'التحوّل', title: 'كيف تعمل ء-حماية', lead: 'السلسلة نفسها، من التبليغ إلى أخذ القرار، لكن بمعطى دقيق في كل حلقة.'},
+  {name: 'اليوم', title: 'كيف تعمل القاعة اليوم', lead: 'منظومة تسجّل البلاغات وتتابع الأحداث، وعون يحمل بجهد مضنٍ عبء الصوت والتقدير والتنسيق.'},
+  {name: 'التحوّل', title: 'لبنة تدعم المنظومة الحالية', lead: 'السلسلة نفسها، من التبليغ إلى أخذ القرار، بمعطى دقيق في كل حلقة: من تسجيل الأحداث إلى دعم القرار.'},
   {name: 'القيم المضافة', title: 'ما تضيفه لكل متدخّل', lead: 'المواطن والقاعة والفريق والمؤسسة والمتطوع والقيادة: لكل واحد منهم ما يتغيّر في عمله.'},
   {name: 'الذكاء المحلي', title: 'الذكاء الاصطناعي المحلي', lead: 'اثنتا عشرة أداة تعمل داخل خوادم الديوان: تقترح وتعلّل، والإنسان يقرّر.'},
   {name: 'الرؤية', title: 'الرؤية: عند الاستعمال وبعده', lead: 'من ردّ الفعل إلى الاستباق، ومن المكالمة إلى القرار المبني على الأرقام.'},
@@ -24,11 +25,11 @@ const ACTS = [
 const TODAY = [
   ['المواطن يتصل بـ198', 'وقد يجد الخط مشغولا في الذروة'],
   ['العون يسأل عن المكان', 'وصف شفوي، وعنوان يُبحث عنه'],
-  ['يدوّن البلاغ بيده', 'لا صورة ولا صوت محفوظ'],
+  ['يسجّل البلاغ', 'من السماع وحده، دون صورة ولا موقع'],
   ['يقدّر الوسائل', 'من كلام المبلّغ وانفعاله'],
   ['يُعلم الوحدة', 'بالهاتف أو اللاسلكي'],
   ['الفريق يكتشف الوضع', 'عند الوصول: المؤسسة ومخاطرها مجهولة'],
-  ['التقرير بعد العودة', 'والأرقام تُجمع لاحقا باليد'],
+  ['الحدث يُسجَّل ويُتابَع', 'تسجيل للمتابعة، لا مؤشرات للقرار'],
 ];
 const TOMORROW = [
   ['بلاغ بموقعه', 'تطبيق أو رسالة أو مكالمة، بصورة وصوت وبث'],
@@ -50,7 +51,7 @@ const GAPS = [
   ['مواطن متصل لا مشارك', 'لا متابعة لبلاغه ولا تحفيز، فتضعف الثقة بين المواطن والإدارة.'],
   ['نسيج مؤسساتي غير مربوط', 'موقع المؤسسة وبطاقتها وموادها الخطرة غائبة عن العون قبل الوصول.'],
   ['فريق ميداني معزول', 'المراحل والأزمنة تُدوَّن لاحقا، ولا محاسبة آنية للأفراد في المنطقة الخطرة.'],
-  ['توثيق ورقي بلا ذاكرة', 'سجلات يدوية يصعب البحث فيها، والدروس والقرارات لا تُجمع.'],
+  ['تسجيل دون تحليل', 'الأحداث تُسجَّل وتُتابَع، لكن الدروس والقرارات لا تتحول إلى ذاكرة ولا إلى مؤشرات.'],
   ['لا إنذار موجّه للسكان', 'التحذير لا يصل حسب المنطقة المهددة إلى هواتف من فيها.'],
 ];
 const BRIDGE = [
@@ -64,7 +65,7 @@ const BRIDGE = [
   ['مواطن متصل', 'رقم تتبع وتنبيهات ونقاط وشارات «المواطن اليقظ»'],
   ['مؤسسة مجهولة', 'بطاقة المؤسسة وملف السلامة والمواد الخطرة على الخريطة'],
   ['فريق معزول', 'تطبيق الأعوان: المهمة والمراحل والصوت ومحاسبة الأفراد'],
-  ['توثيق ورقي', 'سجل رقمي كامل، ومكتبة أحداث يُبحث فيها، وسجل تدقيق لا يُعدَّل'],
+  ['تسجيل دون تحليل', 'مكتبة أحداث يُبحث فيها، ودروس وقرارات تُجمع، وسجل تدقيق لا يُعدَّل'],
   ['لا إنذار موجّه', 'تنبيهات حسب الولاية والمنطقة إلى هواتف السكان'],
 ];
 const VALUES = [
@@ -143,7 +144,7 @@ const P = {cover: K.add('cover'), agenda: K.add('agenda')};
 P.act = [K.add('act', {a: 0})];
 P.today = K.add('journey'); P.volume = K.add('big'); P.outings = K.add('big'); P.night = K.add('big'); P.gaps = K.add('grid'); P.cost = K.add('cost');
 P.act.push(K.add('act', {a: 1}));
-P.glance = K.add('glance'); P.tomorrow = K.add('journey'); P.bridge = [K.add('bridge'), K.add('bridge')];
+P.layer = K.add('layer'); P.glance = K.add('glance'); P.tomorrow = K.add('journey'); P.bridge = [K.add('bridge'), K.add('bridge')];
 P.act.push(K.add('act', {a: 2}));
 P.values = VALUES.map(() => K.add('value'));
 P.act.push(K.add('act', {a: 3}));
@@ -184,7 +185,7 @@ for (const mode of K.MODES) {
     A(K.text(s, [{text: 'من التبليغ إلى ', options: {color: C.ink}}, {text: 'أخذ القرار', options: {color: C.gold}}], {x: 6.3, y: 2.95, w: 6.53, h: 0.85, fontSize: 40, fontFace: DISP, bold: true}), 'fade', 450, 800);
     A(K.text(s, SYSTEM, {x: 6.3, y: 3.85, w: 6.53, h: 0.8, fontSize: 14, lineSpacingMultiple: 1.05, bold: true, color: C.ink, valign: 'top'}), 'fade', 600, 800);
     A(K.text(s, 'توقٍّ قبل الحادث · استجابة أسرع عند وقوعه · قيادة أوضح إذا صار أزمة', {x: 6.3, y: 4.7, w: 6.53, h: 0.4, fontSize: 14.5, bold: true, color: C.gold, valign: 'top'}), 'fade', 700, 700);
-    A(K.text(s, 'كيف تعمل القاعة اليوم، وكيف ستعمل مع ء-حماية، وما الذي يتغيّر لكل متدخّل.', {x: 6.3, y: 5.12, w: 6.53, h: 0.36, fontSize: 12, color: C.mute, valign: 'top'}), 'fade', 800, 700);
+    A(K.text(s, 'كيف تعمل القاعة اليوم، وكيف تدعمها ء-حماية، وما الذي يتغيّر لكل متدخّل.', {x: 6.3, y: 5.12, w: 6.53, h: 0.36, fontSize: 12, color: C.mute, valign: 'top'}), 'fade', 800, 700);
     K.button(s, 'ابدأ العرض', 10.73, 5.55, 2.1, P.agenda, true);
     K.button(s, 'الوضع اليوم', 8.48, 5.55, 2.1, P.act[0]);
   }
@@ -239,7 +240,7 @@ for (const mode of K.MODES) {
   };
 
   divider(0);
-  { const s = journey(P.today, 'بلاغ اليوم: رحلة بالهاتف', 'سبع خطوات يقوم بها العون بيده وذاكرته، والمعطى الدقيق غائب في كل واحدة منها.', TODAY, 'red', '!');
+  { const s = journey(P.today, 'بلاغ اليوم: رحلة بالهاتف', 'سبع خطوات يحملها العون بجهده وخبرته، والمعطى الدقيق غائب في معظمها.', TODAY, 'red', '!');
     A(K.text(s, 'كل خطوة تأخذ من الدقائق الأولى، وهي الدقائق التي تصنع الفرق في إنقاذ الأرواح.', {x: 0.5, y: 6.25, w: 12.33, h: 0.4, fontSize: 14, bold: true, color: C.gold, align: 'center'}), 'fade', 2000, 600);
     nav(s, P.today); }
 
@@ -326,7 +327,7 @@ for (const mode of K.MODES) {
   {
     const s = K.newSlide(P.gaps), red = K.tone('red');
     K.crumb(s, crumbOf(P.gaps)); K.title(s, 'اثنتا عشرة نقيصة');
-    K.lead(s, 'ليست تقصيرا من العون، بل حدود طريقة عمل بُنيت على الهاتف والورق.');
+    K.lead(s, 'ليست تقصيرا من العون ولا من المنظومة الحالية، بل حدود عمل يقوم على الصوت والتقدير.');
     const cols = 4, w = (12.33 - 0.18 * (cols - 1)) / cols, h = 1.5;
     GAPS.forEach(([t, b], k) => {
       const c = k % cols, r = Math.floor(k / cols), x = 12.83 - (c + 1) * w - c * 0.18, y = 1.8 + r * (h + 0.15), dl = 250 + k * 90;
@@ -359,6 +360,29 @@ for (const mode of K.MODES) {
   }
 
   divider(1);
+  // the layer: what exists stays, e-Himaya builds on it, and the decision is what changes
+  {
+    const s = K.newSlide(P.layer);
+    K.crumb(s, crumbOf(P.layer)); K.title(s, 'من تسجيل الأحداث إلى دعم القرار');
+    K.lead(s, 'ء-حماية لا تعوّض المنظومة الحالية، بل تضيف إليها لبنة تنقل القاعة من التسجيل إلى القرار.');
+    const cols = [
+      ['المنظومة الحالية', 'تبقى أساس العمل', 'navy', ['تسجيل البلاغات', 'متابعة الأحداث', 'خبرة الأعوان وإجراءات القاعة']],
+      ['لبنة ء-حماية', 'تُضاف إليها', 'green', ['الموقع والصورة والبث مع البلاغ', 'قراءة البلاغ وترتيبه وتجميع المكرر', 'ربط الفرق والمؤسسات والمتطوعين', 'ذكاء محلي يقترح ويعلّل']],
+      ['أخذ القرار', 'ما يتغيّر', 'purple', ['صورة واحدة محيّنة للحدث', 'مؤشرات حية لكل ولاية وللوطن', 'وسائل بقدر الحاجة', 'ذاكرة للدروس والقرارات']],
+    ];
+    const w = 3.75, g = 0.54, y = 1.85, h = 3.9;
+    cols.forEach(([t, sub, tone, items], k) => {
+      const x = 12.83 - (k + 1) * w - k * g, col = K.tone(tone), dl = 300 + k * 450;
+      A(K.panel(s, x, y, w, h, {line: {color: col, width: k === 1 ? 2.25 : 1.5}}), 'fade', dl, 500);
+      A(K.shape(s, pres.shapes.RECTANGLE, {x, y, w, h: 0.08, fill: {color: col}}), 'wipe', dl, 500, 'l');
+      A(K.text(s, t, {x: x + 0.25, y: y + 0.25, w: w - 0.5, h: 0.5, fontSize: 20, fontFace: DISPM, color: col}), 'fade', dl + 80, 400);
+      A(K.text(s, sub, {x: x + 0.25, y: y + 0.75, w: w - 0.5, h: 0.32, fontSize: 12, bold: true, color: C.mute}), 'fade', dl + 120, 400);
+      K.list(s, items, x + 0.25, y + 1.3, w - 0.5, 0.6, col, dl + 200, 13.5);
+      if (k < cols.length - 1) A(K.shape(s, pres.shapes.LEFT_ARROW, {x: x - g + 0.08, y: y + h / 2 - 0.17, w: g - 0.16, h: 0.34, fill: {color: C.gold}}), 'wipe', dl + 350, 300, 'l');
+    });
+    A(K.text(s, 'من تسجيل روتيني للأحداث إلى منظومة تساعد على أخذ القرار.', {x: 0.5, y: 6.0, w: 12.33, h: 0.45, fontSize: 16, bold: true, color: C.gold, align: 'center'}), 'fade', 1900, 600);
+    nav(s, P.layer);
+  }
   // the system at a glance: five spaces round one platform
   {
     const s = K.newSlide(P.glance);
@@ -387,7 +411,7 @@ for (const mode of K.MODES) {
   P.bridge.forEach((n, half) => {
     const s = K.newSlide(n), red = K.tone('red'), green = K.tone('green');
     K.crumb(s, crumbOf(n)); K.title(s, `من … إلى  (${ind(half + 1)}/${ind(2)})`);
-    K.lead(s, 'كل نقيصة من النقائص الاثنتي عشرة، وجوابها في المنظومة.');
+    K.lead(s, 'كل نقيصة من النقائص الاثنتي عشرة، وما تضيفه ء-حماية إلى المنظومة الحالية.');
     const rows = BRIDGE.slice(half * 6, half * 6 + 6), top = 1.85, rh = 0.8, wl = 3.6, wr = 7.93;
     A(K.text(s, 'اليوم', {x: 12.83 - wl, y: top, w: wl, h: 0.4, fontSize: 14, bold: true, color: red}), 'fade', 200, 400);
     A(K.text(s, 'مع ء-حماية', {x: 0.5, y: top, w: wr, h: 0.4, fontSize: 14, bold: true, color: green}), 'fade', 200, 400);
@@ -496,7 +520,7 @@ for (const mode of K.MODES) {
   {
     const s = K.newSlide(P.end);
     K.crumb(s, 'ء-حماية · الخلاصة'); K.title(s, 'من التبليغ إلى أخذ القرار');
-    [['اليوم', 'بلاغ بالهاتف، ووصف شفوي، وتقدير، وخروج قد يكون دون تدخل.', 'red'],
+    [['اليوم', 'بلاغ يُسجَّل ويُتابَع، وعون يحمل عبء الصوت والتقدير، وخروج قد يكون دون تدخل.', 'red'],
      ['غدا', 'بلاغ بموقعه وصورته، يُقرأ ويُرتَّب، ووسائل بقدر الحاجة، وفريق مربوط بالقاعة.', 'green'],
      ['الرؤية', 'قرار مبني على الأرقام، ومواطن شريك، ومؤسسات معروفة، وذكاء سيادي يتعلم.', 'purple']].forEach(([h, b, t], k) => {
       const y = 1.5 + k * 1.5, dl = 300 + k * 300, col = K.tone(t);
@@ -505,12 +529,12 @@ for (const mode of K.MODES) {
       A(K.text(s, b, {x: 0.5, y: y + 0.2, w: 9.4, h: 1.05, fontSize: 17, bold: true, color: C.ink, valign: 'middle'}), 'fade', dl + 250, 500);
     });
     A(K.panel(s, 0.5, 6.1, 12.33, 0.75, {fill: {color: C.root}, line: {color: C.gold, width: 1.5}}), 'fade', 1300, 500);
-    A(K.text(s, 'ء-حماية: منظومة وطنية واحدة، على خوادم وطنية، في خدمة المواطن وعون الحماية المدنية.', {x: 0.8, y: 6.1, w: 11.73, h: 0.75, fontSize: 15, bold: true, align: 'center', color: night ? C.ink : C.white}), 'fade', 1400, 500);
+    A(K.text(s, 'ء-حماية: لبنة تدعم المنظومة الحالية، من تسجيل روتيني للأحداث إلى منظومة تساعد على أخذ القرار.', {x: 0.8, y: 6.1, w: 11.73, h: 0.75, fontSize: 15, bold: true, align: 'center', color: night ? C.ink : C.white}), 'fade', 1400, 500);
     K.button(s, 'الفهرس', 0.5, 0.6, 1.0, P.agenda, true); K.button(s, 'الغلاف', 1.62, 0.6, 1.0, P.cover);
     K.counter(s, P.end);
   }
 }
 
 await K.write(out, {cover: '<p:fade/>', agenda: '<p:fade/>', act: '<p:push dir="l"/>', journey: '<p:fade/>', big: '<p:fade/>', grid: '<p:fade/>',
-  cost: '<p:fade/>', glance: '<p:fade/>', bridge: '<p:push dir="l"/>', value: '<p:fade/>', why: '<p:fade/>', aimap: '<p:fade/>', tool: '<p:fade/>',
+  cost: '<p:fade/>', layer: '<p:fade/>', glance: '<p:fade/>', bridge: '<p:push dir="l"/>', value: '<p:fade/>', why: '<p:fade/>', aimap: '<p:fade/>', tool: '<p:fade/>',
   compare: '<p:fade/>', guards: '<p:fade/>', profiles: '<p:fade/>', answer: '<p:fade/>', vision: '<p:fade/>', kpis: '<p:fade/>', end: '<p:fade/>'});
