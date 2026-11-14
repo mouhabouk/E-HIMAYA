@@ -80,3 +80,5 @@ else
 fi
 python3 "$ROOT/scripts/atlas/build.py" "$OUT/capture.json" "$OUT" --portal "$WORK/portal-cap" --mobile "$WORK/mobile" \
   --backend "$WORK/backend.json" ${ATLAS_PREVIOUS:+--previous "$ATLAS_PREVIOUS"}
+# 5. The same atlas as a book: atlas.pdf (the shots of cards kept from the previous atlas are read beside it).
+python3 "$ROOT/scripts/atlas/pdf.py" "$OUT" ${ATLAS_PREVIOUS:+--shots "$(dirname "$ATLAS_PREVIOUS")"}

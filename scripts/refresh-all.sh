@@ -12,7 +12,8 @@
 #   model/                    the relational model: DBML, draw.io, PNG, Word (docs/deliverables/data-model)
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
 #   atlas/                    the flowchart atlas in chapters: the dashboard, the portal and both apps with every tab and
-#                             window, and the links between each app and the dashboard (scripts/atlas/run.sh)
+#                             window, and the links between each app and the dashboard (scripts/atlas/run.sh), and the
+#                             same atlas as a printed book, atlas/atlas.pdf (scripts/atlas/pdf.py)
 #   atlas.pptx, atlas-day.pptx
 #                             the atlas as a deck in the same template: each card's flowchart playing step by step
 #                             beside its functional card, its screenshot on click (scripts/atlas/atlas-pptx.mjs)
