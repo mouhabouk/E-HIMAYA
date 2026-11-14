@@ -23,7 +23,10 @@ import requests as cur  # noqa: E402
 from build import collect  # noqa: E402
 
 sys.path.insert(0, str(HERE.parent / "menu"))
-from menu import label, load  # noqa: E402
+from menu import items as load_items, label, load  # noqa: E402
+
+sys.path.insert(0, str(HERE.parent / "atlas"))
+from content import SCREENS  # noqa: E402
 
 
 def menu_maps() -> tuple[dict[str, str], list[dict]]:
@@ -40,9 +43,27 @@ def menu_maps() -> tuple[dict[str, str], list[dict]]:
             rows.append(
                 dict(g=g, code=str(s["number"]), title=s["names"]["ar"], kind="نظام", desc="، ".join(built + planned),
                      status="approved" if planned else "done", size="L" if len(s["items"]) > 5 else "M",
-                     imp=4 if block["key"] == "operational" else 3, date="", ref="menu.json")
+                     imp=4 if block["key"] == "operational" else 3, date="", ref="menu.json",
+                     screens=[dict(p=i["path"], l=label(i["key"])) for i in s["items"]
+                              if not i.get("planned") and not i.get("alias")])
             )
     return groups, rows
+
+
+def link_screens(rows: list[dict]) -> None:
+    """The dashboard screens an item speaks of (Yamen 2026-11-14: its screenshot opens from its card): a menu entry
+    whose label appears in the item's title or description. Menu systems already list their own entries."""
+    entries = [i for i in load_items() if not i.get("planned") and not i.get("alias")]
+    labels = [(i["path"], label(i["key"])) for i in entries]
+    for r in rows:
+        if "screens" in r:
+            continue
+        text = f"{r['title']} {r['desc']}"
+        hits = [dict(p=p, l=lb) for p, lb in labels if len(lb) >= 5 and lb in text]
+        r["screens"] = hits[:4]
+    for r in rows:   # what each screen is for and what it adds, from the atlas texts
+        for sc in r["screens"]:
+            sc["u"], sc["v"] = SCREENS.get(sc["p"], ("", ""))
 
 
 def main() -> None:
@@ -51,6 +72,7 @@ def main() -> None:
     menu_groups, menu_rows = menu_maps()
     groups = {**cur.G, **menu_groups}
     rows = rows + menu_rows
+    link_screens(rows)
     data = {"groups": groups, "rows": rows, "built": date.today().isoformat(), "versions": nitems}
     viewer = (HERE.parent / "atlas" / "viewer.js").read_text(encoding="utf-8")
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
