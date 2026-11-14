@@ -159,25 +159,28 @@ function screenSlide(c, ch, j) {
   // the flowchart: one column up to seven steps, two (right then left) beyond
   k.box(s, 0.4, 1.35, 7.25, 5.5);
   const F = c.flow || [], cols = F.length > 7 ? 2 : 1, per = Math.ceil(F.length / cols);
-  const gap = Math.min(0.78, 5.1 / per), nh = Math.min(0.56, gap - 0.2), nw = cols === 2 ? 3.0 : 4.2;
+  const gap = Math.min(0.78, (cols === 2 ? 4.7 : 5.1) / per), nh = Math.min(0.56, gap - 0.2), nw = cols === 2 ? 3.0 : 4.2;
   const colX = q => cols === 2 ? (q === 0 ? 4.35 : 0.75) : 0.4 + (7.25 - nw) / 2;
-  const pos = F.map((_, i) => { const q = Math.floor(i / per), r = i % per; return {x: colX(q), y: 1.6 + r * gap + (gap - nh) / 2 - 0.1, q, r}; });
+  // two columns are joined by the on-page connector of the standard: a lettered circle under the first column and
+  // the same circle over the second
+  const pos = F.map((_, i) => { const q = Math.floor(i / per), r = i % per; return {x: colX(q), y: 1.6 + (q ? 0.45 : 0) + r * gap + (gap - nh) / 2 - 0.1, q, r}; });
+  const conn = (x, y, d) => {
+    A(shape(s, pres.shapes.OVAL, {x: x - 0.16, y, w: 0.32, h: 0.32, fill: {color: C.panel}, line: {color: C.gold, width: 1.75}}), 'zoom', d, 300);
+    A(text(s, 'أ', {x: x - 0.16, y, w: 0.32, h: 0.32, align: 'center', fontSize: 11, bold: true, color: C.gold}), 'zoom', d, 300);
+  };
   F.forEach((n, i) => {
     const kd = KIND[n.t] || KIND.proc, {x, y} = pos[i], d = 300 + i * 360, h = n.t === 'dec' ? nh + 0.14 : nh, yy = n.t === 'dec' ? y - 0.07 : y;
     const lk = to && n.r != null ? link(to) : {};
     A(shape(s, kd.shape(), {x, y: yy, w: nw, h, ...(kd.r ? {rectRadius: Math.min(kd.r, h / 2)} : {}), fill: {color: C.panel}, line: {color: kd.col(), width: 2}, ...lk}), 'zoom', d, 400);
     A(text(s, [{text: n.l || '', options: {bold: true, fontSize: 11.5, color: C.ink, breakLine: !!n.s}}, ...(n.s ? [{text: n.s, options: {fontSize: 8.5, color: C.mute}}] : [])],
       {x: x + (n.t === 'io' ? 0.25 : 0.12), y: yy, w: nw - (n.t === 'io' ? 0.5 : 0.24), h, align: 'center', fit: 'shrink', ...lk}), 'zoom', d, 400);
-    if (i < F.length - 1) {
-      const p2 = pos[i + 1];
-      if (p2.q === pos[i].q) A(shape(s, pres.shapes.LINE, {x: x + nw / 2, y: yy + h, w: 0, h: Math.max(0.05, p2.y - (yy + h) - (F[i + 1].t === 'dec' ? 0.07 : 0)),
-        line: {color: C.gold, width: 1.75, endArrowType: 'triangle'}}), 'wipe', d + 230, 250, 'd');
-      else {   // from the foot of the right column to the head of the left one
-        const x1 = x + nw / 2, y1 = yy + h, x2 = p2.x + nw / 2, y2 = p2.y, ym = Math.max(y1, 6.55) + 0.12;
-        A(shape(s, pres.shapes.CUSTOM_GEOMETRY, {x: x2, y: 1.35 + 0.08, w: x1 - x2, h: ym - 1.43,
-          points: [{x: x1 - x2, y: y1 - 1.43}, {x: x1 - x2, y: ym - 1.43}, {x: (x1 - x2) / 2, y: ym - 1.43}, {x: (x1 - x2) / 2, y: 0.02}, {x: 0, y: 0.02}, {x: 0, y: y2 - 1.43}],
-          line: {color: C.gold, width: 1.5, dashType: 'dash', endArrowType: 'triangle'}}), 'fade', d + 230, 400);
-      }
+    if (i === F.length - 1) return;
+    const p2 = pos[i + 1], arrow = (ax, ay, ah, dl) => A(shape(s, pres.shapes.LINE, {x: ax, y: ay, w: 0, h: Math.max(0.05, ah),
+      line: {color: C.gold, width: 1.75, endArrowType: 'triangle'}}), 'wipe', dl, 250, 'd');
+    if (p2.q === pos[i].q) arrow(x + nw / 2, yy + h, p2.y - (yy + h) - (F[i + 1].t === 'dec' ? 0.07 : 0), d + 230);
+    else {
+      arrow(x + nw / 2, yy + h, 0.18, d + 230); conn(x + nw / 2, yy + h + 0.18, d + 300);
+      conn(p2.x + nw / 2, 1.5, d + 330); arrow(p2.x + nw / 2, 1.82, p2.y - 1.82 - (F[i + 1].t === 'dec' ? 0.07 : 0), d + 340);
     }
   });
   // the legend of the shapes, under the box

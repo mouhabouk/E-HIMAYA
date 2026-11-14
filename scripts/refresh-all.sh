@@ -13,6 +13,9 @@
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
 #   atlas/                    the flowchart atlas in chapters: the dashboard, the portal and both apps with every tab and
 #                             window, and the links between each app and the dashboard (scripts/atlas/run.sh)
+#   atlas.pptx, atlas-day.pptx
+#                             the atlas as a deck in the same template: each card's flowchart playing step by step
+#                             beside its functional card, its screenshot on click (scripts/atlas/atlas-pptx.mjs)
 #   sim-guide.html            the guide to the [SIM] data and how each item becomes real, with what is still [SIM] in
 #                             the database (scripts/sim_guide/build.py); docs/sql/sim-guide.md is rewritten with it
 #
@@ -74,4 +77,9 @@ fi
 echo "7/7 mind maps deck in PowerPoint, with the atlas screenshots on the element cards when the atlas ran"
 node "$ROOT/scripts/tracking/mindmap-pptx.mjs" "$OUT/mindmaps-deck.html" "$OUT/mindmaps.pptx" "$OUT/atlas/shots"
 DECK_SETS=day node "$ROOT/scripts/tracking/mindmap-pptx.mjs" "$OUT/mindmaps-deck.html" "$OUT/mindmaps-day.pptx" "$OUT/atlas/shots"
+if [ -f "$OUT/atlas/index.html" ]; then
+  echo "7b/7 flowchart atlas deck in PowerPoint (night and day, and the day set alone)"
+  node "$ROOT/scripts/atlas/atlas-pptx.mjs" "$OUT/atlas" "$OUT/atlas.pptx"
+  DECK_SETS=day node "$ROOT/scripts/atlas/atlas-pptx.mjs" "$OUT/atlas" "$OUT/atlas-day.pptx"
+fi
 echo "done → $OUT"
