@@ -4,6 +4,8 @@
 #   requests-tracker.html     the request tracker (scripts/tracking/build.py)
 #   mindmaps.html             one mind map per phase (scripts/tracking/mindmap.py)
 #   mindmaps-deck.html        the same mind maps as a presentation, written by the same run
+#   mindmaps.pptx, fonts/     the same deck in PowerPoint, native shapes and animations, with the system's font files
+#                             to install (scripts/tracking/mindmap-pptx.mjs)
 #   ehimaya-ui-reference.xlsx the workbook of every element of every surface (scripts/ui_reference/build.py)
 #   model/                    the relational model: DBML, draw.io, PNG, Word (docs/deliverables/data-model)
 #   web.html                  the spider web surfaces → screens → server modules → tables (scripts/atlas/web.py)
@@ -43,6 +45,7 @@ echo "1/6 backend dump"
 echo "2/6 request tracker and mind maps"
 python3 "$ROOT/scripts/tracking/build.py" "$OUT/requests-tracker.html"
 python3 "$ROOT/scripts/tracking/mindmap.py" "$OUT/mindmaps.html"
+node "$ROOT/scripts/tracking/mindmap-pptx.mjs" "$OUT/mindmaps-deck.html" "$OUT/mindmaps.pptx"
 
 echo "3/6 UI reference workbook"
 python3 "$ROOT/scripts/ui_reference/build.py" --backend "$OUT/backend.json" --out "$OUT/ehimaya-ui-reference.xlsx"

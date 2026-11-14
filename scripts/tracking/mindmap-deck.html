@@ -47,6 +47,12 @@ header button[hidden]{display:none}
 /* cover */
 #cover{background:var(--hero);color:#fff}
 #cover .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center;max-width:1180px;width:100%}
+header .logo{width:34px;height:34px;flex:none}
+#cover .brand{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+#cover .brand img{width:clamp(56px,6vw,84px);height:auto;flex:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.35))}
+#cover .brand b{display:block;font-size:clamp(13px,1.2vw,15px);color:#D7DEF5;font-weight:600;margin-bottom:4px}
+#cover .brand strong{display:block;font-size:clamp(16px,1.7vw,22px);line-height:1.5}
+#cover .brand em{display:block;font-style:normal;color:var(--gold);font-weight:700;font-size:clamp(14px,1.4vw,18px);margin-top:2px}
 #cover h2{font-size:clamp(28px,4.4vw,54px);margin:0 0 10px;line-height:1.25}
 #cover h2 span{color:var(--gold)}
 #cover p{font-size:clamp(14px,1.5vw,18px);opacity:.9;line-height:1.8;margin:0 0 18px}
@@ -155,6 +161,7 @@ header button[hidden]{display:none}
 </head>
 <body>
 <header>
+  <img class="logo" src="__LOGO__" alt="شعار الديوان الوطني للحماية المدنية" width="34" height="34">
   <h1>عرض الخرائط الذهنية</h1>
   <select id="pick" aria-label="انتقل إلى شريحة"></select>
   <button id="prev" type="button" aria-label="السابق" title="السابق (→)">› السابق</button>
@@ -205,6 +212,8 @@ $('sorter').querySelector('.grid').innerHTML = SL.map((s, i) =>
   `<button type="button" data-i="${i}"><b>${i + 1} · ${{cover: 'غلاف', map: 'خريطة', chapter: 'فصل', end: 'خلاصة'}[s.t]}</b><span>${esc(s.name)}</span></button>`).join('');
 
 // ---- cover
+// the system's full title (Yamen, 2026-11-14)
+const SYSTEM = 'منظومة ذكية للتبليغ والمشاركة المجتمعية والمؤسساتية في مجال السلامة والوقاية وإدارة الأخطار';
 (function cover() {
   const all = D.rows, d = doneOf(all);
   const R = 150, n = keys.length;
@@ -220,7 +229,9 @@ $('sorter').querySelector('.grid').innerHTML = SL.map((s, i) =>
       <title>${esc(D.groups[k])}: ${p}% منجز</title></g>`;
   }).join('');
   $('cover').innerHTML = `<div class="wrap">
-    <div><h2>منظومة <span>ء-حماية</span><br>في خرائط ذهنية</h2>
+    <div><div class="brand"><img src="__LOGO__" alt="شعار الديوان الوطني للحماية المدنية">
+        <div><b>الديوان الوطني للحماية المدنية</b><strong>${esc(SYSTEM)}</strong><em>من التبليغ إلى أخذ القرار</em></div></div>
+      <h2>منظومة <span>ء-حماية</span><br>في خرائط ذهنية</h2>
       <p>${keys.length} مراحل، ولكل مرحلة خريطة تتفرع إلى عناصرها ثم إلى تفاصيلها. اضغط «التالي» للمرور على العناصر واحدا بعد الآخر، أو اضغط على أي فرع لطيّه وبسطه.</p>
       <div class="kpis"><div class="kpi"><b>${keys.length}</b><span>مرحلة</span></div><div class="kpi"><b>${all.length}</b><span>عنصرا</span></div>
         <div class="kpi"><b>${pct(d, all.length)}%</b><span>منجز ومعتمد</span></div><div class="kpi"><b>${D.built}</b><span>آخر تحيين</span></div></div>

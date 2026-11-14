@@ -11,6 +11,7 @@ and an interactive map slide per phase, with the folding branches and «next» w
 
 from __future__ import annotations
 
+import base64
 import json
 import sys
 from datetime import date
@@ -53,9 +54,10 @@ def main() -> None:
     data = {"groups": groups, "rows": rows, "built": date.today().isoformat(), "versions": nitems}
     viewer = (HERE.parent / "atlas" / "viewer.js").read_text(encoding="utf-8")
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    logo = "data:image/png;base64," + base64.b64encode((HERE / "assets" / "civil-protection-logo.png").read_bytes()).decode()
     deck = out.with_name(out.stem + "-deck.html")
     for page, target in (("mindmap.html", out), ("mindmap-deck.html", deck)):
-        html = (HERE / page).read_text(encoding="utf-8").replace("__VIEWER__", viewer)
+        html = (HERE / page).read_text(encoding="utf-8").replace("__VIEWER__", viewer).replace("__LOGO__", logo)
         target.write_text(html.replace("__DATA__", payload), encoding="utf-8")
     print(f"{len(groups)} mind maps, {len(rows)} items → {out} and {deck}")
 
