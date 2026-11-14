@@ -16,21 +16,12 @@
 // The cover carries the Office's emblem and the system's full title; every slide sits in the royal blue frame of the
 // system with a gold hairline; the text uses IBM Plex Sans Arabic, whose files are copied to <out-dir>/fonts.
 import {createRequire} from 'node:module';
-import {readFileSync, writeFileSync, mkdtempSync, rmSync, mkdirSync, readdirSync, copyFileSync, existsSync} from 'node:fs';
-import {tmpdir} from 'node:os';
-import {join, resolve, dirname} from 'node:path';
-import {fileURLToPath} from 'node:url';
-
-const HERE = dirname(fileURLToPath(import.meta.url));
-const req = createRequire(join(HERE, '../../docs/deliverables/package.json'));
-const pptxgen = req('pptxgenjs');
-const sharp = req('sharp');
-const JSZip = req('jszip');
+import {readFileSync, existsSync} from 'node:fs';
+import {join, resolve} from 'node:path';
+import {sharp, hex, ind, SYSTEM, W, DISP, DISPM, MONO, MODES, WORD, WORD_AR, deck, finish} from './deck-kit.mjs';
 const {chromium} = createRequire(import.meta.url)('playwright');
 
 const [src, out, shotsDir] = process.argv.slice(2);
-// the colour sets to build, in order: both by default (with the switch), or one (DECK_SETS=day writes the day deck alone)
-const MODES = (process.env.DECK_SETS || 'night,day').split(',').filter(m => ['night', 'day'].includes(m));
 if (!src || !out) { console.error('usage: mindmap-pptx.mjs <mindmaps-deck.html> <out.pptx> [atlas-shots-dir]'); process.exit(2); }
 
 // ---------------------------------------------------------------- 1. read the data and every map's layout
@@ -68,50 +59,10 @@ const {D, keys, PAL, groups} = X;
 const SETS = {night: {maps: X.maps, ST: X.ST}, day: {maps: XL.maps, ST: XL.ST}};
 let maps, ST;
 
-// ---------------------------------------------------------------- 2. palette and helpers
-// any colour of the page (#abc, #aabbcc, rgb(), rgba()) as the six hex digits PowerPoint wants
-const hex = c => {
-  c = String(c || '').trim();
-  const m = c.match(/rgba?\(([^)]+)\)/i);
-  if (m) return m[1].split(',').slice(0, 3).map(v => Math.round(+v).toString(16).padStart(2, '0')).join('').toUpperCase();
-  c = c.replace('#', '');
-  if (c.length === 3) c = c.split('').map(x => x + x).join('');
-  return c.slice(0, 6).toUpperCase();
-};
-// the night set of the algorithm page (docs/design-system.md, dark colours)
-// the two colour sets of the deck: the night of the algorithm page, and its day counterpart on the system's white base
-const PALETTES = {
-  night: {bg: '08102A', deck: '0E1426', panel: '161E35', line: '26304D', grid: '16224A', edge: '3A4770', root: '0E1426', shade: '050A1C',
-    ink: 'E8ECF5', mute: 'A6AFC4', gold: 'C9A24A', teal: '4DD0B8', white: 'FFFFFF', onGold: '1B1405'},
-  day: {bg: 'F6F8FC', deck: 'EEF2F9', panel: 'FFFFFF', line: 'D5DCEB', grid: 'E3E9F4', edge: 'B9C4DD', root: '1F3FA0', shade: 'DCE3F1',
-    ink: '0E1426', mute: '55607A', gold: '9C7A22', teal: '0E7C8F', white: 'FFFFFF', onGold: 'FFFFFF'},
-};
-let C;
-// fonts: the system's text face, the display face of the titles, the mono face of figures and routes; their files ship
-// beside the deck in a fonts folder (Yamen, 2026-11-14)
-const FONT = 'IBM Plex Sans Arabic', DISP = 'Reem Kufi', DISPM = 'Reem Kufi Medium', MONO = 'IBM Plex Mono Medium';
-// the system's full title (Yamen, 2026-11-14)
-const SYSTEM = 'منظومة ذكية للتبليغ والمشاركة المجتمعية والمؤسساتية في مجال السلامة والوقاية وإدارة الأخطار';
+// ---------------------------------------------------------------- 2. plan and helpers
 const SZ = {S: 'صغير', M: 'متوسط', L: 'كبير', XL: 'كبير جدا'}, IMP = {4: 'حرجة', 3: 'عالية', 2: 'متوسطة', 1: 'منخفضة'};
-const W = 13.333, H = 7.5;
 const doneOf = rs => rs.filter(r => r.status === 'done').length;
 const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
-const ind = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);   // Arabic-Indic digits, as the acts of the page
-const AR = {rtlMode: true, lang: 'ar-SA', fontFace: FONT};
-
-// the emblem of the Office (top of every slide) and the system's wordmark (cover), from the repository's brand files
-const ROOT = join(HERE, '../..');
-const EMBLEM = 'image/png;base64,' + readFileSync(join(HERE, 'assets/civil-protection-logo.png')).toString('base64');
-const WORD = 'image/png;base64,' + (await sharp(join(ROOT, 'infra/keycloak/themes/ehimaya/login/resources/img/logo-horizontal.png'))
-  .extract({left: 0, top: 70, width: 590, height: 275}).png().toBuffer()).toString('base64');
-// the ground with its blueprint grid, one picture per colour set
-const ground = async c => 'image/png;base64,' + (await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080">
-  <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0V40M0 40H40" stroke="#${c.grid}" stroke-width="2" fill="none"/></pattern>
-  <radialGradient id="v" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#${c.bg}" stop-opacity="0"/><stop offset="1" stop-color="#${c.shade}" stop-opacity=".85"/></radialGradient></defs>
-  <rect width="1920" height="1080" fill="#${c.bg}"/><rect width="1920" height="1080" fill="url(#g)"/><rect width="1920" height="1080" fill="url(#v)"/></svg>`))
-  .png().toBuffer()).toString('base64');
-const GROUNDS = {night: await ground(PALETTES.night), day: await ground(PALETTES.day)};
-let GRID, MODE, OFF = 0;
 
 // the atlas screenshots of the screens an element speaks of, made lighter for the deck
 const SHOT = {};
@@ -143,79 +94,15 @@ const PH = groups.map((gr, i) => {
 P.end = add('end');
 const N = plan.length;   // slides per colour set; the day deck follows the night one
 
-const pres = new pptxgen();
-pres.layout = 'LAYOUT_WIDE';
-pres.title = 'خرائط ء-حماية الذهنية';
-pres.rtlMode = true;
-pres.theme = {headFontFace: DISP, bodyFontFace: FONT};
-
-// animations wanted on each slide, by shape name, read again after writing (section 4)
-const anim = [];             // anim[slideNo] = [{name, fx, delay, dur, dir}]
-let cur = 0, seq = 0;
-const nm = () => `s${cur}_${++seq}`;
-const A = (o, fx, delay, dur = 500, dir) => { (anim[cur] ||= []).push({name: o.objectName, fx, delay, dur, dir}); return o; };
-const link = n => n ? {hyperlink: {slide: n + OFF, tooltip: ''}} : {};
-const linkAbs = n => ({hyperlink: {slide: n, tooltip: ''}});
-
-function newSlide(n) {
-  cur = n + OFF; seq = 0;
-  const s = pres.addSlide();
-  if (pres.slides.length !== cur) throw new Error(`slide ${pres.slides.length} built where the plan expects ${cur}`);
-  s.background = {data: GRID};
-  if (n !== P.cover) emblem(s);
-  // the day / night switch: the same slide in the other colour set
-  if (MODES.length < 2) return s;
-  const other = n + (MODES.indexOf(MODE) === 0 ? N : 0), w = 1.05;
-  shape(s, pres.shapes.ROUNDED_RECTANGLE, {x: 0.5, y: 0.14, w, h: 0.28, rectRadius: 0.14, fill: {color: C.panel}, line: {color: C.line}, ...linkAbs(other)});
-  text(s, MODE === 'night' ? '☀ نهاري' : '☾ ليلي', {x: 0.5, y: 0.14, w, h: 0.28, align: "center", fontSize: 9.5, color: C.ink, ...linkAbs(other)});
-  return s;
-}
-// pptxgenjs writes no relationship for a link on a shape or a text box: keep the target and write it after (section 4)
-const shapeLinks = [];       // shapeLinks[slideNo] = {objectName: targetSlide}
-function text(s, t, o) {
-  const opt = {...AR, isTextBox: true, margin: 0, color: C.ink, fontSize: 14, align: 'right', valign: 'middle', objectName: nm(), ...o};
-  if (opt.hyperlink?.slide) (shapeLinks[cur] ||= {})[opt.objectName] = opt.hyperlink.slide;
-  s.addText(t, opt); return opt;
-}
-function shape(s, kind, o) {
-  const opt = {objectName: nm(), ...o};
-  if (opt.hyperlink?.slide) (shapeLinks[cur] ||= {})[opt.objectName] = opt.hyperlink.slide;
-  s.addShape(kind, opt); return opt;
-}
-function image(s, o) {
-  const opt = {objectName: nm(), ...o};
-  s.addImage(opt); return opt;
-}
-const panel = (s, x, y, w, h, o = {}) => shape(s, pres.shapes.ROUNDED_RECTANGLE, {x, y, w, h, rectRadius: 0.18, fill: {color: C.panel}, line: {color: C.line, width: 1}, ...o});
-// the pill buttons of the page: gold for the main action, the panel colour with a hairline for the others
-function button(s, label, x, y, w, to, primary = false) {
-  const o = shape(s, pres.shapes.ROUNDED_RECTANGLE, {x, y, w, h: 0.38, rectRadius: 0.19, fill: {color: primary ? C.gold : C.panel},
-    line: {color: primary ? C.gold : C.line}, ...link(to)});
-  const t = text(s, label, {x, y, w, h: 0.38, align: 'center', fontSize: 12, bold: primary, color: primary ? C.onGold : C.ink, ...link(to)});
-  return [o, t];
-}
-// the eyebrow (gold, the step of the page) and the act title (gold numeral, display face)
-function crumb(s, label) { return text(s, label, {x: 4.6, y: 0.3, w: 7.45, h: 0.3, fontSize: 11, bold: true, color: C.gold}); }
-function title(s, label, num) {
-  const t = num != null ? [{text: ind(num) + '  ', options: {color: C.gold, fontFace: DISP, fontSize: 30}}, {text: label, options: {}}] : label;
-  return text(s, t, {x: 4.1, y: 0.58, w: 7.95, h: 0.62, fontSize: 28, fontFace: DISPM, color: C.ink, fit: 'shrink'});
-}
-function emblem(s, x = 12.23, y = 0.28, w = 0.6) {
-  const o = {data: EMBLEM, x, y, w, h: w, objectName: nm(), altText: 'شعار الديوان الوطني للحماية المدنية', ...link(P.toc)};
-  s.addImage(o); return o;
-}
-function counter(s, n) { text(s, `${n} / ${N}`, {x: 0.5, y: 7.08, w: 1.4, h: 0.25, fontSize: 9, fontFace: MONO, align: 'left', color: C.mute}); }
-// a figure of the page: a gold rule on top, the number in mono, the label under it
-function figure(s, x, y, w, v, l, dl) {
-  A(shape(s, pres.shapes.LINE, {x, y, w, h: 0, line: {color: C.gold, width: 1.75}}), 'wipe', dl, 500, 'l');
-  A(text(s, String(v), {x, y: y + 0.08, w, h: 0.5, fontSize: 26, fontFace: MONO, color: C.ink, bold: true}), 'fade', dl + 150, 500);
-  A(text(s, l, {x, y: y + 0.56, w, h: 0.28, fontSize: 11, color: C.mute}), 'fade', dl + 200, 500);
-}
+// the deck and its helpers (scripts/tracking/deck-kit.mjs); C and MODE follow the colour set being built
+const k = deck('خرائط ء-حماية الذهنية', N, P.toc), {pres, A, link, text, shape, image, panel, button, crumb, title, counter, figure} = k;
+const emblem = k.emblem, newSlide = n => k.slide(n, {emblem: n !== P.cover}), nm = () => `s${k.cur}_${++k.seq}`;
+let C, MODE;
 
 // ---------------------------------------------------------------- 3. the slides
 // built twice: the night set, then the day set, each slide linked to its twin by the switch at its foot
 for (const mode of MODES) {
-MODE = mode; C = PALETTES[mode]; GRID = GROUNDS[mode]; ({maps, ST} = SETS[mode]); OFF = MODES.indexOf(mode) * N;
+k.set(mode); MODE = mode; C = k.C; ({maps, ST} = SETS[mode]);
 // cover: the hero of the page beside the phases in orbit, each with its progress ring, each a link to its chapter
 {
   const s = newSlide(P.cover), all = D.rows, cx = 3.2, cy = 3.6, R = 2.3;
@@ -242,7 +129,7 @@ MODE = mode; C = PALETTES[mode]; GRID = GROUNDS[mode]; ({maps, ST} = SETS[mode])
   A(emblem(s, 11.93, 0.3, 0.9), 'zoom', 0, 600);
   A(text(s, 'الديوان الوطني للحماية المدنية', {x: 6.6, y: 0.72, w: 5.2, h: 0.4, fontSize: 15, bold: true, color: C.ink}), 'fade', 150, 600);
   if (MODE === 'day') shape(s, pres.shapes.ROUNDED_RECTANGLE, {x: 9.48, y: 1.22, w: 3.5, h: 3.2 * 275 / 590 + 0.2, rectRadius: 0.16, fill: {color: C.root}});   // the white wordmark needs the royal blue under it
-  A(image(s, {data: WORD, x: 9.63, y: 1.32, w: 3.2, h: 3.2 * 275 / 590, altText: 'ء-حماية E-HIMAYA'}), 'fade', 300, 900);
+  A(image(s, {data: WORD, x: 9.63, y: 1.32, w: 3.2, h: 3.2 * WORD_AR, altText: 'ء-حماية E-HIMAYA'}), 'fade', 300, 900);
   A(text(s, [{text: 'من التبليغ إلى ', options: {color: C.ink}}, {text: 'أخذ القرار', options: {color: C.gold}}],
     {x: 6.3, y: 2.85, w: 6.53, h: 0.85, fontSize: 40, fontFace: DISP, bold: true}), 'fade', 450, 800);
   A(text(s, SYSTEM, {x: 6.3, y: 3.68, w: 6.53, h: 0.9, fontSize: 17, lineSpacingMultiple: 1.05, fontFace: DISPM, color: C.ink, valign: 'top'}), 'fade', 600, 800);
@@ -510,108 +397,7 @@ PH.forEach(p => { makeChapter(p); makeMaps(p); p.rows.forEach((r, j) => { makeBr
 }
 }
 
-// ---------------------------------------------------------------- 4. write, then add the native transitions and animations
-const tmp = mkdtempSync(join(tmpdir(), 'mm-pptx-'));
-const raw = join(tmp, 'raw.pptx');
-await pres.writeFile({fileName: raw});
-const zip = await JSZip.loadAsync(readFileSync(raw));
-
-const ENTR = {
-  fade: {id: 10, sub: 0, filter: 'fade'},
-  wipe: {id: 22, sub: {l: 8, r: 2, u: 1, d: 4, cw: 8}, filter: {l: 'wipe(left)', r: 'wipe(right)', u: 'wipe(up)', d: 'wipe(down)', cw: 'wheel(1)'}},
-  zoom: {id: 53, sub: 16, filter: 'fade'},
-};
-function effect(e, spid, ids) {
-  const id = () => ++ids.n;
-  const par = id();
-  let sub = 0, filter = 'fade', preset = ENTR[e.fx].id, extra = '';
-  if (e.fx === 'wipe') {
-    if (e.dir === 'cw') { preset = 21; sub = 1; filter = 'wheel(1)'; }   // wheel, one spoke: the doughnut and the progress rings
-    else { sub = ENTR.wipe.sub[e.dir || 'l']; filter = ENTR.wipe.filter[e.dir || 'l']; }
-  } else if (e.fx === 'zoom') {
-    sub = 16;
-    extra = ['ppt_w', 'ppt_h'].map(a => `<p:anim calcmode="lin" valueType="num"><p:cBhvr><p:cTn id="${id()}" dur="${e.dur}" fill="hold"/><p:tgtEl><p:spTgt spid="${spid}"/></p:tgtEl><p:attrNameLst><p:attrName>${a}</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm="0"><p:val><p:fltVal val="0"/></p:val></p:tav><p:tav tm="100000"><p:val><p:strVal val="#${a}"/></p:val></p:tav></p:tavLst></p:anim>`).join('');
-  }
-  const set = `<p:set><p:cBhvr><p:cTn id="${id()}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn><p:tgtEl><p:spTgt spid="${spid}"/></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>`;
-  const fx = `<p:animEffect transition="in" filter="${filter}"><p:cBhvr><p:cTn id="${id()}" dur="${e.dur}"/><p:tgtEl><p:spTgt spid="${spid}"/></p:tgtEl></p:cBhvr></p:animEffect>`;
-  return `<p:par><p:cTn id="${par}" presetID="${preset}" presetClass="entr" presetSubtype="${sub}" fill="hold" grpId="0" nodeType="withEffect"><p:stCondLst><p:cond delay="${Math.round(e.delay)}"/></p:stCondLst><p:childTnLst>${set}${extra}${fx}</p:childTnLst></p:cTn></p:par>`;
-}
+// ---------------------------------------------------------------- 4. write, with native transitions and animations
 const TRANS = {shot: '<p:fade/>', cover: '<p:fade/>', toc: '<p:push dir="l"/>', map: '<p:fade/>', chapter: '<p:push dir="l"/>', branch: '<p:fade/>', end: '<p:fade/>'};
-let nAnim = 0;
-for (let n = 1; n <= MODES.length * N; n++) {
-  const f = `ppt/slides/slide${n}.xml`;
-  let xml = await zip.file(f).async('string');
-  const ids = {}; for (const m of xml.matchAll(/<p:cNvPr id="(\d+)" name="([^"]+)"/g)) ids[m[2]] = m[1];
-  // what each object is, for its build entry: text shapes get bldP, charts bldGraphic, pictures none (as PowerPoint writes)
-  const kind = {}; for (const m of xml.matchAll(/<p:(sp|pic|graphicFrame)>\s*<p:nv\w+Pr>\s*<p:cNvPr id="(\d+)"/g)) kind[m[2]] = m[1];
-  const list = (anim[n] || []).filter(e => ids[e.name]).sort((a, b) => a.delay - b.delay);
-  const trans = `<p:transition spd="med">${TRANS[plan[(n - 1) % N].t]}</p:transition>`;
-  let timing = '';
-  if (list.length) {
-    const c = {n: 4};
-    const effects = list.map(e => effect(e, ids[e.name], c)).join('');
-    const spids = [...new Set(list.map(e => ids[e.name]))];
-    timing = `<p:timing><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek"><p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst><p:par><p:cTn id="3" fill="hold"><p:stCondLst><p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond></p:stCondLst><p:childTnLst><p:par><p:cTn id="4" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>${effects}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn><p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst><p:bldLst>${spids.map(i => kind[i] === 'graphicFrame' ? `<p:bldGraphic spid="${i}" grpId="0"><p:bldAsOne/></p:bldGraphic>` : kind[i] === 'pic' ? '' : `<p:bldP spid="${i}" grpId="0" animBg="1"/>`).join('')}</p:bldLst></p:timing>`;
-    // the first effect starts the chain "after previous" so the slide plays by itself; the rest run "with previous"
-    timing = timing.replace('nodeType="withEffect"', 'nodeType="afterEffect"');
-    nAnim += list.length;
-  }
-  xml = xml.replace(/<p:transition[\s\S]*?<\/p:transition>|<p:transition[^>]*\/>/g, '').replace(/<p:timing>[\s\S]*?<\/p:timing>/g, '');
-  xml = xml.replace(/(<\/p:clrMapOvr>)/, `$1${trans}${timing}`);
-  if (shapeLinks[n]) {
-    const rf = `ppt/slides/_rels/slide${n}.xml.rels`;
-    let rels = await zip.file(rf).async('string');
-    let next = Math.max(0, ...[...rels.matchAll(/Id="rId(\d+)"/g)].map(m => +m[1])) + 1;
-    // every link still unresolved inside a named object (on the object itself or on its runs) goes to that object's target
-    const parts = xml.split(/(?=<p:cNvPr id="\d+" name=")/);
-    xml = parts.map(part => {
-      const name = part.match(/^<p:cNvPr id="\d+" name="([^"]+)"/)?.[1], to = name && shapeLinks[n][name];
-      if (!to) return part;
-      const id = `rId${next++}`;
-      rels = rels.replace('</Relationships>', `<Relationship Id="${id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slide${to}.xml"/></Relationships>`);
-      // the whole object is the link, with no link on its runs, so a linked label keeps its colour and has no underline
-      return part.replace(/ u="sng"/g, "").replace(/<a:hlinkClick\b[^>]*?(?:\/>|>[\s\S]*?<\/a:hlinkClick>)/g, '')
-        .replace(/^(<p:cNvPr [^>]*?)(?:\/>|><\/p:cNvPr>)/, `$1><a:hlinkClick r:id="${id}" action="ppaction://hlinksldjump"/></p:cNvPr>`);
-    }).join('');
-    zip.file(rf, rels);
-  }
-  zip.file(f, xml);
-}
-// the theme carries the night set, so PowerPoint's colour picker offers it first
-{
-  const f = Object.keys(zip.files).find(f => /^ppt\/theme\/theme\d+\.xml$/.test(f));
-  let x = await zip.file(f).async('string');
-  const T = {dk1: '08102A', lt1: 'FFFFFF', dk2: '0E1426', lt2: 'E8ECF5', accent1: 'C9A24A', accent2: '4DD0B8', accent3: '8FA8FF',
-    accent4: 'FFC933', accent5: 'C49BE6', accent6: 'FF6B6B', hlink: 'C9A24A', folHlink: 'A6AFC4'};
-  for (const [k, v] of Object.entries(T)) x = x.replace(new RegExp(`<a:${k}>[\\s\\S]*?</a:${k}>`), `<a:${k}><a:srgbClr val="${v}"/></a:${k}>`);
-  x = x.replace(/<a:clrScheme name="[^"]*"/, '<a:clrScheme name="E-HIMAYA الليلي"');
-  zip.file(f, x);
-}
-// pptxgenjs writes one copy of an image per slide: keep one copy of each and point every slide at it
-{
-  const first = new Map(), gone = new Map();
-  for (const f of Object.keys(zip.files).filter(f => f.startsWith('ppt/media/') && !zip.files[f].dir).sort()) {
-    const key = (await zip.file(f).async('base64'));
-    if (first.has(key)) { gone.set(f.slice(4), first.get(key).slice(4)); zip.remove(f); } else first.set(key, f);
-  }
-  for (const f of Object.keys(zip.files).filter(f => /^ppt\/slides\/_rels\/.*\.rels$/.test(f))) {
-    let x = await zip.file(f).async('string');
-    x = x.replace(/Target="\.\.\/(media\/[^"]+)"/g, (a, t) => gone.has(t) ? `Target="../${gone.get(t)}"` : a);
-    zip.file(f, x);
-  }
-  let ct = await zip.file('[Content_Types].xml').async('string');
-  for (const t of gone.keys()) ct = ct.replace(new RegExp(`<Override[^>]*PartName="/ppt/${t.replace(/[.]/g, '\\.')}"[^>]*/>`), '');
-  zip.file('[Content_Types].xml', ct);
-}
-for (const f of Object.keys(zip.files)) if (zip.files[f].dir) delete zip.files[f];   // no folder entries in the package
-writeFileSync(out, await zip.generateAsync({type: 'nodebuffer', compression: 'DEFLATE'}));
-rmSync(tmp, {recursive: true, force: true});
-// the font files, with their licence, in a fonts folder beside the deck, to install before opening it
-{
-  const src = join(ROOT, 'apps/mobile/assets/fonts'), dst = join(dirname(out), 'fonts');
-  mkdirSync(dst, {recursive: true});
-  for (const f of readdirSync(src).filter(f => /^IBMPlexSansArabic-.*\.ttf$|^OFL\.txt$/.test(f))) copyFileSync(join(src, f), join(dst, f));
-  // the display and mono faces of the algorithm page (Google Fonts, SIL OFL 1.1, like the text face)
-  for (const f of readdirSync(join(HERE, 'assets/fonts'))) copyFileSync(join(HERE, 'assets/fonts', f), join(dst, f));
-}
+const nAnim = await finish(k, out, n => TRANS[plan[(n - 1) % N].t]);
 console.log(`${MODES.length * N} slides (${MODES.join(' and ')}), ${nAnim} animations → ${out}`);
