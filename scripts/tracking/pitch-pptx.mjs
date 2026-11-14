@@ -17,7 +17,7 @@ if (!out) { console.error('usage: pitch-pptx.mjs <out.pptx>'); process.exit(2); 
 // ---------------------------------------------------------------- 1. the content
 const ACTS = [
   {name: 'اليوم', title: 'كيف تعمل القاعة اليوم', lead: 'منظومة تسجّل البلاغات وتتابع الأحداث، وعون يحمل بجهد مضنٍ عبء الصوت والتقدير والتنسيق.'},
-  {name: 'التحوّل', title: 'لبنة تدعم المنظومة الحالية', lead: 'السلسلة نفسها، من التبليغ إلى أخذ القرار، بمعطى دقيق في كل حلقة: من تسجيل الأحداث إلى دعم القرار.'},
+  {name: 'التحوّل', title: 'رافد يدعم المنظومة الحالية', lead: 'السلسلة نفسها، من التبليغ إلى أخذ القرار، بمعطى دقيق في كل حلقة: من تسجيل الأحداث إلى دعم القرار.'},
   {name: 'القيم المضافة', title: 'ما تضيفه لكل متدخّل', lead: 'المواطن والقاعة والفريق والمؤسسة والمتطوع والقيادة: لكل واحد منهم ما يتغيّر في عمله.'},
   {name: 'الذكاء المحلي', title: 'الذكاء الاصطناعي المحلي', lead: 'اثنتا عشرة أداة تعمل داخل خوادم الديوان: تقترح وتعلّل، والإنسان يقرّر.'},
   {name: 'الرؤية', title: 'الرؤية: عند الاستعمال وبعده', lead: 'من ردّ الفعل إلى الاستباق، ومن المكالمة إلى القرار المبني على الأرقام.'},
@@ -150,7 +150,7 @@ P.values = VALUES.map(() => K.add('value'));
 P.act.push(K.add('act', {a: 3}));
 const AI = planAi(K);
 P.act.push(K.add('act', {a: 4}));
-P.answer = K.add('answer'); P.vision = K.add('vision'); P.kpis = K.add('kpis'); P.end = K.add('end');
+P.answer = K.add('answer'); P.vision = K.add('vision'); P.kpis = K.add('kpis'); P.end = K.add('end'); P.thanks = K.add('thanks');
 K.home = P.agenda;
 const ACT_START = [P.act[0], P.act[1], P.act[2], P.act[3], P.act[4]];
 const actOf = n => ACT_START.filter(a => a <= n).length - 1;
@@ -316,7 +316,7 @@ for (const mode of K.MODES) {
     K.figure(s, 0.5, 2.95, 5.4, `≈ ${(NIGHT / DAYS).toFixed(1)}`, 'خروجات دون تدخل كل ليلة', 1050, red, 28);
     K.figure(s, 0.5, 3.95, 5.4, `+${ng}%`, `نموها بين ${first.y} و${last.y}، مقابل ${dg}% نهارا`, 1200, red, 28);
     A(K.panel(s, 0.5, 5.15, 5.6, 1.35, {fill: {color: C.root}, line: {color: C.gold, width: 1.5}}), 'fade', 1400, 500);
-    A(K.text(s, 'معدل الخروج دون تدخل يعكس غياب منظومة قادرة على التحري ونقل الخبر، وخاصة بالليل، وهو خطر داهم على سلامة الأفراد.',
+    A(K.text(s, 'معدل الخروج دون تدخل يعكس غياب وسائل التحري ونقل الخبر، وخاصة بالليل، وهو خطر داهم على سلامة الأفراد.',
       {x: 0.75, y: 5.2, w: 5.1, h: 1.25, fontSize: 13.5, bold: true, color: night ? C.ink : C.white, valign: 'middle'}), 'fade', 1500, 500);
     A(K.text(s, 'المصدر: أرقام الديوان الوطني للحماية المدنية، 2022 إلى 2025.', {x: 6.4, y: 6.2, w: 6.43, h: 0.3, fontSize: 10, color: C.mute}), 'fade', 1300, 400);
     K.button(s, 'الجواب', 1.62, 0.6, 1.0, P.answer);
@@ -364,10 +364,10 @@ for (const mode of K.MODES) {
   {
     const s = K.newSlide(P.layer);
     K.crumb(s, crumbOf(P.layer)); K.title(s, 'من تسجيل الأحداث إلى دعم القرار');
-    K.lead(s, 'ء-حماية لا تعوّض المنظومة الحالية، بل تضيف إليها لبنة تنقل القاعة من التسجيل إلى القرار.');
+    K.lead(s, 'ء-حماية لا تعوّض المنظومة الحالية، بل ترفدها بما ينقل القاعة من التسجيل إلى القرار.');
     const cols = [
       ['المنظومة الحالية', 'تبقى أساس العمل', 'navy', ['تسجيل البلاغات', 'متابعة الأحداث', 'خبرة الأعوان وإجراءات القاعة']],
-      ['لبنة ء-حماية', 'تُضاف إليها', 'green', ['الموقع والصورة والبث مع البلاغ', 'قراءة البلاغ وترتيبه وتجميع المكرر', 'ربط الفرق والمؤسسات والمتطوعين', 'ذكاء محلي يقترح ويعلّل']],
+      ['رافد ء-حماية', 'يُضاف إليها', 'green', ['الموقع والصورة والبث مع البلاغ', 'قراءة البلاغ وترتيبه وتجميع المكرر', 'ربط الفرق والمؤسسات والمتطوعين', 'ذكاء محلي يقترح ويعلّل']],
       ['أخذ القرار', 'ما يتغيّر', 'purple', ['صورة واحدة محيّنة للحدث', 'مؤشرات حية لكل ولاية وللوطن', 'وسائل بقدر الحاجة', 'ذاكرة للدروس والقرارات']],
     ];
     const w = 3.75, g = 0.54, y = 1.85, h = 3.9;
@@ -529,12 +529,23 @@ for (const mode of K.MODES) {
       A(K.text(s, b, {x: 0.5, y: y + 0.2, w: 9.4, h: 1.05, fontSize: 17, bold: true, color: C.ink, valign: 'middle'}), 'fade', dl + 250, 500);
     });
     A(K.panel(s, 0.5, 6.1, 12.33, 0.75, {fill: {color: C.root}, line: {color: C.gold, width: 1.5}}), 'fade', 1300, 500);
-    A(K.text(s, 'ء-حماية: لبنة تدعم المنظومة الحالية، من تسجيل روتيني للأحداث إلى منظومة تساعد على أخذ القرار.', {x: 0.8, y: 6.1, w: 11.73, h: 0.75, fontSize: 15, bold: true, align: 'center', color: night ? C.ink : C.white}), 'fade', 1400, 500);
+    A(K.text(s, 'ء-حماية: رافد يدعم المنظومة الحالية، من تسجيل روتيني للأحداث إلى منظومة تساعد على أخذ القرار.', {x: 0.8, y: 6.1, w: 11.73, h: 0.75, fontSize: 15, bold: true, align: 'center', color: night ? C.ink : C.white}), 'fade', 1400, 500);
     K.button(s, 'الفهرس', 0.5, 0.6, 1.0, P.agenda, true); K.button(s, 'الغلاف', 1.62, 0.6, 1.0, P.cover);
     K.counter(s, P.end);
+  }
+
+  // thanks: the closing words in gold
+  {
+    const s = K.newSlide(P.thanks);
+    A(K.text(s, 'شكرا على حسن متابعتكم', {x: 0.5, y: 2.55, w: 12.33, h: 1.5, fontSize: 60, fontFace: DISP, bold: true, color: C.gold, align: 'center'}), 'zoom', 200, 900);
+    A(K.shape(s, pres.shapes.LINE, {x: 4.67, y: 4.25, w: 4.0, h: 0, line: {color: C.gold, width: 2}}), 'wipe', 700, 600, 'l');
+    A(K.text(s, 'ء-حماية · من التبليغ إلى أخذ القرار', {x: 0.5, y: 4.45, w: 12.33, h: 0.5, fontSize: 18, bold: true, color: C.ink, align: 'center'}), 'fade', 900, 600);
+    A(K.text(s, 'الديوان الوطني للحماية المدنية', {x: 0.5, y: 5.0, w: 12.33, h: 0.4, fontSize: 14, color: C.mute, align: 'center'}), 'fade', 1000, 600);
+    K.button(s, 'الغلاف', 0.5, 0.6, 1.0, P.cover, true);
+    K.counter(s, P.thanks);
   }
 }
 
 await K.write(out, {cover: '<p:fade/>', agenda: '<p:fade/>', act: '<p:push dir="l"/>', journey: '<p:fade/>', big: '<p:fade/>', grid: '<p:fade/>',
   cost: '<p:fade/>', layer: '<p:fade/>', glance: '<p:fade/>', bridge: '<p:push dir="l"/>', value: '<p:fade/>', why: '<p:fade/>', aimap: '<p:fade/>', tool: '<p:fade/>',
-  compare: '<p:fade/>', guards: '<p:fade/>', profiles: '<p:fade/>', answer: '<p:fade/>', vision: '<p:fade/>', kpis: '<p:fade/>', end: '<p:fade/>'});
+  compare: '<p:fade/>', guards: '<p:fade/>', profiles: '<p:fade/>', answer: '<p:fade/>', vision: '<p:fade/>', kpis: '<p:fade/>', end: '<p:fade/>', thanks: '<p:fade/>'});
