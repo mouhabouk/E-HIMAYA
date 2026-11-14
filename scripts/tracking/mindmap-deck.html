@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>عرض خرائط ء-حماية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#F2F5FB; --ink:#0E1426; --mute:#55607A; --line:#D5DCEB; --card:#FFFFFF; --brand:#1F3FA0; --gold:#C9A24A;
+  --grid:rgba(31,63,160,.07); --leaf:#2A3350; --glow:rgba(201,162,74,.35); --bar:#1F3FA0; --bar-ink:#FFFFFF;
+  --ok:#166B2E; --run:#1F3FA0; --wait:#7A4B00; --ext:#5B3FA0; --def:#55607A; --sup:#8A6D1F; --rej:#A0182A;
+  --hero:linear-gradient(135deg,#0B1A3F 0%,#1F3FA0 55%,#2F55C8 100%);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#0E1426; --ink:#EEF2FF; --mute:#9AA6C8; --line:#26304F; --card:#151D36; --brand:#8FA8FF;
+  --grid:rgba(143,168,255,.06); --leaf:#D7DEF5; --glow:rgba(201,162,74,.45); --bar:#0B1A3F;
+  --ok:#4CC772; --run:#8FA8FF; --wait:#FFC933; --ext:#C3A8FF; --def:#9AA6C8; --sup:#E2C26A; --rej:#FF8A95;
+}}
+:root[data-theme="dark"]{
+  --page:#0E1426; --ink:#EEF2FF; --mute:#9AA6C8; --line:#26304F; --card:#151D36; --brand:#8FA8FF;
+  --grid:rgba(143,168,255,.06); --leaf:#D7DEF5; --glow:rgba(201,162,74,.45); --bar:#0B1A3F;
+  --ok:#4CC772; --run:#8FA8FF; --wait:#FFC933; --ext:#C3A8FF; --def:#9AA6C8; --sup:#E2C26A; --rej:#FF8A95;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--page);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;overflow:hidden}
+button,select{font:inherit}
+header{position:fixed;inset:0 0 auto 0;z-index:8;background:var(--bar);color:var(--bar-ink);display:flex;flex-wrap:wrap;gap:8px;
+  align-items:center;padding:8px 14px;border-bottom:2px solid var(--gold)}
+header h1{font-size:15px;margin:0 0 0 6px;font-weight:700;white-space:nowrap}
+header select,header button{font-size:13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);
+  color:#fff;padding:6px 12px;cursor:pointer}
+header select{min-width:220px;max-width:100%}
+header select option,header select optgroup{color:#0E1426;background:#fff}
+header button:hover,header select:hover{background:rgba(255,255,255,.22)}
+header button:focus-visible,header select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+header button[hidden]{display:none}
+.sp{flex:1}
+#count{font-size:12px;opacity:.85;white-space:nowrap}
+/* slides */
+#deck{position:fixed;inset:56px 0 6px 0}
+.slide{position:absolute;inset:0;display:flex;align-items:safe center;justify-content:safe center;padding:28px 20px;overflow:auto;
+  opacity:0;transform:scale(.97);transition:opacity .45s ease,transform .45s ease;pointer-events:none}
+.slide.on{opacity:1;transform:none;pointer-events:auto}
+/* cover */
+#cover{background:var(--hero);color:#fff}
+#cover .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center;max-width:1180px;width:100%}
+header .logo{width:34px;height:34px;flex:none}
+#cover .brand{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+#cover .brand img{width:clamp(56px,6vw,84px);height:auto;flex:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.35))}
+#cover .brand b{display:block;font-size:clamp(13px,1.2vw,15px);color:#D7DEF5;font-weight:600;margin-bottom:4px}
+#cover .brand strong{display:block;font-size:clamp(16px,1.7vw,22px);line-height:1.5}
+#cover .brand em{display:block;font-style:normal;color:var(--gold);font-weight:700;font-size:clamp(14px,1.4vw,18px);margin-top:2px}
+#cover h2{font-size:clamp(28px,4.4vw,54px);margin:0 0 10px;line-height:1.25}
+#cover h2 span{color:var(--gold)}
+#cover p{font-size:clamp(14px,1.5vw,18px);opacity:.9;line-height:1.8;margin:0 0 18px}
+.kpis{display:flex;flex-wrap:wrap;gap:12px}
+.kpi{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:10px 16px;min-width:110px}
+.kpi b{display:block;font-size:26px;color:var(--gold)}
+.kpi span{font-size:12px;opacity:.85}
+.cta{margin-top:20px;background:var(--gold);color:#1B1405;border:0;border-radius:999px;padding:10px 22px;font-weight:700;font-size:15px;cursor:pointer}
+.cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#orbit{width:100%;max-height:70vh}
+#orbit .ph{cursor:pointer}
+#orbit .ph:hover circle.b,#orbit .ph:focus-visible circle.b{stroke:#fff;stroke-width:3}
+#orbit .ph:focus{outline:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+#orbit .ring{transform-origin:0 0;animation:spin 90s linear infinite}
+@media (prefers-reduced-motion:reduce){#orbit .ring{animation:none}.slide{transition:none}}
+/* chapter */
+.chap{max-width:1100px;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:32px;align-items:center}
+.chap .num{font-size:clamp(70px,11vw,150px);font-weight:700;line-height:1;color:transparent;-webkit-text-stroke:2px var(--gold)}
+.chap h2{font-size:clamp(24px,3.4vw,42px);margin:6px 0 12px}
+.chap .lead{color:var(--mute);font-size:16px;line-height:1.8;margin:0 0 16px}
+.donut{width:min(260px,60vw);display:block;margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:12px;border-radius:999px;padding:4px 10px;border:1px solid var(--line);background:var(--card)}
+.chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-inline-end:5px;vertical-align:-1px}
+.top{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 10px 30px rgba(14,20,38,.08)}
+.top h3{margin:0 0 10px;font-size:15px;color:var(--mute);font-weight:600}
+.top ol{margin:0;padding:0;list-style:none;counter-reset:t}
+.top li{counter-increment:t;display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);font-size:15px;line-height:1.6}
+.top li:first-child{border-top:0}
+.top li::before{content:counter(t);flex:none;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font-size:13px;
+  display:flex;align-items:center;justify-content:center;font-weight:700}
+.top li small{display:block;color:var(--mute);font-size:12px}
+.top .go{margin-top:12px;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:8px 18px;cursor:pointer;font-size:14px}
+/* end */
+.end{max-width:1000px;width:100%}
+.end h2{font-size:clamp(24px,3vw,38px);margin:0 0 6px}
+.end p{color:var(--mute);margin:0 0 18px}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(120px,260px) minmax(0,1fr) 70px;gap:12px;align-items:center;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:start;color:var(--ink)}
+.bar:hover,.bar:focus-visible{border-color:var(--gold);outline:none}
+.bar .t{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{height:12px;border-radius:999px;background:var(--line);overflow:hidden;display:flex}
+.bar .track span{height:100%}
+.bar .n{font-size:13px;color:var(--mute);text-align:end}
+/* map slide */
+#mapslide{padding:0}
+#stage{position:absolute;inset:0;background-image:radial-gradient(var(--grid) 1.2px,transparent 1.3px);background-size:22px 22px;cursor:grab;touch-action:none}
+#stage.drag{cursor:grabbing}
+#stage svg{width:100%;height:100%;display:block}
+.branch{fill:none;stroke-linecap:round;transition:opacity .35s}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw .9s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fade{opacity:0;animation:fade .5s ease forwards}
+@keyframes fade{to{opacity:1}}
+.node,.leaf{transition:opacity .35s}
+.node{cursor:pointer}
+.node:hover rect.pill{filter:brightness(1.08)}
+.node:focus{outline:none}
+.node:focus-visible rect.pill{stroke:var(--gold);stroke-width:3}
+.leaf text{fill:var(--leaf);font-size:13px}
+.root-t{fill:#fff;font-weight:700}
+.spot [data-k]:not(.cur){filter:opacity(.16)}
+.spot .cur rect.pill{stroke:var(--gold);stroke-width:3}
+#mtitle{position:absolute;top:12px;inset-inline-start:16px;z-index:3;background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:8px 14px;box-shadow:0 6px 20px rgba(0,0,0,.12);max-width:min(460px,calc(100% - 32px))}
+#mtitle b{display:block;font-size:15px}
+#mtitle span{font-size:12px;color:var(--mute)}
+#steps{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:5px;flex-wrap:wrap;justify-content:center;
+  max-width:calc(100% - 32px);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 10px}
+#steps button{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;opacity:.45}
+#steps button.cur{opacity:1;transform:scale(1.35);box-shadow:0 0 0 2px var(--gold)}
+#steps button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#card{position:absolute;z-index:4;inset-inline-start:16px;bottom:56px;width:min(380px,calc(100% - 32px));background:var(--card);color:var(--ink);
+  border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);padding:16px 18px;display:none}
+#card.on{display:block}
+#card h2{margin:0 0 6px;font-size:16px}
+#card .meta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+#card .pill{font-size:12px;border-radius:999px;padding:3px 10px;border:1px solid var(--line)}
+#card p{margin:6px 0;font-size:14px;line-height:1.7;color:var(--mute)}
+#card .row{display:flex;gap:8px;margin-top:10px}
+#card .row button{background:var(--brand);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer}
+#card .x{position:absolute;inset-inline-end:10px;top:8px;background:none;border:0;color:var(--mute);font-size:20px;padding:2px 8px;cursor:pointer}
+/* progress and sorter */
+#prog{position:fixed;inset:auto 0 0 0;height:6px;background:var(--line);z-index:8}
+#prog span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--brand));transition:width .4s}
+#sorter{position:fixed;inset:56px 0 6px 0;z-index:7;background:var(--page);overflow:auto;padding:20px;display:none}
+#sorter.on{display:block}
+#sorter h2{margin:0 0 14px;font-size:18px}
+#sorter .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+#sorter button{text-align:start;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;min-height:84px}
+#sorter button:hover,#sorter button:focus-visible{border-color:var(--gold);outline:none}
+#sorter button.cur{border:2px solid var(--gold)}
+#sorter button b{display:block;font-size:12px;color:var(--mute);margin-bottom:4px}
+#sorter button span{font-size:14px;font-weight:600}
+@media (max-width:820px){
+  header h1,#count{display:none} header select{min-width:140px;flex:1}
+  .slide{align-items:flex-start} #mapslide{align-items:stretch}
+  #mtitle{top:64px;inset-inline:8px;max-width:none} #mtitle span{display:none}
+  #card{bottom:52px;max-height:38vh;overflow:auto}
+  #cover .wrap,.chap{grid-template-columns:1fr} #orbit{max-height:40vh}
+  .bar{grid-template-columns:minmax(0,1fr) 60px}.bar .track{grid-column:1/-1;grid-row:2}
+}
+</style>
+</head>
+<body>
+<header>
+  <img class="logo" src="__LOGO__" alt="شعار الديوان الوطني للحماية المدنية" width="34" height="34">
+  <h1>عرض الخرائط الذهنية</h1>
+  <select id="pick" aria-label="انتقل إلى شريحة"></select>
+  <button id="prev" type="button" aria-label="السابق" title="السابق (→)">› السابق</button>
+  <button id="next" type="button" aria-label="التالي" title="التالي (← أو المسافة)">التالي ‹</button>
+  <button id="fold" type="button" hidden>طيّ الفروع</button>
+  <button id="skip" type="button" hidden title="الانتقال إلى الشريحة التالية دون المرور على بقية العناصر">تخطّ العناصر</button>
+  <button id="grid" type="button" aria-pressed="false" title="كل الشرائح (G)">▦ الشرائح</button>
+  <button id="full" type="button" title="ملء الشاشة (F)">⛶ ملء الشاشة</button>
+  <button id="theme" type="button" title="الوضع النهاري أو الليلي (T)" aria-label="تبديل الوضع النهاري والليلي"></button>
+  <span class="sp"></span>
+  <span id="count" aria-live="polite"></span>
+</header>
+<main id="deck">
+  <section class="slide" id="cover" aria-label="الغلاف"></section>
+  <section class="slide" id="chapter" aria-label="فصل"></section>
+  <section class="slide" id="mapslide" aria-label="خريطة">
+    <div id="stage"><svg id="svg" role="img" aria-label="خريطة ذهنية"><g id="vp"></g></svg></div>
+    <div id="mtitle"></div>
+    <div id="steps" role="group" aria-label="عناصر الخريطة"></div>
+    <div id="card" role="dialog" aria-live="polite"><button class="x" type="button" aria-label="إغلاق">×</button><div id="cbody"></div></div>
+  </section>
+  <section class="slide" id="end" aria-label="الخلاصة"></section>
+</main>
+<div id="sorter" role="dialog" aria-label="كل الشرائح"><h2>كل الشرائح</h2><div class="grid"></div></div>
+<div id="prog" aria-hidden="true"><span></span></div>
+<script>
+const D = __DATA__;
+const ST = {done:['منجز ومعتمد','--ok'],approved:['معتمد، لم يُنفَّذ بعد','--run'],review:['ينتظر الموافقة','--wait'],
+  external:['ينتظر جهة أو معلومة','--ext'],deferred:['مؤجَّل للدراسة','--def'],superseded:['تم تجاوزه','--sup'],rejected:['مرفوض','--rej']};
+const SZ = {S:'صغير',M:'متوسط',L:'كبير',XL:'كبير جدا'}, IMP = {4:'حرجة',3:'عالية',2:'متوسطة',1:'منخفضة'};
+const PAL = ['#E8590C','#1F9D55','#7B3FD1','#0E8FA8','#D6336C','#C9A24A','#2F6FE0','#B5651D','#12A38A','#9C36B5','#E03131','#5C7CFA'];
+const $ = id => document.getElementById(id), NS = 'http://www.w3.org/2000/svg';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const keys = Object.keys(D.groups);
+const byG = g => D.rows.filter(r => r.g === g).sort((a, b) => b.imp - a.imp || ('SMLX'.indexOf(b.size[0]) - 'SMLX'.indexOf(a.size[0])));
+const clauses = s => String(s || '').split(/[،؛;]| ثم /).map(x => x.trim()).filter(Boolean).map(x => x.length > 54 ? x.slice(0, 52) + '…' : x).slice(0, 6);
+const doneOf = rs => rs.filter(r => r.status === 'done').length;
+const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+
+// ---- the slides: cover, overview map, then a chapter and a map for every phase, then the summary
+const SL = [{t: 'cover', name: 'الغلاف'}, {t: 'map', g: 'all', name: 'نظرة شاملة على كل المراحل'}];
+keys.forEach((k, i) => { SL.push({t: 'chapter', g: k, i, name: `${i + 1}. ${D.groups[k]}`}); SL.push({t: 'map', g: k, i, name: `خريطة: ${D.groups[k]}`}); });
+SL.push({t: 'end', name: 'الخلاصة'});
+let cur = 0, step = -1;
+
+$('pick').innerHTML = SL.map((s, i) => `<option value="${i}">${i + 1} · ${esc(s.name)}</option>`).join('');
+$('sorter').querySelector('.grid').innerHTML = SL.map((s, i) =>
+  `<button type="button" data-i="${i}"><b>${i + 1} · ${{cover: 'غلاف', map: 'خريطة', chapter: 'فصل', end: 'خلاصة'}[s.t]}</b><span>${esc(s.name)}</span></button>`).join('');
+
+// ---- cover
+// the system's full title (Yamen, 2026-11-14)
+const SYSTEM = 'منظومة ذكية للتبليغ والمشاركة المجتمعية والمؤسساتية في مجال السلامة والوقاية وإدارة الأخطار';
+(function cover() {
+  const all = D.rows, d = doneOf(all);
+  const R = 150, n = keys.length;
+  const ph = keys.map((k, i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / n, x = R * Math.cos(a), y = R * Math.sin(a), rs = byG(k), p = pct(doneOf(rs), rs.length);
+    const r = 15 + Math.min(14, rs.length / 2), C = 2 * Math.PI * (r + 5);
+    return `<g class="ph" tabindex="0" role="button" data-g="${k}" aria-label="${esc(D.groups[k])}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+      <line x1="0" y1="0" x2="${(-x * .55).toFixed(1)}" y2="${(-y * .55).toFixed(1)}" stroke="${PAL[i % PAL.length]}" stroke-width="2" opacity=".6"/>
+      <circle r="${r + 5}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="3"/>
+      <circle r="${r + 5}" fill="none" stroke="#C9A24A" stroke-width="3" stroke-dasharray="${(C * p / 100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90)"/>
+      <circle class="b" r="${r}" fill="${PAL[i % PAL.length]}"/>
+      <text y="5" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">${i + 1}</text>
+      <title>${esc(D.groups[k])}: ${p}% منجز</title></g>`;
+  }).join('');
+  $('cover').innerHTML = `<div class="wrap">
+    <div><div class="brand"><img src="__LOGO__" alt="شعار الديوان الوطني للحماية المدنية">
+        <div><b>الديوان الوطني للحماية المدنية</b><strong>${esc(SYSTEM)}</strong><em>من التبليغ إلى أخذ القرار</em></div></div>
+      <h2>منظومة <span>ء-حماية</span><br>في خرائط ذهنية</h2>
+      <p>${keys.length} مراحل، ولكل مرحلة خريطة تتفرع إلى عناصرها ثم إلى تفاصيلها. اضغط «التالي» للمرور على العناصر واحدا بعد الآخر، أو اضغط على أي فرع لطيّه وبسطه.</p>
+      <div class="kpis"><div class="kpi"><b>${keys.length}</b><span>مرحلة</span></div><div class="kpi"><b>${all.length}</b><span>عنصرا</span></div>
+        <div class="kpi"><b>${pct(d, all.length)}%</b><span>منجز ومعتمد</span></div><div class="kpi"><b>${D.built}</b><span>آخر تحيين</span></div></div>
+      <button class="cta" type="button" id="start">ابدأ العرض</button></div>
+    <svg id="orbit" viewBox="-220 -220 440 440" aria-label="المراحل حول المنظومة">
+      <circle r="${R}" fill="none" stroke="rgba(255,255,255,.2)" stroke-dasharray="3 7"/>
+      <g class="ring"><circle r="${R + 40}" fill="none" stroke="rgba(201,162,74,.35)" stroke-dasharray="1 12" stroke-width="3"/></g>
+      <circle r="64" fill="#0B1A3F" stroke="#C9A24A" stroke-width="3"/>
+      <text y="-4" text-anchor="middle" fill="#fff" font-size="19" font-weight="700">ء-حماية</text>
+      <text y="18" text-anchor="middle" fill="#C9A24A" font-size="12">${all.length} عنصرا</text>
+      ${ph}</svg></div>`;
+  $('start').onclick = () => show(1);
+  $('orbit').querySelectorAll('.ph').forEach(g => {
+    const open = () => show(SL.findIndex(s => s.t === 'chapter' && s.g === g.dataset.g));
+    g.addEventListener('click', open);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  });
+})();
+
+// ---- chapter of a phase
+function donut(rs) {
+  const tot = rs.length || 1, R = 70, C = 2 * Math.PI * R; let off = 0;
+  const arcs = Object.keys(ST).map(s => {
+    const n = rs.filter(r => r.status === s).length; if (!n) return '';
+    const L = C * n / tot, a = `<circle r="${R}" fill="none" stroke="${css(ST[s][1])}" stroke-width="22" stroke-dasharray="${L.toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90)"><title>${ST[s][0]}: ${n}</title></circle>`;
+    off += L; return a;
+  }).join('');
+  return `<svg class="donut" viewBox="-100 -100 200 200" role="img" aria-label="توزيع الحالات">${arcs}
+    <text y="2" text-anchor="middle" font-size="34" font-weight="700" fill="currentColor">${pct(doneOf(rs), rs.length)}%</text>
+    <text y="26" text-anchor="middle" font-size="12" fill="${css('--mute')}">منجز ومعتمد</text></svg>`;
+}
+function chapter(s) {
+  const rs = byG(s.g), c = PAL[s.i % PAL.length];
+  const chips = Object.keys(ST).map(k => { const n = rs.filter(r => r.status === k).length;
+    return n ? `<span class="chip"><i style="background:var(${ST[k][1]})"></i>${ST[k][0]}: ${n}</span>` : ''; }).join('');
+  $('chapter').innerHTML = `<div class="chap">
+    <div><div class="num">${String(s.i + 1).padStart(2, '0')}</div><h2>${esc(D.groups[s.g])}</h2>
+      <p class="lead">${rs.length} عنصرا، منها ${doneOf(rs)} منجزة. الخريطة في الشريحة التالية.</p>${donut(rs)}<div class="chips">${chips}</div></div>
+    <div class="top" style="--c:${c}"><h3>أهم العناصر</h3><ol>${rs.slice(0, 5).map(r =>
+      `<li><div>${esc(r.title)}<small>${esc(ST[r.status][0])} · الأهمية ${IMP[r.imp]}</small></div></li>`).join('')}</ol>
+      <button class="go" type="button" id="tomap">افتح الخريطة ‹</button></div></div>`;
+  $('tomap').onclick = () => show(cur + 1);
+}
+
+// ---- summary
+function end() {
+  $('end').innerHTML = `<div class="end"><h2>الخلاصة</h2><p>تقدّم كل مرحلة حسب الحالة. اضغط على مرحلة للعودة إلى خريطتها.</p>
+    <div class="bars">${keys.map((k, i) => { const rs = byG(k);
+      return `<button class="bar" type="button" data-g="${k}"><span class="t">${i + 1}. ${esc(D.groups[k])}</span><span class="track">${Object.keys(ST).map(s => {
+        const n = rs.filter(r => r.status === s).length; return n ? `<span style="width:${100 * n / rs.length}%;background:var(${ST[s][1]})" title="${ST[s][0]}: ${n}"></span>` : ''; }).join('')}</span>
+        <span class="n">${doneOf(rs)}/${rs.length}</span></button>`; }).join('')}</div></div>`;
+  $('end').querySelectorAll('.bar').forEach(b => b.onclick = () => show(SL.findIndex(s => s.t === 'map' && s.g === b.dataset.g)));
+}
+
+// ---- the mind map (same drawing as mindmaps.html)
+const mctx = document.createElement('canvas').getContext('2d');
+const tw = (t, size, w = 400) => { mctx.font = `${w} ${size}px "IBM Plex Sans Arabic", system-ui, sans-serif`; return mctx.measureText(t).width; };
+let model, collapsed = new Set();
+function build(g) {
+  if (g === 'all') {
+    return {title: 'ء-حماية', sub: `${D.rows.length} عنصرا`, kids: keys.map((k, i) => {
+      const rs = byG(k);
+      return {id: k, label: `${D.groups[k]}`, badge: `${doneOf(rs)}/${rs.length}`, color: PAL[i % PAL.length], go: k,
+        leaves: rs.slice(0, 6).map(r => ({t: r.title, st: r.status})), info: {k, rs}};
+    })};
+  }
+  return {title: D.groups[g], sub: `${byG(g).length} عنصرا`, kids: byG(g).map((r, i) => ({
+    id: r.code + i, label: (r.code ? r.code + ' · ' : '') + r.title, color: PAL[i % PAL.length], st: r.status, row: r,
+    badge: r.size, leaves: clauses(r.desc).map(t => ({t}))}))};
+}
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function render(animate = true) {
+  const vp = $('vp'); vp.innerHTML = '';
+  const m = model, LH = 26, GAP = 18, KH = 34;
+  const rootR = Math.max(70, Math.min(110, tw(m.title, 18, 700) / 2 + 26));
+  const sides = [[], []];
+  m.kids.forEach((k, i) => { k.n = i; sides[i < Math.ceil(m.kids.length / 2) ? 0 : 1].push(k); });
+  const defs = el('defs', {}, vp);
+  const rg = el('radialGradient', {id: 'rg'}, defs);
+  el('stop', {offset: '0%', 'stop-color': '#2F55C8'}, rg); el('stop', {offset: '100%', 'stop-color': '#152D78'}, rg);
+  const glow = el('filter', {id: 'gl', x: '-50%', y: '-50%', width: '200%', height: '200%'}, defs);
+  el('feGaussianBlur', {stdDeviation: 10}, glow);
+  const gL = el('g', {}, vp), gN = el('g', {}, vp);
+  let delay = 0;
+  sides.forEach((list, si) => {
+    const s = si === 0 ? 1 : -1;
+    const blocks = list.map(k => Math.max(1, collapsed.has(k.id) ? 1 : k.leaves.length) * LH + GAP);
+    const H = blocks.reduce((a, b) => a + b, 0);
+    let y = -H / 2;
+    const X1 = rootR + 90;
+    const kidW = Math.max(...list.map(k => tw(k.label, 14, 600) + 64), 120);
+    list.forEach((k, i) => {
+      const h = blocks[i], cy = y + h / 2;
+      const w = tw(k.label, 14, 600) + 64, a = s * X1, b = s * (X1 + w);
+      const p = el('path', {class: 'branch' + (animate ? ' draw' : ''), 'data-k': k.n, d: `M${s * rootR * .6},0 C${s * (rootR + 40)},0 ${a - s * 60},${cy} ${a},${cy}`,
+        stroke: k.color, 'stroke-width': 5, opacity: .9}, gL);
+      if (animate) { const L = p.getTotalLength(); p.style.setProperty('--len', L); p.style.animationDelay = (delay * 40) + 'ms'; }
+      const n = el('g', {class: 'node' + (animate ? ' fade' : ''), 'data-k': k.n, tabindex: 0, role: 'button', 'aria-label': k.label,
+        'aria-expanded': String(!collapsed.has(k.id))}, gN);
+      if (animate) n.style.animationDelay = (200 + delay * 40) + 'ms';
+      const x0 = Math.min(a, b);
+      k.cx = x0 + w / 2; k.cy = cy;
+      el('rect', {class: 'pill', x: x0, y: cy - KH / 2, width: w, height: KH, rx: KH / 2, fill: k.color}, n);
+      const t = el('text', {x: x0 + w / 2 + 10, y: cy + 5, 'text-anchor': 'middle', fill: '#fff', 'font-size': 14, 'font-weight': 600}, n);
+      t.textContent = k.label;
+      const bx = s > 0 ? x0 + w - 18 : x0 + 18;
+      if (k.st) el('circle', {cx: x0 + 18, cy, r: 6, fill: css(ST[k.st][1]), stroke: '#fff', 'stroke-width': 2}, n);
+      else { const bb = el('text', {x: x0 + 20, y: cy + 4, 'text-anchor': 'middle', fill: '#fff', 'font-size': 11, opacity: .9}, n); bb.textContent = k.badge; }
+      if (collapsed.has(k.id) && k.leaves.length) {
+        const c = el('text', {x: bx + s * 26, y: cy + 5, 'text-anchor': 'middle', fill: k.color, 'font-size': 13, 'font-weight': 700}, n);
+        c.textContent = '+' + k.leaves.length;
+      }
+      n.addEventListener('click', ev => { ev.stopPropagation(); select(k, true); });
+      n.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ev.stopPropagation(); select(k, true); } });
+      if (!collapsed.has(k.id)) {
+        const lx = s * (X1 + kidW + 70);
+        k.leaves.forEach((lf, j) => {
+          const ly = y + GAP / 2 + LH * (j + .5);
+          const lw = tw(lf.t, 13) + 14;
+          const q = el('path', {class: 'branch' + (animate ? ' draw' : ''), 'data-k': k.n, d: `M${b},${cy} C${b + s * 40},${cy} ${lx - s * 40},${ly + 9} ${lx},${ly + 9} L${lx + s * lw},${ly + 9}`,
+            stroke: k.color, 'stroke-width': 1.6, opacity: .75}, gL);
+          if (animate) { const L = q.getTotalLength(); q.style.setProperty('--len', L); q.style.animationDelay = (300 + delay * 40 + j * 30) + 'ms'; }
+          const lg = el('g', {class: 'leaf' + (animate ? ' fade' : ''), 'data-k': k.n}, gN);
+          if (animate) lg.style.animationDelay = (450 + delay * 40 + j * 30) + 'ms';
+          const lt = el('text', {x: lx + s * lw / 2, y: ly + 4, 'text-anchor': 'middle'}, lg);
+          lt.textContent = lf.t;
+          if (lf.st) el('circle', {cx: lx + s * (lw + 7), cy: ly + 9, r: 4, fill: css(ST[lf.st][1])}, lg);
+        });
+      }
+      y += h; delay++;
+    });
+  });
+  const r = el('g', {class: 'node', tabindex: 0, role: 'button', 'aria-label': m.title}, gN);
+  el('circle', {cx: 0, cy: 0, r: rootR + 8, fill: css('--glow'), filter: 'url(#gl)'}, r);
+  el('circle', {cx: 0, cy: 0, r: rootR, fill: 'url(#rg)', stroke: css('--gold'), 'stroke-width': 3}, r);
+  el('circle', {cx: 0, cy: 0, r: rootR - 8, fill: 'none', stroke: css('--gold'), 'stroke-width': .8, 'stroke-dasharray': '2 5'}, r);
+  const words = m.title.split(' '), lines = [];
+  let w0 = '';
+  words.forEach(w => { if (tw(w0 + ' ' + w, 17, 700) > rootR * 1.55 && w0) { lines.push(w0); w0 = w; } else w0 = w0 ? w0 + ' ' + w : w; });
+  lines.push(w0);
+  lines.forEach((ln, i) => { const t = el('text', {class: 'root-t', x: 0, y: (i - (lines.length - 1) / 2) * 22 - 4, 'text-anchor': 'middle', 'font-size': 17}, r); t.textContent = ln; });
+  const st = el('text', {x: 0, y: lines.length * 11 + 14, 'text-anchor': 'middle', fill: css('--gold'), 'font-size': 12}, r);
+  st.textContent = m.sub;
+  r.addEventListener('click', ev => { ev.stopPropagation(); spot(-1); viewer.fit(true); });
+  spotMark();
+}
+
+// highlight of the current element; the rest of the map dims
+function spotMark() {
+  const svg = $('svg');
+  svg.classList.toggle('spot', step >= 0);
+  svg.querySelectorAll('[data-k]').forEach(e => e.classList.toggle('cur', +e.dataset.k === step));
+  $('steps').querySelectorAll('button').forEach((b, i) => { b.classList.toggle('cur', i === step); b.setAttribute('aria-current', i === step ? 'step' : 'false'); });
+}
+function spot(i) {
+  step = i; $('card').classList.remove('on');
+  if (i < 0) { spotMark(); counter(); return; }
+  const k = model.kids[i];
+  if (collapsed.has(k.id)) { collapsed.delete(k.id); render(false); }
+  spotMark(); viewer.focus(k.cx, k.cy, 1.4); showCard(k); counter();
+}
+// a click on a branch: fold or unfold it, and make it the current element
+function select(k, toggle) {
+  if (toggle && !k.go && k.leaves.length) { collapsed.has(k.id) ? collapsed.delete(k.id) : collapsed.add(k.id); render(false); }
+  step = k.n; spotMark(); viewer.focus(k.cx, k.cy, 1.4); showCard(k); counter(); foldLabel();
+}
+function showCard(k) {
+  let h;
+  if (k.row) {
+    const r = k.row;
+    h = `<h2>${esc(r.title)}</h2><div class="meta"><span class="pill" style="color:var(${ST[r.status][1]})">● ${ST[r.status][0]}</span>
+      <span class="pill">الحجم: ${SZ[r.size] || r.size}</span><span class="pill">الأهمية: ${IMP[r.imp]}</span>${r.date ? `<span class="pill">${esc(r.date)}</span>` : ''}</div>
+      <p>${esc(r.desc)}</p>${r.ref ? `<p><b>المرجع:</b> ${esc(r.ref)}</p>` : ''}`;
+  } else {
+    const rs = k.info.rs;
+    h = `<h2>${esc(k.label)}</h2><p>${rs.length} عنصرا، منها ${doneOf(rs)} منجزة.</p>
+      <div class="row"><button type="button" id="gochap">افتح فصل المرحلة</button></div>`;
+  }
+  $('cbody').innerHTML = h; $('card').classList.add('on');
+  if ($('gochap')) $('gochap').onclick = () => show(SL.findIndex(s => s.t === 'chapter' && s.g === k.go));
+}
+
+// ---- pan, zoom and turn (scripts/atlas/viewer.js)
+__VIEWER__
+const stage = $('stage');
+const viewer = makeViewer(stage, $('vp'), () => $('vp').getBBox());
+stage.addEventListener('click', e => { if (!viewer.moved && !e.target.closest('.node, .vctl')) $('card').classList.remove('on'); viewer.moved = false; });
+document.querySelector('#card .x').onclick = () => $('card').classList.remove('on');
+
+function openMap(s, fromEnd) {
+  collapsed = new Set(); model = build(s.g);
+  const rs = s.g === 'all' ? D.rows : byG(s.g);
+  $('mtitle').innerHTML = `<b>${s.g === 'all' ? 'نظرة شاملة' : `${s.i + 1}. ${esc(D.groups[s.g])}`}</b><span>${model.kids.length} فرعا · «التالي» يمرّ على الفروع واحدا بعد الآخر · ${pct(doneOf(rs), rs.length)}% منجز</span>`;
+  $('steps').innerHTML = model.kids.map((k, i) => `<button type="button" style="background:${k.color}" aria-label="${esc(k.label)}" title="${esc(k.label)}" data-i="${i}"></button>`).join('');
+  $('steps').querySelectorAll('button').forEach(b => b.onclick = e => { e.stopPropagation(); spot(+b.dataset.i); });
+  step = fromEnd ? model.kids.length - 1 : -1;
+  render(true); viewer.fit();
+  if (fromEnd) spot(step);
+  foldLabel();
+}
+function foldLabel() { $('fold').textContent = collapsed.size ? 'بسط الفروع' : 'طيّ الفروع'; }
+
+// ---- slide navigation
+function show(i, fromEnd = false) {
+  if (i < 0 || i >= SL.length) return;
+  cur = i; const s = SL[i];
+  document.querySelectorAll('.slide').forEach(e => e.classList.remove('on'));
+  const id = {cover: 'cover', chapter: 'chapter', map: 'mapslide', end: 'end'}[s.t];
+  if (s.t === 'chapter') chapter(s);
+  if (s.t === 'end') end();
+  $(id).classList.add('on');
+  if (s.t === 'map') openMap(s, fromEnd); else step = -1;
+  $('fold').hidden = $('skip').hidden = s.t !== 'map';
+  $('pick').value = String(i);
+  document.querySelector('#prog span').style.width = (100 * (i + 1) / SL.length) + '%';
+  $('sorter').querySelectorAll('button').forEach(b => b.classList.toggle('cur', +b.dataset.i === i));
+  counter();
+  try { history.replaceState(null, '', '#' + i); } catch (e) {}
+}
+function counter() {
+  const s = SL[cur];
+  $('count').textContent = `الشريحة ${cur + 1} من ${SL.length}` + (s.t === 'map' && step >= 0 ? ` · العنصر ${step + 1} من ${model.kids.length}` : '');
+}
+function next() {
+  const s = SL[cur];
+  if (s.t === 'map' && step < model.kids.length - 1) { spot(step + 1); return; }
+  show(cur + 1);
+}
+function prev() {
+  const s = SL[cur];
+  if (s.t === 'map' && step > 0) { spot(step - 1); return; }
+  if (s.t === 'map' && step === 0) { spot(-1); viewer.fit(true); return; }
+  const p = cur - 1; if (p < 0) return;
+  show(p, SL[p].t === 'map');
+}
+$('next').onclick = next; $('prev').onclick = prev;
+$('skip').onclick = () => show(cur + 1);
+$('pick').onchange = () => show(+$('pick').value);
+$('fold').onclick = () => {
+  if (collapsed.size) collapsed = new Set(); else collapsed = new Set(model.kids.map(k => k.id));
+  render(false); viewer.fit(true); foldLabel();
+};
+function sorter(on) { $('sorter').classList.toggle('on', on); $('grid').setAttribute('aria-pressed', on); if (on) $('sorter').querySelector('button.cur')?.focus(); }
+$('grid').onclick = () => sorter(!$('sorter').classList.contains('on'));
+$('sorter').querySelector('.grid').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { sorter(false); show(+b.dataset.i); } });
+function full() { document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.(); }
+$('full').onclick = full;
+// day or night (Yamen, 2026-11-14): follows the device until chosen, then keeps the choice on this browser
+const dark = () => (document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
+function themeLabel() { $('theme').textContent = dark() ? '☀ نهاري' : '☾ ليلي'; }
+function theme(t) {
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('mm-deck-theme', t); } catch (e) {}
+  themeLabel();
+  const s = step; show(cur); if (SL[cur].t === 'map' && s >= 0) spot(s);   // the maps read their colours when drawn
+}
+try { const t = localStorage.getItem('mm-deck-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+themeLabel();
+$('theme').onclick = () => theme(dark() ? 'light' : 'dark');
+addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('select, input, textarea')) return;
+  if (e.target.closest && e.target.closest('.node') && (e.key === 'Enter' || e.key === ' ')) return;
+  const k = e.key;
+  if (k === 'ArrowLeft' || k === 'PageDown' || k === ' ' || (k === 'Enter' && !e.target.closest('button'))) { e.preventDefault(); next(); }
+  else if (k === 'ArrowRight' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+  else if (k === 'Home') show(0); else if (k === 'End') show(SL.length - 1);
+  else if (k === 'f' || k === 'F') full();
+  else if (k === 'g' || k === 'G') sorter(!$('sorter').classList.contains('on'));
+  else if (k === 't' || k === 'T') theme(dark() ? 'light' : 'dark');
+  else if (k === 'Escape') sorter(false);
+});
+function place() { $('deck').style.top = $('sorter').style.top = document.querySelector('header').offsetHeight + 'px'; }
+addEventListener('resize', () => { place(); if (SL[cur].t === 'map') viewer.fit(); }); place();
+const start = parseInt(location.hash.slice(1), 10);
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => show(Number.isInteger(start) && start >= 0 && start < SL.length ? start : 0));
+</script>
+</body>
+</html>
